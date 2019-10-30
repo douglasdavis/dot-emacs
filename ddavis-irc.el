@@ -66,7 +66,12 @@
            )
           ))
   (require 'circe-color-nicks)
-  (enable-circe-color-nicks))
+  (enable-circe-color-nicks)
+  (setq circe-use-cycle-completion t)
+  (setq helm-mode-no-completion-in-region-in-modes
+        '(circe-channel-mode
+          circe-query-mode
+          circe-server-mode)))
 
 
 (provide 'ddavis-irc)
