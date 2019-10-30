@@ -200,7 +200,7 @@
               :key ?3))
 (add-to-list 'mu4e-bookmarks
              (make-mu4e-bookmark
-              :name "The 7 days"
+              :name "Last 7 days"
               :query "date:1w..now"
               :key ?7))
 
