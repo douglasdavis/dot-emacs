@@ -49,6 +49,7 @@
 (global-set-key [(meta shift up)]  'ddavis/move-line-up)
 (global-set-key [(meta shift down)]  'ddavis/move-line-down)
 
+(setq browse-url-browser-function 'browse-url-default-macosx-browser)
 
 (provide 'ddavis-macos)
 ;;; ddavis-macos.el ends here

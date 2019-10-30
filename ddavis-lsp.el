@@ -25,6 +25,7 @@
 ;;; Code:
 
 (require 'use-package)
+(require 'ddavis-vars)
 
 (use-package lsp-mode
   :ensure t
