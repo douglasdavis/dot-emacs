@@ -63,5 +63,11 @@
         (ddavis-v-is-grads-18 "~/.cargo/bin/rg")
         (ddavis-v-is-pion "/usr/bin/rg")))
 
+(defvar ddavis-v-fd-exe
+  (cond (ddavis-v-is-mac "/usr/local/bin/fd")
+        (ddavis-v-is-cc7 "~/.cargo/bin/fd")
+        (ddavis-v-is-grads-18 "~/.cargo/bin/fd")
+        (ddavis-v-is-pion "/usr/bin/fd")))
+
 (provide 'ddavis-vars)
 ;;; ddavis-vars.el ends here

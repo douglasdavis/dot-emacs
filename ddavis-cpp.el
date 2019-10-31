@@ -38,9 +38,6 @@
     (require 'eglot))
   (delete 'company-capf company-backends)
   (add-to-list 'company-backends 'company-capf)
-  (projectile-mode t)
-  (with-eval-after-load 'project
-    (add-to-list 'project-find-functions 'ddavis/projectile-proj-find-function))
   (add-to-list 'eglot-server-programs
                `((c++-mode cc-mode) ,ddavis-v-clangd-exe)))
 

@@ -37,5 +37,8 @@
   (let ((root (projectile-project-root dir)))
     (and root (cons 'transient root))))
 
+(with-eval-after-load 'project
+  (add-to-list 'project-find-functions 'ddavis/projectile-proj-find-function))
+
 (provide 'ddavis-projectile)
 ;;; ddavis-projectile.el ends here

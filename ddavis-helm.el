@@ -25,12 +25,19 @@
 ;;; Code:
 
 (require 'use-package)
+(require 'ddavis-projectile)
 
 (use-package helm
   :ensure t
-  :init
-  (setq helm-autoresize-max-height 50)
-  (setq helm-autoresize-min-height 30)
+  :init (setq helm-autoresize-max-height 50
+              helm-autoresize-min-height 30)
+  :bind (("C-x C-f" . helm-find-files)
+         ("C-x C-t" . find-file)
+         ("C-x r b" . helm-bookmarks)
+         ("C-x m" . helm-M-x)
+         ("C-x b" . helm-buffers-list)
+         :map helm-map
+         ("<tab>" . helm-execute-persistent-action))
   :config
   (require 'helm-config)
   (setq helm-split-window-in-side-p t
@@ -40,32 +47,29 @@
         helm-quick-update t
         helm-ff-skip-boring-files t)
   (helm-autoresize-mode 1)
-  (helm-mode 1)
-  :bind (("C-x C-f" . helm-find-files)
-         ("C-x C-t" . find-file)
-         ("C-x b" . helm-buffers-list)
-         ("C-x r b" . helm-bookmarks)
-         ("C-x m" . helm-M-x)
-         :map helm-map
-         ("<tab>" . helm-execute-persistent-action)))
+  (helm-mode 1))
 
 (use-package helm-projectile
   :ensure t
-  :init
-  (setq projectile-completion-system 'helm)
-  :config
-  (require 'helm-projectile)
-  (helm-projectile-on)
-  (define-key global-map (kbd "C-c h p") 'helm-projectile)
-  (setq helm-split-window-in-side-p t))
+  :init (setq projectile-completion-system 'helm
+              helm-split-window-in-side-p t)
+  :bind (:map helm-command-map
+              ("p" . helm-projectile))
+  :demand)
+
+(use-package helm-fd
+  :ensure t
+  :init (setq helm-fd-cmd ddavis-v-fd-exe)
+  :bind (:map helm-command-map
+              ("/" . helm-fd)
+              ("f" . helm-fd-project))
+  :demand)
 
 (use-package helm-rg
   :ensure t
-  :init
-  (setq helm-rg-ripgrep-executable ddavis-v-rg-exe)
-  :config
-  (require 'helm-rg)
-  (define-key global-map (kbd "C-c s r") 'helm-projectile-rg))
+  :init (setq helm-rg-ripgrep-executable ddavis-v-rg-exe)
+  :bind (("C-c s r" . helm-projectile-rg))
+  :demand)
 
 
 (provide 'ddavis-helm)

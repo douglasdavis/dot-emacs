@@ -46,9 +46,8 @@
 (require 'ddavis-package)
 (require 'ddavis-utils)
 (require 'ddavis-org)
-(require 'ddavis-helm)
-
 (require 'ddavis-projectile)
+(require 'ddavis-helm)
 (require 'ddavis-spell)
 (require 'ddavis-eshell)
 (require 'ddavis-company)
