@@ -186,7 +186,7 @@
 (add-to-list 'mu4e-bookmarks
              (make-mu4e-bookmark
               :name "Emacs"
-              :query "m:/fastmail/Lists/emacs-devel or m:/fastmail/Lists/help-gnu-emacs"
+              :query "m:/fastmail/Lists/emacs-devel or m:/fastmail/Lists/help-gnu-emacs or m:/fastmail/Lists/emacs-orgmode"
               :key ?e))
 (add-to-list 'mu4e-bookmarks
              (make-mu4e-bookmark

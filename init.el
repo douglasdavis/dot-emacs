@@ -32,7 +32,7 @@
 (when (yes-or-no-p "start server?")
   (server-start))
 
-(add-to-list 'load-path "~/.emacs.d/ddavis-elisp")
+(add-to-list 'load-path "~/Software/emacs.d")
 
 (setq custom-file (concat user-emacs-directory "/custom.el"))
 
@@ -53,8 +53,10 @@
 (require 'ddavis-spell)
 (require 'ddavis-eshell)
 (require 'ddavis-company)
+
 (require 'ddavis-python)
 (require 'ddavis-cpp)
+(require 'ddavis-tex)
+
 (require 'ddavis-misc)
 (require 'ddavis-looks)
-(require 'ddavis-tex)
