@@ -26,7 +26,7 @@
 
 (require 'use-package)
 
-
+(require 'ddavis-vars)
 
 (setq ring-bell-function 'ignore)
 (setq echo-keystrokes 0.001)
@@ -40,7 +40,6 @@
 (setq show-paren-delay 0)
 (show-paren-mode 1)
 (global-set-key (kbd "C-c q") 'auto-fill-mode)
-
 
 (setq auto-save-list-file-prefix nil
       create-lockfiles nil
