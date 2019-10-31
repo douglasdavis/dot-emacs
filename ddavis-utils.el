@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2019  Doug Davis
 
-;; Author: Doug Davis <douglas.davis.092@gmail.com>
+;; Author: Doug Davis <ddavis@ddavis.io>
 ;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -107,8 +107,6 @@
           (set-window-buffer (next-window) next-win-buffer)
           (select-window first-win)
           (if this-win-2nd (other-window 1))))))
-
-(global-set-key (kbd "C-x \\") 'ddavis/toggle-window-split)
 
 
 (provide 'ddavis-utils)

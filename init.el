@@ -48,13 +48,6 @@
 (require 'ddavis-org)
 (require 'ddavis-helm)
 
-(when ddavis-v-is-mac
-  (require 'ddavis-macos))
-(when ddavis-v-enable-mu4e
-  (require 'ddavis-mu4e))
-(when ddavis-v-enable-irc
-  (require 'ddavis-irc))
-
 (require 'ddavis-projectile)
 (require 'ddavis-spell)
 (require 'ddavis-eshell)
@@ -64,5 +57,12 @@
 (require 'ddavis-cpp)
 (require 'ddavis-tex)
 
-(require 'ddavis-misc)
 (require 'ddavis-looks)
+(require 'ddavis-misc)
+
+(when ddavis-v-is-mac
+  (require 'ddavis-macos))
+(when ddavis-v-enable-mu4e
+  (require 'ddavis-mu4e))
+(when ddavis-v-enable-irc
+  (require 'ddavis-irc))

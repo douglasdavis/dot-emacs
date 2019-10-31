@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2019  Doug Davis
 
-;; Author: Doug Davis <douglas.davis.092@gmail.com>
+;; Author: Doug Davis <ddavis@ddavis.io>
 ;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify

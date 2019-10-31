@@ -47,6 +47,8 @@
   (setq sendmail-program "~/Software/localbase/bin/msmtp"
         mu4e-mu-binary "/usr/local/bin/mu"))
 
+(require 'mu4e)
+
 (setq mu4e-change-filenames-when-moving t
       mu4e-get-mail-command "true"
       mu4e-update-interval 75
@@ -59,9 +61,6 @@
       message-sendmail-extra-arguments '("--read-envelope-from")
       message-kill-buffer-on-exit t)
 
-;;(setq mu4e-view-use-gnus t)
-
-(require 'mu4e)
 
 (defun ddavis/mu4e-jump-via-helm ()
   (interactive)
@@ -76,13 +75,17 @@
 (define-key mu4e-view-mode-map (kbd "C-c k") 'mu4e-kill-update-mail)
 (define-key mu4e-main-mode-map (kbd "C-c k") 'mu4e-kill-update-mail)
 
-
+(defun ddavis/set-standard-name-and-email ()
+  (interactive)
+  (setq user-mail-address "ddavis@ddavis.io"
+        user-email-address "ddavis@ddavis.io"
+        user-full-name "Doug Davis"))
 
 (setq mu4e-contexts
       `( ,(make-mu4e-context
            :name "cern"
            :enter-func (lambda () (mu4e-message "Entering CERN context"))
-           :leave-func (lambda () (mu4e-message "Leaving CERN context"))
+           :leave-func (lambda () (ddavis/set-standard-name-and-email))
            :match-func (lambda (msg)
                          (when msg
                            (string-match-p "^/cern" (mu4e-message-field msg :maildir))))
@@ -97,7 +100,7 @@
          ,(make-mu4e-context
            :name "duke"
            :enter-func (lambda () (mu4e-message "Entering Duke context"))
-           :leave-func (lambda () (mu4e-message "Leaving Duke Context"))
+           :leave-func (lambda () (ddavis/set-standard-name-and-email))
            :match-func (lambda (msg)
                          (when msg
                            (string-match-p "^/duke" (mu4e-message-field msg :maildir))))
@@ -114,7 +117,7 @@
                (make-mu4e-context
                 :name "gmail"
                 :enter-func (lambda () (mu4e-message "Entering Gmail context"))
-                :leave-func (lambda () (mu4e-message "Leaving Gmail context"))
+                :leave-func (lambda () (ddavis/set-standard-name-and-email))
                 :match-func (lambda (msg)
                               (when msg
                                 (string-match-p "^/gmail" (mu4e-message-field msg :maildir))))

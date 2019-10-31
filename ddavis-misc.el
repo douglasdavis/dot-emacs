@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2019  Doug Davis
 
-;; Author: Doug Davis <douglas.davis.092@gmail.com>
+;; Author: Doug Davis <ddavis@ddavis.io>
 ;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -25,8 +25,9 @@
 ;;; Code:
 
 (require 'use-package)
-
 (require 'ddavis-vars)
+(require 'ddavis-utils)
+
 
 (setq ring-bell-function 'ignore)
 (setq echo-keystrokes 0.001)
@@ -50,6 +51,8 @@
       kept-new-versions 3
       kept-old-versions 2
       version-control t)
+
+(global-set-key (kbd "C-x \\") 'ddavis/toggle-window-split)
 
 (mapc
  (lambda (language-mode-hook)
