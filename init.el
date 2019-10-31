@@ -32,7 +32,12 @@
 (when (yes-or-no-p "start server?")
   (server-start))
 
-(add-to-list 'load-path "~/Software/emacs.d")
+;; this init.el file is designed to be a symlink to the init.el file
+;; in my `emacs.d` git repo.  this ensures the git repo can live
+;; anywhere
+(add-to-list 'load-path (directory-file-name
+                         (file-name-directory
+                          (file-truename "~/.emacs.d/init.el"))))
 
 (setq custom-file (concat user-emacs-directory "/custom.el"))
 
