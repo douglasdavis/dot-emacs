@@ -28,20 +28,18 @@
 (require 'ddavis-vars)
 (require 'ddavis-utils)
 
+;; plenty of RAM these days
+(setq gc-cons-threshold 25000000)
 
+;; misc seq's
 (setq ring-bell-function 'ignore)
 (setq echo-keystrokes 0.001)
-(scroll-bar-mode -1)
-(tool-bar-mode -1)
-(tooltip-mode -1)
-(menu-bar-mode -1)
 (setq inhibit-startup-screen t)
-(setq-default indent-tabs-mode nil)
 (setq tramp-default-method "ssh")
-(setq show-paren-delay 0)
-(show-paren-mode 1)
-(global-set-key (kbd "C-c q") 'auto-fill-mode)
+(setq-default show-paren-delay 0)
+(setq-default indent-tabs-mode nil)
 
+;; we don't like Emacs backups
 (setq auto-save-list-file-prefix nil
       create-lockfiles nil
       auto-save-list-file-prefix nil
@@ -52,6 +50,15 @@
       kept-old-versions 2
       version-control t)
 
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+(tooltip-mode -1)
+(menu-bar-mode -1)
+(show-paren-mode 1)
+
+
+
+(global-set-key (kbd "C-c q") 'auto-fill-mode)
 (global-set-key (kbd "C-x \\") 'ddavis/toggle-window-split)
 
 (mapc
@@ -76,12 +83,6 @@
 (when ddavis-v-is-pion
   (setq browse-url-browser-function 'browse-url-generic
         browse-url-generic-program "firefox"))
-
-
-(setq vc-follow-symlinks t)
-(use-package magit
-  :ensure t
-  :bind ("C-c m s" . 'magit-status))
 
 (use-package all-the-icons
   :ensure t)

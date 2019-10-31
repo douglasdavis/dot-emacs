@@ -24,13 +24,14 @@
 
 ;;; Code:
 
-;; Use .el if it is newer
-(when (boundp 'load-prefer-newer)
-  (setq load-prefer-newer t))
-
+;; prompt to start server
 (fset 'yes-or-no-p 'y-or-n-p)
 (when (yes-or-no-p "start server?")
   (server-start))
+
+;; Use .el if it is newer
+(when (boundp 'load-prefer-newer)
+  (setq load-prefer-newer t))
 
 ;; this init.el file is designed to be a symlink to the init.el file
 ;; in my `emacs.d` git repo.  this ensures the git repo can live
@@ -51,11 +52,10 @@
 (require 'ddavis-spell)
 (require 'ddavis-eshell)
 (require 'ddavis-company)
-
+(require 'ddavis-vc)
 (require 'ddavis-python)
 (require 'ddavis-cpp)
 (require 'ddavis-tex)
-
 (require 'ddavis-looks)
 (require 'ddavis-misc)
 
