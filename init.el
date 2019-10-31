@@ -37,9 +37,10 @@
 ;; anywhere
 (add-to-list 'load-path (directory-file-name
                          (file-name-directory
-                          (file-truename "~/.emacs.d/init.el"))))
+                          (file-truename
+                           (concat user-emacs-directory "init.el")))))
 
-(setq custom-file (concat user-emacs-directory "/custom.el"))
+(setq custom-file (concat user-emacs-directory "custom.el"))
 
 (require 'ddavis-vars)
 (require 'ddavis-package)
