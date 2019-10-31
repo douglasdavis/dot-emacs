@@ -55,6 +55,7 @@
            :nick "ddavis"
            :nickserv-password ddavis/irc-pw-freenode
            :tls t
+           :channels (:after-auth "#emacs" "#sr.ht" "#python" "#pydata" "#scipy")
            )
           ("Gitter"
            :server-buffer-name "Gitter"
