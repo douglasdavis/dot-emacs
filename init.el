@@ -43,6 +43,10 @@
 
 (setq custom-file (concat user-emacs-directory "custom.el"))
 
+(setq user-mail-address "ddavis@ddavis.io"
+      user-login-name "ddavis"
+      user-full-name "Doug Davis")
+
 (require 'ddavis-vars)
 (require 'ddavis-package)
 (require 'ddavis-utils)
