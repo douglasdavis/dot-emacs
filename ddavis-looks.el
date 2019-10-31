@@ -41,6 +41,13 @@
     (set-face-attribute 'mode-line-inactive  nil :box        nil)
     (set-face-attribute 'mode-line-buffer-id nil :box        nil)))
 
+(when (version<= "26.0.50" emacs-version)
+  (global-display-line-numbers-mode))
+(setq column-number-mode t)
+
+(add-to-list 'default-frame-alist '(height . 80))
+(add-to-list 'default-frame-alist '(width . 248))
+
 (add-to-list 'default-frame-alist ddavis-v-font)
 (set-face-italic 'font-lock-comment-face nil)
 (when (string= (system-name) "grads-18.internal.phy.duke.edu")

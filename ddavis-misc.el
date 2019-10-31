@@ -26,6 +26,56 @@
 
 (require 'use-package)
 
+
+
+(setq ring-bell-function 'ignore)
+(setq echo-keystrokes 0.001)
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+(tooltip-mode -1)
+(menu-bar-mode -1)
+(setq inhibit-startup-screen t)
+(setq-default indent-tabs-mode nil)
+(setq tramp-default-method "ssh")
+(setq show-paren-delay 0)
+(show-paren-mode 1)
+(global-set-key (kbd "C-c q") 'auto-fill-mode)
+
+
+(setq auto-save-list-file-prefix nil
+      create-lockfiles nil
+      auto-save-list-file-prefix nil
+      backup-by-copying t
+      backup-directory-alist '(("." . "~/.saves"))
+      delete-old-versions t
+      kept-new-versions 3
+      kept-old-versions 2
+      version-control t)
+
+(mapc
+ (lambda (language-mode-hook)
+   (add-hook language-mode-hook
+             (lambda ()
+               (add-to-list 'write-file-functions 'delete-trailing-whitespace))))
+ '(text-mode-hook
+   c-mode-common-hook
+   python-mode-hook
+   markdown-mode-hook
+   bash-mode-hook
+   sh-mode-hook
+   cmake-mode-hook
+   fundamental-mode-hook
+   LaTeX-mode-hook))
+
+(when ddavis-v-is-cc7
+  (setq browse-url-browser-function 'browse-url-generic
+        browse-url-generic-program "/home/ddavis/Software/localbase/bin/firefox"))
+
+(when ddavis-v-is-pion
+  (setq browse-url-browser-function 'browse-url-generic
+        browse-url-generic-program "firefox"))
+
+
 (setq vc-follow-symlinks t)
 (use-package magit
   :ensure t
@@ -77,7 +127,6 @@
   :ensure t
   :config
   (require 'deadgrep))
-
 
 (use-package ace-window
   :ensure t

@@ -46,6 +46,7 @@
   (setq-default ns-function-modifier 'hyper)
   (setq-default mac-function-modifier 'hyper))
 
+(global-unset-key "s-t")
 (global-set-key [(meta shift up)]  'ddavis/move-line-up)
 (global-set-key [(meta shift down)]  'ddavis/move-line-down)
 
