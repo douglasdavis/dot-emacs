@@ -56,8 +56,6 @@
 (menu-bar-mode -1)
 (show-paren-mode 1)
 
-
-
 (global-set-key (kbd "C-c q") 'auto-fill-mode)
 (global-set-key (kbd "C-x \\") 'ddavis/toggle-window-split)
 
@@ -82,7 +80,7 @@
 
 (when ddavis-v-is-pion
   (setq browse-url-browser-function 'browse-url-generic
-        browse-url-generic-program "firefox"))
+        browse-url-generic-program "firefox-developer-edition"))
 
 (use-package all-the-icons
   :ensure t)
