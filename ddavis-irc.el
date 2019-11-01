@@ -76,7 +76,7 @@
 
 (defun ddavis/circe-prompt ()
   (lui-set-prompt
-   (concat (propertize (concat (buffer-name) ">>>")
+   (concat (propertize (concat (buffer-name) " >>>")
                        'face 'circe-prompt-face)
            " ")))
 (add-hook 'circe-chat-mode-hook 'ddavis/circe-prompt)
