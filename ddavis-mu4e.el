@@ -27,9 +27,9 @@
 (require 'ddavis-vars)
 
 (when ddavis-v-is-mac
-  (add-to-list 'load-path "~/Software/mu/1.3.5/share/emacs/site-lisp/mu4e")
+  (add-to-list 'load-path "~/Software/mu/releases/master/share/emacs/site-lisp/mu4e")
   (setq sendmail-program "~/Software/localbase/bin/msmtp"
-        mu4e-mu-binary "~/Software/mu/1.3.5/bin/mu"))
+        mu4e-mu-binary "~/Software/mu/releases/master/bin/mu"))
 
 (when ddavis-v-is-grads-18
   (add-to-list 'load-path "~/Software/localbase/share/emacs/site-lisp/mu4e")
