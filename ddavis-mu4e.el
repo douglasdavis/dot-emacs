@@ -36,11 +36,10 @@
   (setq sendmail-program "/usr/bin/msmtp"
         mu4e-mu-binary "~/Software/localbase/bin/mu"))
 
-(when ddavis-v-is-pion
-  (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
-  (setq sendmail-program "/usr/bin/msmtp"
-        mu4e-get-mail-command "mbsync standard"
-        mu4e-mu-binary "/usr/bin/mu"))
+;; (when ddavis-v-is-pion
+;;   (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+;;   (setq sendmail-program "/usr/bin/msmtp"
+;;         mu4e-mu-binary "/usr/bin/mu"))
 
 (when ddavis-v-is-cc7
   (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
