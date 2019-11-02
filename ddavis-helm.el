@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 
-;;
+;; helm setup -- see: https://github.com/emacs-helm/helm
 
 ;;; Code:
 
@@ -31,7 +31,8 @@
   :ensure t
   :init (setq helm-autoresize-max-height 50
               helm-autoresize-min-height 30)
-  :bind (("C-x C-f" . helm-find-files)
+  :bind (("s-o" . helm-find-files)
+         ("C-x C-f" . helm-find-files)
          ("C-x C-t" . find-file)
          ("C-x r b" . helm-bookmarks)
          ("C-x m" . helm-M-x)

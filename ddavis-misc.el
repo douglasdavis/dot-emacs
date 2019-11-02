@@ -20,7 +20,9 @@
 
 ;;; Commentary:
 
-;;
+;; Misc. stuff that doesn't fall into another category. Many setq's
+;; and keybinding definitions, Also some various use-package calls
+;; that do not require any more configuration.
 
 ;;; Code:
 
@@ -56,8 +58,10 @@
 (menu-bar-mode -1)
 (show-paren-mode 1)
 
+;; some key bindings which don't require any external packages.
 (global-set-key (kbd "C-c q") 'auto-fill-mode)
 (global-set-key (kbd "C-x \\") 'ddavis/toggle-window-split)
+
 
 (mapc
  (lambda (language-mode-hook)

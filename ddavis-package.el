@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 
-;;
+;; Setting up use-package -- see: https://github.com/jwiegley/use-package
 
 ;;; Code:
 

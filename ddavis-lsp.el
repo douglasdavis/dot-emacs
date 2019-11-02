@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 
-;;
+;; lsp mode -- see: https://github.com/emacs-lsp/lsp-mode
 
 ;;; Code:
 

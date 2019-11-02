@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 
-;;
+;; C++ dev specific setup
 
 ;;; Code:
 

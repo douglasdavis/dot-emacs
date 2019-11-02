@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 
-;;
+;; LaTeX setup
 
 ;;; Code:
 

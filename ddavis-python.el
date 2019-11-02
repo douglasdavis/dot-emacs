@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 
-;;
+;; personal python setup
 
 ;;; Code:
 

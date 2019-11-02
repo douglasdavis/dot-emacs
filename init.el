@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 
-;;
+;; My personal Emacs configuration.
 
 ;;; Code:
 

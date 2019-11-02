@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 
-;;
+;; spelling specific setup
 
 ;;; Code:
 

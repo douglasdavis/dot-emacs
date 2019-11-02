@@ -20,12 +20,12 @@
 
 ;;; Commentary:
 
-;;
+;; some mac specific things
 
 ;;; Code:
 
 (require 'use-package)
-
+(require 'ddavis-helm)
 
 (use-package exec-path-from-shell
   :ensure t
@@ -46,11 +46,22 @@
   (setq-default ns-function-modifier 'hyper)
   (setq-default mac-function-modifier 'hyper))
 
-;; (global-unset-key "s-t") -- giving warning?
+(global-unset-key (kbd "s-t"))
 (global-set-key [(meta shift up)]  'ddavis/move-line-up)
 (global-set-key [(meta shift down)]  'ddavis/move-line-down)
+(global-set-key (kbd "s-\\") 'ddavis/toggle-window-split)
+(global-set-key (kbd "s-w") 'delete-window)
+(global-set-key (kbd "s-.") 'other-window)
+(global-set-key (kbd "s-b") 'helm-buffers-list)
+(global-set-key (kbd "s-w") (lambda ()
+                              (interactive)
+                              (if (< (count-windows) 2)
+                                  (delete-frame)
+                                (delete-window))))
 
 (setq browse-url-browser-function 'browse-url-default-macosx-browser)
+
+
 
 (provide 'ddavis-macos)
 ;;; ddavis-macos.el ends here

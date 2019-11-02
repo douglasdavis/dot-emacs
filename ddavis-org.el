@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 
-;;
+;; Org-mode setup.
 
 ;;; Code:
 

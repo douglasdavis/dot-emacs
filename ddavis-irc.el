@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 
-;;
+;; IRC setup -- see: https://github.com/jorgenschaefer/circe
 
 ;;; Code:
 

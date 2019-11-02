@@ -20,7 +20,8 @@
 
 ;;; Commentary:
 
-;;
+;; version control specific things; i.e. magit
+;; see: https://magit.vc/
 
 ;;; Code:
 

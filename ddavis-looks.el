@@ -20,7 +20,8 @@
 
 ;;; Commentary:
 
-;;
+;; This is a place to define the "looks" of my Emacs
+;; configuration. This includles themes, fonts, window/frame size.
 
 ;;; Code:
 
@@ -49,10 +50,10 @@
   (add-to-list 'default-frame-alist '(height . 60))
   (add-to-list 'default-frame-alist '(width . 200)))
 
+(setq mac-allow-anti-aliasing t)
+
 (add-to-list 'default-frame-alist ddavis-v-font)
 (set-face-italic 'font-lock-comment-face nil)
-(when (string= (system-name) "grads-18.internal.phy.duke.edu")
-  (set-face-attribute 'region nil :background "white" :foreground "dim gray" :inverse-video t))
 
 
 (provide 'ddavis-looks)

@@ -1,4 +1,4 @@
-;;; ddavis-utils.el --- random utilities             -*- lexical-binding: t; -*-
+;;; ddavis-utils.el --- random utility functions     -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2019  Doug Davis
 
@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 
-;;
+;; This is a place for utility function definitions.
 
 ;;; Code:
 

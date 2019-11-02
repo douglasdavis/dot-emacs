@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 
-;;
+;; projectile setup -- see: https://github.com/bbatsov/projectile
 
 ;;; Code:
 

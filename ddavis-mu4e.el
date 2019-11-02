@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 
-;;
+;; Email setup -- see: https://www.djcbsoftware.nl/code/mu/mu4e.html
 
 ;;; Code:
 

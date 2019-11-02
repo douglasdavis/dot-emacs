@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 
-;;
+;; Helm setup -- see: https://github.com/company-mode/company-mode
 
 ;;; Code:
 

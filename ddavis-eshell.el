@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 
-;;
+;; Some eshell specific things
 
 ;;; Code:
 
