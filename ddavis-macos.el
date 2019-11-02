@@ -53,6 +53,7 @@
 (global-set-key (kbd "s-w") 'delete-window)
 (global-set-key (kbd "s-.") 'other-window)
 (global-set-key (kbd "s-b") 'helm-buffers-list)
+(global-set-key (kbd "s-t") 'neotree)
 (global-set-key (kbd "s-w") (lambda ()
                               (interactive)
                               (if (< (count-windows) 2)
