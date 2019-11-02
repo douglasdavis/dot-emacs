@@ -118,10 +118,10 @@
   :config
   (setq elfeed-feeds
         '("https://planet.scipy.org/feed.xml"
-          "http://sachachua.com/blog/feed/"
-          "http://pragmaticemacs.com/feed/"
-          "https://ddavis.io/index.xml"))
-  ;;"http://planet.emacsen.org/atom.xml"))
+          "https://planet.emacslife.com/atom.xml"
+          "https://sachachua.com/blog/feed/"
+          "https://ddavis.io/index.xml"
+          "http://pragmaticemacs.com/feed/"))
   (setq-default elfeed-search-filter "@4-weeks-ago"))
 
 (use-package deadgrep
