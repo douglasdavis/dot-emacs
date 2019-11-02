@@ -30,7 +30,7 @@
 
 (use-package magit
   :ensure t
-  :bind ("C-c m s" . 'magit-status)
+  :bind ("C-x g" . 'magit-status)
   :demand)
 
 
