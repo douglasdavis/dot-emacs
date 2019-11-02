@@ -45,8 +45,9 @@
   (global-display-line-numbers-mode))
 (setq column-number-mode t)
 
-(add-to-list 'default-frame-alist '(height . 80))
-(add-to-list 'default-frame-alist '(width . 248))
+(when ddavis-v-is-mac
+  (add-to-list 'default-frame-alist '(height . 60))
+  (add-to-list 'default-frame-alist '(width . 200)))
 
 (add-to-list 'default-frame-alist ddavis-v-font)
 (set-face-italic 'font-lock-comment-face nil)

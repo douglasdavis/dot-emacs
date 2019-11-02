@@ -87,30 +87,43 @@
 
 (use-package neotree
   :ensure t
-  :config (global-set-key [f8] 'neotree-project-dir)
+  :config
+  (global-set-key [f8] 'neotree-project-dir)
   (setq neo-theme (if (display-graphic-p) 'icons 'arrow)
         neo-smart-open t
         neo-autorefresh nil))
 
 (use-package which-key
   :ensure t
-  :hook
-  (after-init . which-key-mode))
+  :hook (after-init . which-key-mode))
 
 (use-package yasnippet
   :ensure t
   :config
-  (require 'yasnippet)
   (yas-global-mode 1))
 
 (use-package yasnippet-snippets
-  :ensure t
-  :config
-  (require 'yasnippet-snippets))
+  :ensure t)
 
 (use-package iedit
   :ensure t
   :bind ("C-c ;" . 'iedit-mode))
+
+(use-package cmake-mode
+  :ensure t)
+
+(use-package markdown-mode
+  :ensure t)
+
+(use-package yaml-mode
+  :ensure t)
+
+(use-package deadgrep
+  :ensure t)
+
+(use-package ace-window
+  :ensure t
+  :bind ("M-o" . 'ace-window))
 
 (use-package elfeed
   :ensure t
@@ -123,16 +136,6 @@
           "https://ddavis.io/index.xml"
           "http://pragmaticemacs.com/feed/"))
   (setq-default elfeed-search-filter "@4-weeks-ago"))
-
-(use-package deadgrep
-  :ensure t
-  :config
-  (require 'deadgrep))
-
-(use-package ace-window
-  :ensure t
-  :config
-  (define-key global-map (kbd "M-o") 'ace-window))
 
 
 (provide 'ddavis-misc)
