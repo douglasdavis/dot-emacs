@@ -52,6 +52,8 @@
 (global-set-key (kbd "s-\\") 'ddavis/toggle-window-split)
 (global-set-key (kbd "s-w") 'delete-window)
 (global-set-key (kbd "s-.") 'other-window)
+(global-set-key (kbd "s-3") 'split-window-right)
+(global-set-key (kbd "s-2") 'split-window-below)
 (global-set-key (kbd "s-b") 'helm-buffers-list)
 (global-set-key (kbd "s-t") 'neotree)
 (global-set-key (kbd "s-w") (lambda ()
