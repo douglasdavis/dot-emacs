@@ -33,6 +33,10 @@
 (when (boundp 'load-prefer-newer)
   (setq load-prefer-newer t))
 
+(when (or (eq system-type 'darwin)
+          (eq system-type 'gnu/linux))
+  (setq default-directory "~/"))
+
 ;; this init.el file is designed to be a symlink to the init.el file
 ;; in my `emacs.d` git repo.  this ensures the git repo can live
 ;; anywhere
