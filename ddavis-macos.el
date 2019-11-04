@@ -56,6 +56,7 @@
 (global-set-key (kbd "s-3") 'split-window-right)
 (global-set-key (kbd "s-2") 'split-window-below)
 (global-set-key (kbd "s-b") 'helm-buffers-list)
+(global-set-key (kbd "s-g") 'magit-status)
 (global-set-key (kbd "s-t") 'neotree)
 (global-set-key (kbd "s-w") (lambda ()
                               (interactive)
