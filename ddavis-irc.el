@@ -68,7 +68,10 @@
           ))
   (require 'circe-color-nicks)
   (enable-circe-color-nicks)
-  (setq circe-use-cycle-completion t)
+  (setq circe-use-cycle-completion t
+        circe-format-say "<{nick}> {body}"
+        lui-fill-column 79
+        lui-fill-type 18)
   (setq helm-mode-no-completion-in-region-in-modes
         '(circe-channel-mode
           circe-query-mode
