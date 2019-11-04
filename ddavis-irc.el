@@ -69,9 +69,9 @@
   (require 'circe-color-nicks)
   (enable-circe-color-nicks)
   (setq circe-use-cycle-completion t
-        circe-format-say "<{nick}> {body}"
-        lui-fill-column 79
-        lui-fill-type 18)
+        circe-format-say "<{nick}> {body}")
+  ;; (setq lui-fill-column 79
+  ;;       lui-fill-type 18)
   (setq helm-mode-no-completion-in-region-in-modes
         '(circe-channel-mode
           circe-query-mode
@@ -79,7 +79,7 @@
 
 (defun ddavis/circe-prompt ()
   (lui-set-prompt
-   (concat (propertize (concat (buffer-name) " >>>")
+   (concat (propertize (concat (buffer-name) " >>> ")
                        'face 'circe-prompt-face)
            " ")))
 (add-hook 'circe-chat-mode-hook 'ddavis/circe-prompt)
