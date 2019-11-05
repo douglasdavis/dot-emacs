@@ -49,5 +49,15 @@
   (setq company-backends (cons 'company-capf (remove 'company-capf company-backends)))
   (add-to-list 'eglot-server-programs '(python-mode . ("pyls"))))
 
+(defun ddavis/py-activate (env-name)
+  (require 'pyvenv)
+  (interactive "sEnv name: ")
+  (message env-name)
+  (pyvenv-activate (format "~/.pyenv/versions/%s" env-name)))
+
+(defun ddavis/py-tdub ()
+  (interactive)
+  (ddavis/py-activate "tdub"))
+
 (provide 'ddavis-python)
 ;;; ddavis-python.el ends here
