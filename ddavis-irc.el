@@ -20,12 +20,13 @@
 
 ;;; Commentary:
 
-;; IRC setup -- see: https://github.com/jorgenschaefer/circe
+;; IRC setup -- for circe (primary, see:
+;; https://github.com/jorgenschaefer/circe) and ERC (built-in)
 
 ;;; Code:
 
-(require 'epa-file)
 (require 'erc)
+(require 'epa-file)
 (require 'use-package)
 (require 'ddavis-vars)
 
@@ -76,48 +77,29 @@
   (setq helm-mode-no-completion-in-region-in-modes
         '(circe-channel-mode
           circe-query-mode
-          circe-server-mode)))
+          circe-server-mode))
 
-(defun ddavis/circe-prompt ()
-  (lui-set-prompt
-   (concat (propertize (concat (buffer-name) " >>> ")
-                       'face 'circe-prompt-face)
-           " ")))
-(add-hook 'circe-chat-mode-hook 'ddavis/circe-prompt)
+  (defun ddavis/circe-prompt ()
+    (lui-set-prompt
+     (concat (propertize (concat (buffer-name) " >>> ")
+                         'face 'circe-prompt-face)
+             " ")))
+  (add-hook 'circe-chat-mode-hook 'ddavis/circe-prompt))
 
-;; ERC nick color from EmacsWiki
-(setq nick-face-list '())
-(setq-default erc-colors-list '("blue" "green" "yellow"
-                                "gray" "brown" "red"
-                                "purple" "white" "cyan"))
-(defun build-nick-face-list ()
-  (setq i -1)
-  (setq nick-face-list
-        (mapcar
-         (lambda (COLOR)
-           (setq i (1+ i))
-           (list (custom-declare-face
-                  (make-symbol (format "erc-nick-face-%d" i))
-                  (list (list t (list :foreground COLOR)))
-                  (format "Nick face %d" i))))
-         erc-colors-list)))
 
-(defun my-insert-modify-hook ()
-  (if (null nick-face-list) (build-nick-face-list))
-  (save-excursion
-    (goto-char (point-min))
-    (if (looking-at "<\\([^>]*\\)>")
-        (let ((nick (match-string 1)))
-          (put-text-property (match-beginning 1) (match-end 1)
-                             'face (nth
-                                    (mod (string-to-number
-                                          (substring (md5 nick) 0 4) 16)
-                                         (length nick-face-list))
-                                    nick-face-list))))))
-(add-hook 'erc-insert-modify-hook 'my-insert-modify-hook)
+(use-package erc
+  :config
+  (setq erc-hide-list '("JOIN" "PART" "QUIT")
+        erc-user-full-name "Doug Davis"
+        erc-kill-server-buffer-on-quit t
+        erc-kill-buffer-on-part t))
 
-(setq erc-hide-list '("JOIN" "PART" "QUIT"))
+
+(use-package erc-hl-nicks
+  :after erc)
 
 
 (provide 'ddavis-irc)
 ;;; ddavis-irc.el ends here
+
+
