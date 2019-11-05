@@ -116,6 +116,7 @@
                                     nick-face-list))))))
 (add-hook 'erc-insert-modify-hook 'my-insert-modify-hook)
 
+(setq erc-hide-list '("JOIN" "PART" "QUIT"))
 
 
 (provide 'ddavis-irc)
