@@ -216,6 +216,7 @@
         "ddavis@phy\\.duke\\.edu"
         "douglas\\.davis\\.092@gmail\\.com"
         "douglas\\.davis@duke\\.edu"
+        "douglas\\.davis@cern\\.ch"
         "ddavis@cern\\.ch"))
 
 (setq w3m-default-desplay-inline-images t)
