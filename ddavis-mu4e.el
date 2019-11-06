@@ -75,7 +75,7 @@
 (define-key mu4e-main-mode-map (kbd "C-c k") 'mu4e-kill-update-mail)
 (define-key mu4e-headers-mode-map "d" 'mu4e-headers-mark-for-delete)
 (define-key mu4e-headers-mode-map "D" 'mu4e-headers-mark-for-trash)
-(define-key mu4e-view-mode-map "d" 'mu4e-view-mark-for-delete
+(define-key mu4e-view-mode-map "d" 'mu4e-view-mark-for-delete)
 (define-key mu4e-view-mode-map "D" 'mu4e-view-mark-for-trash)
 
 (defun ddavis/set-standard-name-and-email ()
