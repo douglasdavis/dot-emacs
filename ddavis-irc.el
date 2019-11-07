@@ -86,6 +86,13 @@
              " ")))
   (add-hook 'circe-chat-mode-hook 'ddavis/circe-prompt))
 
+(use-package helm-circe
+  :when ddavis-v-enable-irc
+  :ensure t
+  :config
+  (when ddavis-v-is-mac
+    (global-set-key (kbd "s-i") 'helm-circe))
+
 
 (use-package erc
   :config
@@ -94,12 +101,9 @@
         erc-kill-server-buffer-on-quit t
         erc-kill-buffer-on-part t))
 
-
 (use-package erc-hl-nicks
   :after erc)
 
 
 (provide 'ddavis-irc)
 ;;; ddavis-irc.el ends here
-
-
