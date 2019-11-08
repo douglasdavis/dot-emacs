@@ -89,9 +89,10 @@
 (use-package helm-circe
   :when ddavis-v-enable-irc
   :ensure t
+  :bind (:map helm-command-map ("i" . helm-circe))
   :config
   (when ddavis-v-is-mac
-    (global-set-key (kbd "s-i") 'helm-circe))
+    (global-set-key (kbd "s-i") 'helm-circe)))
 
 
 (use-package erc
