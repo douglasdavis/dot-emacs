@@ -28,10 +28,11 @@
 (require 'use-package)
 (require 'ddavis-vars)
 
+(setq custom-safe-themes t)
+
 (use-package gruvbox-theme
   :ensure t
   :init
-  (setq custom-safe-themes t)
   :config
   (load-theme 'gruvbox t)
   (let ((line (face-attribute 'mode-line :underline)))
