@@ -28,22 +28,8 @@
 (require 'package)
 (require 'ddavis-vars)
 
-(unless ddavis-v-is-grads-18
-  (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
-                      (not (gnutls-available-p))))
-         (proto (if no-ssl "http" "https")))
-    (when no-ssl
-      (warn "no ssl bad :("))
-    ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
-    (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
-    (add-to-list 'package-archives (cons "org" (concat proto "://orgmode.org/elpa/")) t)
-    (when (< emacs-major-version 24)
-      ;; For important compatibility libraries like cl-lib
-      (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/"))))))
-
-(when ddavis-v-is-grads-18
-  (add-to-list 'package-archives (cons "melpa" "http://melpa.org/packages/") t)
-  (add-to-list 'package-archives (cons "org" "http://orgmode.org/elpa/") t))
+(add-to-list 'package-archives (cons "melpa" "https://melpa.org/packages/") t)
+(add-to-list 'package-archives (cons "melpa" "https://orgmode.org/elpa/") t)
 
 (when (version< emacs-version "27.0.50")
   (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
@@ -55,8 +41,6 @@
 
 (eval-when-compile
   (require 'use-package))
-
-;; (setq use-package-always-ensure t)
 
 (use-package auto-package-update
   :ensure t
