@@ -32,6 +32,7 @@
 
 (defvar ddavis-v-enable-mu4e
   (or ddavis-v-is-mac
+      ddavis-v-is-pion
       ddavis-v-is-cc7
       ddavis-v-is-grads-18))
 
@@ -42,7 +43,7 @@
 (defvar ddavis-v-font
   (cond (ddavis-v-is-mac '(font . "Source Code Pro for Powerline-12"))
         (ddavis-v-is-cc7 '(font . "-*-cascadia code-*-*-normal-*-*-120-120-100-m-0-*-*"))
-        (ddavis-v-is-pion '(font . "-*-cascadia code-*-*-normal-*-*-120-120-100-m-0-*-*"))
+        (ddavis-v-is-pion '(font . "-*-source code pro-semibold-*-normal-*-*-120-120-100-m-0-*-*"))
         (ddavis-v-is-grads-18 '(font . "-*-source code pro-semibold-*-normal-*-*-100-100-100-m-0-*-*"))))
 
 (defvar ddavis-v-clangd-exe

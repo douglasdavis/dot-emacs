@@ -36,10 +36,10 @@
   (setq sendmail-program "/usr/bin/msmtp"
         mu4e-mu-binary "~/Software/localbase/bin/mu"))
 
-;; (when ddavis-v-is-pion
-;;   (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
-;;   (setq sendmail-program "/usr/bin/msmtp"
-;;         mu4e-mu-binary "/usr/bin/mu"))
+(when ddavis-v-is-pion
+  (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+  (setq sendmail-program "/usr/bin/msmtp"
+        mu4e-mu-binary "/usr/bin/mu"))
 
 (when ddavis-v-is-cc7
   (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
@@ -115,7 +115,7 @@
                     ( mu4e-drafts-folder      . "/duke/Drafts" )
                     ( mu4e-reply-to-address   . "ddavis@phy.duke.edu" )))))
 
-(when (or ddavis-v-is-mac ddavis-v-is-cc7)
+(when (or ddavis-v-is-mac ddavis-v-is-cc7 ddavis-v-is-pion)
   (add-to-list 'mu4e-contexts
                (make-mu4e-context
                 :name "gmail"
