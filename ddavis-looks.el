@@ -43,8 +43,15 @@
     (set-face-attribute 'mode-line-inactive  nil :box        nil)
     (set-face-attribute 'mode-line-buffer-id nil :box        nil)))
 
-(when (version<= "26.0.50" emacs-version)
-  (global-display-line-numbers-mode))
+(when (eq system-type 'gnu/linux)
+  (use-package moody
+    :ensure t
+    :config
+    (setq x-underline-at-descent-line t)
+    (moody-replace-mode-line-buffer-identification)
+    (moody-replace-vc-mode)))
+
+(global-display-line-numbers-mode)
 (setq column-number-mode t)
 
 (when ddavis-v-is-mac
@@ -54,8 +61,6 @@
 (setq mac-allow-anti-aliasing t)
 
 (add-to-list 'default-frame-alist ddavis-v-font)
-(set-face-italic 'font-lock-comment-face nil)
-
 
 (provide 'ddavis-looks)
 ;;; ddavis-looks.el ends here
