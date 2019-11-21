@@ -66,6 +66,7 @@
 (require 'ddavis-spell)
 (require 'ddavis-looks)
 (require 'ddavis-misc)
+(require 'ddavis-lsp)
 
 (when ddavis-v-is-mac
   (require 'ddavis-macos))
