@@ -38,6 +38,7 @@
 
 (defvar ddavis-v-enable-irc
   (or ddavis-v-is-mac
+      ddavis-v-is-pion
       ddavis-v-is-cc7))
 
 (defvar ddavis-v-font
