@@ -59,18 +59,22 @@
 
 (use-package helm-fd
   :ensure t
+  :demand
   :init (setq helm-fd-cmd ddavis-v-fd-exe)
   :bind (:map helm-command-map
               ("/" . helm-fd)
-              ("f" . helm-fd-project))
-  :demand)
+              ("f" . helm-fd-project)))
 
 (use-package helm-rg
   :ensure t
+  :demand
   :init (setq helm-rg-ripgrep-executable ddavis-v-rg-exe)
-  :bind (("C-c s r" . helm-projectile-rg))
-  :demand)
+  :bind (("C-c s r" . helm-projectile-rg)))
 
+(use-package helm-descbinds
+  :ensure t
+  :demand
+  :bind (("C-h b" . helm-descbinds)))
 
 (provide 'ddavis-helm)
 ;;; ddavis-helm.el ends here
