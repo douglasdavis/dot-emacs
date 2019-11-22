@@ -53,6 +53,7 @@
 (global-set-key (kbd "s-1") 'delete-other-windows)
 (global-set-key (kbd "s-2") 'split-window-below)
 (global-set-key (kbd "s-3") 'split-window-right)
+(global-set-key (kbd "s-4") 'mu4e)
 (global-set-key (kbd "s-f") 'helm-find-files)
 (global-set-key (kbd "s-r") 'helm-rg)
 (global-set-key (kbd "s-o") 'other-window)
