@@ -32,7 +32,7 @@
 
 (use-package solarized-theme
   :ensure t
-  :when ddavis-v-is-mac
+  :when (and (window-system) ddavis-v-is-mac)
   :init
   :config
   (load-theme 'solarized-light t)
@@ -46,7 +46,7 @@
 
 (use-package gruvbox-theme
   :ensure t
-  :when (eq system-type 'gnu/linux)
+  :when (and (window-system) (eq system-type 'gnu/linux))
   :init
   :config
   (load-theme 'gruvbox t)
