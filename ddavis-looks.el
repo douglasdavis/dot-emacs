@@ -30,20 +30,6 @@
 
 (setq custom-safe-themes t)
 
-(use-package solarized-theme
-  :ensure t
-  :when (window-system)
-  :init
-  :config
-  (load-theme 'solarized-light t)
-  (let ((line (face-attribute 'mode-line :underline)))
-    (set-face-attribute 'mode-line           nil :overline   line)
-    (set-face-attribute 'mode-line-inactive  nil :overline   line)
-    (set-face-attribute 'mode-line-inactive  nil :underline  line)
-    (set-face-attribute 'mode-line           nil :box        nil)
-    (set-face-attribute 'mode-line-inactive  nil :box        nil)
-    (set-face-attribute 'mode-line-buffer-id nil :box        nil)))
-
 (defvar ddavis-current-theme-is "light"
   "A simple holder to help with toggling the solarized theme")
 
@@ -63,8 +49,28 @@
       (ddavis/load-solarized-dark)
     (ddavis/load-solarized-light)))
 
+(use-package solarized-theme
+  :ensure t
+  :when (window-system)
+  :init
+  :config
+  (when ddavis-v-is-linux-desktop
+    (ddavis/load-solarized-dark))
+  (when ddavis-v-is-mac
+    (ddavis/load-solarized-light))
+  (let ((line (face-attribute 'mode-line :underline)))
+    (set-face-attribute 'mode-line           nil :overline   line)
+    (set-face-attribute 'mode-line-inactive  nil :overline   line)
+    (set-face-attribute 'mode-line-inactive  nil :underline  line)
+    (set-face-attribute 'mode-line           nil :box        nil)
+    (set-face-attribute 'mode-line-inactive  nil :box        nil)
+    (set-face-attribute 'mode-line-buffer-id nil :box        nil)))
+
 (when ddavis-v-is-mac
   (global-set-key (kbd "s-6") 'ddavis/toggle-solarized))
+
+(when ddavis-v-is-linux-desktop
+  (global-set-key (kbd "C-x t") 'ddavis/toggle-solarized))
 
 ;; (use-package gruvbox-theme
 ;;   :ensure t
