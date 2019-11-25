@@ -30,8 +30,23 @@
 
 (setq custom-safe-themes t)
 
+(use-package solarized-theme
+  :ensure t
+  :when ddavis-v-is-mac
+  :init
+  :config
+  (load-theme 'solarized-light t)
+  (let ((line (face-attribute 'mode-line :underline)))
+    (set-face-attribute 'mode-line           nil :overline   line)
+    (set-face-attribute 'mode-line-inactive  nil :overline   line)
+    (set-face-attribute 'mode-line-inactive  nil :underline  line)
+    (set-face-attribute 'mode-line           nil :box        nil)
+    (set-face-attribute 'mode-line-inactive  nil :box        nil)
+    (set-face-attribute 'mode-line-buffer-id nil :box        nil)))
+
 (use-package gruvbox-theme
   :ensure t
+  :when (eq system-type 'gnu/linux)
   :init
   :config
   (load-theme 'gruvbox t)
