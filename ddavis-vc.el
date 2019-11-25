@@ -34,7 +34,6 @@
   :bind ("C-x g" . 'magit-status)
   :demand)
 
-
 (defun ddavis/magit-kill-buffers ()
   "See `https://manuel-uberti.github.io/emacs/2018/02/17/magit-bury-buffer/'"
   (interactive)

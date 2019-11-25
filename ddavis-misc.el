@@ -62,7 +62,6 @@
 (global-set-key (kbd "C-c q") 'auto-fill-mode)
 (global-set-key (kbd "C-x \\") 'ddavis/toggle-window-split)
 
-
 (mapc
  (lambda (language-mode-hook)
    (add-hook language-mode-hook
@@ -70,6 +69,7 @@
                (add-to-list 'write-file-functions 'delete-trailing-whitespace))))
  '(text-mode-hook
    c-mode-common-hook
+   emacs-lisp-mode-hook
    python-mode-hook
    markdown-mode-hook
    bash-mode-hook
