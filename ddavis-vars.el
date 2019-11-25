@@ -29,6 +29,7 @@
 (defvar ddavis-v-is-cc7 (string= (system-name) "cc7"))
 (defvar ddavis-v-is-grads-18 (string= (system-name) "grads-18.internal.phy.duke.edu"))
 (defvar ddavis-v-is-pion (string= (system-name) "pion"))
+(defvar ddavis-v-is-linux-desktop (or ddavis-v-is-pion ddavis-v-is-cc7))
 
 (defvar ddavis-v-enable-mu4e
   (or ddavis-v-is-mac
