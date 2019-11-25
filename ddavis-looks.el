@@ -32,7 +32,7 @@
 
 (use-package solarized-theme
   :ensure t
-  :when (and (window-system) ddavis-v-is-mac)
+  :when (window-system)
   :init
   :config
   (load-theme 'solarized-light t)
@@ -44,27 +44,41 @@
     (set-face-attribute 'mode-line-inactive  nil :box        nil)
     (set-face-attribute 'mode-line-buffer-id nil :box        nil)))
 
-(use-package gruvbox-theme
-  :ensure t
-  :when (and (window-system) (eq system-type 'gnu/linux))
-  :init
-  :config
-  (load-theme 'gruvbox t)
-  (let ((line (face-attribute 'mode-line :underline)))
-    (set-face-attribute 'mode-line           nil :overline   line)
-    (set-face-attribute 'mode-line-inactive  nil :overline   line)
-    (set-face-attribute 'mode-line-inactive  nil :underline  line)
-    (set-face-attribute 'mode-line           nil :box        nil)
-    (set-face-attribute 'mode-line-inactive  nil :box        nil)
-    (set-face-attribute 'mode-line-buffer-id nil :box        nil)))
+(defvar ddavis-current-theme-is "light"
+  "A simple holder to help with toggling the solarized theme")
 
-(when (eq system-type 'gnu/linux)
-  (use-package moody
-    :ensure t
-    :config
-    (setq x-underline-at-descent-line t)
-    (moody-replace-mode-line-buffer-identification)
-    (moody-replace-vc-mode)))
+(defun ddavis/load-solarized-dark ()
+  (interactive)
+  (setq ddavis-current-theme-is "dark")
+  (load-theme 'solarized-dark))
+
+(defun ddavis/load-solarized-light ()
+  (interactive)
+  (setq ddavis-current-theme-is "light")
+  (load-theme 'solarized-light))
+
+(defun ddavis/toggle-solarized ()
+  (interactive)
+  (if (string= ddavis-current-theme-is "light")
+      (ddavis/load-solarized-dark)
+    (ddavis/load-solarized-light)))
+
+(when ddavis-v-is-mac
+  (global-set-key (kbd "s-6") 'ddavis/toggle-solarized))
+
+;; (use-package gruvbox-theme
+;;   :ensure t
+;;   :when (and (window-system) (eq system-type 'gnu/linux))
+;;   :init
+;;   :config
+;;   (load-theme 'gruvbox t)
+;;   (let ((line (face-attribute 'mode-line :underline)))
+;;     (set-face-attribute 'mode-line           nil :overline   line)
+;;     (set-face-attribute 'mode-line-inactive  nil :overline   line)
+;;     (set-face-attribute 'mode-line-inactive  nil :underline  line)
+;;     (set-face-attribute 'mode-line           nil :box        nil)
+;;     (set-face-attribute 'mode-line-inactive  nil :box        nil)
+;;     (set-face-attribute 'mode-line-buffer-id nil :box        nil)))
 
 (global-display-line-numbers-mode)
 (setq column-number-mode t)
