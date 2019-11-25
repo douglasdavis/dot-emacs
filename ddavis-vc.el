@@ -35,5 +35,14 @@
   :demand)
 
 
+(defun ddavis/magit-kill-buffers ()
+  "See `https://manuel-uberti.github.io/emacs/2018/02/17/magit-bury-buffer/'"
+  (interactive)
+  (let ((buffers (magit-mode-get-buffers)))
+    (magit-restore-window-configuration)
+    (mapc #'kill-buffer buffers)))
+(bind-key "q" #'ddavis/magit-kill-buffers magit-status-mode-map)
+
+
 (provide 'ddavis-vc)
 ;;; ddavis-vc.el ends here
