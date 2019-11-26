@@ -88,6 +88,7 @@
 
 (use-package helm-circe
   :when ddavis-v-enable-irc
+  :after circe
   :ensure t
   :bind (:map helm-command-map ("i" . helm-circe))
   :config
@@ -99,6 +100,7 @@
   :config
   (setq erc-hide-list '("JOIN" "PART" "QUIT")
         erc-user-full-name "Doug Davis"
+        erc-track-enable-keybindings nil
         erc-kill-server-buffer-on-quit t
         erc-kill-buffer-on-part t))
 
