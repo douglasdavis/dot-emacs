@@ -24,7 +24,9 @@
 
 ;;; Code:
 
-(setq tex-fontify-script nil
+(setq-default TeX-master nil)
+
+(setq font-latex-fontify-sectioning 1.0
       font-latex-fontify-script nil)
 
 (provide 'ddavis-tex)
