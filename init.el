@@ -24,6 +24,9 @@
 
 ;;; Code:
 
+;; plenty of RAM
+(setq gc-cons-threshold 100000000)
+
 ;; prompt to start server
 (fset 'yes-or-no-p 'y-or-n-p)
 (when (yes-or-no-p "start server?")

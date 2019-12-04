@@ -30,8 +30,6 @@
 (require 'ddavis-vars)
 (require 'ddavis-utils)
 
-;; plenty of RAM these days
-(setq gc-cons-threshold 25000000)
 
 ;; misc seq's
 (setq ring-bell-function 'ignore)
