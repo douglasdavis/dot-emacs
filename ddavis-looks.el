@@ -95,7 +95,7 @@
 (defvar ddavis-v-font
   (cond (ddavis-v-is-mac '(font . "SF Mono-12"))
         (ddavis-v-is-cc7 '(font . "-*-cascadia code-*-*-normal-*-*-120-120-100-m-0-*-*"))
-        (ddavis-v-is-pion '(font . "-*-source code pro-semibold-*-normal-*-*-120-120-100-m-0-*-*"))
+        (ddavis-v-is-pion '(font . "-SAJA-Cascadia Code-normal-normal-normal-*-*-*-*-*-m-0-iso10646-1"))
         (ddavis-v-is-grads-18 '(font . "-*-source code pro-semibold-*-normal-*-*-100-100-100-m-0-*-*"))))
 
 (add-to-list 'default-frame-alist ddavis-v-font)
