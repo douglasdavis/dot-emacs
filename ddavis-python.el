@@ -27,7 +27,9 @@
 (require 'use-package)
 
 (use-package pyvenv
-  :ensure t)
+  :ensure t
+  :config
+  (setenv "WORKON_HOME" "~/.pyenv/versions"))
 
 (use-package elpy
   :ensure t)
