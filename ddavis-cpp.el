@@ -41,6 +41,14 @@
   (add-to-list 'eglot-server-programs
                `((c++-mode cc-mode) ,ddavis-v-clangd-exe)))
 
+(use-package clang-format
+  :ensure t
+  :config
+  (setq clang-format-executable
+        (cond (ddavis-v-is-mac "~/Software/LLVM/releases/master/bin/clang-format")
+              (ddavis-v-is-cc7 "~/Software/LLVM/releases/9.0.0/bin/clang-format")
+              (ddavis-v-is-pion "/usr/bin/clang-format")
+              (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clang-format"))))
 
 (provide 'ddavis-cpp)
 ;;; ddavis-cpp.el ends here
