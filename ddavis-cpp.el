@@ -45,7 +45,7 @@
   :ensure t
   :config
   (setq clang-format-executable
-        (cond (ddavis-v-is-mac "~/Software/LLVM/releases/master/bin/clang-format")
+        (cond (ddavis-v-is-mac "~/Software/LLVM/releases/10.x/bin/clang-format")
               (ddavis-v-is-cc7 "~/Software/LLVM/releases/9.0.0/bin/clang-format")
               (ddavis-v-is-pion "/usr/bin/clang-format")
               (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clang-format"))))

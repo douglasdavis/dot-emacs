@@ -43,13 +43,13 @@
       ddavis-v-is-cc7))
 
 (defvar ddavis-v-clangd-exe
-  (cond (ddavis-v-is-mac "/usr/local/opt/llvm/bin/clangd")
+  (cond (ddavis-v-is-mac "~/Software/LLVM/releases/10.x/bin/clangd")
         (ddavis-v-is-cc7 "~/Software/LLVM/releases/9.0.0/bin/clangd")
         (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clangd")
         (ddavis-v-is-pion "/usr/bin/clangd")))
 
 (defvar ddavis-v-clang-exe
-  (cond (ddavis-v-is-mac "/usr/local/opt/llvm/bin/clang")
+  (cond (ddavis-v-is-mac "~/Software/LLVM/releases/10.x/bin/clang")
         (ddavis-v-is-cc7 "~/Software/LLVM/releases/9.0.0/bin/clang")
         (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clang")
         (ddavis-v-is-pion "/usr/bin/clang")))
