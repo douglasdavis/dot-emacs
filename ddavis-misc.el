@@ -141,6 +141,7 @@
           "https://planet.emacslife.com/atom.xml"
           "https://sachachua.com/blog/feed/"
           "https://ddavis.io/index.xml"
+          "https://www.npr.org/rss/podcast.php?id=510318"
           "http://pragmaticemacs.com/feed/"))
   (setq-default elfeed-search-filter "@4-weeks-ago"))
 
