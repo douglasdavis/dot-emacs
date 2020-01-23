@@ -1,3 +1,4 @@
+
 ;;; ddavis-looks.el --- Emacs looks                  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2019  Doug Davis
@@ -30,7 +31,19 @@
 
 (setq custom-safe-themes t)
 
+;; from https://github.com/emacs-helm/helm/issues/2213
+;; Fix issue with the new :extend face attribute in emacs-27
+;; Prefer to extend to EOL as in previous emacs.
+(defun tv/extend-faces-matching (regexp)
+  (cl-loop for f in (face-list)
+           for face = (symbol-name f)
+           when (and (string-match regexp face)
+                     (eq (face-attribute f :extend t 'default)
+                         'unspecified))
+           do (set-face-attribute f nil :extend t)))
+
 (when window-system
+  ;; (setq custom-theme-load-path (append '("~/.emacs.d/cthemes/") custom-theme-load-path))
   (use-package gruvbox-theme
     :ensure t
     :init
@@ -45,8 +58,8 @@
       (set-face-attribute 'mode-line-buffer-id nil :box        nil)))
 
   (when ddavis-v-is-mac
-    (add-to-list 'default-frame-alist '(height . 68))
-    (add-to-list 'default-frame-alist '(width . 204)))
+    (add-to-list 'default-frame-alist '(height . 72))
+    (add-to-list 'default-frame-alist '(width . 234)))
 
   (setq mac-allow-anti-aliasing t)
 
@@ -59,17 +72,6 @@
 
 (global-display-line-numbers-mode)
 (setq column-number-mode t)
-
-;; from https://github.com/emacs-helm/helm/issues/2213
-;; Fix issue with the new :extend face attribute in emacs-27
-;; Prefer to extend to EOL as in previous emacs.
-(defun tv/extend-faces-matching (regexp)
-  (cl-loop for f in (face-list)
-           for face = (symbol-name f)
-           when (and (string-match regexp face)
-                     (eq (face-attribute f :extend t 'default)
-                         'unspecified))
-           do (set-face-attribute f nil :extend t)))
 
 (when (fboundp 'set-face-extend)
   (with-eval-after-load "mu4e"
