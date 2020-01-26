@@ -27,9 +27,9 @@
 (require 'ddavis-vars)
 
 (when ddavis-v-is-mac
-  (add-to-list 'load-path "~/Software/mu/releases/master/share/emacs/site-lisp/mu4e")
+  (add-to-list 'load-path "~/Software/mu/releases/1.3.7/share/emacs/site-lisp/mu/mu4e")
   (setq sendmail-program "~/Software/localbase/bin/msmtp"
-        mu4e-mu-binary "~/Software/mu/releases/master/bin/mu"))
+        mu4e-mu-binary "~/Software/mu/releases/1.3.7/bin/mu"))
 
 (when ddavis-v-is-grads-18
   (add-to-list 'load-path "~/Software/localbase/share/emacs/site-lisp/mu4e")
@@ -156,6 +156,11 @@
               :key ?u))
 (add-to-list 'mu4e-bookmarks
              (make-mu4e-bookmark
+              :name "Recent personal"
+              :query "date:10d..now and (m:/fastmail/INBOX or m:/gmail/INBOX*)"
+              :key ?p))
+(add-to-list 'mu4e-bookmarks
+             (make-mu4e-bookmark
               :name "Unread all"
               :query "flag:unread and not flag:trashed"
               :key ?U))
@@ -181,18 +186,13 @@
               :key ?d))
 (add-to-list 'mu4e-bookmarks
              (make-mu4e-bookmark
-              :name "FastMail recent"
-              :query "date:2d..now and m:/fastmail*"
-              :key ?f))
-(add-to-list 'mu4e-bookmarks
-             (make-mu4e-bookmark
               :name "CERN recent"
               :query "date:2d..now and m:/cern*"
               :key ?c))
 (add-to-list 'mu4e-bookmarks
              (make-mu4e-bookmark
               :name "Emacs"
-              :query "m:/fastmail/Lists/emacs-devel or m:/fastmail/Lists/help-gnu-emacs or m:/fastmail/Lists/emacs-orgmode"
+              :query "m:/fastmail/Lists/emacs-devel or m:/fastmail/Lists/help-gnu-emacs"
               :key ?e))
 (add-to-list 'mu4e-bookmarks
              (make-mu4e-bookmark
