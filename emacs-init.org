@@ -1,0 +1,1088 @@
+* Startup
+
+#+begin_src emacs-lisp :results silent
+  ;; prompt to start server
+  (fset 'yes-or-no-p 'y-or-n-p)
+  (when (yes-or-no-p "start server?")
+    (server-start))
+
+  ;; Use .el if it is newer
+  (when (boundp 'load-prefer-newer)
+    (setq load-prefer-newer t))
+
+  (when (or (eq system-type 'darwin)
+            (eq system-type 'gnu/linux))
+    (setq default-directory "~/"))
+
+  ;; this init.el file is designed to be a symlink to the init.el file
+  ;; in my `emacs.d` git repo.  this ensures the git repo can live
+  ;; anywhere
+  (add-to-list 'load-path (directory-file-name
+                           (file-name-directory
+                            (file-truename
+                             (concat user-emacs-directory "init.el")))))
+
+  (setq custom-file (concat user-emacs-directory "custom.el"))
+
+  (setq user-mail-address "ddavis@ddavis.io"
+        user-login-name "ddavis"
+        user-full-name "Doug Davis")
+#+end_src
+
+* Variables
+
+#+begin_src emacs-lisp :results silent
+  (defvar ddavis-v-is-mac (eq system-type 'darwin))
+  (defvar ddavis-v-is-cc7 (string= (system-name) "cc7"))
+  (defvar ddavis-v-is-grads-18 (string= (system-name) "grads-18.internal.phy.duke.edu"))
+  (defvar ddavis-v-is-pion (string= (system-name) "pion"))
+  (defvar ddavis-v-is-linux-desktop (or ddavis-v-is-pion ddavis-v-is-cc7))
+
+  (defvar ddavis-v-enable-mu4e
+    (or ddavis-v-is-mac
+        ddavis-v-is-pion
+        ddavis-v-is-cc7
+        ddavis-v-is-grads-18))
+
+  (defvar ddavis-v-enable-irc
+    (or ddavis-v-is-mac
+        ddavis-v-is-pion
+        ddavis-v-is-cc7))
+
+  (defvar ddavis-v-clangd-exe
+    (cond (ddavis-v-is-mac "~/Software/LLVM/releases/10.x/bin/clangd")
+          (ddavis-v-is-cc7 "~/Software/LLVM/releases/9.0.0/bin/clangd")
+          (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clangd")
+          (ddavis-v-is-pion "/usr/bin/clangd")))
+
+  (defvar ddavis-v-clang-exe
+    (cond (ddavis-v-is-mac "~/Software/LLVM/releases/10.x/bin/clang")
+          (ddavis-v-is-cc7 "~/Software/LLVM/releases/9.0.0/bin/clang")
+          (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clang")
+          (ddavis-v-is-pion "/usr/bin/clang")))
+
+  (defvar ddavis-v-rg-exe
+    (cond (ddavis-v-is-mac "/usr/local/bin/rg")
+          (ddavis-v-is-cc7 "~/.cargo/bin/rg")
+          (ddavis-v-is-grads-18 "~/.cargo/bin/rg")
+          (ddavis-v-is-pion "/usr/bin/rg")))
+
+  (defvar ddavis-v-fd-exe
+    (cond (ddavis-v-is-mac "/usr/local/bin/fd")
+          (ddavis-v-is-cc7 "~/.cargo/bin/fd")
+          (ddavis-v-is-grads-18 "~/.cargo/bin/fd")
+          (ddavis-v-is-pion "/usr/bin/fd")))
+#+end_src
+
+* Package
+
+#+begin_src emacs-lisp :results silent
+  (require 'package)
+
+  (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+                      (not (gnutls-available-p))))
+         (proto (if no-ssl "http" "https")))
+    (when no-ssl
+      (warn "\
+  Your version of Emacs does not support SSL connections,
+  which is unsafe because it allows man-in-the-middle attacks.
+  There are two things you can do about this warning:
+  1. Install an Emacs version that does support SSL and be safe.
+  2. Remove this warning from your init file so you won't see it again."))
+    ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
+    (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+    ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
+    (when (< emacs-major-version 24)
+      ;; For important compatibility libraries like cl-lib
+      (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/")))))
+  (package-initialize)
+
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
+
+  (eval-when-compile
+    (require 'use-package))
+
+  (use-package auto-package-update
+    :ensure t
+    :config
+    (setq auto-package-update-delete-old-versions t
+          auto-package-update-interval 5)
+    (auto-package-update-maybe))
+#+end_src
+
+* Utils
+
+#+begin_src emacs-lisp :results silent
+  (defun ddavis/enable-cua-selection ()
+    "turn on cua-selection-mode"
+    (interactive)
+    (cua-selection-mode t))
+
+  ;; See the following for more details
+  ;;     https://emacs.stackexchange.com/a/50215/8887
+  ;; and also see the following on a recent GNU/Linux or similar system:
+  ;;     /usr/share/doc/fontconfig/fontconfig-user.html
+  ;; for the explanation of spacing=100
+  ;; also see the following UNIX StackExchange answer:
+  ;;    https://unix.stackexchange.com/a/363368/13105
+  (defun ddavis/compare-monospace-font-families ()
+    "Display a list of all monospace font faces. Tested on GNU/Linux."
+    (interactive)
+    (pop-to-buffer "*Monospace Fonts*")
+    (erase-buffer)
+    (dolist (font-name (seq-filter (lambda (font)
+                                     (when-let ((info (font-info font)))
+                                       (string-match-p "spacing=100" (aref info 1))))
+                                   (font-family-list)))
+      (insert
+       (propertize
+        (concat "1 l; 0 O o [ < = > ] " font-name ")\n")
+        'font-lock-face `((:family
+                           ,(format "%s" (font-get (font-spec :name font-name) :family))))))))
+
+  (defun ddavis/move-line-up ()
+    "Move up the current line."
+    (interactive)
+    (transpose-lines 1)
+    (forward-line -2)
+    (indent-according-to-mode))
+
+  (defun ddavis/move-line-down ()
+    "Move down the current line."
+    (interactive)
+    (forward-line 1)
+    (transpose-lines 1)
+    (forward-line -1)
+    (indent-according-to-mode))
+
+
+  (defun ddavis/copy-lines-matching-re (re)
+    "put lines matching re in a buffer named *matching*"
+    (interactive "sRegexp to match: ")
+    (let ((result-buffer (get-buffer-create "*matching*")))
+      (with-current-buffer result-buffer
+        (erase-buffer))
+      (save-match-data
+        (save-excursion
+          (goto-char (point-min))
+          (while (re-search-forward re nil t)
+            (princ (buffer-substring-no-properties (line-beginning-position)
+                                                   (line-beginning-position 2))
+                   result-buffer))))
+      (pop-to-buffer result-buffer)))
+
+
+  (defun ddavis/toggle-window-split ()
+    (interactive)
+    (if (= (count-windows) 2)
+        (let* ((this-win-buffer (window-buffer))
+               (next-win-buffer (window-buffer (next-window)))
+               (this-win-edges (window-edges (selected-window)))
+               (next-win-edges (window-edges (next-window)))
+               (this-win-2nd (not (and (<= (car this-win-edges)
+                                           (car next-win-edges))
+                                       (<= (cadr this-win-edges)
+                                           (cadr next-win-edges)))))
+               (splitter
+                (if (= (car this-win-edges)
+                       (car (window-edges (next-window))))
+                    'split-window-horizontally
+                  'split-window-vertically)))
+          (delete-other-windows)
+          (let ((first-win (selected-window)))
+            (funcall splitter)
+            (if this-win-2nd (other-window 1))
+            (set-window-buffer (selected-window) this-win-buffer)
+            (set-window-buffer (next-window) next-win-buffer)
+            (select-window first-win)
+            (if this-win-2nd (other-window 1))))))
+#+end_src
+
+* Org
+
+#+begin_src emacs-lisp :results silent
+  (if ddavis-v-is-mac
+      ;; mac
+      (use-package org
+        :bind (("<A-down>" . 'org-move-subtree-down)
+               ("<A-up>" . 'org-move-subtree-up)
+               ("<A-left>" . 'org-promote-subtree)
+               ("<A-right>" . 'org-demote-subtree))
+        :init
+        (setq org-src-fontify-natively t)
+        :config
+        (setq org-structure-template-alist
+              (append org-structure-template-alist
+                      '(("el" . "src emacs-lisp :results silent")
+                        ("py" . "src python :results silent")
+                        ("cpp" . "src C++")))))
+
+    ;; not mac
+    (use-package org
+      :bind (("<s-down>" . 'org-move-subtree-down)
+             ("<s-up>" . 'org-move-subtree-up)
+             ("<s-left>" . 'org-promote-subtree)
+             ("<s-right>" . 'org-demote-subtree))
+      :init
+      (setq org-src-fontify-natively t)
+      :config
+      (setq org-structure-template-alist
+            (append org-structure-template-alist
+                    '(("el" . "src emacs-lisp :results silent")
+                      ("py" . "src python :results silent")
+                      ("cpp" . "src C++"))))))
+
+
+  (require 'ox-md)
+
+  (use-package ox-hugo
+    :ensure t
+    :after ox)
+
+  (use-package ox-reveal
+    :ensure t
+    :after ox)
+
+  ;; (org-babel-do-load-languages
+  ;;  'org-babel-load-languages
+  ;;  '((python . t)))
+
+
+  (define-key global-map "\C-ca" 'org-agenda)
+  (setq org-agenda-files (list "~/Dropbox/org/agenda/"))
+
+  (setq org-agenda-custom-commands
+        '(("c" "Simple agenda view"
+           ((agenda "")
+            (alltodo "")))))
+
+  (use-package htmlize
+    :ensure t)
+#+end_src
+
+* Projectile
+
+#+begin_src emacs-lisp :results silent
+  (use-package projectile
+    :ensure t
+    :hook
+    (after-init . projectile-mode)
+    :config
+    (setq projectile-switch-project-action 'neotree-projectile-action))
+
+  (defun ddavis/projectile-proj-find-function (dir)
+    (let ((root (projectile-project-root dir)))
+      (and root (cons 'transient root))))
+
+  (with-eval-after-load 'project
+    (add-to-list 'project-find-functions 'ddavis/projectile-proj-find-function))
+#+end_src
+
+* Helm
+
+#+begin_src emacs-lisp :results silent
+  (use-package helm
+    :ensure t
+    :init (setq helm-autoresize-max-height 50
+                helm-autoresize-min-height 30)
+    :bind (("C-x C-f" . helm-find-files)
+           ("C-x C-t" . find-file)
+           ("C-x r b" . helm-bookmarks)
+           ("C-x m" . helm-M-x)
+           ("C-x b" . helm-buffers-list)
+           :map helm-map
+           ("<tab>" . helm-execute-persistent-action))
+    :config
+    (require 'helm-config)
+    (setq helm-split-window-in-side-p t
+          helm-split-window-default-side 'below
+          helm-idle-delay 0.0
+          helm-input-idle-delay 0.01
+          helm-quick-update t
+          helm-ff-skip-boring-files t)
+    (helm-autoresize-mode 1)
+    (helm-mode 1))
+
+  (use-package helm-projectile
+    :ensure t
+    :init (setq projectile-completion-system 'helm
+                helm-split-window-in-side-p t)
+    :bind (:map helm-command-map
+                ("p" . helm-projectile))
+    :demand)
+
+  (use-package helm-fd
+    :ensure t
+    :demand
+    :init (setq helm-fd-cmd ddavis-v-fd-exe)
+    :bind (:map helm-command-map
+                ("/" . helm-fd)
+                ("f" . helm-fd-project)))
+
+  (use-package helm-rg
+    :ensure t
+    :demand
+    :init (setq helm-rg-ripgrep-executable ddavis-v-rg-exe)
+    :bind (("C-c s r" . helm-projectile-rg)))
+
+  (use-package helm-descbinds
+    :ensure t
+    :demand
+    :bind (("C-h b" . helm-descbinds)))
+#+end_src
+
+* Eshell
+
+#+begin_src emacs-lisp :results silent
+  (defun eshell-here ()
+    "Opens up a new shell in the directory associated with the
+  current buffer's file. The eshell is renamed to match that
+  directory to make multiple eshell windows easier."
+    (interactive)
+    (let* ((height (/ (window-total-height) 3)))
+      (split-window-vertically (- height))
+      (other-window 1)
+      (eshell "new")
+      (insert (concat "ls"))
+      (eshell-send-input)))
+  (bind-key "C-!" 'eshell-here)
+
+  (defun eshell/clear ()
+    (let ((inhibit-read-only t))
+      (erase-buffer)))
+
+  (defun eshell/close ()
+    (delete-window))
+#+end_src
+
+* Company
+
+#+begin_src emacs-lisp :results silent
+  (use-package company
+    :init
+    (setq company-clang-executable ddavis-v-clang-exe)
+    :config
+    (add-hook 'emacs-lisp-mode-hook 'company-mode)
+    (add-hook 'python-mode-hook 'company-mode)
+    (add-hook 'mu4e-compose-mode-hook 'company-mode)
+    (add-hook 'sh-mode-hook 'company-mode)
+    (add-hook 'LaTeX-mode-hook 'company-mode))
+#+end_src
+
+* VC
+
+#+begin_src emacs-lisp :results silent
+  (setq vc-follow-symlinks t)
+
+  (use-package magit
+    :ensure t
+    :bind ("C-x g" . 'magit-status)
+    :demand)
+
+  (defun ddavis/magit-kill-buffers ()
+    "See `https://manuel-uberti.github.io/emacs/2018/02/17/magit-bury-buffer/'"
+    (interactive)
+    (let ((buffers (magit-mode-get-buffers)))
+      (magit-restore-window-configuration)
+      (mapc #'kill-buffer buffers)))
+  (bind-key "q" #'ddavis/magit-kill-buffers magit-status-mode-map)
+#+end_src
+
+* Python
+
+#+begin_src emacs-lisp :results silent
+  (use-package pyvenv
+    :ensure t
+    :config
+    (setenv "WORKON_HOME" "~/.pyenv/versions"))
+
+  (use-package elpy
+    :ensure t)
+
+  (use-package blacken
+    :ensure t)
+
+  (defun ddavis/blacken-96 ()
+    (interactive)
+    (setq blacken-line-length 96))
+
+  (defun ddavis/python-eglot-enable ()
+    "prepare python eglot setup"
+    (interactive)
+    (use-package eglot
+      :ensure t
+      :config
+      (require 'eglot))
+    (setq company-backends (cons 'company-capf (remove 'company-capf company-backends)))
+    (add-to-list 'eglot-server-programs '(python-mode . ("pyls"))))
+
+  (defun ddavis/py-activate (env-name)
+    (require 'pyvenv)
+    (interactive "sEnv name: ")
+    (message env-name)
+    (pyvenv-activate (format "~/.pyenv/versions/%s" env-name)))
+#+end_src
+
+* CPP
+
+#+begin_src emacs-lisp :results silent
+  (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+  (add-to-list 'auto-mode-alist '("\\.icc\\'" . c++-mode))
+
+  (defun ddavis/cpp-eglot-setup ()
+    "enable variables and hooks for eglot cpp IDE"
+    (interactive)
+    (use-package eglot
+      :ensure t
+      :config
+      (require 'eglot))
+    (delete 'company-capf company-backends)
+    (add-to-list 'company-backends 'company-capf)
+    (add-to-list 'eglot-server-programs
+                 `((c++-mode cc-mode) ,ddavis-v-clangd-exe)))
+
+  (use-package clang-format
+    :ensure t
+    :config
+    (setq clang-format-executable
+          (cond (ddavis-v-is-mac "~/Software/LLVM/releases/10.x/bin/clang-format")
+                (ddavis-v-is-cc7 "~/Software/LLVM/releases/9.0.0/bin/clang-format")
+                (ddavis-v-is-pion "/usr/bin/clang-format")
+                (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clang-format"))))
+#+end_src
+
+* TeX
+
+#+begin_src emacs-lisp :results silent
+  (setq-default TeX-master nil)
+
+  (setq font-latex-fontify-sectioning 1.0
+        font-latex-fontify-script nil)
+#+end_src
+
+* Spell
+
+#+begin_src emacs-lisp :results silent
+  (mapc
+   (lambda (language-mode-hook)
+     (add-hook language-mode-hook 'flyspell-mode))
+   '(org-mode-hook
+     LaTeX-mode-hook
+     markdown-mode-hook
+     mu4e-compose-mode-hook))
+#+end_src
+
+* Looks
+
+#+begin_src emacs-lisp :results silent
+  (setq custom-safe-themes t)
+
+  ;; from https://github.com/emacs-helm/helm/issues/2213
+  ;; Fix issue with the new :extend face attribute in emacs-27
+  ;; Prefer to extend to EOL as in previous emacs.
+  (defun tv/extend-faces-matching (regexp)
+    (cl-loop for f in (face-list)
+             for face = (symbol-name f)
+             when (and (string-match regexp face)
+                       (eq (face-attribute f :extend t 'default)
+                           'unspecified))
+             do (set-face-attribute f nil :extend t)))
+
+  (when window-system
+    ;; (setq custom-theme-load-path (append '("~/.emacs.d/cthemes/") custom-theme-load-path))
+    (use-package gruvbox-theme
+      :ensure t
+      :init
+      :config
+      (load-theme 'gruvbox t)
+      (let ((line (face-attribute 'mode-line :underline)))
+        (set-face-attribute 'mode-line           nil :overline   line)
+        (set-face-attribute 'mode-line-inactive  nil :overline   line)
+        (set-face-attribute 'mode-line-inactive  nil :underline  line)
+        (set-face-attribute 'mode-line           nil :box        nil)
+        (set-face-attribute 'mode-line-inactive  nil :box        nil)
+        (set-face-attribute 'mode-line-buffer-id nil :box        nil)))
+
+    (when ddavis-v-is-mac
+      (add-to-list 'default-frame-alist '(height . 72))
+      (add-to-list 'default-frame-alist '(width . 234)))
+
+    (setq mac-allow-anti-aliasing t)
+
+    (defvar ddavis-v-font
+      (cond (ddavis-v-is-mac '(font . "JetBrains Mono-12"))
+            (ddavis-v-is-cc7 '(font . "-SAJA-Cascadia Code-normal-normal-normal-*-*-*-*-*-m-0-iso10646-1"))
+            (ddavis-v-is-pion '(font . "-SAJA-Cascadia Code-normal-normal-normal-*-*-*-*-*-m-0-iso10646-1"))
+            (ddavis-v-is-grads-18 '(font . "-*-source code pro-semibold-*-normal-*-*-100-100-100-m-0-*-*"))))
+    (add-to-list 'default-frame-alist ddavis-v-font))
+
+  (global-display-line-numbers-mode)
+  (setq column-number-mode t)
+
+  (when (fboundp 'set-face-extend)
+    (with-eval-after-load "mu4e"
+      (tv/extend-faces-matching "\\`mu4e"))
+    (with-eval-after-load "org"
+      (tv/extend-faces-matching "\\`org"))
+    (with-eval-after-load "magit"
+      (tv/extend-faces-matching "\\`magit"))
+    (with-eval-after-load "helm"
+      (tv/extend-faces-matching "\\`helm")))
+
+  ;; some old stuff to keep for reference
+
+  ;; (when ddavis-v-is-mac
+
+  ;;   (defvar ddavis-current-theme-is "light"
+  ;;     "A simple holder to help with toggling the solarized theme")
+
+  ;;   (defun ddavis/load-solarized-dark ()
+  ;;     (interactive)
+  ;;     (setq ddavis-current-theme-is "dark")
+  ;;     (load-theme 'solarized-dark))
+
+  ;;   (defun ddavis/load-solarized-light ()
+  ;;     (interactive)
+  ;;     (setq ddavis-current-theme-is "light")
+  ;;     (load-theme 'solarized-light))
+
+  ;;   (defun ddavis/toggle-solarized ()
+  ;;     (interactive)
+  ;;     (if (string= ddavis-current-theme-is "light")
+  ;;         (ddavis/load-solarized-dark)
+  ;;       (ddavis/load-solarized-light)))
+
+  ;;   (global-set-key (kbd "s-6") 'ddavis/toggle-solarized)
+
+  ;;   (use-package solarized-theme
+  ;;     :ensure t
+  ;;     :when (window-system)
+  ;;     :init
+  ;;     :config
+  ;;     (when ddavis-v-is-linux-desktop
+  ;;       (ddavis/load-solarized-dark))
+  ;;     (when ddavis-v-is-mac
+  ;;       (ddavis/load-solarized-light))
+  ;;     (let ((line (face-attribute 'mode-line :underline)))
+  ;;       (set-face-attribute 'mode-line           nil :overline   line)
+  ;;       (set-face-attribute 'mode-line-inactive  nil :overline   line)
+  ;;       (set-face-attribute 'mode-line-inactive  nil :underline  line)
+  ;;       (set-face-attribute 'mode-line           nil :box        nil)
+  ;;       (set-face-attribute 'mode-line-inactive  nil :box        nil)
+  ;;       (set-face-attribute 'mode-line-buffer-id nil :box        nil))))
+#+end_src
+
+* Misc
+
+#+begin_src emacs-lisp :results silent
+  ;; authinfo
+  (setq auth-sources '((:source "~/.emacs.d/.authinfo.gpg")))
+
+  ;; misc seq's
+  (setq ring-bell-function 'ignore)
+  (setq echo-keystrokes 0.001)
+  (setq inhibit-startup-screen t)
+  (setq tramp-default-method "ssh")
+  (setq-default show-paren-delay 0)
+  (setq-default indent-tabs-mode nil)
+
+  ;; we don't like Emacs backups
+  (setq auto-save-list-file-prefix nil
+        create-lockfiles nil
+        auto-save-list-file-prefix nil
+        backup-by-copying t
+        backup-directory-alist '(("." . "~/.saves"))
+        delete-old-versions t
+        kept-new-versions 3
+        kept-old-versions 2
+        version-control t)
+
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1)
+  (tooltip-mode -1)
+  (menu-bar-mode -1)
+  (show-paren-mode 1)
+
+  ;; some key bindings which don't require any external packages.
+  (global-set-key (kbd "C-c q") 'auto-fill-mode)
+  (global-set-key (kbd "C-x \\") 'ddavis/toggle-window-split)
+
+  (mapc
+   (lambda (language-mode-hook)
+     (add-hook language-mode-hook
+               (lambda ()
+                 (add-to-list 'write-file-functions 'delete-trailing-whitespace))))
+   '(text-mode-hook
+     c-mode-common-hook
+     emacs-lisp-mode-hook
+     python-mode-hook
+     markdown-mode-hook
+     bash-mode-hook
+     sh-mode-hook
+     cmake-mode-hook
+     fundamental-mode-hook
+     LaTeX-mode-hook))
+
+  (when ddavis-v-is-cc7
+    (setq browse-url-browser-function 'browse-url-generic
+          browse-url-generic-program "/home/ddavis/Software/localbase/bin/firefox"))
+
+  (when ddavis-v-is-pion
+    (setq browse-url-browser-function 'browse-url-generic
+          browse-url-generic-program "firefox-developer-edition"))
+
+  (use-package all-the-icons
+    :ensure t)
+
+  (use-package all-the-icons-dired
+    :ensure t
+    :config
+    (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+
+  (use-package neotree
+    :ensure t
+    :config
+    (global-set-key [f8] 'neotree-project-dir)
+    (setq neo-theme (if (display-graphic-p) 'icons 'arrow)
+          neo-smart-open t
+          neo-autorefresh nil))
+
+  (use-package which-key
+    :ensure t
+    :hook (after-init . which-key-mode))
+
+  (use-package yasnippet
+    :ensure t
+    :config
+    (yas-global-mode 1))
+
+  (use-package yasnippet-snippets
+    :ensure t)
+
+  (use-package iedit
+    :ensure t
+    :bind ("C-c ;" . 'iedit-mode))
+
+  (use-package cmake-mode
+    :ensure t)
+
+  (use-package markdown-mode
+    :ensure t)
+
+  (use-package yaml-mode
+    :ensure t)
+
+  (use-package deadgrep
+    :ensure t)
+
+  (use-package ace-window
+    :ensure t
+    :bind ("M-o" . 'ace-window))
+
+  (use-package elfeed
+    :ensure t
+    :bind ("C-x w" . 'elfeed)
+    :config
+    (setq elfeed-feeds
+          '("https://planet.scipy.org/feed.xml"
+            "https://planet.emacslife.com/atom.xml"
+            "https://sachachua.com/blog/feed/"
+            "https://ddavis.io/index.xml"
+            "https://www.npr.org/rss/podcast.php?id=510318"
+            "http://pragmaticemacs.com/feed/"))
+    (setq-default elfeed-search-filter "@4-weeks-ago"))
+#+end_src
+
+* LSP
+
+#+begin_src emacs-lisp :results silent
+  (use-package lsp-mode
+    :ensure t
+    :commands lsp
+    :init
+    (setq lsp-clients-clangd-executable ddavis-v-clangd-exe)
+    (setq lsp-enable-on-type-formatting nil)
+    (setq lsp-auto-guess-root t))
+
+  (use-package lsp-ui
+    :ensure t
+    :commands lsp-ui-mode
+    :init
+    (setq lsp-ui-sideline-show-hover nil))
+
+  (use-package company-lsp
+    :ensure t
+    :commands company-lsp)
+#+end_src
+
+* Mac
+
+#+begin_src emacs-lisp :results silent
+  (when ddavis-v-is-mac
+    (use-package exec-path-from-shell
+      :ensure t
+      :config
+      (setq exec-path-from-shell-variables '("PATH"  "MANPATH" "SHELL"))
+      (exec-path-from-shell-initialize))
+
+    (when (display-graphic-p)
+      (setq-default ns-alternate-modifier 'meta)
+      (setq-default mac-option-modifier 'meta)
+      (setq-default ns-right-alternate-modifier nil))
+
+    (when (display-graphic-p)
+      (setq-default ns-command-modifier 'super)
+      (setq-default mac-command-modifier 'super))
+
+    (when (display-graphic-p)
+      (setq-default ns-function-modifier 'hyper)
+      (setq-default mac-function-modifier 'hyper))
+
+    (global-unset-key (kbd "s-t"))
+    (global-set-key [(meta shift up)]  'ddavis/move-line-up)
+    (global-set-key [(meta shift down)]  'ddavis/move-line-down)
+    (global-set-key (kbd "s-\\") 'ddavis/toggle-window-split)
+    (global-set-key (kbd "s-1") 'delete-other-windows)
+    (global-set-key (kbd "s-2") 'split-window-below)
+    (global-set-key (kbd "s-3") 'split-window-right)
+    (global-set-key (kbd "s-4") 'mu4e)
+    (global-set-key (kbd "s-f") 'helm-find-files)
+    (global-set-key (kbd "s-r") 'helm-projectile-rg)
+    (global-set-key (kbd "s-o") 'other-window)
+    (global-set-key (kbd "s-/") 'previous-buffer)
+    (global-set-key (kbd "s-b") 'helm-buffers-list)
+    (global-set-key (kbd "s-g") 'magit-status)
+    (global-set-key (kbd "s-t") 'neotree)
+    (global-set-key (kbd "s-w") (lambda ()
+                                  (interactive)
+                                  (if (< (count-windows) 2)
+                                      (delete-frame)
+                                    (delete-window))))
+
+    (setq browse-url-browser-function 'browse-url-default-macosx-browser))
+#+end_src
+
+* Mail
+
+#+begin_src emacs-lisp :results silent
+  (when ddavis-v-enable-mu4e
+    (when ddavis-v-is-mac
+      (add-to-list 'load-path "~/Software/mu/releases/master/share/emacs/site-lisp/mu4e")
+      (setq sendmail-program "~/Software/localbase/bin/msmtp"
+            mu4e-mu-binary "~/Software/mu/releases/master/bin/mu"))
+
+    (when ddavis-v-is-grads-18
+      (add-to-list 'load-path "~/Software/localbase/share/emacs/site-lisp/mu4e")
+      (setq sendmail-program "/usr/bin/msmtp"
+            mu4e-mu-binary "~/Software/localbase/bin/mu"))
+
+    (when ddavis-v-is-pion
+      (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+      (setq sendmail-program "/usr/bin/msmtp"
+            mu4e-mu-binary "/usr/bin/mu"))
+
+    (when ddavis-v-is-cc7
+      (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+      (setq sendmail-program "~/Software/localbase/bin/msmtp"
+            mu4e-mu-binary "/usr/local/bin/mu"))
+
+    (require 'mu4e)
+
+    (setq mu4e-change-filenames-when-moving t
+          mu4e-get-mail-command "true"
+          mu4e-update-interval 75
+          mu4e-maildir "~/.mail"
+          mu4e-confirm-quit nil
+          mu4e-context-policy 'pick-first
+          mu4e-change-filenames-when-moving t
+          message-send-mail-function 'message-send-mail-with-sendmail
+          message-sendmail-f-is-evil t
+          message-sendmail-extra-arguments '("--read-envelope-from")
+          message-kill-buffer-on-exit t)
+
+
+    (defun ddavis/mu4e-jump-via-helm ()
+      (interactive)
+      (let ((maildir (helm-comp-read "Maildir: " (mu4e-get-maildirs))))
+        (mu4e-headers-search (format "maildir:\"%s\"" maildir))))
+
+    (define-key global-map (kbd "C-c 4") 'mu4e)
+    (define-key mu4e-headers-mode-map "j" 'ddavis/mu4e-jump-via-helm)
+    (define-key mu4e-view-mode-map "j" 'ddavis/mu4e-jump-via-helm)
+    (define-key mu4e-main-mode-map "j" 'ddavis/mu4e-jump-via-helm)
+    (define-key mu4e-headers-mode-map (kbd "C-c k") 'mu4e-kill-update-mail)
+    (define-key mu4e-view-mode-map (kbd "C-c k") 'mu4e-kill-update-mail)
+    (define-key mu4e-main-mode-map (kbd "C-c k") 'mu4e-kill-update-mail)
+    (define-key mu4e-headers-mode-map "d" 'mu4e-headers-mark-for-delete)
+    (define-key mu4e-headers-mode-map "D" 'mu4e-headers-mark-for-trash)
+    (define-key mu4e-view-mode-map "d" 'mu4e-view-mark-for-delete)
+    (define-key mu4e-view-mode-map "D" 'mu4e-view-mark-for-trash)
+
+    (defun ddavis/set-standard-name-and-email ()
+      (interactive)
+      (setq user-mail-address "ddavis@ddavis.io"
+            user-email-address "ddavis@ddavis.io"
+            user-full-name "Doug Davis"))
+
+    (setq mu4e-contexts
+          `( ,(make-mu4e-context
+               :name "cern"
+               :enter-func (lambda () (mu4e-message "Entering CERN context"))
+               :leave-func (lambda () (ddavis/set-standard-name-and-email))
+               :match-func (lambda (msg)
+                             (when msg
+                               (string-match-p "^/cern" (mu4e-message-field msg :maildir))))
+               :vars '( ( user-mail-address      . "ddavis@cern.ch" )
+                        ( user-email-address     . "ddavis@cern.ch" )
+                        ( user-full-name         . "Douglas Davis" )
+                        ( mu4e-trash-folder      . "/cern/Trash" )
+                        ( mu4e-sent-folder       . "/cern/Sent" )
+                        ( mu4e-drafts-folder     . "/cern/Drafts" )
+                        ( mu4e-reply-to-address  . "ddavis@cern.ch" )))
+
+             ,(make-mu4e-context
+               :name "duke"
+               :enter-func (lambda () (mu4e-message "Entering Duke context"))
+               :leave-func (lambda () (ddavis/set-standard-name-and-email))
+               :match-func (lambda (msg)
+                             (when msg
+                               (string-match-p "^/duke" (mu4e-message-field msg :maildir))))
+               :vars '( ( user-mail-address       . "ddavis@phy.duke.edu" )
+                        ( user-email-address      . "ddavis@phy.duke.edu" )
+                        ( user-full-name          . "Douglas Davis" )
+                        ( mu4e-trash-folder       . "/duke/Trash" )
+                        ( mu4e-sent-folder        . "/duke/Sent" )
+                        ( mu4e-drafts-folder      . "/duke/Drafts" )
+                        ( mu4e-reply-to-address   . "ddavis@phy.duke.edu" )))))
+
+    (when (or ddavis-v-is-mac ddavis-v-is-cc7 ddavis-v-is-pion)
+      (add-to-list 'mu4e-contexts
+                   (make-mu4e-context
+                    :name "gmail"
+                    :enter-func (lambda () (mu4e-message "Entering Gmail context"))
+                    :leave-func (lambda () (ddavis/set-standard-name-and-email))
+                    :match-func (lambda (msg)
+                                  (when msg
+                                    (string-match-p "^/gmail" (mu4e-message-field msg :maildir))))
+                    :vars '( ( user-mail-address           . "douglas.davis.092@gmail.com" )
+                             ( user-email-address          . "douglas.davis.092@gmail.com" )
+                             ( user-full-name              . "Doug Davis" )
+                             ( mu4e-trash-folder           . "/gmail/_blackhole" )
+                             ( mu4e-sent-folder            . "/gmail/[Gmail]/Sent Mail" )
+                             ( mu4e-drafts-folder          . "/gmail/_blackhole" )
+                             ( mu4e-reply-to-address       . "douglas.davis.092@gmail.com" ))))
+      (add-to-list 'mu4e-contexts
+                   (make-mu4e-context
+                    :name "fastmail"
+                    :enter-func (lambda () (mu4e-message "Entering FastMail context"))
+                    :leave-func (lambda () (mu4e-message "Leaving FastMail context"))
+                    :match-func (lambda (msg)
+                                  (when msg
+                                    (string-match-p "^/fastmail" (mu4e-message-field msg :maildir))))
+                    :vars '( ( user-mail-address      . "ddavis@ddavis.io" )
+                             ( user-email-address     . "ddavis@ddavis.io" )
+                             ( user-full-name         . "Doug Davis" )
+                             ( mu4e-trash-folder      . "/fastmail/Trash" )
+                             ( mu4e-sent-folder       . "/fastmail/Sent" )
+                             ( mu4e-drafts-folder     . "/fastmail/Drafts" )
+                             ( mu4e-reply-to-address  . "ddavis@ddavis.io" )))))
+
+
+    (setq mu4e-bookmarks ())
+    (add-to-list 'mu4e-bookmarks
+                 (make-mu4e-bookmark
+                  :name "Unread short"
+                  :query "flag:unread and not flag:trashed and (m:/duke* or m:/cern* or m:/fastmail/INBOX or m:/gmail/INBOX*)"
+                  :key ?u))
+    (add-to-list 'mu4e-bookmarks
+                 (make-mu4e-bookmark
+                  :name "Recent personal"
+                  :query "date:10d..now and (m:/fastmail/INBOX or m:/gmail/INBOX*)"
+                  :key ?p))
+    (add-to-list 'mu4e-bookmarks
+                 (make-mu4e-bookmark
+                  :name "Unread all"
+                  :query "flag:unread and not flag:trashed"
+                  :key ?U))
+    (add-to-list 'mu4e-bookmarks
+                 (make-mu4e-bookmark
+                  :name "INBOXes"
+                  :query "m:/duke/INBOX or m:/cern/INBOX or m:/fastmail/INBOX or m:/gmail/INBOX"
+                  :key ?i))
+    (add-to-list 'mu4e-bookmarks
+                 (make-mu4e-bookmark
+                  :name "Last day's work"
+                  :query "date:1d..now and not m:/fastmail* and not m:/cern/Mailing\\ Lists/JEDI* and not m:/gmail*"
+                  :key ?w))
+    (add-to-list 'mu4e-bookmarks
+                 (make-mu4e-bookmark
+                  :name "Recent work"
+                  :query "date:3d..now and not m:/fastmail* and not m:/cern/Mailing\\ Lists/JEDI* and not m:/gmail*"
+                  :key ?r))
+    (add-to-list 'mu4e-bookmarks
+                 (make-mu4e-bookmark
+                  :name "Duke recent"
+                  :query "date:5d..now and m:/duke*"
+                  :key ?d))
+    (add-to-list 'mu4e-bookmarks
+                 (make-mu4e-bookmark
+                  :name "CERN recent"
+                  :query "date:2d..now and m:/cern*"
+                  :key ?c))
+    (add-to-list 'mu4e-bookmarks
+                 (make-mu4e-bookmark
+                  :name "Emacs"
+                  :query "m:/fastmail/Lists/emacs-devel or m:/fastmail/Lists/help-gnu-emacs"
+                  :key ?e))
+    (add-to-list 'mu4e-bookmarks
+                 (make-mu4e-bookmark
+                  :name "Last 1 day"
+                  :query "date:1d..now"
+                  :key ?1))
+    (add-to-list 'mu4e-bookmarks
+                 (make-mu4e-bookmark
+                  :name "Last 3 days"
+                  :query "date:3d..now"
+                  :key ?3))
+    (add-to-list 'mu4e-bookmarks
+                 (make-mu4e-bookmark
+                  :name "Last 7 days"
+                  :query "date:1w..now"
+                  :key ?7))
+
+    (setq mu4e-compose-reply-ignore-address
+          '("notifications@github\\.com"
+            "ddavis@ddavis\\.io"
+            "ddavis@phy\\.duke\\.edu"
+            "douglas\\.davis\\.092@gmail\\.com"
+            "douglas\\.davis@duke\\.edu"
+            "douglas\\.davis@cern\\.ch"
+            "ddavis@cern\\.ch"))
+
+    (setq w3m-default-desplay-inline-images t)
+
+    (defun mu4e-action-view-in-w3m ()
+      "View the body of the message in emacs w3m."
+      (interactive)
+      (w3m-browse-url (concat "file://"
+                              (mu4e~write-body-to-html (mu4e-message-at-point t)))))
+    (define-key mu4e-view-mode-map (kbd "M") 'mu4e-action-view-in-w3m)
+
+    (defun ddavis/mu4e-toggle-gnus ()
+      (interactive)
+      (setq mu4e-view-use-gnus (not mu4e-view-use-gnus)))
+
+    (define-key mu4e-headers-mode-map (kbd "C-c g") 'ddavis/mu4e-toggle-gnus)
+
+
+    ;; (when ddavis-v-enable-mu4e
+    ;;   (use-package visual-fill-column
+    ;;     :ensure t
+    ;;     :after mu4e
+    ;;     :hook ((visual-line-mode . visual-fill-column-mode)
+    ;;            (mu4e-view-mode . visual-line-mode))
+    ;;     :config
+    ;;     (add-hook 'mu4e-view-mode-hook
+    ;;               (lambda () (setq-local fill-column 98))))
+
+    ;; (use-package mu4e-maildirs-extension
+    ;;   :ensure t
+    ;;   :after mu4e
+    ;;   :config
+    ;;   (mu4e-maildirs-extension)))
+
+    )
+
+#+end_src
+
+(when ddavis-v-enable-mu4e
+  (require 'ddavis-mu4e))
+(when ddavis-v-enable-irc
+  (require 'ddavis-irc))
+* IRC
+
+#+begin_src emacs-lisp :results silent
+  (when ddavis-v-enable-irc
+    (require 'epa-file)
+    (require 'erc)
+
+    (if ddavis-v-is-mac
+        (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
+      (custom-set-variables '(epg-gpg-program "/usr/bin/gpg2")))
+
+    (use-package password-store
+      :when ddavis-v-enable-irc
+      :ensure t
+      :config
+      (require 'password-store))
+
+    (defun ddavis/irc-pw-freenode (server)
+      (password-store-get "Freenode"))
+
+    (defun ddavis/irc-pw-gitter (server)
+      (password-store-get "Gitter"))
+
+    (use-package circe
+      :when ddavis-v-enable-irc
+      :ensure t
+      :config
+      (setq circe-reduce-lurker-spam t
+            circe-network-options
+            `(("Freenode"
+               :nick "ddavis"
+               :nickserv-password ddavis/irc-pw-freenode
+               :tls t
+               :channels (:after-auth "#emacs" "#sr.ht" "#python" "#pydata" "#scipy")
+               )
+              ("Gitter"
+               :server-buffer-name "Gitter"
+               :host "irc.gitter.im"
+               :port "6697"
+               :nick "douglasdavis"
+               :pass ddavis/irc-pw-gitter
+               :tls t
+               )
+              ))
+      (require 'circe-color-nicks)
+      (enable-circe-color-nicks)
+      (setq circe-use-cycle-completion t
+            circe-format-say "<{nick}> {body}")
+      ;; (setq lui-fill-column 79
+      ;;       lui-fill-type 18)
+      (setq helm-mode-no-completion-in-region-in-modes
+            '(circe-channel-mode
+              circe-query-mode
+              circe-server-mode))
+
+      (defun ddavis/circe-prompt ()
+        (lui-set-prompt
+         (concat (propertize (concat (buffer-name) " > ")
+                             'face 'circe-prompt-face)
+                 " ")))
+      (add-hook 'circe-chat-mode-hook 'ddavis/circe-prompt))
+
+    (use-package helm-circe
+      :when ddavis-v-enable-irc
+      :after circe
+      :ensure t
+      :bind (:map helm-command-map ("i" . helm-circe))
+      :config
+      (when ddavis-v-is-mac
+        (global-set-key (kbd "s-i") 'helm-circe)))
+
+
+    (use-package erc
+      :config
+      (setq erc-hide-list '("JOIN" "PART" "QUIT")
+            erc-user-full-name "Doug Davis"
+            erc-track-enable-keybindings nil
+            erc-kill-server-buffer-on-quit t
+            erc-kill-buffer-on-part t))
+
+    (use-package erc-hl-nicks
+      :after erc))
+#+end_src
+
+end

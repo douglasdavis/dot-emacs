@@ -26,54 +26,30 @@
 
 ;; plenty of RAM
 (setq gc-cons-threshold 100000000)
+(require 'ob-tangle)
+(org-babel-load-file "~/.emacs.d/dot-emacs/emacs-init.org")
 
-;; prompt to start server
-(fset 'yes-or-no-p 'y-or-n-p)
-(when (yes-or-no-p "start server?")
-  (server-start))
 
-;; Use .el if it is newer
-(when (boundp 'load-prefer-newer)
-  (setq load-prefer-newer t))
+;; (require 'ddavis-vars)
+;; (require 'ddavis-package)
+;; (require 'ddavis-utils)
+;; (require 'ddavis-org)
+;; (require 'ddavis-projectile)
+;; (require 'ddavis-helm)
+;; (require 'ddavis-eshell)
+;; (require 'ddavis-company)
+;; (require 'ddavis-vc)
+;; (require 'ddavis-python)
+;; (require 'ddavis-cpp)
+;; (require 'ddavis-tex)
+;; (require 'ddavis-spell)
+;; (require 'ddavis-looks)
+;; (require 'ddavis-misc)
+;; (require 'ddavis-lsp)
 
-(when (or (eq system-type 'darwin)
-          (eq system-type 'gnu/linux))
-  (setq default-directory "~/"))
-
-;; this init.el file is designed to be a symlink to the init.el file
-;; in my `emacs.d` git repo.  this ensures the git repo can live
-;; anywhere
-(add-to-list 'load-path (directory-file-name
-                         (file-name-directory
-                          (file-truename
-                           (concat user-emacs-directory "init.el")))))
-
-(setq custom-file (concat user-emacs-directory "custom.el"))
-
-(setq user-mail-address "ddavis@ddavis.io"
-      user-login-name "ddavis"
-      user-full-name "Doug Davis")
-
-(require 'ddavis-vars)
-(require 'ddavis-package)
-(require 'ddavis-utils)
-(require 'ddavis-org)
-(require 'ddavis-projectile)
-(require 'ddavis-helm)
-(require 'ddavis-eshell)
-(require 'ddavis-company)
-(require 'ddavis-vc)
-(require 'ddavis-python)
-(require 'ddavis-cpp)
-(require 'ddavis-tex)
-(require 'ddavis-spell)
-(require 'ddavis-looks)
-(require 'ddavis-misc)
-(require 'ddavis-lsp)
-
-(when ddavis-v-is-mac
-  (require 'ddavis-macos))
-(when ddavis-v-enable-mu4e
-  (require 'ddavis-mu4e))
-(when ddavis-v-enable-irc
-  (require 'ddavis-irc))
+;; (when ddavis-v-is-mac
+;;   (require 'ddavis-macos))
+;; (when ddavis-v-enable-mu4e
+;;   (require 'ddavis-mu4e))
+;; (when ddavis-v-enable-irc
+;;   (require 'ddavis-irc))

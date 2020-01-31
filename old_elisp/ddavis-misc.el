@@ -30,6 +30,8 @@
 (require 'ddavis-vars)
 (require 'ddavis-utils)
 
+;; authinfo
+(setq auth-sources '((:source "~/.emacs.d/.authinfo.gpg")))
 
 ;; misc seq's
 (setq ring-bell-function 'ignore)
