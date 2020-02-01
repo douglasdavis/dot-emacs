@@ -51,13 +51,13 @@
 
   (defvar ddavis-v-clangd-exe
     (cond (ddavis-v-is-mac "~/Software/LLVM/releases/10.x/bin/clangd")
-          (ddavis-v-is-cc7 "~/Software/LLVM/releases/master/bin/clangd")
+          (ddavis-v-is-cc7 "~/Software/LLVM/releases/10.0.0/bin/clangd")
           (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clangd")
           (ddavis-v-is-pion "/usr/bin/clangd")))
 
   (defvar ddavis-v-clang-exe
     (cond (ddavis-v-is-mac "~/Software/LLVM/releases/10.x/bin/clang")
-          (ddavis-v-is-cc7 "~/Software/LLVM/releases/master/bin/clang")
+          (ddavis-v-is-cc7 "~/Software/LLVM/releases/10.0.0/bin/clang")
           (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clang")
           (ddavis-v-is-pion "/usr/bin/clang")))
 
@@ -448,7 +448,7 @@
     :config
     (setq clang-format-executable
           (cond (ddavis-v-is-mac "~/Software/LLVM/releases/10.x/bin/clang-format")
-                (ddavis-v-is-cc7 "~/Software/LLVM/releases/master/bin/clang-format")
+                (ddavis-v-is-cc7 "~/Software/LLVM/releases/10.0.0/bin/clang-format")
                 (ddavis-v-is-pion "/usr/bin/clang-format")
                 (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clang-format"))))
 #+end_src
@@ -574,11 +574,21 @@
   ;;       (set-face-attribute 'mode-line-buffer-id nil :box        nil))))
 #+end_src
 
+* Auth
+
+#+begin_src emacs-lisp :results silent
+  (require 'epa-file)
+  ;; authinfo
+  (setq auth-sources '((:source "~/.emacs.d/.authinfo.gpg")))
+
+  (if ddavis-v-is-mac
+      (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
+    (custom-set-variables '(epg-gpg-program "/usr/bin/gpg2")))
+#+end_src
+
 * Misc
 
 #+begin_src emacs-lisp :results silent
-  ;; authinfo
-  (setq auth-sources '((:source "~/.emacs.d/.authinfo.gpg")))
 
   ;; misc seq's
   (setq ring-bell-function 'ignore)
@@ -1005,12 +1015,7 @@
 
 #+begin_src emacs-lisp :results silent
   (when ddavis-v-enable-irc
-    (require 'epa-file)
     (require 'erc)
-
-    (if ddavis-v-is-mac
-        (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
-      (custom-set-variables '(epg-gpg-program "/usr/bin/gpg2")))
 
     (use-package password-store
       :when ddavis-v-enable-irc
@@ -1034,17 +1039,14 @@
                :nick "ddavis"
                :nickserv-password ddavis/irc-pw-freenode
                :tls t
-               :channels (:after-auth "#emacs" "#sr.ht" "#python" "#pydata" "#scipy")
-               )
+               :channels (:after-auth "#emacs" "#sr.ht" "#python" "#pydata" "#scipy"))
               ("Gitter"
                :server-buffer-name "Gitter"
                :host "irc.gitter.im"
                :port "6697"
                :nick "douglasdavis"
                :pass ddavis/irc-pw-gitter
-               :tls t
-               )
-              ))
+               :tls t)))
       (require 'circe-color-nicks)
       (enable-circe-color-nicks)
       (setq circe-use-cycle-completion t
