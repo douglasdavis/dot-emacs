@@ -1,4 +1,4 @@
-* Startup
+* startup
 
 #+begin_src emacs-lisp :results silent
   ;; prompt to start server
@@ -29,7 +29,7 @@
         user-full-name "Doug Davis")
 #+end_src
 
-* Variables
+* variables
 
 #+begin_src emacs-lisp :results silent
   (defvar ddavis-v-is-mac (eq system-type 'darwin))
@@ -74,7 +74,7 @@
           (ddavis-v-is-pion "/usr/bin/fd")))
 #+end_src
 
-* Package
+* package
 
 #+begin_src emacs-lisp :results silent
   (require 'package)
@@ -112,7 +112,7 @@
     (auto-package-update-maybe))
 #+end_src
 
-* Utils
+* utils
 
 #+begin_src emacs-lisp :results silent
   (defun ddavis/enable-cua-selection ()
@@ -200,7 +200,7 @@
             (if this-win-2nd (other-window 1))))))
 #+end_src
 
-* Org
+* org
 
 #+begin_src emacs-lisp :results silent
   (if ddavis-v-is-mac
@@ -262,7 +262,7 @@
     :ensure t)
 #+end_src
 
-* Projectile
+* projectile
 
 #+begin_src emacs-lisp :results silent
   (use-package projectile
@@ -280,7 +280,7 @@
     (add-to-list 'project-find-functions 'ddavis/projectile-proj-find-function))
 #+end_src
 
-* Helm
+* helm
 
 #+begin_src emacs-lisp :results silent
   (use-package helm
@@ -333,7 +333,7 @@
     :bind (("C-h b" . helm-descbinds)))
 #+end_src
 
-* Eshell
+* eshell
 
 #+begin_src emacs-lisp :results silent
   (defun eshell-here ()
@@ -357,7 +357,7 @@
     (delete-window))
 #+end_src
 
-* Company
+* company
 
 #+begin_src emacs-lisp :results silent
   (use-package company
@@ -371,7 +371,7 @@
     (add-hook 'LaTeX-mode-hook 'company-mode))
 #+end_src
 
-* VC
+* version control
 
 #+begin_src emacs-lisp :results silent
   (setq vc-follow-symlinks t)
@@ -390,7 +390,7 @@
   (bind-key "q" #'ddavis/magit-kill-buffers magit-status-mode-map)
 #+end_src
 
-* Python
+* python
 
 #+begin_src emacs-lisp :results silent
   (use-package pyvenv
@@ -425,7 +425,7 @@
     (pyvenv-activate (format "~/.pyenv/versions/%s" env-name)))
 #+end_src
 
-* CPP
+* c++
 
 #+begin_src emacs-lisp :results silent
   (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
@@ -451,6 +451,10 @@
                 (ddavis-v-is-cc7 "~/Software/LLVM/releases/10.0.0/bin/clang-format")
                 (ddavis-v-is-pion "/usr/bin/clang-format")
                 (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clang-format"))))
+
+  (use-package modern-cpp-font-lock
+    :ensure t
+    :hook (c++-mode . modern-c++-font-lock-mode))
 #+end_src
 
 * TeX
@@ -462,7 +466,7 @@
         font-latex-fontify-script nil)
 #+end_src
 
-* Spell
+* spell
 
 #+begin_src emacs-lisp :results silent
   (mapc
@@ -474,7 +478,7 @@
      mu4e-compose-mode-hook))
 #+end_src
 
-* Looks
+* looks
 
 #+begin_src emacs-lisp :results silent
   (setq custom-safe-themes t)
@@ -574,7 +578,7 @@
   ;;       (set-face-attribute 'mode-line-buffer-id nil :box        nil))))
 #+end_src
 
-* Auth
+* auth
 
 #+begin_src emacs-lisp :results silent
   (require 'epa-file)
@@ -586,7 +590,7 @@
     (custom-set-variables '(epg-gpg-program "/usr/bin/gpg2")))
 #+end_src
 
-* Misc
+* misc
 
 #+begin_src emacs-lisp :results silent
 
@@ -705,7 +709,7 @@
     (setq-default elfeed-search-filter "@4-weeks-ago"))
 #+end_src
 
-* LSP
+* lsp
 
 #+begin_src emacs-lisp :results silent
   (use-package lsp-mode
@@ -727,7 +731,7 @@
     :commands company-lsp)
 #+end_src
 
-* Mac
+* macOS
 
 #+begin_src emacs-lisp :results silent
   (when ddavis-v-is-mac
@@ -774,7 +778,7 @@
     (setq browse-url-browser-function 'browse-url-default-macosx-browser))
 #+end_src
 
-* Mail
+* email
 
 #+begin_src emacs-lisp :results silent
   (when ddavis-v-enable-mu4e
@@ -1011,7 +1015,7 @@
   (require 'ddavis-mu4e))
 (when ddavis-v-enable-irc
   (require 'ddavis-irc))
-* IRC
+* irc
 
 #+begin_src emacs-lisp :results silent
   (when ddavis-v-enable-irc
