@@ -587,11 +587,11 @@
 #+begin_src emacs-lisp :results silent
   (require 'epa-file)
   ;; authinfo
-  (setq auth-sources '((:source "~/.emacs.d/.authinfo.gpg")))
-
+  (setq auth-sources '("~/.emacs.d/.authinfo.gpg"))
   (if ddavis-v-is-mac
       (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
     (custom-set-variables '(epg-gpg-program "/usr/bin/gpg2")))
+  (epa-file-enable)
 #+end_src
 
 * misc
