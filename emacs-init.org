@@ -237,8 +237,8 @@
                       ("py" . "src python :results silent")
                       ("cpp" . "src C++"))))))
 
-
-  (require 'ox-md)
+  (use-package ox-md
+    :after ox)
 
   (use-package ox-hugo
     :ensure t
@@ -247,6 +247,9 @@
   (use-package ox-reveal
     :ensure t
     :after ox)
+
+  (use-package htmlize
+    :ensure t)
 
   ;; (org-babel-do-load-languages
   ;;  'org-babel-load-languages
@@ -261,8 +264,6 @@
            ((agenda "")
             (alltodo "")))))
 
-  (use-package htmlize
-    :ensure t)
 #+end_src
 
 * projectile
