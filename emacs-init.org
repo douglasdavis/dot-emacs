@@ -500,11 +500,12 @@
 
   (when window-system
     ;; (setq custom-theme-load-path (append '("~/.emacs.d/cthemes/") custom-theme-load-path))
-    (use-package gruvbox-theme
+    (use-package doom-themes
       :ensure t
       :init
       :config
-      (load-theme 'gruvbox t)
+      (setq doom-themes-enable-bold nil)
+      (load-theme 'doom-gruvbox t)
       (let ((line (face-attribute 'mode-line :underline)))
         (set-face-attribute 'mode-line           nil :overline   line)
         (set-face-attribute 'mode-line-inactive  nil :overline   line)
@@ -538,48 +539,6 @@
       (tv/extend-faces-matching "\\`magit"))
     (with-eval-after-load "helm"
       (tv/extend-faces-matching "\\`helm")))
-
-  ;; some old stuff to keep for reference
-
-  ;; (when ddavis-v-is-mac
-
-  ;;   (defvar ddavis-current-theme-is "light"
-  ;;     "A simple holder to help with toggling the solarized theme")
-
-  ;;   (defun ddavis/load-solarized-dark ()
-  ;;     (interactive)
-  ;;     (setq ddavis-current-theme-is "dark")
-  ;;     (load-theme 'solarized-dark))
-
-  ;;   (defun ddavis/load-solarized-light ()
-  ;;     (interactive)
-  ;;     (setq ddavis-current-theme-is "light")
-  ;;     (load-theme 'solarized-light))
-
-  ;;   (defun ddavis/toggle-solarized ()
-  ;;     (interactive)
-  ;;     (if (string= ddavis-current-theme-is "light")
-  ;;         (ddavis/load-solarized-dark)
-  ;;       (ddavis/load-solarized-light)))
-
-  ;;   (global-set-key (kbd "s-6") 'ddavis/toggle-solarized)
-
-  ;;   (use-package solarized-theme
-  ;;     :ensure t
-  ;;     :when (window-system)
-  ;;     :init
-  ;;     :config
-  ;;     (when ddavis-v-is-linux-desktop
-  ;;       (ddavis/load-solarized-dark))
-  ;;     (when ddavis-v-is-mac
-  ;;       (ddavis/load-solarized-light))
-  ;;     (let ((line (face-attribute 'mode-line :underline)))
-  ;;       (set-face-attribute 'mode-line           nil :overline   line)
-  ;;       (set-face-attribute 'mode-line-inactive  nil :overline   line)
-  ;;       (set-face-attribute 'mode-line-inactive  nil :underline  line)
-  ;;       (set-face-attribute 'mode-line           nil :box        nil)
-  ;;       (set-face-attribute 'mode-line-inactive  nil :box        nil)
-  ;;       (set-face-attribute 'mode-line-buffer-id nil :box        nil))))
 #+end_src
 
 * auth
