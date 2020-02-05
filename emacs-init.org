@@ -64,6 +64,12 @@
           (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clang")
           (ddavis-v-is-pion "/usr/bin/clang")))
 
+  (defvar ddavis-v-clang-format-exe
+    (cond (ddavis-v-is-mac "~/Software/LLVM/releases/10.x/bin/clang-format")
+          (ddavis-v-is-cc7 "~/Software/LLVM/releases/10.0.0/bin/clang-format")
+          (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clang-format")
+          (ddavis-v-is-pion "/usr/bin/clang-format")))
+
   (defvar ddavis-v-rg-exe
     (cond (ddavis-v-is-mac "/usr/local/bin/rg")
           (ddavis-v-is-cc7 "~/.cargo/bin/rg")
@@ -450,11 +456,7 @@
   (use-package clang-format
     :ensure t
     :config
-    (setq clang-format-executable
-          (cond (ddavis-v-is-mac "~/Software/LLVM/releases/10.x/bin/clang-format")
-                (ddavis-v-is-cc7 "~/Software/LLVM/releases/10.0.0/bin/clang-format")
-                (ddavis-v-is-pion "/usr/bin/clang-format")
-                (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clang-format"))))
+    (setq clang-format-executable ddavis-v-clang-format-exe))
 
   (use-package modern-cpp-font-lock
     :ensure t
