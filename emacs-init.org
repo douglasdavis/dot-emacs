@@ -383,6 +383,8 @@
 
 * version control
 
+Basically just [[https://magit.vc/][magit]].
+
 #+begin_src emacs-lisp :results silent
   (setq vc-follow-symlinks t)
 
@@ -451,7 +453,8 @@
     (delete 'company-capf company-backends)
     (add-to-list 'company-backends 'company-capf)
     (add-to-list 'eglot-server-programs
-                 `((c++-mode cc-mode) ,ddavis-v-clangd-exe)))
+                 `((c++-mode cc-mode) ,ddavis-v-clangd-exe))
+    (add-hook 'c++-mode-hook 'company-mode))
 
   (use-package clang-format
     :ensure t
@@ -474,6 +477,8 @@
 
 * spell
 
+Add some flyspell hooks for a few modes.
+
 #+begin_src emacs-lisp :results silent
   (mapc
    (lambda (language-mode-hook)
@@ -485,6 +490,8 @@
 #+end_src
 
 * looks
+
+Fonts and themes
 
 #+begin_src emacs-lisp :results silent
   (setq custom-safe-themes t)
@@ -523,7 +530,7 @@
     (setq mac-allow-anti-aliasing t)
 
     (defvar ddavis-v-font
-      (cond (ddavis-v-is-mac '(font . "JetBrains Mono-12"))
+      (cond (ddavis-v-is-mac '(font . "SF Mono-12"))
             (ddavis-v-is-cc7 '(font . "-*-JetBrains Mono-normal-normal-normal-*-*-*-*-*-d-0-iso10646-1"))
             (ddavis-v-is-pion '(font . "-SAJA-Cascadia Code-normal-normal-normal-*-*-*-*-*-m-0-iso10646-1"))
             (ddavis-v-is-grads-18 '(font . "-*-source code pro-semibold-*-normal-*-*-100-100-100-m-0-*-*"))))
@@ -545,6 +552,8 @@
 
 * auth
 
+Setting up authentication with encryption
+
 #+begin_src emacs-lisp :results silent
   (require 'epa-file)
   ;; authinfo
@@ -556,6 +565,8 @@
 #+end_src
 
 * misc
+
+Miscellaneous stiff that should probably be better sorted.
 
 #+begin_src emacs-lisp :results silent
 
@@ -676,6 +687,8 @@
 
 * lsp
 
+Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]].
+
 #+begin_src emacs-lisp :results silent
   (use-package lsp-mode
     :ensure t
@@ -697,6 +710,8 @@
 #+end_src
 
 * macOS
+
+Some configuration specific to using Emacs on macOS.
 
 #+begin_src emacs-lisp :results silent
   (when ddavis-v-is-mac
@@ -744,6 +759,8 @@
 #+end_src
 
 * email
+
+My [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] setup
 
 #+begin_src emacs-lisp :results silent
   (when ddavis-v-enable-mu4e
@@ -982,6 +999,10 @@
   (require 'ddavis-irc))
 * irc
 
+I haven't really been able to make up my mind on using the builtin
+Emacs IRC client [[https://www.emacswiki.org/emacs/ERC][ERC]] or the third party client [[https://github.com/jorgenschaefer/circe][Circe]]. This configures
+usage of both.
+
 #+begin_src emacs-lisp :results silent
   (when ddavis-v-enable-irc
     (require 'erc)
@@ -1043,14 +1064,21 @@
       (when ddavis-v-is-mac
         (global-set-key (kbd "s-i") 'helm-circe)))
 
-
     (use-package erc
       :config
       (setq erc-hide-list '("JOIN" "PART" "QUIT")
             erc-user-full-name "Doug Davis"
+            erc-prompt-for-password nil
             erc-track-enable-keybindings nil
             erc-kill-server-buffer-on-quit t
             erc-kill-buffer-on-part t))
+
+    (defun ddavis/erc-start-or-switch ()
+      (interactive)
+      (if (get-buffer "irc.freenode.net:6667")
+          (switch-to-buffer "irc.freenode.net:6667")
+        (when (y-or-n-p "Start? ")
+          (erc :server "irc.freenode.net" :port 6667 :nick "ddavis"))))
 
     (use-package erc-hl-nicks
       :after erc))
