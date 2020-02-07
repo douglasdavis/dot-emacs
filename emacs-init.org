@@ -569,7 +569,6 @@ Setting up authentication with encryption
 Miscellaneous stiff that should probably be better sorted.
 
 #+begin_src emacs-lisp :results silent
-
   ;; misc seq's
   (setq ring-bell-function 'ignore)
   (setq echo-keystrokes 0.001)
@@ -598,38 +597,6 @@ Miscellaneous stiff that should probably be better sorted.
   ;; some key bindings which don't require any external packages.
   (global-set-key (kbd "C-c q") 'auto-fill-mode)
   (global-set-key (kbd "C-x \\") 'ddavis/toggle-window-split)
-
-  (mapc
-   (lambda (language-mode-hook)
-     (add-hook language-mode-hook
-               (lambda ()
-                 (add-to-list 'write-file-functions 'delete-trailing-whitespace))))
-   '(text-mode-hook
-     c-mode-common-hook
-     emacs-lisp-mode-hook
-     python-mode-hook
-     markdown-mode-hook
-     bash-mode-hook
-     sh-mode-hook
-     cmake-mode-hook
-     fundamental-mode-hook
-     LaTeX-mode-hook))
-
-  (when ddavis-v-is-cc7
-    (setq browse-url-browser-function 'browse-url-generic
-          browse-url-generic-program "/home/ddavis/Software/localbase/bin/firefox"))
-
-  (when ddavis-v-is-pion
-    (setq browse-url-browser-function 'browse-url-generic
-          browse-url-generic-program "firefox-developer-edition"))
-
-  (use-package all-the-icons
-    :ensure t)
-
-  (use-package all-the-icons-dired
-    :ensure t
-    :config
-    (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
   (use-package neotree
     :ensure t
@@ -670,7 +637,11 @@ Miscellaneous stiff that should probably be better sorted.
   (use-package ace-window
     :ensure t
     :bind ("M-o" . 'ace-window))
+#+end_src
 
+* elfeed
+
+#+begin_src emacs-lisp :results silent
   (use-package elfeed
     :ensure t
     :bind ("C-x w" . 'elfeed)
@@ -683,6 +654,53 @@ Miscellaneous stiff that should probably be better sorted.
             "https://www.npr.org/rss/podcast.php?id=510318"
             "http://pragmaticemacs.com/feed/"))
     (setq-default elfeed-search-filter "@4-weeks-ago"))
+#+end_src
+
+* delete whitespace
+
+#+begin_src emacs-lisp :results silent
+  (mapc
+   (lambda (language-mode-hook)
+     (add-hook language-mode-hook
+               (lambda ()
+                 (add-to-list 'write-file-functions 'delete-trailing-whitespace))))
+   '(text-mode-hook
+     c-mode-common-hook
+     emacs-lisp-mode-hook
+     python-mode-hook
+     markdown-mode-hook
+     bash-mode-hook
+     sh-mode-hook
+     cmake-mode-hook
+     fundamental-mode-hook
+     LaTeX-mode-hook))
+#+end_src
+
+* browser
+
+#+begin_src emacs-lisp :results silent
+  (when ddavis-v-is-cc7
+    (setq browse-url-browser-function 'browse-url-generic
+          browse-url-generic-program "/home/ddavis/Software/localbase/bin/firefox"))
+
+  (when ddavis-v-is-pion
+    (setq browse-url-browser-function 'browse-url-generic
+          browse-url-generic-program "firefox-developer-edition"))
+#+end_src
+
+* dired
+
+#+begin_src emacs-lisp :results silent
+  (use-package all-the-icons
+    :ensure t)
+
+  (use-package all-the-icons-dired
+    :ensure t
+    :config
+    (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+
+  (add-hook 'dired-mode-hook
+            (lambda () (local-set-key (kbd "q") #'kill-current-buffer)))
 #+end_src
 
 * lsp
