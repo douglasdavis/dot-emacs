@@ -81,6 +81,24 @@
           (ddavis-v-is-cc7 "~/.cargo/bin/fd")
           (ddavis-v-is-grads-18 "~/.cargo/bin/fd")
           (ddavis-v-is-pion "/usr/bin/fd")))
+
+  (defvar ddavis-v-sendmail-program
+    (cond (ddavis-v-is-mac "~/Software/localbase/bin/msmtp")
+          (ddavis-v-is-cc7 "~/Software/localbase/bin/msmtp")
+          (ddavis-v-is-grads-18 "/usr/bin/msmtp")
+          (ddavis-v-is-pion "/usr/bin/msmtp")))
+
+  (defvar ddavis-v-mu-exe
+    (cond (ddavis-v-is-mac "~/Software/mu/releases/master/bin/mu")
+          (ddavis-v-is-cc7 "/usr/local/bin/mu")
+          (ddavis-v-is-grads-18 "~/Software/localbase/bin/mu")
+          (ddavis-v-is-pion "/usr/bin/mu")))
+
+  (defvar ddavis-v-mu4e-dir
+    (cond (ddavis-v-is-mac "~/Software/mu/releases/master/share/emacs/site-lisp/mu4e")
+          (ddavis-v-is-grads-18 "~/Software/localbase/share/emacs/site-lisp/mu4e")
+          (ddavis-v-is-cc7 "/usr/local/share/emacs/site-lisp/mu4e")
+          (ddavis-v-is-pion "/usr/share/emacs/site-lisp/mu4e")))
 #+end_src
 
 * package
@@ -777,45 +795,45 @@ Some configuration specific to using Emacs on macOS.
 #+end_src
 
 * email
+** sending mail
+
+#+begin_src emacs-lisp :results silent
+  (setq message-send-mail-function 'message-send-mail-with-sendmail
+        message-sendmail-f-is-evil t
+        message-sendmail-extra-arguments '("--read-envelope-from")
+        message-kill-buffer-on-exit t)
+
+  (setq sendmail-program ddavis-v-sendmail-program)
+
+  (defun ddavis/reset-standard-name-and-email ()
+    (interactive)
+    (setq user-mail-address "ddavis@ddavis.io"
+          user-email-address "ddavis@ddavis.io"
+          user-full-name "Doug Davis"))
+#+end_src
+
+** indexing mail with mu4e
 
 My [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] setup
 
 #+begin_src emacs-lisp :results silent
+  (with-eval-after-load "mm-decode"
+    (add-to-list 'mm-discouraged-alternatives "text/html")
+    (add-to-list 'mm-discouraged-alternatives "text/richtext"))
+
   (when ddavis-v-enable-mu4e
-    (when ddavis-v-is-mac
-      (add-to-list 'load-path "~/Software/mu/releases/master/share/emacs/site-lisp/mu4e")
-      (setq sendmail-program "~/Software/localbase/bin/msmtp"
-            mu4e-mu-binary "~/Software/mu/releases/master/bin/mu"))
-
-    (when ddavis-v-is-grads-18
-      (add-to-list 'load-path "~/Software/localbase/share/emacs/site-lisp/mu4e")
-      (setq sendmail-program "/usr/bin/msmtp"
-            mu4e-mu-binary "~/Software/localbase/bin/mu"))
-
-    (when ddavis-v-is-pion
-      (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
-      (setq sendmail-program "/usr/bin/msmtp"
-            mu4e-mu-binary "/usr/bin/mu"))
-
-    (when ddavis-v-is-cc7
-      (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
-      (setq sendmail-program "~/Software/localbase/bin/msmtp"
-            mu4e-mu-binary "/usr/local/bin/mu"))
-
+    (add-to-list 'load-path ddavis-v-mu4e-dir)
     (require 'mu4e)
+
+    (setq mu4e-mu-binary ddavis-v-mu-exe)
 
     (setq mu4e-change-filenames-when-moving t
           mu4e-get-mail-command "true"
-          mu4e-update-interval 75
+          mu4e-update-interval 90
           mu4e-maildir "~/.mail"
           mu4e-confirm-quit nil
           mu4e-context-policy 'pick-first
-          mu4e-change-filenames-when-moving t
-          message-send-mail-function 'message-send-mail-with-sendmail
-          message-sendmail-f-is-evil t
-          message-sendmail-extra-arguments '("--read-envelope-from")
-          message-kill-buffer-on-exit t)
-
+          mu4e-change-filenames-when-moving t)
 
     (defun ddavis/mu4e-jump-via-helm ()
       (interactive)
@@ -833,12 +851,6 @@ My [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] setup
     (define-key mu4e-headers-mode-map "D" 'mu4e-headers-mark-for-trash)
     (define-key mu4e-view-mode-map "d" 'mu4e-view-mark-for-delete)
     (define-key mu4e-view-mode-map "D" 'mu4e-view-mark-for-trash)
-
-    (defun ddavis/set-standard-name-and-email ()
-      (interactive)
-      (setq user-mail-address "ddavis@ddavis.io"
-            user-email-address "ddavis@ddavis.io"
-            user-full-name "Doug Davis"))
 
     (setq mu4e-contexts
           `( ,(make-mu4e-context
