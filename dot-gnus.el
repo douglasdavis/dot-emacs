@@ -154,6 +154,9 @@
                                "nntp+news.gwene.org:gmane.comp.python.c++"
                                "nntp+news.gwene.org:gmane.comp.python.devel"
                                "nntp+news.gwene.org:gmane.comp.python.announce"
+                               "nntp+news.gwene.org:gmane.comp.python.matplotlib.devel"
+                               "nntp+news.gwene.org:gmane.comp.python.matplotlib.general"
+                               "nntp+news.gwene.org:gmane.comp.python.matplotlib.announce"
                                "nntp+news.gwene.org:gwene.org.scipy.planet")
                               ("Emacs"
                                "nntp+news.gwene.org:gmane.emacs.devel"

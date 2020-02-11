@@ -504,6 +504,7 @@ Add some flyspell hooks for a few modes.
    '(org-mode-hook
      LaTeX-mode-hook
      markdown-mode-hook
+     message-mode-hook
      mu4e-compose-mode-hook))
 #+end_src
 
@@ -526,13 +527,15 @@ Fonts and themes
              do (set-face-attribute f nil :extend t)))
 
   (when window-system
-    ;; (setq custom-theme-load-path (append '("~/.emacs.d/cthemes/") custom-theme-load-path))
-    (use-package doom-themes
+    (use-package solarized-theme
       :ensure t
       :init
       :config
-      (setq doom-themes-enable-bold nil)
-      (load-theme 'doom-gruvbox t)
+      (setq solarized-use-less-bold t
+            solarized-use-variable-pitch nil
+            solarized-scale-org-headlines nil
+            solarized-scale-outline-headlines nil)
+      (load-theme 'solarized-gruvbox-dark t)
       (let ((line (face-attribute 'mode-line :underline)))
         (set-face-attribute 'mode-line           nil :overline   line)
         (set-face-attribute 'mode-line-inactive  nil :overline   line)
