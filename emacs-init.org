@@ -527,22 +527,23 @@ Fonts and themes
              do (set-face-attribute f nil :extend t)))
 
   (when window-system
-    (use-package gruvbox-theme
-      :ensure t
-      :init
-      :config
-      ;; (setq solarized-use-less-bold t
-      ;;       solarized-use-variable-pitch nil
-      ;;       solarized-scale-org-headlines nil
-      ;;       solarized-scale-outline-headlines nil)
-      (load-theme 'gruvbox t)
-      (let ((line (face-attribute 'mode-line :underline)))
-        (set-face-attribute 'mode-line           nil :overline   line)
-        (set-face-attribute 'mode-line-inactive  nil :overline   line)
-        (set-face-attribute 'mode-line-inactive  nil :underline  line)
-        (set-face-attribute 'mode-line           nil :box        nil)
-        (set-face-attribute 'mode-line-inactive  nil :box        nil)
-        (set-face-attribute 'mode-line-buffer-id nil :box        nil)))
+    ;; currently using my fork of emacs-theme-gruvbox
+    (add-to-list 'load-path "~/Software/emacs-theme-gruvbox")
+    (add-to-list 'custom-theme-load-path "~/Software/emacs-theme-gruvbox")
+    (load-theme 'gruvbox t)
+
+    ;; (use-package gruvbox-theme
+    ;;   :ensure t
+    ;;   :config
+    ;;   (load-theme 'gruvbox t))
+
+    (let ((line (face-attribute 'mode-line :underline)))
+      (set-face-attribute 'mode-line           nil :overline   line)
+      (set-face-attribute 'mode-line-inactive  nil :overline   line)
+      (set-face-attribute 'mode-line-inactive  nil :underline  line)
+      (set-face-attribute 'mode-line           nil :box        nil)
+      (set-face-attribute 'mode-line-inactive  nil :box        nil)
+      (set-face-attribute 'mode-line-buffer-id nil :box        nil))
 
     (when ddavis-v-is-mac
       (add-to-list 'default-frame-alist '(height . 72))
@@ -1061,8 +1062,8 @@ usage of both.
             `(("Freenode"
                :nick "ddavis"
                :nickserv-password ddavis/irc-pw-freenode
-               :tls t
-               :channels (:after-auth "#emacs" "#sr.ht" "#python" "#pydata" "#scipy"))
+               :tls t)
+               ;; :channels (:after-auth "#emacs" "#sr.ht" "#python" "#pydata" "#scipy"))
               ("Gitter"
                :server-buffer-name "Gitter"
                :host "irc.gitter.im"
