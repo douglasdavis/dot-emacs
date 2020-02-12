@@ -860,7 +860,7 @@ My [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] setup
           `( ,(make-mu4e-context
                :name "cern"
                :enter-func (lambda () (mu4e-message "Entering CERN context"))
-               :leave-func (lambda () (ddavis/set-standard-name-and-email))
+               :leave-func (lambda () (ddavis/reset-standard-name-and-email))
                :match-func (lambda (msg)
                              (when msg
                                (string-match-p "^/cern" (mu4e-message-field msg :maildir))))
@@ -875,7 +875,7 @@ My [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] setup
              ,(make-mu4e-context
                :name "duke"
                :enter-func (lambda () (mu4e-message "Entering Duke context"))
-               :leave-func (lambda () (ddavis/set-standard-name-and-email))
+               :leave-func (lambda () (ddavis/reset-standard-name-and-email))
                :match-func (lambda (msg)
                              (when msg
                                (string-match-p "^/duke" (mu4e-message-field msg :maildir))))
@@ -892,7 +892,7 @@ My [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] setup
                    (make-mu4e-context
                     :name "gmail"
                     :enter-func (lambda () (mu4e-message "Entering Gmail context"))
-                    :leave-func (lambda () (ddavis/set-standard-name-and-email))
+                    :leave-func (lambda () (ddavis/reset-standard-name-and-email))
                     :match-func (lambda (msg)
                                   (when msg
                                     (string-match-p "^/gmail" (mu4e-message-field msg :maildir))))
