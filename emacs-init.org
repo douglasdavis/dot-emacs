@@ -527,15 +527,15 @@ Fonts and themes
              do (set-face-attribute f nil :extend t)))
 
   (when window-system
-    (use-package solarized-theme
+    (use-package gruvbox-theme
       :ensure t
       :init
       :config
-      (setq solarized-use-less-bold t
-            solarized-use-variable-pitch nil
-            solarized-scale-org-headlines nil
-            solarized-scale-outline-headlines nil)
-      (load-theme 'solarized-gruvbox-dark t)
+      ;; (setq solarized-use-less-bold t
+      ;;       solarized-use-variable-pitch nil
+      ;;       solarized-scale-org-headlines nil
+      ;;       solarized-scale-outline-headlines nil)
+      (load-theme 'gruvbox t)
       (let ((line (face-attribute 'mode-line :underline)))
         (set-face-attribute 'mode-line           nil :overline   line)
         (set-face-attribute 'mode-line-inactive  nil :overline   line)
