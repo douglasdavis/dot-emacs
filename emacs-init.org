@@ -590,7 +590,7 @@ Fonts and themes
     (setq mac-allow-anti-aliasing t)
 
     (defvar ddavis-v-font
-      (cond (ddavis-v-is-mac '(font . "SF Mono-12"))
+      (cond (ddavis-v-is-mac '(font . "Source Code Pro for Powerline-12"))
             (ddavis-v-is-cc7 '(font . "-*-JetBrains Mono-normal-normal-normal-*-*-*-*-*-d-0-iso10646-1"))
             (ddavis-v-is-pion '(font . "-SAJA-Cascadia Code-normal-normal-normal-*-*-*-*-*-m-0-iso10646-1"))
             (ddavis-v-is-grads-18 '(font . "-*-source code pro-semibold-*-normal-*-*-100-100-100-m-0-*-*"))))
