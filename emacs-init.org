@@ -420,6 +420,30 @@ Basically just [[https://magit.vc/][magit]].
   (bind-key "q" #'ddavis/magit-kill-buffers magit-status-mode-map)
 #+end_src
 
+* lsp
+
+Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]].
+
+#+begin_src emacs-lisp :results silent
+  (use-package lsp-mode
+    :ensure t
+    :commands lsp
+    :init
+    (setq lsp-clients-clangd-executable ddavis-v-clangd-exe)
+    (setq lsp-enable-on-type-formatting nil)
+    (setq lsp-auto-guess-root t))
+
+  (use-package lsp-ui
+    :ensure t
+    :commands lsp-ui-mode
+    :init
+    (setq lsp-ui-sideline-show-hover nil))
+
+  (use-package company-lsp
+    :ensure t
+    :commands company-lsp)
+#+end_src
+
 * python
 
 #+begin_src emacs-lisp :results silent
@@ -427,6 +451,18 @@ Basically just [[https://magit.vc/][magit]].
     :ensure t
     :config
     (setenv "WORKON_HOME" "~/.pyenv/versions"))
+
+  (defun ddavis/py-auto-lsp ()
+    (interactive)
+    (if (and pyvenv-virtual-env (file-directory-p pyvenv-virtual-env))
+        (lsp)
+      (pyvenv-workon (projectile-project-name))
+      (if (file-directory-p pyvenv-virtual-env)
+          (lsp)
+        (message (format "%s does not exist, set env manually"
+                         pyvenv-virtual-env))
+        (call-interactively #'pyvenv-workon)
+        (lsp))))
 
   (use-package elpy
     :ensure t)
@@ -448,11 +484,11 @@ Basically just [[https://magit.vc/][magit]].
     (setq company-backends (cons 'company-capf (remove 'company-capf company-backends)))
     (add-to-list 'eglot-server-programs '(python-mode . ("pyls"))))
 
-  (defun ddavis/py-activate (env-name)
-    (require 'pyvenv)
-    (interactive "sEnv name: ")
-    (message env-name)
-    (pyvenv-activate (format "~/.pyenv/versions/%s" env-name)))
+  ;; (defun ddavis/py-activate (env-name)
+  ;;   (require 'pyvenv)
+  ;;   (interactive "sEnv name: ")
+  ;;   (message env-name)
+  ;;   (pyvenv-activate (format "~/.pyenv/versions/%s" env-name)))
 #+end_src
 
 * c++
@@ -528,7 +564,9 @@ Fonts and themes
 
   (when window-system
     ;; currently using my fork of emacs-theme-gruvbox
-    (add-to-list 'load-path "~/Software/emacs-theme-gruvbox")
+    (use-package gruvbox
+      :load-path "~/Software/emacs-theme-gruvbox"
+      :demand t)
     (add-to-list 'custom-theme-load-path "~/Software/emacs-theme-gruvbox")
     (load-theme 'gruvbox t)
 
@@ -723,30 +761,6 @@ Miscellaneous stiff that should probably be better sorted.
 
   (add-hook 'dired-mode-hook
             (lambda () (local-set-key (kbd "q") #'kill-current-buffer)))
-#+end_src
-
-* lsp
-
-Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]].
-
-#+begin_src emacs-lisp :results silent
-  (use-package lsp-mode
-    :ensure t
-    :commands lsp
-    :init
-    (setq lsp-clients-clangd-executable ddavis-v-clangd-exe)
-    (setq lsp-enable-on-type-formatting nil)
-    (setq lsp-auto-guess-root t))
-
-  (use-package lsp-ui
-    :ensure t
-    :commands lsp-ui-mode
-    :init
-    (setq lsp-ui-sideline-show-hover nil))
-
-  (use-package company-lsp
-    :ensure t
-    :commands company-lsp)
 #+end_src
 
 * macOS
@@ -1063,7 +1077,7 @@ usage of both.
                :nick "ddavis"
                :nickserv-password ddavis/irc-pw-freenode
                :tls t)
-               ;; :channels (:after-auth "#emacs" "#sr.ht" "#python" "#pydata" "#scipy"))
+              ;; :channels (:after-auth "#emacs" "#sr.ht" "#python" "#pydata" "#scipy"))
               ("Gitter"
                :server-buffer-name "Gitter"
                :host "irc.gitter.im"
@@ -1084,7 +1098,7 @@ usage of both.
 
       (defun ddavis/circe-prompt ()
         (lui-set-prompt
-         (concat (propertize (concat (buffer-name) " > ")
+         (concat (propertize (concat "[" (buffer-name) "] >")
                              'face 'circe-prompt-face)
                  " ")))
       (add-hook 'circe-chat-mode-hook 'ddavis/circe-prompt))
@@ -1105,7 +1119,11 @@ usage of both.
             erc-prompt-for-password nil
             erc-track-enable-keybindings nil
             erc-kill-server-buffer-on-quit t
-            erc-kill-buffer-on-part t))
+            erc-kill-buffer-on-part t
+            erc-prompt (lambda () (concat "[" (buffer-name) "] >"))))
+
+    (with-eval-after-load 'erc-faces
+      (set-face-attribute 'erc-nick-default-face :bold nil))
 
     (defun ddavis/erc-start-or-switch ()
       (interactive)
