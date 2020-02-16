@@ -564,16 +564,16 @@ Fonts and themes
 
   (when window-system
     ;; currently using my fork of emacs-theme-gruvbox
-    (use-package gruvbox
-      :load-path "~/Software/emacs-theme-gruvbox"
-      :demand t)
-    (add-to-list 'custom-theme-load-path "~/Software/emacs-theme-gruvbox")
-    (load-theme 'gruvbox t)
+    ;; (use-package gruvbox
+    ;;   :load-path "~/Software/emacs-theme-gruvbox"
+    ;;   :demand t)
+    ;; (add-to-list 'custom-theme-load-path "~/Software/emacs-theme-gruvbox")
+    ;; (load-theme 'gruvbox t)
 
-    ;; (use-package gruvbox-theme
-    ;;   :ensure t
-    ;;   :config
-    ;;   (load-theme 'gruvbox t))
+    (use-package gruvbox-theme
+      :ensure t
+      :config
+      (load-theme 'gruvbox t))
 
     (let ((line (face-attribute 'mode-line :underline)))
       (set-face-attribute 'mode-line           nil :overline   line)
@@ -709,9 +709,7 @@ Miscellaneous stiff that should probably be better sorted.
     (setq elfeed-feeds
           '("https://planet.scipy.org/feed.xml"
             "https://planet.emacslife.com/atom.xml"
-            "https://sachachua.com/blog/feed/"
             "https://ddavis.io/index.xml"
-            "https://www.npr.org/rss/podcast.php?id=510318"
             "http://pragmaticemacs.com/feed/"))
     (setq-default elfeed-search-filter "@4-weeks-ago"))
 #+end_src
