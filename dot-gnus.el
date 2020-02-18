@@ -18,8 +18,13 @@
                   (nnimap-stream ssl)
                   (nnimap-authinfo-file "~/.emacs.d/.authinfo.gpg"))))
   (setq gnus-message-archive-group "nnimap+fastmail:Sent")
-  (setq message-directory "~/.emacs.d/gnusmail/")
-  (setq gnus-directory "~/.emacs.d/gnusnews/")
+
+  (setq message-directory "~/.emacs.d/gnusmail/"
+        gnus-home-directory "~/.emacs.d/gnusnews"
+        gnus-dribble-directory "~/.emacs.d/gnusnews"
+        gnus-article-save-directory "~/.emacs.d/gnusnews"
+        gnus-directory "~/.emacs.d/gnusnews")
+
   (setq nnfolder-directory "~/.emacs.d/gnusmail/archive")
   (setq nndraft-directory "~/.emacs.d/gnusmail/drafts/")
   (setq gnus-parameters
@@ -132,105 +137,3 @@
          (gnus-group-mode . hl-line-mode)
          (gnus-server-mode . hl-line-mode)
          (gnus-group-mode . gnus-topic-mode)))
-
-
-(eval-after-load 'gnus-topic
-  '(progn
-     (setq gnus-message-archive-group '((format-time-string "sent.%Y")))
-
-     (setq gnus-topic-topology '(("Gnus" visible)
-                                 (("misc" visible))
-                                 (("Email" visible nil nil)
-                                  (("Duke" visible nil nil))
-                                  (("CERN" visible nil nil))
-                                  (("Fastmail" visible nil nil)))
-                                 (("Python" visible nil nil))
-                                 (("Emacs" visible nil nil))))
-
-     (setq gnus-topic-alist '(("Python"
-                               "nntp+news.gwene.org:gmane.comp.python.numba.user"
-                               "nntp+news.gwene.org:gmane.comp.python.numeric.general"
-                               "nntp+news.gwene.org:gmane.comp.python.pydata"
-                               "nntp+news.gwene.org:gmane.comp.python.c++"
-                               "nntp+news.gwene.org:gmane.comp.python.devel"
-                               "nntp+news.gwene.org:gmane.comp.python.announce"
-                               "nntp+news.gwene.org:gmane.comp.python.matplotlib.devel"
-                               "nntp+news.gwene.org:gmane.comp.python.matplotlib.general"
-                               "nntp+news.gwene.org:gmane.comp.python.matplotlib.announce"
-                               "nntp+news.gwene.org:gwene.org.scipy.planet")
-                              ("Emacs"
-                               "nntp+news.gwene.org:gmane.emacs.devel"
-                               "nntp+news.gwene.org:gmane.emacs.help"
-                               "nntp+news.gwene.org:gmane.emacs.emacsconf"
-                               "nntp+news.gwene.org:gmane.emacs.macintosh.osx"
-                               "nntp+news.gwene.org:gmane.emacs.gnus.user"
-                               "nntp+news.gwene.org:gmane.emacs.cc-mode.general"
-                               "nntp+news.gwene.org:gmane.emacs.orgmode")
-                              ("misc"
-                               "nntp+news.gwene.org:gmane.announce"
-                               "nntp+news.gwene.org:gmane.org.fsf.announce")
-                              ("Fastmail"
-                               "nnimap+fastmail:Trash"
-                               "nnimap+fastmail:Spam"
-                               "nnimap+fastmail:Sent"
-                               "nnimap+fastmail:Lists/sr.ht"
-                               "nnimap+fastmail:Lists/mu-discuss"
-                               "nnimap+fastmail:Lists/llvm"
-                               "nnimap+fastmail:Lists/clangd-dev"
-                               "nnimap+fastmail:Lists"
-                               "nnimap+fastmail:Drafts"
-                               "nnimap+fastmail:Archive"
-                               "nnimap+fastmail:INBOX")
-                              ("CERN"
-                               "nnimap+cernmail:Trash"
-                               "nnimap+cernmail:Tasks"
-                               "nnimap+cernmail:sent-mail"
-                               "nnimap+cernmail:Sent Messages"
-                               "nnimap+cernmail:Sent Items"
-                               "nnimap+cernmail:Sent"
-                               "nnimap+cernmail:Outbox"
-                               "nnimap+cernmail:Notes"
-                               "nnimap+cernmail:Mailing Lists/TRT mail lists"
-                               "nnimap+cernmail:Mailing Lists/Top lists"
-                               "nnimap+cernmail:Mailing Lists/Tau"
-                               "nnimap+cernmail:Mailing Lists/SW help mail lists"
-                               "nnimap+cernmail:Mailing Lists/SW Computing"
-                               "nnimap+cernmail:Mailing Lists/Stats"
-                               "nnimap+cernmail:Mailing Lists/Machine Learning"
-                               "nnimap+cernmail:Mailing Lists/JEDI notifications"
-                               "nnimap+cernmail:Mailing Lists/InDet"
-                               "nnimap+cernmail:Mailing Lists/HistFitter"
-                               "nnimap+cernmail:Mailing Lists/Exits"
-                               "nnimap+cernmail:Mailing Lists/Current Physicists"
-                               "nnimap+cernmail:Mailing Lists/CERN-JIRA"
-                               "nnimap+cernmail:Mailing Lists"
-                               "nnimap+cernmail:Junk E-Mail"
-                               "nnimap+cernmail:Journal"
-                               "nnimap+cernmail:INBOX"
-                               "nnimap+cernmail:Drafts"
-                               "nnimap+cernmail:Deleted Messages"
-                               "nnimap+cernmail:Deleted Items"
-                               "nnimap+cernmail:Contacts"
-                               "nnimap+cernmail:Calendar"
-                               "nnimap+cernmail:Archive"
-                               "nnimap+cernmail:2018"
-                               "nnimap+cernmail:2017"
-                               "nnimap+cernmail:2016"
-                               "nnimap+cernmail:2015"
-                               "nnimap+cernmail:2014")
-                              ("Duke"
-                               "nnimap+dukemail:INBOX"
-                               "nnimap+dukemail:Archive"
-                               "nnimap+dukemail:Archives/2016"
-                               "nnimap+dukemail:Archives/2015"
-                               "nnimap+dukemail:Archives"
-                               "nnimap+dukemail:Trash"
-                               "nnimap+dukemail:Spam"
-                               "nnimap+dukemail:Sent"
-                               "nnimap+dukemail:Sent Messages"
-                               "nnimap+dukemail:Notes"
-                               "nnimap+dukemail:Drafts"
-                               "nnimap+dukemail:Deleted Messages")
-                              ("Email"
-                               "nndraft:drafts")
-                              ("Gnus")))))
