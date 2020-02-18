@@ -797,7 +797,7 @@ Some configuration specific to using Emacs on macOS.
     (global-set-key (kbd "s-/") 'previous-buffer)
     (global-set-key (kbd "s-b") 'helm-buffers-list)
     (global-set-key (kbd "s-g") 'magit-status)
-    (global-set-key (kbd "s-t") 'neotree)
+    (global-set-key (kbd "s-t") 'neotree-toggle)
     (global-set-key (kbd "s-w") (lambda ()
                                   (interactive)
                                   (if (< (count-windows) 2)
