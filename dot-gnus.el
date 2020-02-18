@@ -4,7 +4,7 @@
         user-mail-address "ddavis@ddavis.io")
   (setq gnus-select-method '(nnnil))
   (setq gnus-secondary-select-methods
-        '((nntp "news.gwene.org")
+        '((nntp "news.gmane.io")
           (nnimap "fastmail"
                   (nnimap-address "imap.fastmail.com")
                   (nnimap-stream ssl)
