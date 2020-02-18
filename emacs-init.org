@@ -549,8 +549,6 @@ Add some flyspell hooks for a few modes.
 Fonts and themes
 
 #+begin_src emacs-lisp :results silent
-  (setq custom-safe-themes t)
-
   ;; from https://github.com/emacs-helm/helm/issues/2213
   ;; Fix issue with the new :extend face attribute in emacs-27
   ;; Prefer to extend to EOL as in previous emacs.
@@ -562,26 +560,30 @@ Fonts and themes
                            'unspecified))
              do (set-face-attribute f nil :extend t)))
 
+
+  (setq custom-safe-themes t)
+
+  ;; currently using my fork of emacs-theme-gruvbox
+  ;; (use-package gruvbox
+  ;;   :load-path "~/Software/emacs-theme-gruvbox"
+  ;;   :demand t)
+  ;; (add-to-list 'custom-theme-load-path "~/Software/emacs-theme-gruvbox")
+  ;; (load-theme 'gruvbox t)
+
+  (use-package gruvbox-theme
+    :ensure t
+    :config
+    (load-theme 'gruvbox t))
+
+  (let ((line (face-attribute 'mode-line :underline)))
+    (set-face-attribute 'mode-line           nil :overline   line)
+    (set-face-attribute 'mode-line-inactive  nil :overline   line)
+    (set-face-attribute 'mode-line-inactive  nil :underline  line)
+    (set-face-attribute 'mode-line           nil :box        nil)
+    (set-face-attribute 'mode-line-inactive  nil :box        nil)
+    (set-face-attribute 'mode-line-buffer-id nil :box        nil))
+
   (when window-system
-    ;; currently using my fork of emacs-theme-gruvbox
-    ;; (use-package gruvbox
-    ;;   :load-path "~/Software/emacs-theme-gruvbox"
-    ;;   :demand t)
-    ;; (add-to-list 'custom-theme-load-path "~/Software/emacs-theme-gruvbox")
-    ;; (load-theme 'gruvbox t)
-
-    (use-package gruvbox-theme
-      :ensure t
-      :config
-      (load-theme 'gruvbox t))
-
-    (let ((line (face-attribute 'mode-line :underline)))
-      (set-face-attribute 'mode-line           nil :overline   line)
-      (set-face-attribute 'mode-line-inactive  nil :overline   line)
-      (set-face-attribute 'mode-line-inactive  nil :underline  line)
-      (set-face-attribute 'mode-line           nil :box        nil)
-      (set-face-attribute 'mode-line-inactive  nil :box        nil)
-      (set-face-attribute 'mode-line-buffer-id nil :box        nil))
 
     (when ddavis-v-is-mac
       (add-to-list 'default-frame-alist '(height . 72))
