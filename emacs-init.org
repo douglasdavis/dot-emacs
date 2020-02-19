@@ -842,7 +842,7 @@ My [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] setup
 
     (setq mu4e-change-filenames-when-moving t
           mu4e-get-mail-command "true"
-          mu4e-update-interval 90
+          mu4e-update-interval 120
           mu4e-maildir "~/.mail"
           mu4e-confirm-quit nil
           mu4e-context-policy 'pick-first
@@ -933,12 +933,12 @@ My [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] setup
     (add-to-list 'mu4e-bookmarks
                  (make-mu4e-bookmark
                   :name "Unread short"
-                  :query "flag:unread and not flag:trashed and (m:/duke* or m:/cern* or m:/fastmail/INBOX or m:/gmail/INBOX*)"
+                  :query "flag:unread and (m:/duke* or m:/cern* or m:/fastmail/INBOX or m:/gmail/INBOX*)"
                   :key ?u))
     (add-to-list 'mu4e-bookmarks
                  (make-mu4e-bookmark
                   :name "Recent personal"
-                  :query "date:10d..now and (m:/fastmail/INBOX or m:/gmail/INBOX*)"
+                  :query "date:14d..now and (m:/fastmail/INBOX or m:/gmail/INBOX*)"
                   :key ?p))
     (add-to-list 'mu4e-bookmarks
                  (make-mu4e-bookmark
@@ -953,12 +953,12 @@ My [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] setup
     (add-to-list 'mu4e-bookmarks
                  (make-mu4e-bookmark
                   :name "Last day's work"
-                  :query "date:1d..now and not m:/fastmail* and not m:/cern/Mailing\\ Lists/JEDI* and not m:/gmail*"
+                  :query "date:1d..now and not m:/fastmail* and not m:/gmail*"
                   :key ?w))
     (add-to-list 'mu4e-bookmarks
                  (make-mu4e-bookmark
                   :name "Recent work"
-                  :query "date:3d..now and not m:/fastmail* and not m:/cern/Mailing\\ Lists/JEDI* and not m:/gmail*"
+                  :query "date:3d..now and not m:/fastmail* and not m:/gmail*"
                   :key ?r))
     (add-to-list 'mu4e-bookmarks
                  (make-mu4e-bookmark
