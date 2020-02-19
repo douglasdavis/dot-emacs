@@ -521,6 +521,28 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]].
 
   (setq font-latex-fontify-sectioning 1.0
         font-latex-fontify-script nil)
+
+  (use-package helm-bibtex
+    :ensure t)
+
+  (use-package company-bibtex
+    :ensure t)
+
+  (when ddavis-v-is-mac
+    (add-to-list 'company-backends 'company-bibtex)
+    (setq company-bibtex-bibliography
+          '("/Users/ddavis/Desktop/thesis/biblio/refs.bib"))
+    (setq bibtex-completion-bibliography
+          '("/Users/ddavis/Desktop/thesis/biblio/refs.bib")))
+
+  (defun ddavis/work-on-thesis ()
+    (interactive)
+    (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+    (setq reftex-plug-into-AUCTeX t)
+    (when (file-exists-p "~/Desktop/thesis/dissertation.tex")
+      (find-file "~/Desktop/thesis/dissertation.tex"))
+    (when (file-exists-p "~/Documents/thesis/dissertation.tex")
+      (find-file "~/Documents/thesis/dissertation.tex")))
 #+end_src
 
 * spell
