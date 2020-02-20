@@ -52,6 +52,11 @@
             (gcc "nnimap+cernmail:Sent")
             (eval (setq message-sendmail-extra-arguments '("-a" "cern")))
             (user-mail-address "ddavis@cern.ch")))))
+
+  ;; keys
+  (define-key gnus-group-mode-map (kbd "q") 'quit-window)
+  (define-key gnus-group-mode-map (kbd "Q") 'gnus-group-exit)
+
   ;; agent
   (setq mail-user-agent 'gnus-user-agent) ; also works with `sendmail-user-agent'
   (setq gnus-agent t)
