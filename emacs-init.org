@@ -742,18 +742,18 @@ Miscellaneous stiff that should probably be better sorted.
       "Play enclosure link with mpv."
       (interactive)
       (let ((speed ddavis-v-podcast-speed)
-            (link (nth 0 (car (elfeed-entry-enclosures elfeed-show-entry)))))
-        (message "Opening %s with with mpv..." link)
+            (podcast-link (nth 0 (car (elfeed-entry-enclosures elfeed-show-entry)))))
+        (message "Opening %s with with mpv..." podcast-link)
         (start-process "elfeed-mpv" nil "mpv"
                        "--speed" speed
-                       link)))
+                       podcast-link)))
 
     ;; Entries older than 2 weeks are marked as read
     (add-hook 'elfeed-new-entry-hook
-              (elfeed-make-tagger :before "4 weeks ago"
+              (elfeed-make-tagger :before "3 weeks ago"
                                   :remove 'unread))
 
-    (setq-default elfeed-search-filter "@3-weeks-ago"))
+    (setq-default elfeed-search-filter "@10-days-ago"))
 #+end_src
 
 * delete whitespace
