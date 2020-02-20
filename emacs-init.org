@@ -712,6 +712,12 @@ Miscellaneous stiff that should probably be better sorted.
   (use-package ace-window
     :ensure t
     :bind ("M-o" . 'ace-window))
+
+  (defun ddavis/cleanup-tramp ()
+    (interactive)
+    (tramp-cleanup-all-buffers)
+    (tramp-cleanup-all-connections)
+    (setq default-directory "~/."))
 #+end_src
 
 * elfeed
