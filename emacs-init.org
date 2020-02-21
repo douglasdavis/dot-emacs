@@ -410,7 +410,11 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]].
     :ensure t
     :commands lsp
     :init
+    (setq company-minimum-prefix-length 2) ;; default is 3
+    (setq company-idle-delay 0.1) ;; default is 0.2
+    (setq read-process-output-max (* 2 1024 1024))
     (setq lsp-clients-clangd-executable ddavis-v-clangd-exe)
+    (setq lsp-prefer-capf t)
     (setq lsp-enable-on-type-formatting nil)
     (setq lsp-auto-guess-root t))
 
@@ -419,6 +423,9 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]].
     :commands lsp-ui-mode
     :init
     (setq lsp-ui-sideline-show-hover nil))
+
+  (use-package lsp-python-ms
+    :ensure t)
 
   (use-package company-lsp
     :ensure t
