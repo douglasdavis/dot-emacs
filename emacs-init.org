@@ -558,8 +558,7 @@ Add some flyspell hooks for a few modes.
 #+end_src
 
 * looks
-
-Fonts and themes
+** themes
 
 #+begin_src emacs-lisp :results silent
   (setq custom-safe-themes t)
@@ -584,14 +583,14 @@ Fonts and themes
     (set-face-attribute 'mode-line-inactive  nil :box        nil)
     (set-face-attribute 'mode-line-buffer-id nil :box        nil))
 
+  (global-display-line-numbers-mode)
+  (setq column-number-mode t)
+#+end_src
+
+** fonts
+
+#+begin_src emacs-lisp :results silent
   (when window-system
-
-
-    (defvar ddavis-v-font
-      (cond (ddavis-v-is-mac '(font . "Source Code Pro for Powerline-12"))
-            (ddavis-v-is-pion '(font . "-SAJA-Cascadia Code-normal-normal-normal-*-*-*-*-*-m-0-iso10646-1"))
-            (ddavis-v-is-grads-18 '(font . "-*-source code pro-semibold-*-normal-*-*-100-100-100-m-0-*-*"))))
-    (add-to-list 'default-frame-alist ddavis-v-font)
 
     (when ddavis-v-is-cc7
       (set-face-attribute 'default nil
@@ -600,16 +599,24 @@ Fonts and themes
                           :height 130))
 
     (when ddavis-v-is-mac
+      (set-face-attribute 'default nil
+                          :family "Source Code Pro for Powerline"
+                          :weight 'regular
+                          :height 120))
+
+    (when ddavis-v-is-pion
+      (set-face-attribute 'defaullt nil
+                          :family "Source Code Pro",
+                          :weight 'semibold
+                          :height 130))
+
+    (when ddavis-v-is-mac
       (add-to-list 'default-frame-alist '(height . 72))
       (add-to-list 'default-frame-alist '(width . 234))
       (setq mac-allow-anti-aliasing t)))
-
-
-  (global-display-line-numbers-mode)
-  (setq column-number-mode t)
-
-
 #+end_src
+
+** extend
 
 from https://github.com/emacs-helm/helm/issues/2213; Fix issue with
 the new :extend face attribute in emacs-27 Prefer to extend to EOL as
