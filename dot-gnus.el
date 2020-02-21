@@ -54,8 +54,8 @@
             (user-mail-address "ddavis@cern.ch")))))
 
   ;; keys
-  (define-key gnus-group-mode-map (kbd "q") 'quit-window)
-  (define-key gnus-group-mode-map (kbd "Q") 'gnus-group-exit)
+  ;; (define-key gnus-group-mode-map (kbd "q") 'quit-window)
+  ;; (define-key gnus-group-mode-map (kbd "Q") 'gnus-group-exit)
 
   ;; agent
   (setq mail-user-agent 'gnus-user-agent) ; also works with `sendmail-user-agent'
