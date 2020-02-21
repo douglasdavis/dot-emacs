@@ -562,18 +562,6 @@ Add some flyspell hooks for a few modes.
 Fonts and themes
 
 #+begin_src emacs-lisp :results silent
-  ;; from https://github.com/emacs-helm/helm/issues/2213
-  ;; Fix issue with the new :extend face attribute in emacs-27
-  ;; Prefer to extend to EOL as in previous emacs.
-  (defun tv/extend-faces-matching (regexp)
-    (cl-loop for f in (face-list)
-             for face = (symbol-name f)
-             when (and (string-match regexp face)
-                       (eq (face-attribute f :extend t 'default)
-                           'unspecified))
-             do (set-face-attribute f nil :extend t)))
-
-
   (setq custom-safe-themes t)
 
   ;; currently using my fork of emacs-theme-gruvbox
@@ -598,31 +586,56 @@ Fonts and themes
 
   (when window-system
 
-    (when ddavis-v-is-mac
-      (add-to-list 'default-frame-alist '(height . 72))
-      (add-to-list 'default-frame-alist '(width . 234)))
-
-    (setq mac-allow-anti-aliasing t)
 
     (defvar ddavis-v-font
       (cond (ddavis-v-is-mac '(font . "Source Code Pro for Powerline-12"))
-            (ddavis-v-is-cc7 '(font . "-*-JetBrains Mono-normal-normal-normal-*-*-*-*-*-d-0-iso10646-1"))
             (ddavis-v-is-pion '(font . "-SAJA-Cascadia Code-normal-normal-normal-*-*-*-*-*-m-0-iso10646-1"))
             (ddavis-v-is-grads-18 '(font . "-*-source code pro-semibold-*-normal-*-*-100-100-100-m-0-*-*"))))
-    (add-to-list 'default-frame-alist ddavis-v-font))
+    (add-to-list 'default-frame-alist ddavis-v-font)
+
+    (when ddavis-v-is-cc7
+      (set-face-attribute 'default nil
+                          :family "Source Code Pro"
+                          :weight 'semibold
+                          :height 130))
+
+    (when ddavis-v-is-mac
+      (add-to-list 'default-frame-alist '(height . 72))
+      (add-to-list 'default-frame-alist '(width . 234))
+      (setq mac-allow-anti-aliasing t)))
+
 
   (global-display-line-numbers-mode)
   (setq column-number-mode t)
 
-  (when (fboundp 'set-face-extend)
-    (with-eval-after-load "mu4e"
-      (tv/extend-faces-matching "\\`mu4e"))
-    (with-eval-after-load "org"
-      (tv/extend-faces-matching "\\`org"))
-    (with-eval-after-load "magit"
-      (tv/extend-faces-matching "\\`magit"))
-    (with-eval-after-load "helm"
-      (tv/extend-faces-matching "\\`helm")))
+
+#+end_src
+
+from https://github.com/emacs-helm/helm/issues/2213; Fix issue with
+the new :extend face attribute in emacs-27 Prefer to extend to EOL as
+in previous emacs.
+
+#+begin_src emacs-lisp :results silent
+  (defun tv/extend-faces-matching (regexp)
+    (cl-loop for f in (face-list)
+             for face = (symbol-name f)
+             when (and (string-match regexp face)
+                       (eq (face-attribute f :extend t 'default)
+                           'unspecified))
+             do (set-face-attribute f nil :extend t)))
+
+  (defun ddavis/init-extend-faces ()
+    (when (fboundp 'set-face-extend)
+      (with-eval-after-load "mu4e"
+        (tv/extend-faces-matching "\\`mu4e"))
+      (with-eval-after-load "org"
+        (tv/extend-faces-matching "\\`org"))
+      (with-eval-after-load "magit"
+        (tv/extend-faces-matching "\\`magit"))
+      (with-eval-after-load "helm"
+        (tv/extend-faces-matching "\\`helm"))))
+
+  (ddavis/init-extend-faces)
 #+end_src
 
 * auth
