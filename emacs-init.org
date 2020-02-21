@@ -612,8 +612,8 @@ Add some flyspell hooks for a few modes.
                           :height 120))
 
     (when ddavis-v-is-pion
-      (set-face-attribute 'defaullt nil
-                          :family "Source Code Pro",
+      (set-face-attribute 'default nil
+                          :family "Source Code Pro"
                           :weight 'semibold
                           :height 130))
 
