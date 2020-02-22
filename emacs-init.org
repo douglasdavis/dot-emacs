@@ -302,7 +302,9 @@
            ("C-x m" . helm-M-x)
            ("C-x b" . helm-buffers-list)
            :map helm-map
-           ("<tab>" . helm-execute-persistent-action))
+           ("<tab>" . helm-execute-persistent-action)
+           :map helm-command-map
+           ("r" . ddavis/helm-project-search))
     :config
     (require 'helm-config)
     (setq helm-split-window-in-side-p t
@@ -341,8 +343,6 @@
   With WITH-TYPES, ask for file types to search in."
     (interactive "P")
     (ddavis/helm-rg (projectile-project-root) with-types))
-
-  (define-key helm-command-map "r" 'ddavis/helm-project-search)
 
   (use-package helm-projectile
     :ensure t
