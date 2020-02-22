@@ -314,6 +314,36 @@
     (helm-autoresize-mode 1)
     (helm-mode 1))
 
+  (setq helm-grep-ag-command (concat ddavis-v-rg-exe
+                                     " --color=always"
+                                     " --smart-case"
+                                     " --no-heading"
+                                     " --line-number %s %s %s")
+        helm-grep-file-path-style 'relative)
+
+  (defun ddavis/helm-rg (directory &optional with-types)
+    "Search in DIRECTORY with ripgrep.
+  With WITH-TYPES, ask for file types to search in."
+    (interactive "P")
+    (require 'helm-adaptive)
+    (helm-grep-ag-1 (expand-file-name directory)
+                    (helm-aif (and with-types
+                                   (helm-grep-ag-get-types))
+                        (helm-comp-read
+                         "RG type: " it
+                         :must-match t
+                         :marked-candidates t
+                         :fc-transformer 'helm-adaptive-sort
+                         :buffer "*helm rg types*"))))
+
+  (defun ddavis/helm-project-search (&optional with-types)
+    "Search in current project with rippgrep.
+  With WITH-TYPES, ask for file types to search in."
+    (interactive "P")
+    (ddavis/helm-rg (projectile-project-root) with-types))
+
+  (define-key helm-command-map "r" 'ddavis/helm-project-search)
+
   (use-package helm-projectile
     :ensure t
     :init (setq projectile-completion-system 'helm
@@ -329,12 +359,6 @@
     :bind (:map helm-command-map
                 ("/" . helm-fd)
                 ("f" . helm-fd-project)))
-
-  (use-package helm-rg
-    :ensure t
-    :demand
-    :init (setq helm-rg-ripgrep-executable ddavis-v-rg-exe)
-    :bind (("C-c s r" . helm-projectile-rg)))
 
   (use-package helm-descbinds
     :ensure t
@@ -864,8 +888,8 @@ Some configuration specific to using Emacs on macOS.
     (global-set-key (kbd "s-3") 'split-window-right)
     (global-set-key (kbd "s-4") 'mu4e)
     (global-set-key (kbd "s-f") 'helm-find-files)
-    (global-set-key (kbd "s-p") 'helm-projectile-find-file)
-    (global-set-key (kbd "s-r") 'helm-projectile-rg)
+    (global-set-key (kbd "s-p") 'helm-projectile)
+    (global-set-key (kbd "s-r") 'ddavis/helm-project-search)
     (global-set-key (kbd "s-o") 'other-window)
     (global-set-key (kbd "s-/") 'previous-buffer)
     (global-set-key (kbd "s-b") 'helm-buffers-list)
