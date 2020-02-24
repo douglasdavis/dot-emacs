@@ -32,70 +32,89 @@
 * variables
 
 #+begin_src emacs-lisp :results silent
-  (defvar ddavis-v-is-mac (eq system-type 'darwin))
-  (defvar ddavis-v-is-cc7 (string= (system-name) "cc7"))
-  (defvar ddavis-v-is-grads-18 (string= (system-name) "grads-18.internal.phy.duke.edu"))
-  (defvar ddavis-v-is-pion (string= (system-name) "pion"))
-  (defvar ddavis-v-is-linux-desktop (or ddavis-v-is-pion ddavis-v-is-cc7))
+  (defconst ddavis-v-is-mac (eq system-type 'darwin)
+    "true if on a Mac")
 
-  (defvar ddavis-v-enable-mu4e
+  (defconst ddavis-v-is-cc7 (string= (system-name) "cc7")
+    "true if on cc7 box")
+
+  (defconst ddavis-v-is-grads-18 (string= (system-name) "grads-18.internal.phy.duke.edu")
+    "true if on grads-18 Duke physics machine")
+
+  (defconst ddavis-v-is-pion (string= (system-name) "pion")
+    "true if on pion box")
+
+  (defconst ddavis-v-is-linux-desktop (or ddavis-v-is-pion ddavis-v-is-cc7)
+    "true if on either pion or cc7")
+
+  (defconst ddavis-v-enable-mu4e
     (or ddavis-v-is-mac
         ddavis-v-is-pion
         ddavis-v-is-cc7
-        ddavis-v-is-grads-18))
+        ddavis-v-is-grads-18)
+    "a flag for conditionally setting up mu4e stuff")
 
-  (defvar ddavis-v-enable-irc
+  (defconst ddavis-v-enable-irc
     (or ddavis-v-is-mac
         ddavis-v-is-pion
-        ddavis-v-is-cc7))
+        ddavis-v-is-cc7)
+    "a flag for conditionally setting up erc and circe")
 
-  (defvar ddavis-v-clangd-exe
+  (defconst ddavis-v-clangd-exe
     (cond (ddavis-v-is-mac "~/Software/LLVM/releases/10.x/bin/clangd")
           (ddavis-v-is-cc7 "~/Software/LLVM/releases/10.0.0/bin/clangd")
           (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clangd")
-          (ddavis-v-is-pion "/usr/bin/clangd")))
+          (ddavis-v-is-pion "/usr/bin/clangd"))
+    "machine dependent clangd executable string")
 
-  (defvar ddavis-v-clang-exe
+  (defconst ddavis-v-clang-exe
     (cond (ddavis-v-is-mac "~/Software/LLVM/releases/10.x/bin/clang")
           (ddavis-v-is-cc7 "~/Software/LLVM/releases/10.0.0/bin/clang")
           (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clang")
-          (ddavis-v-is-pion "/usr/bin/clang")))
+          (ddavis-v-is-pion "/usr/bin/clang"))
+    "machine dependent clang executable string")
 
-  (defvar ddavis-v-clang-format-exe
+  (defconst ddavis-v-clang-format-exe
     (cond (ddavis-v-is-mac "~/Software/LLVM/releases/10.x/bin/clang-format")
           (ddavis-v-is-cc7 "~/Software/LLVM/releases/10.0.0/bin/clang-format")
           (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clang-format")
-          (ddavis-v-is-pion "/usr/bin/clang-format")))
+          (ddavis-v-is-pion "/usr/bin/clang-format"))
+    "machine dependent clang-format executable string")
 
-  (defvar ddavis-v-rg-exe
+  (defconst ddavis-v-rg-exe
     (cond (ddavis-v-is-mac "/usr/local/bin/rg")
           (ddavis-v-is-cc7 "~/.cargo/bin/rg")
           (ddavis-v-is-grads-18 "~/.cargo/bin/rg")
-          (ddavis-v-is-pion "/usr/bin/rg")))
+          (ddavis-v-is-pion "/usr/bin/rg"))
+    "machine dependent ripgrep executable string")
 
-  (defvar ddavis-v-fd-exe
+  (defconst ddavis-v-fd-exe
     (cond (ddavis-v-is-mac "/usr/local/bin/fd")
           (ddavis-v-is-cc7 "~/.cargo/bin/fd")
           (ddavis-v-is-grads-18 "~/.cargo/bin/fd")
-          (ddavis-v-is-pion "/usr/bin/fd")))
+          (ddavis-v-is-pion "/usr/bin/fd"))
+    "machine dependent fd executable string")
 
-  (defvar ddavis-v-sendmail-program
+  (defconst ddavis-v-sendmail-program
     (cond (ddavis-v-is-mac "~/Software/localbase/bin/msmtp")
           (ddavis-v-is-cc7 "~/Software/localbase/bin/msmtp")
           (ddavis-v-is-grads-18 "/usr/bin/msmtp")
-          (ddavis-v-is-pion "/usr/bin/msmtp")))
+          (ddavis-v-is-pion "/usr/bin/msmtp"))
+    "machine dependent msmtp executable string")
 
-  (defvar ddavis-v-mu-exe
+  (defconst ddavis-v-mu-exe
     (cond (ddavis-v-is-mac "~/Software/mu/releases/master/bin/mu")
           (ddavis-v-is-cc7 "/usr/local/bin/mu")
           (ddavis-v-is-grads-18 "~/Software/localbase/bin/mu")
-          (ddavis-v-is-pion "/usr/bin/mu")))
+          (ddavis-v-is-pion "/usr/bin/mu"))
+    "machine dependent mu executable string")
 
-  (defvar ddavis-v-mu4e-dir
+  (defconst ddavis-v-mu4e-dir
     (cond (ddavis-v-is-mac "~/Software/mu/releases/master/share/emacs/site-lisp/mu4e")
           (ddavis-v-is-grads-18 "~/Software/localbase/share/emacs/site-lisp/mu4e")
           (ddavis-v-is-cc7 "/usr/local/share/emacs/site-lisp/mu4e")
-          (ddavis-v-is-pion "/usr/share/emacs/site-lisp/mu4e")))
+          (ddavis-v-is-pion "/usr/share/emacs/site-lisp/mu4e"))
+    "machine dependent mu4e installation location string")
 #+end_src
 
 * package
@@ -211,36 +230,26 @@
 * org
 
 #+begin_src emacs-lisp :results silent
-  (if ddavis-v-is-mac
-      ;; mac
-      (use-package org
-        :bind (("<A-down>" . 'org-move-subtree-down)
-               ("<A-up>" . 'org-move-subtree-up)
-               ("<A-left>" . 'org-promote-subtree)
-               ("<A-right>" . 'org-demote-subtree))
-        :init
-        (setq org-src-fontify-natively t)
-        :config
-        (setq org-structure-template-alist
-              (append org-structure-template-alist
-                      '(("el" . "src emacs-lisp :results silent")
-                        ("py" . "src python :results silent")
-                        ("cpp" . "src C++")))))
+  (use-package org
+    :config
+    (setq org-src-fontify-natively t)
+    (setq org-structure-template-alist
+          (append org-structure-template-alist
+                  '(("el" . "src emacs-lisp :results silent")
+                    ("py" . "src python :results silent")
+                    ("cpp" . "src C++")))))
 
-    ;; not mac
-    (use-package org
-      :bind (("<s-down>" . 'org-move-subtree-down)
-             ("<s-up>" . 'org-move-subtree-up)
-             ("<s-left>" . 'org-promote-subtree)
-             ("<s-right>" . 'org-demote-subtree))
-      :init
-      (setq org-src-fontify-natively t)
-      :config
-      (setq org-structure-template-alist
-            (append org-structure-template-alist
-                    '(("el" . "src emacs-lisp :results silent")
-                      ("py" . "src python :results silent")
-                      ("cpp" . "src C++"))))))
+  (when ddavis-v-is-mac
+    (define-key org-mode-map (kbd "<A-down>") 'org-move-subtree-down)
+    (define-key org-mode-map (kbd "<A-up>") 'org-move-subtree-up)
+    (define-key org-mode-map (kbd "<A-left>") 'org-promote-subtree)
+    (define-key org-mode-map (kbd "<A-right>") 'org-demote-subtree))
+
+  (unless ddavis-v-is-mac
+    (define-key org-mode-map (kbd "<s-down>") 'org-move-subtree-down)
+    (define-key org-mode-map (kbd "<s-up>") 'org-move-subtree-up)
+    (define-key org-mode-map (kbd "<s-left>") 'org-promote-subtree)
+    (define-key org-mode-map (kbd "<s-right>") 'org-demote-subtree))
 
   (use-package ox-md
     :after ox)
@@ -260,15 +269,12 @@
   ;;  'org-babel-load-languages
   ;;  '((python . t)))
 
-
   (define-key global-map "\C-ca" 'org-agenda)
   (setq org-agenda-files (list "~/Dropbox/org/agenda/"))
-
   (setq org-agenda-custom-commands
         '(("c" "Simple agenda view"
            ((agenda "")
             (alltodo "")))))
-
 #+end_src
 
 * projectile
@@ -276,10 +282,9 @@
 #+begin_src emacs-lisp :results silent
   (use-package projectile
     :ensure t
-    :hook
-    (after-init . projectile-mode)
     :config
-    (setq projectile-switch-project-action 'neotree-projectile-action))
+    (projectile-mode +1)
+    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
 
   (defun ddavis/projectile-proj-find-function (dir)
     (let ((root (projectile-project-root dir)))
