@@ -399,9 +399,12 @@
 
 #+begin_src emacs-lisp :results silent
   (use-package company
+    :ensure t
     :init
-    (setq company-clang-executable ddavis-v-clang-exe)
     :config
+    (setq company-clang-executable ddavis-v-clang-exe)
+    (setq company-minimum-prefix-length 2) ;; default is 3
+    (setq company-idle-delay 0.1) ;; default is 0.2
     (add-hook 'emacs-lisp-mode-hook 'company-mode)
     (add-hook 'python-mode-hook 'company-mode)
     (add-hook 'mu4e-compose-mode-hook 'company-mode)
@@ -430,18 +433,17 @@ Basically just [[https://magit.vc/][magit]].
   (bind-key "q" #'ddavis/magit-kill-buffers magit-status-mode-map)
 #+end_src
 
-* lsp
+* lsp and eglot
 
-Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]].
+Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https://github.com/joaotavora/eglot][eglot]].
 
 #+begin_src emacs-lisp :results silent
+  (setq read-process-output-max (* 2 1024 1024))
+
   (use-package lsp-mode
     :ensure t
     :commands lsp
     :init
-    (setq company-minimum-prefix-length 2) ;; default is 3
-    (setq company-idle-delay 0.1) ;; default is 0.2
-    (setq read-process-output-max (* 2 1024 1024))
     (setq lsp-clients-clangd-executable ddavis-v-clangd-exe)
     (setq lsp-prefer-capf t)
     (setq lsp-enable-on-type-formatting nil)
@@ -459,6 +461,10 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]].
   (use-package company-lsp
     :ensure t
     :commands company-lsp)
+
+  (use-package eglot
+    :ensure t
+    :config)
 #+end_src
 
 * python
@@ -497,25 +503,11 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]].
   (use-package blacken
     :ensure t)
 
-  (defun ddavis/blacken-96 ()
-    (interactive)
-    (setq blacken-line-length 96))
-
-  (defun ddavis/python-eglot-enable ()
+  (defun ddavis/eglot-prep-for-python ()
     "prepare python eglot setup"
     (interactive)
-    (use-package eglot
-      :ensure t
-      :config
-      (require 'eglot))
     (setq company-backends (cons 'company-capf (remove 'company-capf company-backends)))
     (add-to-list 'eglot-server-programs '(python-mode . ("pyls"))))
-
-  ;; (defun ddavis/py-activate (env-name)
-  ;;   (require 'pyvenv)
-  ;;   (interactive "sEnv name: ")
-  ;;   (message env-name)
-  ;;   (pyvenv-activate (format "~/.pyenv/versions/%s" env-name)))
 #+end_src
 
 * c++
@@ -524,18 +516,11 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]].
   (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
   (add-to-list 'auto-mode-alist '("\\.icc\\'" . c++-mode))
 
-  (defun ddavis/cpp-eglot-setup ()
+  (defun ddavis/eglot-prep-for-cpp ()
     "enable variables and hooks for eglot cpp IDE"
     (interactive)
-    (use-package eglot
-      :ensure t
-      :config
-      (require 'eglot))
-    (delete 'company-capf company-backends)
-    (add-to-list 'company-backends 'company-capf)
-    (add-to-list 'eglot-server-programs
-                 `((c++-mode cc-mode) ,ddavis-v-clangd-exe))
-    (add-hook 'c++-mode-hook 'company-mode))
+    (setq company-backends (cons 'company-capf (remove 'company-capf company-backends)))
+    (add-to-list 'eglot-server-programs `((c++-mode cc-mode) ,ddavis-v-clangd-exe)))
 
   (use-package clang-format
     :ensure t
@@ -635,8 +620,9 @@ Add some flyspell hooks for a few modes.
                           :height 130))
 
     (when ddavis-v-is-mac
+      (setq mac-allow-anti-aliasing t)
       (set-face-attribute 'default nil
-                          :family "Source Code Pro for Powerline"
+                          :family "SF Mono"
                           :weight 'regular
                           :height 120))
 
@@ -646,10 +632,8 @@ Add some flyspell hooks for a few modes.
                           :weight 'semibold
                           :height 130))
 
-    (when ddavis-v-is-mac
-      (add-to-list 'default-frame-alist '(height . 72))
-      (add-to-list 'default-frame-alist '(width . 234))
-      (setq mac-allow-anti-aliasing t)))
+    (add-to-list 'default-frame-alist '(height . 72))
+    (add-to-list 'default-frame-alist '(width . 234)))
 #+end_src
 
 ** extend
@@ -873,6 +857,14 @@ Some configuration specific to using Emacs on macOS.
         (delete-frame)
       (delete-window)))
 
+  (defun ddavis/switch-to-or-start-gnus ()
+    "if we have a '*Group*' buffer go and and switch to it; if not
+  spin up gnus. just for binding to s-u on macOS."
+    (interactive)
+    (if (get-buffer "*Group*")
+        (switch-to-buffer "*Group*")
+      (gnus)))
+
   (when ddavis-v-is-mac
     (use-package exec-path-from-shell
       :ensure t
@@ -906,6 +898,7 @@ Some configuration specific to using Emacs on macOS.
     (global-set-key (kbd "s-g") 'magit-status)
     (global-set-key (kbd "s-t") 'neotree-toggle)
     (global-set-key (kbd "s-w") 'ddavis/delete-frame-or-window)
+    (global-set-key (kbd "s-u") 'ddavis/switch-to-or-start-gnus)
 
     (setq browse-url-browser-function 'browse-url-default-macosx-browser))
 #+end_src
@@ -1150,88 +1143,89 @@ Emacs IRC client [[https://www.emacswiki.org/emacs/ERC][ERC]] or the third party
 usage of both.
 
 #+begin_src emacs-lisp :results silent
-  (when ddavis-v-enable-irc
-    (require 'erc)
+  (use-package password-store
+    :when ddavis-v-enable-irc
+    :ensure t)
 
-    (use-package password-store
-      :when ddavis-v-enable-irc
-      :ensure t
-      :config
-      (require 'password-store))
+  (defun ddavis/irc-pw-freenode (server)
+    (password-store-get "Freenode"))
 
-    (defun ddavis/irc-pw-freenode (server)
-      (password-store-get "Freenode"))
+  (defun ddavis/irc-pw-gitter (server)
+    (password-store-get "Gitter"))
 
-    (defun ddavis/irc-pw-gitter (server)
-      (password-store-get "Gitter"))
+  (use-package circe
+    :when ddavis-v-enable-irc
+    :ensure t
+    :config
+    (setq circe-reduce-lurker-spam t
+          circe-network-options
+          `(("Freenode"
+             :nick "ddavis"
+             :nickserv-password ddavis/irc-pw-freenode
+             :nickserv-identify-confirmation "Freenode password accepted for ddavis"
+             :tls t)
+            ("Gitter"
+             :server-buffer-name "Gitter"
+             :host "irc.gitter.im"
+             :port "6697"
+             :nick "douglasdavis"
+             :pass ddavis/irc-pw-gitter
+             :tls t)))
+    (require 'circe-color-nicks)
 
-    (use-package circe
-      :when ddavis-v-enable-irc
-      :ensure t
-      :config
-      (setq circe-reduce-lurker-spam t
-            circe-network-options
-            `(("Freenode"
-               :nick "ddavis"
-               :nickserv-password ddavis/irc-pw-freenode
-               :tls t)
-              ;; :channels (:after-auth "#emacs" "#sr.ht" "#python" "#pydata" "#scipy"))
-              ("Gitter"
-               :server-buffer-name "Gitter"
-               :host "irc.gitter.im"
-               :port "6697"
-               :nick "douglasdavis"
-               :pass ddavis/irc-pw-gitter
-               :tls t)))
-      (require 'circe-color-nicks)
-      (enable-circe-color-nicks)
-      (setq circe-use-cycle-completion t
-            circe-format-say "<{nick}> {body}")
-      ;; (setq lui-fill-column 79
-      ;;       lui-fill-type 18)
-      (setq helm-mode-no-completion-in-region-in-modes
-            '(circe-channel-mode
-              circe-query-mode
-              circe-server-mode))
+    (setq circe-color-nicks-pool-type
+          '("#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#fe8019"
+            "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e"))
 
-      (defun ddavis/circe-prompt ()
-        (lui-set-prompt
-         (concat (propertize (concat "[" (buffer-name) "] >")
-                             'face 'circe-prompt-face)
-                 " ")))
-      (add-hook 'circe-chat-mode-hook 'ddavis/circe-prompt))
+    (enable-circe-color-nicks)
+    (setq circe-use-cycle-completion t
+          circe-format-say "<{nick}> {body}"
+          circe-color-nicks-everywhere t)
+    (setq helm-mode-no-completion-in-region-in-modes
+          '(circe-channel-mode
+            circe-query-mode
+            circe-server-mode))
 
-    (use-package helm-circe
-      :when ddavis-v-enable-irc
-      :after circe
-      :ensure t
-      :bind (:map helm-command-map ("i" . helm-circe))
-      :config
-      (when ddavis-v-is-mac
-        (global-set-key (kbd "s-i") 'helm-circe)))
+    (defun ddavis/circe-prompt ()
+      (lui-set-prompt
+       (concat (propertize (concat "[" (buffer-name) "] >")
+                           'face 'circe-prompt-face)
+               " ")))
+    (add-hook 'circe-chat-mode-hook 'ddavis/circe-prompt))
 
-    (use-package erc
-      :config
-      (setq erc-hide-list '("JOIN" "PART" "QUIT")
-            erc-user-full-name "Doug Davis"
-            erc-prompt-for-password nil
-            erc-track-enable-keybindings nil
-            erc-kill-server-buffer-on-quit t
-            erc-kill-buffer-on-part t
-            erc-prompt (lambda () (concat "[" (buffer-name) "] >"))))
+  (use-package helm-circe
+    :when ddavis-v-enable-irc
+    :after circe
+    :ensure t
+    :bind (:map helm-command-map ("i" . helm-circe))
+    :config
+    (when ddavis-v-is-mac
+      (global-set-key (kbd "s-i") 'helm-circe)))
 
-    (with-eval-after-load 'erc-faces
-      (set-face-attribute 'erc-nick-default-face :bold nil))
+  (use-package erc
+    :when ddavis-v-enable-irc
+    :config
+    (setq erc-hide-list '("JOIN" "PART" "QUIT")
+          erc-user-full-name "Doug Davis"
+          erc-prompt-for-password nil
+          erc-track-enable-keybindings nil
+          erc-kill-server-buffer-on-quit t
+          erc-kill-buffer-on-part t
+          erc-prompt (lambda () (concat "[" (buffer-name) "] >"))))
 
-    (defun ddavis/erc-start-or-switch ()
-      (interactive)
-      (if (get-buffer "irc.freenode.net:6667")
-          (switch-to-buffer "irc.freenode.net:6667")
-        (when (y-or-n-p "Start? ")
-          (erc :server "irc.freenode.net" :port 6667 :nick "ddavis"))))
+  (with-eval-after-load 'erc-faces
+    (set-face-attribute 'erc-nick-default-face :bold nil))
 
-    (use-package erc-hl-nicks
-      :after erc))
+  (defun ddavis/erc-start-or-switch ()
+    (interactive)
+    (if (get-buffer "irc.freenode.net:6667")
+        (switch-to-buffer "irc.freenode.net:6667")
+      (when (y-or-n-p "Start? ")
+        (erc :server "irc.freenode.net" :port 6667 :nick "ddavis"))))
+
+  (use-package erc-hl-nicks
+    :when ddavis-v-enable-irc
+    :after erc)
 #+end_src
 
 end
