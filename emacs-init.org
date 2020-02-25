@@ -44,6 +44,9 @@
   (defconst ddavis-v-is-pion (string= (system-name) "pion")
     "true if on pion box")
 
+  (defconst ddavis-v-is-dobian (string= (system-name) "dobian")
+    "true if on dobian box")
+
   (defconst ddavis-v-is-linux-desktop (or ddavis-v-is-pion ddavis-v-is-cc7)
     "true if on either pion or cc7")
 
@@ -57,6 +60,7 @@
   (defconst ddavis-v-enable-irc
     (or ddavis-v-is-mac
         ddavis-v-is-pion
+        ddavis-v-is-dobian
         ddavis-v-is-cc7)
     "a flag for conditionally setting up erc and circe")
 
@@ -64,6 +68,7 @@
     (cond (ddavis-v-is-mac "~/Software/LLVM/releases/10.x/bin/clangd")
           (ddavis-v-is-cc7 "~/Software/LLVM/releases/10.0.0/bin/clangd")
           (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clangd")
+          (ddavis-v-is-dobian "/usr/bin/clangd")
           (ddavis-v-is-pion "/usr/bin/clangd"))
     "machine dependent clangd executable string")
 
@@ -71,6 +76,7 @@
     (cond (ddavis-v-is-mac "~/Software/LLVM/releases/10.x/bin/clang")
           (ddavis-v-is-cc7 "~/Software/LLVM/releases/10.0.0/bin/clang")
           (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clang")
+          (ddavis-v-is-dobian "/usr/bin/clang")
           (ddavis-v-is-pion "/usr/bin/clang"))
     "machine dependent clang executable string")
 
@@ -78,6 +84,7 @@
     (cond (ddavis-v-is-mac "~/Software/LLVM/releases/10.x/bin/clang-format")
           (ddavis-v-is-cc7 "~/Software/LLVM/releases/10.0.0/bin/clang-format")
           (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clang-format")
+          (ddavis-v-is-dobian "/usr/bin/clang-format")
           (ddavis-v-is-pion "/usr/bin/clang-format"))
     "machine dependent clang-format executable string")
 
@@ -85,6 +92,7 @@
     (cond (ddavis-v-is-mac "/usr/local/bin/rg")
           (ddavis-v-is-cc7 "~/.cargo/bin/rg")
           (ddavis-v-is-grads-18 "~/.cargo/bin/rg")
+          (ddavis-v-is-dobian "~/.cargo/bin/rg")
           (ddavis-v-is-pion "/usr/bin/rg"))
     "machine dependent ripgrep executable string")
 
@@ -92,6 +100,7 @@
     (cond (ddavis-v-is-mac "/usr/local/bin/fd")
           (ddavis-v-is-cc7 "~/.cargo/bin/fd")
           (ddavis-v-is-grads-18 "~/.cargo/bin/fd")
+          (ddavis-v-is-dobian "~/.cargo/bin/fd")
           (ddavis-v-is-pion "/usr/bin/fd"))
     "machine dependent fd executable string")
 
@@ -631,6 +640,12 @@ Add some flyspell hooks for a few modes.
                           :family "Source Code Pro"
                           :weight 'semibold
                           :height 130))
+
+    (when ddavis-v-is-dobian
+      (set-face-attribute 'default nil
+                          :family "Terminus (TTF)"
+                          :weight 'regular
+                          :height 90))
 
     (add-to-list 'default-frame-alist '(height . 72))
     (add-to-list 'default-frame-alist '(width . 234)))
