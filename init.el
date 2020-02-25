@@ -24,7 +24,7 @@
 
 ;;; Code:
 
-;; plenty of RAM
-(setq gc-cons-threshold (* 200 1024 1024))
+;; plenty of RAM (100MB threshold)
+(setq gc-cons-threshold (* 100 1024 1024))
 (require 'ob-tangle)
-(org-babel-load-file "~/.emacs.d/dot-emacs/emacs-init.org")
+(org-babel-load-file (concat user-emacs-directory "dot-emacs/emacs-init.org"))
