@@ -880,42 +880,39 @@ Some configuration specific to using Emacs on macOS.
         (switch-to-buffer "*Group*")
       (gnus)))
 
-  (when ddavis-v-is-mac
-    (use-package exec-path-from-shell
-      :ensure t
-      :config
-      (setq exec-path-from-shell-variables '("PATH"  "MANPATH" "SHELL"))
-      (exec-path-from-shell-initialize))
+  (use-package exec-path-from-shell
+    :if (memq window-system '(mac ns))
+    :ensure t
+    :config
+    (exec-path-from-shell-initialize))
 
-    (when (display-graphic-p)
-      (setq-default ns-alternate-modifier 'meta)
-      (setq-default mac-option-modifier 'meta)
-      (setq-default ns-right-alternate-modifier nil)
-      (setq-default ns-command-modifier 'super)
-      (setq-default mac-command-modifier 'super)
-      (setq-default ns-function-modifier 'hyper)
-      (setq-default mac-function-modifier 'hyper))
-
-    (global-unset-key (kbd "s-t"))
+  (when (memq window-system '(mac ns))
+    (setq browse-url-browser-function 'browse-url-default-macosx-browser)
+    (setq-default ns-alternate-modifier 'meta)
+    (setq-default mac-option-modifier 'meta)
+    (setq-default ns-right-alternate-modifier nil)
+    (setq-default ns-command-modifier 'super)
+    (setq-default mac-command-modifier 'super)
+    (setq-default ns-function-modifier 'hyper)
+    (setq-default mac-function-modifier 'hyper)
     (global-set-key [(meta shift up)]  'ddavis/move-line-up)
     (global-set-key [(meta shift down)]  'ddavis/move-line-down)
+    (global-set-key (kbd "s-/") 'previous-buffer)
     (global-set-key (kbd "s-\\") 'ddavis/toggle-window-split)
     (global-set-key (kbd "s-1") 'delete-other-windows)
     (global-set-key (kbd "s-2") 'split-window-below)
     (global-set-key (kbd "s-3") 'split-window-right)
     (global-set-key (kbd "s-4") 'mu4e)
+    (global-set-key (kbd "s-b") 'helm-buffers-list)
     (global-set-key (kbd "s-f") 'helm-find-files)
+    (global-set-key (kbd "s-g") 'magit-status)
+    (global-set-key (kbd "s-o") 'other-window)
     (global-set-key (kbd "s-p") 'helm-projectile)
     (global-set-key (kbd "s-r") 'ddavis/helm-project-search)
-    (global-set-key (kbd "s-o") 'other-window)
-    (global-set-key (kbd "s-/") 'previous-buffer)
-    (global-set-key (kbd "s-b") 'helm-buffers-list)
-    (global-set-key (kbd "s-g") 'magit-status)
     (global-set-key (kbd "s-t") 'neotree-toggle)
-    (global-set-key (kbd "s-w") 'ddavis/delete-frame-or-window)
     (global-set-key (kbd "s-u") 'ddavis/switch-to-or-start-gnus)
-
-    (setq browse-url-browser-function 'browse-url-default-macosx-browser))
+    (global-set-key (kbd "s-w") 'ddavis/delete-frame-or-window)
+    (global-unset-key (kbd "s-t")))
 #+end_src
 
 * email
