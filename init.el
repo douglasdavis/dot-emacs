@@ -25,31 +25,6 @@
 ;;; Code:
 
 ;; plenty of RAM
-(setq gc-cons-threshold 100000000)
+(setq gc-cons-threshold (* 200 1024 1024))
 (require 'ob-tangle)
 (org-babel-load-file "~/.emacs.d/dot-emacs/emacs-init.org")
-
-
-;; (require 'ddavis-vars)
-;; (require 'ddavis-package)
-;; (require 'ddavis-utils)
-;; (require 'ddavis-org)
-;; (require 'ddavis-projectile)
-;; (require 'ddavis-helm)
-;; (require 'ddavis-eshell)
-;; (require 'ddavis-company)
-;; (require 'ddavis-vc)
-;; (require 'ddavis-python)
-;; (require 'ddavis-cpp)
-;; (require 'ddavis-tex)
-;; (require 'ddavis-spell)
-;; (require 'ddavis-looks)
-;; (require 'ddavis-misc)
-;; (require 'ddavis-lsp)
-
-;; (when ddavis-v-is-mac
-;;   (require 'ddavis-macos))
-;; (when ddavis-v-enable-mu4e
-;;   (require 'ddavis-mu4e))
-;; (when ddavis-v-enable-irc
-;;   (require 'ddavis-irc))
