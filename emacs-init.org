@@ -12,6 +12,9 @@
             (eq system-type 'gnu/linux))
     (setq default-directory "~/"))
 
+  ;; if an emacs client, don't kill buffer when exiting
+  (setq server-kill-new-buffers nil)
+
   (fset 'yes-or-no-p 'y-or-n-p)
 
   ;; this init.el file is designed to be a symlink to the init.el file
