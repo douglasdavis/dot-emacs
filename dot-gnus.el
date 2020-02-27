@@ -1,5 +1,6 @@
 (use-package gnus
   :config
+  (setq gnus-startup-file "~/Syncthing/Repo/gnus/newsrc")
   (setq user-full-name "Doug Davis"
         user-mail-address "ddavis@ddavis.io")
   (setq gnus-select-method '(nnnil))
