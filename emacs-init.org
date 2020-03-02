@@ -496,10 +496,11 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
       (pyvenv-workon (projectile-project-name))
       (if (file-directory-p pyvenv-virtual-env)
           (lsp)
-        (message (format "%s does not exist, set env manually"
-                         pyvenv-virtual-env))
-        (call-interactively #'pyvenv-workon)
-        (lsp))))
+        (progn
+          (message (format "%s does not exist, set manually"
+                           pyvenv-virtual-env))
+          (call-interactively #'pyvenv-workon)
+          (lsp)))))
 
   (use-package elpy
     :ensure t)
