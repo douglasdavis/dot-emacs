@@ -131,7 +131,6 @@
 #+begin_src emacs-lisp :results silent
   (require 'package)
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-  (package-initialize)
 
   (unless (package-installed-p 'use-package)
     (package-refresh-contents)
@@ -632,8 +631,8 @@ Add some flyspell hooks for a few modes.
 
     (when ddavis-v-is-cc7
       (set-face-attribute 'default nil
-                          :family "Source Code Pro"
-                          :weight 'semibold
+                          :family "JetBrains Mono"
+                          :weight 'medium
                           :height 130))
 
     (when ddavis-v-is-mac
@@ -956,6 +955,8 @@ My [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] setup
           mu4e-maildir "~/.mail"
           mu4e-confirm-quit nil
           mu4e-context-policy 'pick-first
+          mu4e-user-mail-address-list '()
+          mu4e-attachment-dir (expand-file-name "~/Downloads/")
           mu4e-change-filenames-when-moving t)
 
     (defun ddavis/mu4e-jump-via-helm ()
