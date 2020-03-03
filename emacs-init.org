@@ -638,8 +638,8 @@ Add some flyspell hooks for a few modes.
     (when ddavis-v-is-mac
       (setq mac-allow-anti-aliasing t)
       (set-face-attribute 'default nil
-                          :family "SF Mono"
-                          :weight 'regular
+                          :family "JetBrains Mono"
+                          :weight 'medium
                           :height 120))
 
     (when ddavis-v-is-pion
