@@ -434,10 +434,19 @@ Basically just [[https://magit.vc/][magit]].
 #+begin_src emacs-lisp :results silent
   (setq vc-follow-symlinks t)
 
+  (defun ddavis/magit-kill-buffers ()
+    "See `https://manuel-uberti.github.io/emacs/2018/02/17/magit-bury-buffer/'"
+    (interactive)
+    (let ((buffers (magit-mode-get-buffers)))
+      (magit-restore-window-configuration)
+      (mapc #'kill-buffer buffers)))
+
   (use-package magit
     :ensure t
     :demand
-    :bind ("C-x g" . 'magit-status))
+    :bind ("C-x g" . 'magit-status)
+    :config
+    (bind-key "q" #'ddavis/magit-kill-buffers magit-status-mode-map))
 #+end_src
 
 * lsp and eglot
