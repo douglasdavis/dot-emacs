@@ -473,8 +473,7 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
     :commands company-lsp)
 
   (use-package eglot
-    :ensure t
-    :config)
+    :ensure t)
 #+end_src
 
 * python
@@ -530,6 +529,7 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
   (defun ddavis/eglot-prep-for-cpp ()
     "enable variables and hooks for eglot cpp IDE"
     (interactive)
+    (require 'eglot)
     (setq company-backends (cons 'company-capf (remove 'company-capf company-backends)))
     (add-to-list 'eglot-server-programs `((c++-mode cc-mode) ,ddavis-v-clangd-exe)))
 
