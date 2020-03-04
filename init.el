@@ -24,7 +24,10 @@
 
 ;;; Code:
 
-;; plenty of RAM (100MB threshold)
+;; plenty of RAM
+(let ((gc-cons-threshold most-positive-fixnum))
+  (require 'ob-tangle)
+  (org-babel-load-file (concat user-emacs-directory "dot-emacs/emacs-init.org"))
+  (garbage-collect))
+
 (setq gc-cons-threshold (* 100 1024 1024))
-(require 'ob-tangle)
-(org-babel-load-file (concat user-emacs-directory "dot-emacs/emacs-init.org"))
