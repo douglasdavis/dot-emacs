@@ -1,7 +1,7 @@
 #+AUTHOR: Doug Davis
 #+STARTUP: indent
 
-* startup
+* Startup
 
 #+begin_src emacs-lisp :results silent
   ;; Use .el if it is newer
@@ -29,7 +29,7 @@
         user-full-name "Doug Davis")
 #+end_src
 
-* variables
+* Variables
 
 #+begin_src emacs-lisp :results silent
   (defconst ddavis-v-is-mac (eq system-type 'darwin)
@@ -126,7 +126,7 @@
     "machine dependent mu4e installation location string")
 #+end_src
 
-* package
+* Package
 
 #+begin_src emacs-lisp :results silent
   (require 'package)
@@ -147,7 +147,7 @@
     (auto-package-update-maybe))
 #+end_src
 
-* utils
+* Utils
 
 #+begin_src emacs-lisp :results silent
   (defun ddavis/enable-cua-selection ()
@@ -192,7 +192,6 @@
     (forward-line -1)
     (indent-according-to-mode))
 
-
   (defun ddavis/copy-lines-matching-re (re)
     "put lines matching re in a buffer named *matching*"
     (interactive "sRegexp to match: ")
@@ -207,7 +206,6 @@
                                                    (line-beginning-position 2))
                    result-buffer))))
       (pop-to-buffer result-buffer)))
-
 
   (defun ddavis/toggle-window-split ()
     (interactive)
@@ -241,7 +239,7 @@
     (find-file "~/."))
 #+end_src
 
-* org
+* Org
 
 #+begin_src emacs-lisp :results silent
   (use-package org
@@ -291,7 +289,7 @@
             (alltodo "")))))
 #+end_src
 
-* projectile
+* Projectile
 
 #+begin_src emacs-lisp :results silent
   (use-package projectile
@@ -308,7 +306,7 @@
     (add-to-list 'project-find-functions 'ddavis/projectile-proj-find-function))
 #+end_src
 
-* helm
+* Helm
 
 #+begin_src emacs-lisp :results silent
   (use-package helm
@@ -409,7 +407,7 @@
     (delete-window))
 #+end_src
 
-* company
+* Company
 
 #+begin_src emacs-lisp :results silent
   (use-package company
@@ -426,7 +424,7 @@
     (add-hook 'LaTeX-mode-hook 'company-mode))
 #+end_src
 
-* version control
+* Version control
 
 Basically just [[https://magit.vc/][magit]].
 
@@ -448,7 +446,7 @@ Basically just [[https://magit.vc/][magit]].
     (bind-key "q" #'ddavis/magit-kill-buffers magit-status-mode-map))
 #+end_src
 
-* lsp and eglot
+* LSP and Eglot
 
 Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https://github.com/joaotavora/eglot][eglot]].
 
@@ -481,7 +479,7 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
     :ensure t)
 #+end_src
 
-* python
+* Python
 
 #+begin_src emacs-lisp :results silent
   (use-package pyvenv
@@ -525,7 +523,7 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
     (add-to-list 'eglot-server-programs '(python-mode . ("pyls"))))
 #+end_src
 
-* c++
+* C++
 
 #+begin_src emacs-lisp :results silent
   (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
@@ -579,7 +577,7 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
       (find-file "~/Documents/thesis/dissertation.tex")))
 #+end_src
 
-* spell
+* Spell
 
 Add some flyspell hooks for a few modes.
 
@@ -594,7 +592,7 @@ Add some flyspell hooks for a few modes.
      mu4e-compose-mode-hook))
 #+end_src
 
-* looks
+* Looks
 ** themes
 
 #+begin_src emacs-lisp :results silent
@@ -687,7 +685,7 @@ in previous emacs.
   (ddavis/init-extend-faces)
 #+end_src
 
-* auth
+* Auth
 
 Setting up authentication with encryption
 
@@ -701,9 +699,18 @@ Setting up authentication with encryption
   (epa-file-enable)
 #+end_src
 
-* misc
+* Misc
 
-Miscellaneous stiff that should probably be better sorted.
+Miscellaneous stuff that should probably be better sorted.
+
+** Bindings
+
+#+begin_src emacs-lisp :results silent
+  (global-set-key (kbd "C-c q") 'auto-fill-mode)
+  (global-set-key (kbd "C-x \\") 'ddavis/toggle-window-split)
+#+end_src
+
+** Random
 
 #+begin_src emacs-lisp :results silent
   ;; misc seq's
@@ -731,10 +738,27 @@ Miscellaneous stiff that should probably be better sorted.
   (menu-bar-mode -1)
   (show-paren-mode 1)
 
-  ;; some key bindings which don't require any external packages.
-  (global-set-key (kbd "C-c q") 'auto-fill-mode)
-  (global-set-key (kbd "C-x \\") 'ddavis/toggle-window-split)
+  ;; delete trailing whitepace in a few modes
+  (mapc
+   (lambda (language-mode-hook)
+     (add-hook language-mode-hook
+               (lambda ()
+                 (add-to-list 'write-file-functions 'delete-trailing-whitespace))))
+   '(text-mode-hook
+     c-mode-common-hook
+     emacs-lisp-mode-hook
+     python-mode-hook
+     markdown-mode-hook
+     bash-mode-hook
+     sh-mode-hook
+     cmake-mode-hook
+     fundamental-mode-hook
+     LaTeX-mode-hook))
+#+end_src
 
+** Some packages
+
+#+begin_src emacs-lisp :results silent
   (use-package neotree
     :ensure t
     :config
@@ -776,7 +800,7 @@ Miscellaneous stiff that should probably be better sorted.
     :bind ("M-o" . 'ace-window))
 #+end_src
 
-* elfeed
+* Elfeed
 
 #+begin_src emacs-lisp :results silent
   (use-package elfeed
@@ -812,27 +836,7 @@ Miscellaneous stiff that should probably be better sorted.
     (setq-default elfeed-search-filter "@10-days-ago"))
 #+end_src
 
-* delete whitespace
-
-#+begin_src emacs-lisp :results silent
-  (mapc
-   (lambda (language-mode-hook)
-     (add-hook language-mode-hook
-               (lambda ()
-                 (add-to-list 'write-file-functions 'delete-trailing-whitespace))))
-   '(text-mode-hook
-     c-mode-common-hook
-     emacs-lisp-mode-hook
-     python-mode-hook
-     markdown-mode-hook
-     bash-mode-hook
-     sh-mode-hook
-     cmake-mode-hook
-     fundamental-mode-hook
-     LaTeX-mode-hook))
-#+end_src
-
-* browser
+* Browser
 
 #+begin_src emacs-lisp :results silent
   (when ddavis-v-is-cc7
@@ -844,7 +848,7 @@ Miscellaneous stiff that should probably be better sorted.
           browse-url-generic-program "firefox-developer-edition"))
 #+end_src
 
-* dired
+* Dired
 
 #+begin_src emacs-lisp :results silent
   (use-package all-the-icons
@@ -916,7 +920,7 @@ Some configuration specific to using Emacs on macOS.
     (global-unset-key (kbd "s-t")))
 #+end_src
 
-* email
+* Email
 ** sending mail
 
 #+begin_src emacs-lisp :results silent
@@ -1151,11 +1155,13 @@ My [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] setup
   (require 'ddavis-mu4e))
 (when ddavis-v-enable-irc
   (require 'ddavis-irc))
-* irc
+* IRC
 
 I haven't really been able to make up my mind on using the builtin
 Emacs IRC client [[https://www.emacswiki.org/emacs/ERC][ERC]] or the third party client [[https://github.com/jorgenschaefer/circe][Circe]]. This configures
 usage of both.
+
+** Circe
 
 #+begin_src emacs-lisp :results silent
   (use-package password-store
@@ -1167,6 +1173,23 @@ usage of both.
 
   (defun ddavis/irc-pw-gitter (server)
     (password-store-get "Gitter"))
+
+  (defun circe-network-connected-p (network)
+    "Return non-nil if there's any Circe server-buffer whose
+    `circe-server-netwok' is NETWORK."
+    (catch 'return
+      (dolist (buffer (circe-server-buffers))
+        (with-current-buffer buffer
+          (if (string= network circe-server-network)
+              (throw 'return t))))))
+
+  (defun circe-maybe-connect (network)
+    "Connect to NETWORK, but ask user for confirmation if it's
+    already been connected to."
+    (interactive "sNetwork: ")
+    (if (or (not (circe-network-connected-p network))
+            (y-or-n-p (format "Already connected to %s, reconnect?" network)))
+        (circe network)))
 
   (use-package circe
     :when ddavis-v-enable-irc
@@ -1206,7 +1229,10 @@ usage of both.
        (concat (propertize (concat "[" (buffer-name) "] >")
                            'face 'circe-prompt-face)
                " ")))
-    (add-hook 'circe-chat-mode-hook 'ddavis/circe-prompt))
+    (add-hook 'circe-chat-mode-hook 'ddavis/circe-prompt)
+
+    (setq circe-default-part-message
+          (concat "Closed Circe (" circe-version ") buffer in GNU Emacs (" emacs-version ")")))
 
   (use-package helm-circe
     :when ddavis-v-enable-irc
@@ -1216,7 +1242,11 @@ usage of both.
     :config
     (when ddavis-v-is-mac
       (global-set-key (kbd "s-i") 'helm-circe)))
+#+end_src
 
+** ERC
+
+#+begin_src emacs-lisp :results silent
   (use-package erc
     :when ddavis-v-enable-irc
     :config
