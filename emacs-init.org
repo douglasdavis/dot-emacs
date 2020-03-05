@@ -296,6 +296,8 @@
     :ensure t
     :config
     (projectile-mode +1)
+    ;; define my own projects
+    (setq projectile-track-known-projects-automatically nil)
     (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
 
   (defun ddavis/projectile-proj-find-function (dir)
@@ -911,6 +913,7 @@ Some configuration specific to using Emacs on macOS.
     (global-set-key (kbd "s-1") 'delete-other-windows)
     (global-set-key (kbd "s-2") 'split-window-below)
     (global-set-key (kbd "s-3") 'split-window-right)
+    (global-set-key (kbd "s-5") 'projectile-find-file-in-known-projects)
     (global-set-key (kbd "s-4") 'mu4e)
     (global-set-key (kbd "s-d") (lambda () (interactive)
                                   (find-file "~/.emacs.d/dot-emacs/emacs-init.org")))
@@ -1157,10 +1160,6 @@ My [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] setup
 
 #+end_src
 
-(when ddavis-v-enable-mu4e
-  (require 'ddavis-mu4e))
-(when ddavis-v-enable-irc
-  (require 'ddavis-irc))
 * IRC
 
 I haven't really been able to make up my mind on using the builtin
