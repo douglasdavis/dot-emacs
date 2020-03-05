@@ -708,6 +708,10 @@ Miscellaneous stuff that should probably be better sorted.
 #+begin_src emacs-lisp :results silent
   (global-set-key (kbd "C-c q") 'auto-fill-mode)
   (global-set-key (kbd "C-x \\") 'ddavis/toggle-window-split)
+
+  (global-unset-key (kbd "C-d"))
+  (global-set-key (kbd "C-d f") (lambda () (interactive)
+                                  (find-file "~/.emacs.d/dot-emacs/emacs-init.org")))
 #+end_src
 
 ** Random
@@ -908,6 +912,8 @@ Some configuration specific to using Emacs on macOS.
     (global-set-key (kbd "s-2") 'split-window-below)
     (global-set-key (kbd "s-3") 'split-window-right)
     (global-set-key (kbd "s-4") 'mu4e)
+    (global-set-key (kbd "s-d") (lambda () (interactive)
+                                  (find-file "~/.emacs.d/dot-emacs/emacs-init.org")))
     (global-set-key (kbd "s-b") 'helm-buffers-list)
     (global-set-key (kbd "s-f") 'helm-find-files)
     (global-set-key (kbd "s-g") 'magit-status)
@@ -1271,6 +1277,16 @@ usage of both.
   (use-package erc-hl-nicks
     :when ddavis-v-enable-irc
     :after erc)
+#+end_src
+
+* Helpful
+
+#+begin_src emacs-lisp :results silent
+  (use-package helpful
+    :ensure t
+    :bind (("C-h f" . #'helpful-callable)
+           ("C-h v" . #'helpful-variable)
+           ("C-h k" . #'helpful-key)))
 #+end_src
 
 end
