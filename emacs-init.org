@@ -61,6 +61,7 @@
     (or ddavis-v-is-mac
         ddavis-v-is-pion
         ddavis-v-is-dobian
+        ddavis-v-is-grads-18
         ddavis-v-is-cc7)
     "a flag for conditionally setting up erc and circe")
 
@@ -1251,7 +1252,9 @@ usage of both.
     (add-hook 'circe-chat-mode-hook 'ddavis/circe-prompt)
 
     (setq circe-default-part-message
-          (concat "Closed Circe (" circe-version ") buffer in GNU Emacs (" emacs-version ")")))
+          (concat "Closed Circe (" circe-version ") buffer in GNU Emacs (" emacs-version ")"))
+    (setq circe-default-part-message
+          (concat "Quit Circe (" circe-version ") buffer in GNU Emacs (" emacs-version ")")))
 
   (use-package helm-circe
     :when ddavis-v-enable-irc
