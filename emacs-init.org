@@ -602,15 +602,15 @@ Add some flyspell hooks for a few modes.
 
   ;; currently using my fork of emacs-theme-gruvbox on mac
   (use-package gruvbox
-    :if ddavis-v-is-mac
+    :if (or ddavis-v-is-mac ddavis-v-is-cc7)
     :load-path "~/.emacs.d/git-repos/emacs-theme-gruvbox"
-    :demand t)
-  (add-to-list 'custom-theme-load-path "~/Software/emacs-theme-gruvbox")
-  (load-theme 'gruvbox t)
+    :config
+    (add-to-list 'custom-theme-load-path "~/.emacs.d/git-repos/emacs-theme-gruvbox")
+    (load-theme 'gruvbox t))
 
   (use-package gruvbox-theme
     :ensure t
-    :unless ddavis-v-is-mac
+    :unless (or ddavis-v-is-mac ddavis-v-is-cc7)
     :config
     (load-theme 'gruvbox t))
 
