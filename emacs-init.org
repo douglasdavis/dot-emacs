@@ -1320,8 +1320,7 @@ usage of both.
     ("b"  projectile-switch-to-buffer-other-window "buffer")
     ("q"  nil                                      "cancel" :color blue))
 
-  (defhydra hydra-projectile (:color teal
-                                     :hint nil)
+  (defhydra hydra-projectile (:color teal :hint nil)
     "
        PROJECTILE: %(projectile-project-root)
 
@@ -1356,6 +1355,8 @@ usage of both.
     ("z"   projectile-cache-current-file)
     ("`"   hydra-projectile-other-window/body "other window")
     ("q"   nil "cancel" :color blue))
+
+  (define-key projectile-command-map (kbd ",") 'hydra-projectile/body)
 #+end_src
 
 ** dired
