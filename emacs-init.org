@@ -232,12 +232,6 @@
             (set-window-buffer (next-window) next-win-buffer)
             (select-window first-win)
             (if this-win-2nd (other-window 1))))))
-
-  (defun ddavis/cleanup-tramp ()
-    (interactive)
-    (tramp-cleanup-all-buffers)
-    (tramp-cleanup-all-connections)
-    (find-file "~/."))
 #+end_src
 
 * Org
@@ -723,7 +717,6 @@ Setting up authentication with encryption
   (setq ring-bell-function 'ignore)
   (setq echo-keystrokes 0.001)
   (setq inhibit-startup-screen t)
-  (setq tramp-default-method "ssh")
   (setq-default show-paren-delay 0)
   (setq-default indent-tabs-mode nil)
 
@@ -1468,6 +1461,30 @@ usage of both.
     ("." nil :color blue))
 
   (define-key dired-mode-map "." 'hydra-dired/body)
+#+end_src
+
+* Tramp and vterm
+
+#+begin_src emacs-lisp :results silent
+  (use-package vterm
+    :when ddavis-v-is-cc7
+    :ensure t)
+
+  (use-package tramp
+    :defer 5
+    :config
+    (setq tramp-default-method "ssh"))
+
+  (defun ddavis/cleanup-tramp ()
+    (interactive)
+    (tramp-cleanup-all-buffers)
+    (tramp-cleanup-all-connections)
+    (find-file "~/."))
+
+  (defun ddavis/remote-vterm (user-at-machine)
+    (interactive "sMachine: ")
+    (let ((default-directory (format "/ssh:%s:~/." user-at-machine)))
+      (vterm-toggle-cd)))
 #+end_src
 
 * End
