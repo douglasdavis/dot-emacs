@@ -1202,9 +1202,7 @@ usage of both.
 
   (defun ddavis/circe-prompt ()
     (lui-set-prompt
-     (concat (propertize (concat "[" (buffer-name) "] >")
-                         'face 'circe-prompt-face)
-             " ")))
+     (propertize (format "%s >>> " (buffer-name)) 'face 'circe-prompt-face)))
 #+end_src
 
 ** Circe Setup
@@ -1238,7 +1236,7 @@ usage of both.
             "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e"))
     (enable-circe-color-nicks)
     (setq circe-use-cycle-completion t
-          circe-format-say "<{nick}> {body}"
+          circe-format-say "<{nick:15> {body}"
           circe-color-nicks-everywhere t)
     (setq helm-mode-no-completion-in-region-in-modes
           '(circe-channel-mode
@@ -1461,30 +1459,6 @@ usage of both.
   (define-key dired-mode-map "." 'hydra-dired/body)
 #+end_src
 
-* Tramp and vterm
-
-#+begin_src emacs-lisp :results silent
-  (use-package vterm
-    :when ddavis-v-is-cc7
-    :ensure t)
-
-  (use-package tramp
-    :defer 5
-    :config
-    (setq tramp-default-method "ssh"))
-
-  (defun ddavis/cleanup-tramp ()
-    (interactive)
-    (tramp-cleanup-all-buffers)
-    (tramp-cleanup-all-connections)
-    (find-file "~/."))
-
-  (defun ddavis/remote-vterm (user-at-machine)
-    (interactive "sMachine: ")
-    (let ((default-directory (format "/ssh:%s:~/." user-at-machine)))
-      (vterm-toggle-cd)))
-#+end_src
-
 ** lsp
 
 #+begin_src emacs-lisp :results silent
@@ -1513,6 +1487,30 @@ usage of both.
     ("S" lsp-shutdown-workspace))
 
   (define-key lsp-mode-map (kbd "C-c l") 'hydra-lsp/body)
+#+end_src
+
+* Tramp and vterm
+
+#+begin_src emacs-lisp :results silent
+  (use-package vterm
+    :when ddavis-v-is-cc7
+    :ensure t)
+
+  (use-package tramp
+    :defer 5
+    :config
+    (setq tramp-default-method "ssh"))
+
+  (defun ddavis/cleanup-tramp ()
+    (interactive)
+    (tramp-cleanup-all-buffers)
+    (tramp-cleanup-all-connections)
+    (find-file "~/."))
+
+  (defun ddavis/remote-vterm (user-at-machine)
+    (interactive "sMachine: ")
+    (let ((default-directory (format "/ssh:%s:~/." user-at-machine)))
+      (vterm-toggle-cd)))
 #+end_src
 
 * End

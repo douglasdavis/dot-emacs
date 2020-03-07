@@ -124,13 +124,14 @@
   (setq gnus-summary-mode-line-format "Gnus: %p (%U)")
 
   (when window-system
-    (setq gnus-sum-thread-tree-indent "  ")
-    (setq gnus-sum-thread-tree-root "") ;; "● ")
-    (setq gnus-sum-thread-tree-false-root "") ;; "◯ ")
-    (setq gnus-sum-thread-tree-single-indent "") ;; "◎ ")
-    (setq gnus-sum-thread-tree-vertical        "│")
-    (setq gnus-sum-thread-tree-leaf-with-other "├─► ")
-    (setq gnus-sum-thread-tree-single-leaf     "╰─► "))
+    (setq gnus-sum-thread-tree-indent "  "
+          gnus-sum-thread-tree-root "" ;; "● "
+          gnus-sum-thread-tree-false-root "" ;; "◯ "
+          gnus-sum-thread-tree-single-indent "" ;; "◎ "
+          gnus-sum-thread-tree-vertical        "│"
+          gnus-sum-thread-tree-leaf-with-other "├─► "
+          gnus-sum-thread-tree-single-leaf     "╰─► "))
+
   (setq gnus-summary-display-arrow t)
 
   ;; (setq gnus-sum-thread-tree-false-root "")
