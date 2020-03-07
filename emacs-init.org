@@ -293,7 +293,7 @@
     (projectile-mode +1)
     ;; define my own projects
     (setq projectile-track-known-projects-automatically nil)
-    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
+    (define-key projectile-mode-map (kbd "C-c P") 'projectile-command-map))
 
   (defun ddavis/projectile-proj-find-function (dir)
     (let ((root (projectile-project-root dir)))
@@ -1351,6 +1351,7 @@ usage of both.
 #+end_src
 
 * Hydra
+** installation
 
 #+begin_src emacs-lisp :results silent
   (use-package hydra
@@ -1374,23 +1375,20 @@ usage of both.
 
        Find File            Search/Tags          Buffers                Cache
   ------------------------------------------------------------------------------------------
-  _s-f_: file            _r_: ripgrep           _i_: Ibuffer           _c_: cache clear
-   _ff_: file dwim       _g_: update gtags      _b_: switch to buffer  _x_: remove known project
-   _fd_: file curr dir   _o_: multi-occur     _s-k_: Kill all buffers  _X_: cleanup non-existing
-    _d_: dir                                                       ^^^^_z_: cache current
+    _f_: file           _r_: ripgrep       _i_: ibuffer           _c_: cache clear
+  _s-f_: file dwim      _o_: multi-occer   _b_: switch to buffer  _x_: remove known project
+  _s-d_: file curr dir  ^ ^                _K_: kill all buffers  _X_: cleanup non-existing
+    _d_: dir            ^ ^                ^ ^                    _z_: cache current
 
   "
     ("b"   projectile-switch-to-buffer)
     ("c"   projectile-invalidate-cache)
     ("d"   projectile-find-dir)
-    ("s-f" projectile-find-file)
-    ("ff"  projectile-find-file-dwim)
-    ("fd"  projectile-find-file-in-directory)
-    ("g"   ggtags-update-tags)
-    ("s-g" ggtags-update-tags)
+    ("f"   projectile-find-file)
+    ("s-f" projectile-find-file-dwim)
+    ("s-d" projectile-find-file-in-directory)
     ("i"   projectile-ibuffer)
     ("K"   projectile-kill-buffers)
-    ("s-k" projectile-kill-buffers)
     ("m"   projectile-multi-occur)
     ("o"   projectile-multi-occur)
     ("s-p" projectile-switch-project "switch project")
@@ -1403,7 +1401,7 @@ usage of both.
     ("`"   hydra-projectile-other-window/body "other window")
     ("q"   nil "cancel" :color blue))
 
-  (define-key projectile-command-map (kbd ",") 'hydra-projectile/body)
+  (define-key projectile-mode-map (kbd "C-c p") 'hydra-projectile/body)
 #+end_src
 
 ** dired
@@ -1485,6 +1483,36 @@ usage of both.
     (interactive "sMachine: ")
     (let ((default-directory (format "/ssh:%s:~/." user-at-machine)))
       (vterm-toggle-cd)))
+#+end_src
+
+** lsp
+
+#+begin_src emacs-lisp :results silent
+  (defhydra hydra-lsp (:exit t :hint nil)
+    "
+   Buffer^^               Server^^                   Symbol
+  -------------------------------------------------------------------------------------
+   [_f_] format           [_M-r_] restart            [_d_] declaration  [_i_] implementation  [_o_] documentation
+   [_m_] imenu            [_S_]   shutdown           [_D_] definition   [_t_] type            [_r_] rename
+   [_x_] execute action   [_M-s_] describe session   [_R_] references   [_s_] signature"
+    ("d" lsp-find-declaration)
+    ("D" lsp-ui-peek-find-definitions)
+    ("R" lsp-ui-peek-find-references)
+    ("i" lsp-ui-peek-find-implementation)
+    ("t" lsp-find-type-definition)
+    ("s" lsp-signature-help)
+    ("o" lsp-describe-thing-at-point)
+    ("r" lsp-rename)
+
+    ("f" lsp-format-buffer)
+    ("m" lsp-ui-imenu)
+    ("x" lsp-execute-code-action)
+
+    ("M-s" lsp-describe-session)
+    ("M-r" lsp-restart-workspace)
+    ("S" lsp-shutdown-workspace))
+
+  (define-key lsp-mode-map (kbd "C-c l") 'hydra-lsp/body)
 #+end_src
 
 * End
