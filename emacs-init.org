@@ -1358,6 +1358,7 @@ usage of both.
 #+end_src
 
 * Hydra
+** installation
 
 #+begin_src emacs-lisp :results silent
   (use-package hydra
@@ -1465,6 +1466,36 @@ usage of both.
     ("." nil :color blue))
 
   (define-key dired-mode-map "." 'hydra-dired/body)
+#+end_src
+
+** lsp
+
+#+begin_src emacs-lisp :results silent
+  (defhydra hydra-lsp (:exit t :hint nil)
+    "
+   Buffer^^               Server^^                   Symbol
+  -------------------------------------------------------------------------------------
+   [_f_] format           [_M-r_] restart            [_d_] declaration  [_i_] implementation  [_o_] documentation
+   [_m_] imenu            [_S_]   shutdown           [_D_] definition   [_t_] type            [_r_] rename
+   [_x_] execute action   [_M-s_] describe session   [_R_] references   [_s_] signature"
+    ("d" lsp-find-declaration)
+    ("D" lsp-ui-peek-find-definitions)
+    ("R" lsp-ui-peek-find-references)
+    ("i" lsp-ui-peek-find-implementation)
+    ("t" lsp-find-type-definition)
+    ("s" lsp-signature-help)
+    ("o" lsp-describe-thing-at-point)
+    ("r" lsp-rename)
+
+    ("f" lsp-format-buffer)
+    ("m" lsp-ui-imenu)
+    ("x" lsp-execute-code-action)
+
+    ("M-s" lsp-describe-session)
+    ("M-r" lsp-restart-workspace)
+    ("S" lsp-shutdown-workspace))
+
+  (define-key lsp-mode-map (kbd "C-c l") 'hydra-lsp/body)
 #+end_src
 
 * End
