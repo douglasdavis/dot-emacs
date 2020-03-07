@@ -1181,13 +1181,9 @@ I haven't really been able to make up my mind on using the builtin
 Emacs IRC client [[https://www.emacswiki.org/emacs/ERC][ERC]] or the third party client [[https://github.com/jorgenschaefer/circe][Circe]]. This configures
 usage of both.
 
-** Circe
+** Circe Utilities
 
 #+begin_src emacs-lisp :results silent
-  (use-package password-store
-    :when ddavis-v-enable-irc
-    :ensure t)
-
   (defun ddavis/irc-pw-freenode (server)
     (password-store-get "Freenode"))
 
@@ -1211,6 +1207,20 @@ usage of both.
             (y-or-n-p (format "Already connected to %s, reconnect?" network)))
         (circe network)))
 
+  (defun ddavis/circe-prompt ()
+    (lui-set-prompt
+     (concat (propertize (concat "[" (buffer-name) "] >")
+                         'face 'circe-prompt-face)
+             " ")))
+#+end_src
+
+** Circe Setup
+
+#+begin_src emacs-lisp :results silent
+  (use-package password-store
+    :when ddavis-v-enable-irc
+    :ensure t)
+
   (use-package circe
     :when ddavis-v-enable-irc
     :ensure t
@@ -1230,11 +1240,9 @@ usage of both.
              :pass ddavis/irc-pw-gitter
              :tls t)))
     (require 'circe-color-nicks)
-
     (setq circe-color-nicks-pool-type
           '("#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#fe8019"
             "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e"))
-
     (enable-circe-color-nicks)
     (setq circe-use-cycle-completion t
           circe-format-say "<{nick}> {body}"
@@ -1243,14 +1251,7 @@ usage of both.
           '(circe-channel-mode
             circe-query-mode
             circe-server-mode))
-
-    (defun ddavis/circe-prompt ()
-      (lui-set-prompt
-       (concat (propertize (concat "[" (buffer-name) "] >")
-                           'face 'circe-prompt-face)
-               " ")))
     (add-hook 'circe-chat-mode-hook 'ddavis/circe-prompt)
-
     (setq circe-default-part-message
           (concat "Closed Circe (" circe-version ") buffer in GNU Emacs (" emacs-version ")"))
     (setq circe-default-part-message
@@ -1266,11 +1267,63 @@ usage of both.
       (global-set-key (kbd "s-i") 'helm-circe)))
 #+end_src
 
-** ERC
+** ERC Utilities
+
+#+begin_src emacs-lisp :results silent
+  (defvar ddavis-nick-face-list '()
+    "See https://www.emacswiki.org/emacs/ErcNickColors#toc1")
+
+  (defvar ddavis-erc-colors-list
+    '("#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#fe8019"
+      "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e")
+    "See https://www.emacswiki.org/emacs/ErcNickColors#toc1")
+
+  (defun ddavis/build-nick-face-list ()
+    "See https://www.emacswiki.org/emacs/ErcNickColors#toc1"
+    (setq i -1)
+    (setq ddavis-nick-face-list
+          (mapcar
+           (lambda (COLOR)
+             (setq i (1+ i))
+             (list (custom-declare-face
+                    (make-symbol (format "erc-nick-face-%d" i))
+                    (list (list t (list :foreground COLOR)))
+                    (format "Nick face %d" i))))
+           ddavis-erc-colors-list)))
+
+  (defun ddavis/erc-insert-modify-hook ()
+    "See https://www.emacswiki.org/emacs/ErcNickColors#toc1"
+    (if (null ddavis-nick-face-list) (ddavis/build-nick-face-list))
+    (save-excursion
+      (goto-char (point-min))
+      (if (looking-at "<\\([^>]*\\)>")
+          (let ((nick (match-string 1)))
+            (put-text-property (match-beginning 1) (match-end 1)
+                               'face (nth
+                                      (mod (string-to-number
+                                            (substring (md5 nick) 0 4) 16)
+                                           (length ddavis-nick-face-list))
+                                      ddavis-nick-face-list))))))
+
+  (defun ddavis/erc-notify (nickname message)
+    "Displays a notification message for ERC."
+    (let* ((channel (buffer-name))
+           (nick (erc-hl-nicks-trim-irc-nick nickname))
+           (title (if (string-match-p (concat "^" nickname) channel)
+                      nick
+                    (concat nick " (" channel ")")))
+           (msg (s-trim (s-collapse-whitespace message))))
+      (alert (concat nick ": " msg) :title title)))
+#+end_src
+
+** ERC Setup
 
 #+begin_src emacs-lisp :results silent
   (use-package erc
     :when ddavis-v-enable-irc
+    :hook (erc-notify . ddavis/erc-notify)
+    :custom-face
+    (erc-notice-face ((t (:foreground "#ebcb8b"))))
     :config
     (setq erc-hide-list '("JOIN" "PART" "QUIT")
           erc-user-full-name "Doug Davis"
@@ -1278,21 +1331,20 @@ usage of both.
           erc-track-enable-keybindings nil
           erc-kill-server-buffer-on-quit t
           erc-kill-buffer-on-part t
-          erc-prompt (lambda () (concat "[" (buffer-name) "] >"))))
+          erc-fill-function 'erc-fill-static
+          erc-fill-static-center 20
+          erc-prompt (lambda () (concat "[" (buffer-name) "] >")))
 
-  (with-eval-after-load 'erc-faces
-    (set-face-attribute 'erc-nick-default-face :bold nil))
+    ;; See https://www.emacswiki.org/emacs/ErcNickColors#toc1
+    (add-hook 'erc-insert-modify-hook 'ddavis/erc-insert-modify-hook))
 
-  (defun ddavis/erc-start-or-switch ()
-    (interactive)
-    (if (get-buffer "irc.freenode.net:6667")
-        (switch-to-buffer "irc.freenode.net:6667")
-      (when (y-or-n-p "Start? ")
-        (erc :server "irc.freenode.net" :port 6667 :nick "ddavis"))))
-
-  (use-package erc-hl-nicks
+  (use-package erc-track
     :when ddavis-v-enable-irc
-    :after erc)
+    :after erc
+    :config
+    (erc-track-mode t)
+    (setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
+                                    "324" "329" "332" "333" "353" "477")))
 #+end_src
 
 * Helpful
