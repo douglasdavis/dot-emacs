@@ -1260,7 +1260,7 @@ usage of both.
     (add-hook 'circe-chat-mode-hook 'ddavis/circe-prompt)
     (setq circe-default-part-message
           (concat "Closed Circe (" circe-version ") buffer in GNU Emacs (" emacs-version ")"))
-    (setq circe-default-part-message
+    (setq circe-default-quit-message
           (concat "Quit Circe (" circe-version ") buffer in GNU Emacs (" emacs-version ")")))
 
   (use-package helm-circe
