@@ -1261,7 +1261,7 @@ usage of both.
     (setq circe-default-part-message
           (concat "Closed Circe (" circe-version ") buffer in GNU Emacs (" emacs-version ")"))
     (setq circe-default-quit-message
-          (concat "Quit Circe (" circe-version ") buffer in GNU Emacs (" emacs-version ")")))
+          (concat "Quit Circe (" circe-version ") in GNU Emacs (" emacs-version ")")))
 
   (use-package helm-circe
     :when ddavis-v-enable-irc
