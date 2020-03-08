@@ -128,6 +128,7 @@
 #+end_src
 
 * Package
+** Setting up melpa and use-package
 
 #+begin_src emacs-lisp :results silent
   (require 'package)
@@ -146,6 +147,15 @@
     (setq auto-package-update-delete-old-versions t
           auto-package-update-interval 5)
     (auto-package-update-maybe))
+#+end_src
+
+** Some local Emacs Lisp
+
+#+begin_src emacs-lisp :results silent
+  (use-package random-internet-helpers
+    :when ddavis-v-is-mac
+    :load-path "~/.emacs.d/site-lisp/"
+    :bind ([remap keyboard-quit] . keyboard-quit-context+))
 #+end_src
 
 * Utils
@@ -284,23 +294,33 @@
             (alltodo "")))))
 #+end_src
 
+* Uniquify
+
+#+begin_src emacs-lisp :results silent
+  (use-package uniquify
+    :config
+    (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
+    (setq uniquify-strip-common-suffix t)
+    (setq uniquify-after-kill-buffer-p t))
+#+end_src
+
 * Projectile
 
 #+begin_src emacs-lisp :results silent
   (use-package projectile
     :ensure t
+    :bind-keymap ("C-c P" . projectile-command-map)
     :config
     (projectile-mode +1)
-    ;; define my own projects
-    (setq projectile-track-known-projects-automatically nil)
-    (define-key projectile-mode-map (kbd "C-c P") 'projectile-command-map))
+    (setq projectile-track-known-projects-automatically nil))
+
+  (use-package project
+    :config
+    (add-to-list 'project-find-functions 'ddavis/projectile-proj-find-function))
 
   (defun ddavis/projectile-proj-find-function (dir)
     (let ((root (projectile-project-root dir)))
       (and root (cons 'transient root))))
-
-  (with-eval-after-load 'project
-    (add-to-list 'project-find-functions 'ddavis/projectile-proj-find-function))
 #+end_src
 
 * Helm
@@ -409,16 +429,18 @@
 #+begin_src emacs-lisp :results silent
   (use-package company
     :ensure t
-    :init
+    :hook ((emacs-lisp-mode . company-mode)
+           (python-mode . company-mode)
+           (mu4e-compoes-mode . company-mode)
+           (sh-mode . company-mode)
+           (yaml-mode . company-mode)
+           (conf-mode . company-mode)
+           (lsp-mode . company-mode)
+           (LaTeX-mode . company-mode))
     :config
     (setq company-clang-executable ddavis-v-clang-exe)
-    (setq company-minimum-prefix-length 2) ;; default is 3
-    (setq company-idle-delay 0.1) ;; default is 0.2
-    (add-hook 'emacs-lisp-mode-hook 'company-mode)
-    (add-hook 'python-mode-hook 'company-mode)
-    (add-hook 'mu4e-compose-mode-hook 'company-mode)
-    (add-hook 'sh-mode-hook 'company-mode)
-    (add-hook 'LaTeX-mode-hook 'company-mode))
+    (setq company-minimum-prefix-length 2)
+    (setq company-idle-delay 0.1))
 #+end_src
 
 * Version control
@@ -438,9 +460,9 @@ Basically just [[https://magit.vc/][magit]].
   (use-package magit
     :ensure t
     :demand
-    :bind ("C-x g" . 'magit-status)
-    :config
-    (bind-key "q" #'ddavis/magit-kill-buffers magit-status-mode-map))
+    :bind (("C-x g" . 'magit-status)
+           :map magit-status-mode-map
+           ("q" . ddavis/magit-kill-buffers)))
 #+end_src
 
 * LSP and Eglot
@@ -579,14 +601,12 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
 Add some flyspell hooks for a few modes.
 
 #+begin_src emacs-lisp :results silent
-  (mapc
-   (lambda (language-mode-hook)
-     (add-hook language-mode-hook 'flyspell-mode))
-   '(org-mode-hook
-     LaTeX-mode-hook
-     markdown-mode-hook
-     message-mode-hook
-     mu4e-compose-mode-hook))
+  (use-package flyspell
+    :hook ((org-mode . flyspell-mode)
+           (LaTeX-mode . flyspell-mode)
+           (markdown-mode . flyspell-mode)
+           (message-mode . flyspell-mode)
+           (mu4e-compose-mode .flyspell-mode)))
 #+end_src
 
 * Looks
@@ -698,18 +718,29 @@ in previous emacs.
   (ddavis/init-extend-faces)
 #+end_src
 
-* Auth
+* Auth and password-store
 
 Setting up authentication with encryption
 
 #+begin_src emacs-lisp :results silent
-  (require 'epa-file)
-  ;; authinfo
-  (setq auth-sources '("~/.emacs.d/.authinfo.gpg"))
-  (if ddavis-v-is-mac
-      (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
-    (custom-set-variables '(epg-gpg-program "/usr/bin/gpg2")))
-  (epa-file-enable)
+  (use-package auth-source
+    :config
+    (setq auth-sources '("~/.emacs.d/.authinfo.gpg")))
+
+  (use-package epa-file
+    :config
+    (epa-file-enable)
+    (if ddavis-v-is-mac
+        (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
+      (custom-set-variables '(epg-gpg-program "/usr/bin/gpg2"))))
+
+  (use-package password-store
+    :when ddavis-v-enable-irc
+    :commands (password-store-copy
+               password-store-get
+               password-store-edit
+               password-store-insert)
+    :ensure t)
 #+end_src
 
 * Misc
@@ -820,10 +851,6 @@ Setting up authentication with encryption
     :ensure t
     :config
     (exec-path-from-shell-initialize))
-
-  (use-package diredfl
-    :ensure t
-    :hook (dired-mode . diredfl-mode))
 #+end_src
 
 ** Modes
@@ -862,7 +889,7 @@ Setting up authentication with encryption
                        "--speed" speed
                        podcast-link)))
 
-    ;; Entries older than 2 weeks are marked as read
+    ;; Entries older than 3 weeks are marked as read
     (add-hook 'elfeed-new-entry-hook
               (elfeed-make-tagger :before "3 weeks ago"
                                   :remove 'unread))
@@ -885,16 +912,21 @@ Setting up authentication with encryption
 * Dired
 
 #+begin_src emacs-lisp :results silent
+  (use-package dired
+    :bind (:map dired-mode-map
+                ("q" . kill-current-buffer))
+    :hook (dired-mode . hl-line-mode))
+
   (use-package all-the-icons
     :ensure t)
 
   (use-package all-the-icons-dired
     :ensure t
-    :config
-    (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+    :hook (dired-mode . all-the-icons-dired-mode))
 
-  (add-hook 'dired-mode-hook
-            (lambda () (local-set-key (kbd "q") #'kill-current-buffer)))
+  (use-package diredfl
+    :ensure t
+    :hook (dired-mode . diredfl-mode))
 #+end_src
 
 * macOS
@@ -974,17 +1006,23 @@ Some configuration specific to using Emacs on macOS.
 My [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] setup
 
 #+begin_src emacs-lisp :results silent
+  (defun ddavis/mu4e-jump-via-helm ()
+    (interactive)
+    (let ((maildir (helm-comp-read "Maildir: " (mu4e-get-maildirs))))
+      (mu4e-headers-search (format "maildir:\"%s\"" maildir))))
+
   (with-eval-after-load "mm-decode"
     (add-to-list 'mm-discouraged-alternatives "text/html")
     (add-to-list 'mm-discouraged-alternatives "text/richtext"))
 
-  (when ddavis-v-enable-mu4e
-    (add-to-list 'load-path ddavis-v-mu4e-dir)
-    (require 'mu4e)
-
-    (setq mu4e-mu-binary ddavis-v-mu-exe)
-
-    (setq mu4e-change-filenames-when-moving t
+  (use-package mu4e
+    :when ddavis-v-enable-mu4e
+    :load-path ddavis-v-mu4e-dir
+    :commands (mu4e mu4e-update-mail-and-index)
+    :bind (("C-c 4" . mu4e))
+    :config
+    (setq mu4e-mu-binary ddavis-v-mu-exe
+          mu4e-change-filenames-when-moving t
           mu4e-get-mail-command "true"
           mu4e-update-interval 120
           mu4e-maildir "~/.mail"
@@ -994,12 +1032,6 @@ My [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] setup
           mu4e-attachment-dir (expand-file-name "~/Downloads/")
           mu4e-change-filenames-when-moving t)
 
-    (defun ddavis/mu4e-jump-via-helm ()
-      (interactive)
-      (let ((maildir (helm-comp-read "Maildir: " (mu4e-get-maildirs))))
-        (mu4e-headers-search (format "maildir:\"%s\"" maildir))))
-
-    (define-key global-map (kbd "C-c 4") 'mu4e)
     (define-key mu4e-headers-mode-map "j" 'ddavis/mu4e-jump-via-helm)
     (define-key mu4e-view-mode-map "j" 'ddavis/mu4e-jump-via-helm)
     (define-key mu4e-main-mode-map "j" 'ddavis/mu4e-jump-via-helm)
@@ -1159,27 +1191,23 @@ My [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] setup
       (interactive)
       (setq mu4e-view-use-gnus (not mu4e-view-use-gnus)))
 
-    (define-key mu4e-headers-mode-map (kbd "C-c g") 'ddavis/mu4e-toggle-gnus)
+    (define-key mu4e-headers-mode-map (kbd "C-c g") 'ddavis/mu4e-toggle-gnus))
 
+  ;; (when ddavis-v-enable-mu4e
+  ;;   (use-package visual-fill-column
+  ;;     :ensure t
+  ;;     :after mu4e
+  ;;     :hook ((visual-line-mode . visual-fill-column-mode)
+  ;;            (mu4e-view-mode . visual-line-mode))
+  ;;     :config
+  ;;     (add-hook 'mu4e-view-mode-hook
+  ;;               (lambda () (setq-local fill-column 98))))
 
-    ;; (when ddavis-v-enable-mu4e
-    ;;   (use-package visual-fill-column
-    ;;     :ensure t
-    ;;     :after mu4e
-    ;;     :hook ((visual-line-mode . visual-fill-column-mode)
-    ;;            (mu4e-view-mode . visual-line-mode))
-    ;;     :config
-    ;;     (add-hook 'mu4e-view-mode-hook
-    ;;               (lambda () (setq-local fill-column 98))))
-
-    ;; (use-package mu4e-maildirs-extension
-    ;;   :ensure t
-    ;;   :after mu4e
-    ;;   :config
-    ;;   (mu4e-maildirs-extension)))
-
-    )
-
+  ;; (use-package mu4e-maildirs-extension
+  ;;   :ensure t
+  ;;   :after mu4e
+  ;;   :config
+  ;;   (mu4e-maildirs-extension)))
 #+end_src
 
 * IRC
@@ -1222,10 +1250,6 @@ usage of both.
 ** Circe Setup
 
 #+begin_src emacs-lisp :results silent
-  (use-package password-store
-    :when ddavis-v-enable-irc
-    :ensure t)
-
   (use-package circe
     :when ddavis-v-enable-irc
     :ensure t
@@ -1503,13 +1527,9 @@ usage of both.
   (define-key lsp-mode-map (kbd "C-c l") 'hydra-lsp/body)
 #+end_src
 
-* Tramp and vterm
+* Tramp
 
 #+begin_src emacs-lisp :results silent
-  (use-package vterm
-    :when ddavis-v-is-cc7
-    :ensure t)
-
   (use-package tramp
     :defer 5
     :config
@@ -1520,6 +1540,14 @@ usage of both.
     (tramp-cleanup-all-buffers)
     (tramp-cleanup-all-connections)
     (find-file "~/."))
+#+end_src
+
+* vterm
+
+#+begin_src emacs-lisp :results silent
+  (use-package vterm
+    :when ddavis-v-is-cc7
+    :ensure t)
 
   (defun ddavis/remote-vterm (user-at-machine)
     (interactive "sMachine: ")
