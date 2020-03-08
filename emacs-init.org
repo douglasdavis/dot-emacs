@@ -1273,6 +1273,7 @@ usage of both.
             "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e"))
     (enable-circe-color-nicks)
     (setq circe-use-cycle-completion t
+          circe-reduce-lurker-spam t
           circe-format-say "<{nick}> {body}"
           lui-fill-type 18
           lui-fill-column 79
