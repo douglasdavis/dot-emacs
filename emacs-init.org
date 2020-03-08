@@ -1250,7 +1250,8 @@ usage of both.
     (enable-circe-color-nicks)
     (setq circe-use-cycle-completion t
           circe-format-say "<{nick}> {body}"
-          lui-fill-type 16
+          lui-fill-type 18
+          lui-fill-column 79
           circe-color-nicks-everywhere t)
     (setq helm-mode-no-completion-in-region-in-modes
           '(circe-channel-mode
