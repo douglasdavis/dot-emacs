@@ -590,22 +590,39 @@ Add some flyspell hooks for a few modes.
 #+end_src
 
 * Looks
+** misc
+
+#+begin_src emacs-lisp :results silent
+  (global-display-line-numbers-mode)
+  (setq column-number-mode t)
+#+end_src
+
 ** themes
 
 #+begin_src emacs-lisp :results silent
+  (defvar ddavis-v-use-local-theme nil
+    "t if we want to use the local copy gruvbox")
+
+  (when (and ddavis-v-use-local-theme
+             (package-installed-p 'gruvbox-theme))
+    (package-delete (car (cdr (assoc 'gruvbox-theme package-alist)))))
+
+  (unless ddavis-v-use-local-theme
+    (unless (package-installed-p 'gruvbox-theme)
+      (package-refresh-contents)
+      (package-install 'gruvbox-theme)))
+
   (setq custom-safe-themes t)
 
-  ;; currently using my fork of emacs-theme-gruvbox on mac
   (use-package gruvbox
-    :if (or ddavis-v-is-mac ddavis-v-is-cc7)
+    :if ddavis-v-use-local-theme
     :load-path "~/.emacs.d/git-repos/emacs-theme-gruvbox"
     :config
     (add-to-list 'custom-theme-load-path "~/.emacs.d/git-repos/emacs-theme-gruvbox")
     (load-theme 'gruvbox t))
 
   (use-package gruvbox-theme
-    :ensure t
-    :unless (or ddavis-v-is-mac ddavis-v-is-cc7)
+    :unless ddavis-v-use-local-theme
     :config
     (load-theme 'gruvbox t))
 
@@ -616,9 +633,6 @@ Add some flyspell hooks for a few modes.
     (set-face-attribute 'mode-line           nil :box        nil)
     (set-face-attribute 'mode-line-inactive  nil :box        nil)
     (set-face-attribute 'mode-line-buffer-id nil :box        nil))
-
-  (global-display-line-numbers-mode)
-  (setq column-number-mode t)
 #+end_src
 
 ** fonts
