@@ -1384,7 +1384,10 @@ usage of both.
     :ensure t
     :bind (("C-h f" . #'helpful-callable)
            ("C-h v" . #'helpful-variable)
-           ("C-h k" . #'helpful-key)))
+           ("C-h k" . #'helpful-key)
+           :map helpful-mode-map
+           ("q" . kill-current-buffer)
+           ("C-g" . kill-current-buffer)))
 #+end_src
 
 * Hydra
