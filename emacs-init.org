@@ -1216,8 +1216,7 @@ usage of both.
     :when ddavis-v-enable-irc
     :ensure t
     :config
-    (setq circe-reduce-lurker-spam t
-          circe-network-options
+    (setq circe-network-options
           `(("Freenode"
              :nick "ddavis"
              :nickserv-password ddavis/irc-pw-freenode
@@ -1236,7 +1235,8 @@ usage of both.
             "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e"))
     (enable-circe-color-nicks)
     (setq circe-use-cycle-completion t
-          circe-format-say "<{nick:15> {body}"
+          circe-format-say "<{nick}> {body}"
+          lui-fill-type 16
           circe-color-nicks-everywhere t)
     (setq helm-mode-no-completion-in-region-in-modes
           '(circe-channel-mode
@@ -1316,15 +1316,14 @@ usage of both.
     :custom-face
     (erc-notice-face ((t (:foreground "#ebcb8b"))))
     :config
-    (setq erc-hide-list '("JOIN" "PART" "QUIT")
-          erc-user-full-name "Doug Davis"
+    (setq erc-user-full-name "Doug Davis"
           erc-prompt-for-password nil
           erc-track-enable-keybindings nil
           erc-kill-server-buffer-on-quit t
           erc-kill-buffer-on-part t
           erc-fill-function 'erc-fill-static
-          erc-fill-static-center 20
-          erc-prompt (lambda () (concat "[" (buffer-name) "] >")))
+          erc-fill-static-center 16
+          erc-prompt (lambda () (concat (buffer-name) " >>>")))
 
     ;; See https://www.emacswiki.org/emacs/ErcNickColors#toc1
     (add-hook 'erc-insert-modify-hook 'ddavis/erc-insert-modify-hook))
