@@ -1278,8 +1278,8 @@ usage of both.
     (setq circe-use-cycle-completion t
           circe-reduce-lurker-spam t
           circe-format-say "<{nick}> {body}"
-          lui-fill-type 18
-          lui-fill-column 79
+          lui-fill-type 20
+          lui-fill-column 77
           circe-color-nicks-everywhere t)
     (setq helm-mode-no-completion-in-region-in-modes
           '(circe-channel-mode
