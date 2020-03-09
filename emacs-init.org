@@ -690,8 +690,8 @@ Add some flyspell hooks for a few modes.
   (when window-system
     (when ddavis-v-is-cc7
       (set-face-attribute 'default nil
-                          :family "Cascadia Code PL"
-                          :weight 'regular
+                          :family "JetBrains Mono"
+                          :weight 'medium
                           :height 130))
     (when ddavis-v-is-mac
       (setq mac-allow-anti-aliasing t)
