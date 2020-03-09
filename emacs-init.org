@@ -505,6 +505,12 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
 * Python
 
 #+begin_src emacs-lisp :results silent
+  (use-package pydoc
+    :ensure t)
+
+  (use-package helm-pydoc
+    :ensure t)
+
   (use-package pyvenv
     :ensure t
     :config
