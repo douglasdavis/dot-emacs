@@ -133,6 +133,8 @@
 #+begin_src emacs-lisp :results silent
   (require 'package)
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+  (when (version< emacs-version "27")
+    (package-initialize))
 
   (unless (package-installed-p 'use-package)
     (package-refresh-contents)
@@ -145,8 +147,7 @@
     :ensure t
     :config
     (setq auto-package-update-delete-old-versions t
-          auto-package-update-interval 5)
-    (auto-package-update-maybe))
+          auto-package-update-interval 5))
 #+end_src
 
 ** Some local Emacs Lisp
@@ -568,13 +569,20 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
     :hook (c++-mode . modern-c++-font-lock-mode))
 #+end_src
 
-* TeX
+* TeX and PDF
+** TeX
 
 #+begin_src emacs-lisp :results silent
   (setq-default TeX-master nil)
 
   (setq font-latex-fontify-sectioning 1.0
         font-latex-fontify-script nil)
+
+  (setq TeX-source-correlate-mode 'synctex
+        TeX-view-program-selection '((output-pdf "PDF Tools"))
+        TeX-source-correlate-start-server t)
+
+  (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
 
   (use-package helm-bibtex
     :ensure t)
@@ -597,6 +605,18 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
       (find-file "~/Desktop/thesis/dissertation.tex"))
     (when (file-exists-p "~/Documents/thesis/dissertation.tex")
       (find-file "~/Documents/thesis/dissertation.tex")))
+#+end_src
+
+** PDF
+
+#+begin_src emacs-lisp :results silent
+  (when ddavis-v-is-cc7
+    (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig"))
+
+  (use-package pdf-tools
+    :when ddavis-v-is-cc7
+    :config
+    (pdf-tools-install))
 #+end_src
 
 * Spell
