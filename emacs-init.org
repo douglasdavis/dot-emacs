@@ -688,32 +688,27 @@ Add some flyspell hooks for a few modes.
 
 #+begin_src emacs-lisp :results silent
   (when window-system
-
     (when ddavis-v-is-cc7
       (set-face-attribute 'default nil
-                          :family "JetBrains Mono"
-                          :weight 'medium
+                          :family "Cascadia Code PL"
+                          :weight 'regular
                           :height 130))
-
     (when ddavis-v-is-mac
       (setq mac-allow-anti-aliasing t)
       (set-face-attribute 'default nil
                           :family "JetBrains Mono"
                           :weight 'medium
                           :height 120))
-
     (when ddavis-v-is-pion
       (set-face-attribute 'default nil
                           :family "Source Code Pro"
                           :weight 'semibold
                           :height 130))
-
     (when ddavis-v-is-dobian
       (set-face-attribute 'default nil
                           :family "Terminus (TTF)"
                           :weight 'regular
                           :height 90))
-
     (add-to-list 'default-frame-alist '(height . 72))
     (add-to-list 'default-frame-alist '(width . 234)))
 #+end_src
