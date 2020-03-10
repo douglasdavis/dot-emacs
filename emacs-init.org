@@ -148,6 +148,11 @@
     :config
     (setq auto-package-update-delete-old-versions t
           auto-package-update-interval 5))
+
+  (add-hook 'package-menu-mode-hook
+            (lambda ()
+              (define-key package-menu-mode-map (kbd "q") 'kill-buffer-and-window)
+              (define-key package-menu-mode-map (kbd "C-g") 'kill-buffer-and-window)))
 #+end_src
 
 ** Some local Emacs Lisp
