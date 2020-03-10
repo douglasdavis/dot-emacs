@@ -1394,14 +1394,20 @@ usage of both.
 * Helpful
 
 #+begin_src emacs-lisp :results silent
+  (use-package help-mode
+    :bind
+    (:map help-mode-map
+          ("C-g" . kill-buffer-and-window)
+          ("q" . kill-buffer-and-window)))
+
   (use-package helpful
     :ensure t
     :bind (("C-h f" . #'helpful-callable)
            ("C-h v" . #'helpful-variable)
            ("C-h k" . #'helpful-key)
            :map helpful-mode-map
-           ("q" . kill-current-buffer)
-           ("C-g" . kill-current-buffer)))
+           ("q" . kill-buffer-and-window)
+           ("C-g" . kill-buffer-and-window)))
 #+end_src
 
 * Hydra
