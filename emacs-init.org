@@ -159,6 +159,16 @@
     :bind ([remap keyboard-quit] . keyboard-quit-context+))
 #+end_src
 
+* Exec path
+
+  #+begin_src emacs-lisp :results silent
+    (use-package exec-path-from-shell
+      :if (memq window-system '(mac ns x))
+      :ensure t
+      :config
+      (exec-path-from-shell-initialize))
+  #+end_src
+
 * Utils
 
 #+begin_src emacs-lisp :results silent
@@ -585,7 +595,6 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
         font-latex-fontify-script nil)
 
   (setq TeX-source-correlate-mode 'synctex
-        TeX-view-program-selection '((output-pdf "PDF Tools"))
         TeX-source-correlate-start-server t)
 
   (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
@@ -595,22 +604,6 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
 
   (use-package company-bibtex
     :ensure t)
-
-  (when ddavis-v-is-mac
-    (add-to-list 'company-backends 'company-bibtex)
-    (setq company-bibtex-bibliography
-          '("/Users/ddavis/Desktop/thesis/biblio/refs.bib"))
-    (setq bibtex-completion-bibliography
-          '("/Users/ddavis/Desktop/thesis/biblio/refs.bib")))
-
-  (defun ddavis/work-on-thesis ()
-    (interactive)
-    (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-    (setq reftex-plug-into-AUCTeX t)
-    (when (file-exists-p "~/Desktop/thesis/dissertation.tex")
-      (find-file "~/Desktop/thesis/dissertation.tex"))
-    (when (file-exists-p "~/Documents/thesis/dissertation.tex")
-      (find-file "~/Documents/thesis/dissertation.tex")))
 #+end_src
 
 ** PDF
@@ -622,8 +615,32 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
   (use-package pdf-tools
     :when ddavis-v-is-cc7
     :config
-    (pdf-tools-install))
+    (pdf-tools-install)
+    (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))
 #+end_src
+
+** Thesis
+
+  #+begin_src emacs-lisp :results silent
+    (when ddavis-v-is-mac
+      (add-to-list 'company-backends 'company-bibtex)
+      (setq company-bibtex-bibliography
+            '("/Users/ddavis/Desktop/thesis/biblio/refs.bib"))
+      (setq bibtex-completion-bibliography
+            '("/Users/ddavis/Desktop/thesis/biblio/refs.bib")))
+
+    (defun ddavis/work-on-thesis ()
+      (interactive)
+      (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+      (setq reftex-plug-into-AUCTeX t)
+      (when (file-exists-p "~/Desktop/thesis/dissertation.tex")
+        (find-file "~/Desktop/thesis/dissertation.tex"))
+      (when (file-exists-p "~/Documents/thesis/dissertation.tex")
+        (find-file "~/Documents/thesis/dissertation.tex")))
+
+    (when ddavis-v-is-mac
+      (global-set-key (kbd "s-t") #'ddavis/work-on-thesis))
+  #+end_src
 
 * Spell
 
@@ -682,6 +699,8 @@ Add some flyspell hooks for a few modes.
     (set-face-attribute 'mode-line           nil :box        nil)
     (set-face-attribute 'mode-line-inactive  nil :box        nil)
     (set-face-attribute 'mode-line-buffer-id nil :box        nil))
+
+  (set-face-attribute 'link nil :foreground "#458588")
 #+end_src
 
 ** fonts
@@ -869,12 +888,6 @@ Setting up authentication with encryption
   (use-package ace-window
     :ensure t
     :bind ("M-o" . 'ace-window))
-
-  (use-package exec-path-from-shell
-    :if (memq window-system '(mac ns x))
-    :ensure t
-    :config
-    (exec-path-from-shell-initialize))
 #+end_src
 
 ** Modes
@@ -892,6 +905,7 @@ Setting up authentication with encryption
     :ensure t
     :bind ("C-x w" . 'elfeed)
     :config
+    (setq shr-use-fonts nil)
     (setq elfeed-feeds
           '(("https://planet.scipy.org/feed.xml" python)
             ("https://planet.emacslife.com/atom.xml" emacs)
@@ -901,17 +915,6 @@ Setting up authentication with encryption
             ("https://www.npr.org/rss/podcast.php?id=510310" npr podcast)
             ("https://www.npr.org/rss/podcast.php?id=510318" npr podcast)))
 
-    (defvar ddavis-v-podcast-speed "1.33")
-
-    (defun elfeed-play-enclosure-with-mpv ()
-      "Play enclosure link with mpv."
-      (interactive)
-      (let ((speed ddavis-v-podcast-speed)
-            (podcast-link (nth 0 (car (elfeed-entry-enclosures elfeed-show-entry)))))
-        (message "Opening %s with with mpv..." podcast-link)
-        (start-process "elfeed-mpv" nil "mpv"
-                       "--speed" speed
-                       podcast-link)))
 
     ;; Entries older than 3 weeks are marked as read
     (add-hook 'elfeed-new-entry-hook
@@ -919,6 +922,20 @@ Setting up authentication with encryption
                                   :remove 'unread))
 
     (setq-default elfeed-search-filter "@10-days-ago"))
+
+  (defvar ddavis-v-podcast-speed "1.33"
+    "mpv --speed argument for podcasts")
+
+  (defun ddavis/elfeed-play-enclosure-with-mpv ()
+    "Play enclosure link with mpv."
+    (interactive)
+    (let ((speed ddavis-v-podcast-speed)
+          (podcast-link (nth 0 (car (elfeed-entry-enclosures elfeed-show-entry)))))
+      (message "Opening %s with with mpv..." podcast-link)
+      (start-process "elfeed-mpv" nil "mpv"
+                     "--speed" speed
+                     podcast-link)))
+
 #+end_src
 
 * Browser
@@ -1001,10 +1018,8 @@ Some configuration specific to using Emacs on macOS.
     (global-set-key (kbd "s-o") 'other-window)
     (global-set-key (kbd "s-p") 'helm-projectile)
     (global-set-key (kbd "s-r") 'ddavis/helm-project-search)
-    (global-set-key (kbd "s-t") 'neotree-toggle)
     (global-set-key (kbd "s-u") 'ddavis/switch-to-or-start-gnus)
-    (global-set-key (kbd "s-w") 'ddavis/delete-frame-or-window)
-    (global-unset-key (kbd "s-t")))
+    (global-set-key (kbd "s-w") 'ddavis/delete-frame-or-window))
 #+end_src
 
 * Email
