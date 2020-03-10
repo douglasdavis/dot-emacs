@@ -149,10 +149,10 @@
     (setq auto-package-update-delete-old-versions t
           auto-package-update-interval 5))
 
-  (add-hook 'package-menu-mode-hook
-            (lambda ()
-              (define-key package-menu-mode-map (kbd "q") 'kill-buffer-and-window)
-              (define-key package-menu-mode-map (kbd "C-g") 'kill-buffer-and-window)))
+  (use-package emacs
+    :bind (:map package-menu-mode-map
+                ("q" . kill-buffer-and-window)
+                ("C-g" . kill-buffer-and-window)))
 #+end_src
 
 ** Some local Emacs Lisp
@@ -273,27 +273,29 @@
                     ("py" . "src python :results silent")
                     ("cpp" . "src C++")))))
 
-  (when ddavis-v-is-mac
-    (define-key org-mode-map (kbd "<A-down>") 'org-move-subtree-down)
-    (define-key org-mode-map (kbd "<A-up>") 'org-move-subtree-up)
-    (define-key org-mode-map (kbd "<A-left>") 'org-promote-subtree)
-    (define-key org-mode-map (kbd "<A-right>") 'org-demote-subtree))
+  (use-package org
+    :if ddavis-v-is-mac
+    :bind (:map org-mode-map
+                ("<A-down>" . org-move-subtree-down)
+                ("<A-up>" . org-move-subtree-up)
+                ("<A-left>" . org-promote-subtree)
+                ("<A-right>" . org-demote-subtree)))
 
-  (unless ddavis-v-is-mac
-    (define-key org-mode-map (kbd "<s-down>") 'org-move-subtree-down)
-    (define-key org-mode-map (kbd "<s-up>") 'org-move-subtree-up)
-    (define-key org-mode-map (kbd "<s-left>") 'org-promote-subtree)
-    (define-key org-mode-map (kbd "<s-right>") 'org-demote-subtree))
+  (use-package org
+    :unless ddavis-v-is-mac
+    :bind (:map org-mode-map
+                ("<s-down>" . org-move-subtree-down)
+                ("<s-up>" . org-move-subtree-up)
+                ("<s-left>" . org-promote-subtree)
+                ("<s-right>" . org-demote-subtree)))
 
   ;; builtin ox packages
   (use-package ox :after org)
   (use-package ox-beamer :after ox)
   (use-package ox-md :after ox)
-
   ;; some melpa provided ox packages
   (use-package ox-hugo :ensure t :after ox)
   (use-package ox-reveal :ensure t :after ox)
-
   ;; export syntax highlighting to html
   (use-package htmlize :ensure t)
 
@@ -775,12 +777,16 @@ Setting up authentication with encryption
 ** Bindings
 
 #+begin_src emacs-lisp :results silent
-  (global-set-key (kbd "C-c q") 'auto-fill-mode)
-  (global-set-key (kbd "C-x \\") 'ddavis/toggle-window-split)
-
   (global-unset-key (kbd "C-d"))
-  (global-set-key (kbd "C-d f") (lambda () (interactive)
-                                  (find-file "~/.emacs.d/dot-emacs/emacs-init.org")))
+
+  (defun ddavis/open-init ()
+    (interactive)
+    (find-file "~/.emacs.d/dot-emacs/emacs-init.org"))
+
+  (use-package emacs
+    :bind (("C-c q" . auto-fill-mode)
+           ("C-x \\" . ddavis/toggle-window-split)
+           ("C-d f" . ddavis/open-init)))
 #+end_src
 
 ** Random
@@ -831,14 +837,6 @@ Setting up authentication with encryption
 ** Some packages
 
 #+begin_src emacs-lisp :results silent
-  (use-package neotree
-    :ensure t
-    :config
-    (global-set-key [f8] 'neotree-project-dir)
-    (setq neo-theme (if (display-graphic-p) 'icons 'arrow)
-          neo-smart-open t
-          neo-autorefresh nil))
-
   (use-package yasnippet
     :ensure t
     :config
@@ -948,58 +946,6 @@ Setting up authentication with encryption
   (use-package diredfl
     :ensure t
     :hook (dired-mode . diredfl-mode))
-#+end_src
-
-* macOS
-
-Some configuration specific to using Emacs on macOS.
-
-#+begin_src emacs-lisp :results silent
-  (defun ddavis/delete-frame-or-window ()
-    "if we have multiple frames delete the current one, if only one
-  delete the window; this is really just for binding Command+w to
-  behave similar to other macOS applications."
-    (interactive)
-    (if (< (count-windows) 2)
-        (delete-frame)
-      (delete-window)))
-
-  (defun ddavis/switch-to-or-start-gnus ()
-    "if we have a '*Group*' buffer go and and switch to it; if not
-  spin up gnus. just for binding to s-u on macOS."
-    (interactive)
-    (if (get-buffer "*Group*")
-        (switch-to-buffer "*Group*")
-      (gnus)))
-
-  (when (memq window-system '(mac ns))
-    (setq browse-url-browser-function 'browse-url-default-macosx-browser)
-    (setq-default ns-alternate-modifier 'meta)
-    (setq-default mac-option-modifier 'meta)
-    (setq-default ns-right-alternate-modifier nil)
-    (setq-default ns-command-modifier 'super)
-    (setq-default mac-command-modifier 'super)
-    (setq-default ns-function-modifier 'hyper)
-    (setq-default mac-function-modifier 'hyper)
-    (global-set-key [(meta shift up)]  'ddavis/move-line-up)
-    (global-set-key [(meta shift down)]  'ddavis/move-line-down)
-    (global-set-key (kbd "s-/") 'previous-buffer)
-    (global-set-key (kbd "s-\\") 'ddavis/toggle-window-split)
-    (global-set-key (kbd "s-1") 'delete-other-windows)
-    (global-set-key (kbd "s-2") 'split-window-below)
-    (global-set-key (kbd "s-3") 'split-window-right)
-    (global-set-key (kbd "s-5") 'projectile-find-file-in-known-projects)
-    (global-set-key (kbd "s-4") 'mu4e)
-    (global-set-key (kbd "s-d") (lambda () (interactive)
-                                  (find-file "~/.emacs.d/dot-emacs/emacs-init.org")))
-    (global-set-key (kbd "s-b") 'helm-buffers-list)
-    (global-set-key (kbd "s-f") 'helm-find-files)
-    (global-set-key (kbd "s-g") 'magit-status)
-    (global-set-key (kbd "s-o") 'other-window)
-    (global-set-key (kbd "s-p") 'helm-projectile)
-    (global-set-key (kbd "s-r") 'ddavis/helm-project-search)
-    (global-set-key (kbd "s-u") 'ddavis/switch-to-or-start-gnus)
-    (global-set-key (kbd "s-w") 'ddavis/delete-frame-or-window))
 #+end_src
 
 * Email
@@ -1229,6 +1175,61 @@ My [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] setup
   ;;   (mu4e-maildirs-extension)))
 #+end_src
 
+* macOS
+
+Some configuration specific to using Emacs on macOS.
+
+#+begin_src emacs-lisp :results silent
+  (defun ddavis/delete-frame-or-window ()
+    "if we have multiple frames delete the current one, if only one
+  delete the window; this is really just for binding Command+w to
+  behave similar to other macOS applications."
+    (interactive)
+    (if (< (count-windows) 2)
+        (delete-frame)
+      (delete-window)))
+
+  (defun ddavis/switch-to-or-start-gnus ()
+    "if we have a '*Group*' buffer go and and switch to it; if not
+  spin up gnus. just for binding to s-u on macOS."
+    (interactive)
+    (if (get-buffer "*Group*")
+        (switch-to-buffer "*Group*")
+      (gnus)))
+
+  (when (memq window-system '(mac ns))
+    (setq browse-url-browser-function 'browse-url-default-macosx-browser)
+    (setq-default ns-alternate-modifier 'meta)
+    (setq-default mac-option-modifier 'meta)
+    (setq-default ns-right-alternate-modifier nil)
+    (setq-default ns-command-modifier 'super)
+    (setq-default mac-command-modifier 'super)
+    (setq-default ns-function-modifier 'hyper)
+    (setq-default mac-function-modifier 'hyper)
+    (global-set-key [(meta shift up)]  'ddavis/move-line-up)
+    (global-set-key [(meta shift down)]  'ddavis/move-line-down))
+
+  (use-package emacs
+    :if ddavis-v-is-mac
+    :bind (("s-/" . previous-buffer)
+           ("s-\\" . ddavis/toggle-window-split)
+           ("s-1" . delete-other-windows)
+           ("s-2" . split-window-below)
+           ("s-3" . split-window-right)
+           ("s-5" . projectile-find-file-in-known-projects)
+           ("s-4" . mu4e)
+           ("s-d" . ddavis/open-init)
+           ("s-b" . helm-buffers-list)
+           ("s-f" . helm-find-files)
+           ("s-g" . magit-status)
+           ("s-o" . other-window)
+           ("s-p" . helm-projectile)
+           ("s-r" . ddavis/helm-project-search)
+           ("s-u" . ddavis/switch-to-or-start-gnus)
+           ("s-w" . ddavis/delete-frame-or-window)))
+
+#+end_src
+
 * IRC
 
 I haven't really been able to make up my mind on using the builtin
@@ -1272,6 +1273,7 @@ usage of both.
   (use-package circe
     :when ddavis-v-enable-irc
     :ensure t
+    :hook (circe-chat-mode . ddavis/circe-prompt)
     :config
     (setq circe-network-options
           `(("Freenode"
@@ -1301,7 +1303,6 @@ usage of both.
           '(circe-channel-mode
             circe-query-mode
             circe-server-mode))
-    (add-hook 'circe-chat-mode-hook 'ddavis/circe-prompt)
     (setq circe-default-part-message
           (concat "Closed Circe (" circe-version ") buffer in GNU Emacs (" emacs-version ")"))
     (setq circe-default-quit-message
@@ -1311,10 +1312,7 @@ usage of both.
     :when ddavis-v-enable-irc
     :after circe
     :ensure t
-    :bind (:map helm-command-map ("i" . helm-circe))
-    :config
-    (when ddavis-v-is-mac
-      (global-set-key (kbd "s-i") 'helm-circe)))
+    :bind (:map helm-command-map ("i" . helm-circe)))
 #+end_src
 
 ** ERC Utilities
@@ -1371,9 +1369,9 @@ usage of both.
 #+begin_src emacs-lisp :results silent
   (use-package erc
     :when ddavis-v-enable-irc
-    :hook (erc-notify . ddavis/erc-notify)
-    :custom-face
-    (erc-notice-face ((t (:foreground "#ebcb8b"))))
+    :hook ((erc-notify . ddavis/erc-notify)
+           (erc-insert-modify . ddavis/erc-insert-modify-hook))
+    :custom-face (erc-notice-face ((t (:foreground "#ebcb8b"))))
     :config
     (setq erc-user-full-name "Doug Davis"
           erc-prompt-for-password nil
@@ -1382,10 +1380,7 @@ usage of both.
           erc-kill-buffer-on-part t
           erc-fill-function 'erc-fill-static
           erc-fill-static-center 16
-          erc-prompt (lambda () (concat (buffer-name) " >>>")))
-
-    ;; See https://www.emacswiki.org/emacs/ErcNickColors#toc1
-    (add-hook 'erc-insert-modify-hook 'ddavis/erc-insert-modify-hook))
+          erc-prompt (lambda () (concat (buffer-name) " >>>"))))
 
   (use-package erc-track
     :when ddavis-v-enable-irc
