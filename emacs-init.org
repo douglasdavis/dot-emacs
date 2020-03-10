@@ -259,6 +259,7 @@
 
 #+begin_src emacs-lisp :results silent
   (use-package org
+    :ensure t
     :config
     (setq org-src-fontify-natively t)
     (setq org-structure-template-alist
@@ -279,22 +280,17 @@
     (define-key org-mode-map (kbd "<s-left>") 'org-promote-subtree)
     (define-key org-mode-map (kbd "<s-right>") 'org-demote-subtree))
 
-  (use-package ox-beamer
-    :after ox)
+  ;; builtin ox packages
+  (use-package ox :after org)
+  (use-package ox-beamer :after ox)
+  (use-package ox-md :after ox)
 
-  (use-package ox-md
-    :after ox)
+  ;; some melpa provided ox packages
+  (use-package ox-hugo :ensure t :after ox)
+  (use-package ox-reveal :ensure t :after ox)
 
-  (use-package ox-hugo
-    :ensure t
-    :after ox)
-
-  (use-package ox-reveal
-    :ensure t
-    :after ox)
-
-  (use-package htmlize
-    :ensure t)
+  ;; export syntax highlighting to html
+  (use-package htmlize :ensure t)
 
   ;; (org-babel-do-load-languages
   ;;  'org-babel-load-languages
@@ -501,25 +497,18 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
     :init
     (setq lsp-ui-sideline-show-hover nil))
 
-  (use-package lsp-python-ms
-    :ensure t)
-
-  (use-package company-lsp
-    :ensure t
-    :commands company-lsp)
-
-  (use-package eglot
-    :ensure t)
+  (use-package lsp-python-ms :ensure t)
+  (use-package company-lsp :ensure t :commands company-lsp)
+  (use-package eglot :ensure t)
 #+end_src
 
 * Python
 
 #+begin_src emacs-lisp :results silent
-  (use-package pydoc
-    :ensure t)
-
-  (use-package helm-pydoc
-    :ensure t)
+  (use-package pydoc :ensure t)
+  (use-package helm-pydoc :ensure t)
+  (use-package elpy :ensure t)
+  (use-package blacken :ensure t)
 
   (use-package pyvenv
     :ensure t
@@ -548,12 +537,6 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
                            pyvenv-virtual-env))
           (call-interactively #'pyvenv-workon)
           (lsp)))))
-
-  (use-package elpy
-    :ensure t)
-
-  (use-package blacken
-    :ensure t)
 
   (defun ddavis/eglot-prep-for-python ()
     "prepare python eglot setup"
@@ -599,11 +582,8 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
 
   (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
 
-  (use-package helm-bibtex
-    :ensure t)
-
-  (use-package company-bibtex
-    :ensure t)
+  (use-package helm-bibtex :ensure t)
+  (use-package company-bibtex :ensure t)
 #+end_src
 
 ** PDF
@@ -854,24 +834,23 @@ Setting up authentication with encryption
           neo-smart-open t
           neo-autorefresh nil))
 
-  (use-package which-key
-    :ensure t
-    :hook (after-init . which-key-mode))
-
   (use-package yasnippet
     :ensure t
     :config
     (yas-global-mode 1))
 
-  (use-package yasnippet-snippets
-    :ensure t)
+  (use-package yasnippet-snippets :ensure t)
+  (use-package deadgrep :ensure t)
+  (use-package cmake-mode :ensure t)
+
+  (use-package which-key
+    :ensure t
+    :hook (after-init . which-key-mode))
+
 
   (use-package iedit
     :ensure t
     :bind ("C-c ;" . 'iedit-mode))
-
-  (use-package cmake-mode
-    :ensure t)
 
   (use-package markdown-mode
     :ensure t
@@ -881,9 +860,6 @@ Setting up authentication with encryption
     :ensure t
     :mode (("\\.yml\\'" . yaml-mode)
            ("\\.yaml\\'" . yaml-mode)))
-
-  (use-package deadgrep
-    :ensure t)
 
   (use-package ace-window
     :ensure t
@@ -958,8 +934,7 @@ Setting up authentication with encryption
                 ("q" . kill-current-buffer))
     :hook (dired-mode . hl-line-mode))
 
-  (use-package all-the-icons
-    :ensure t)
+  (use-package all-the-icons :ensure t)
 
   (use-package all-the-icons-dired
     :ensure t
@@ -1433,8 +1408,7 @@ usage of both.
 ** installation
 
 #+begin_src emacs-lisp :results silent
-  (use-package hydra
-    :ensure t)
+  (use-package hydra :ensure t)
 #+end_src
 
 ** projectile
@@ -1588,9 +1562,7 @@ usage of both.
 * vterm
 
 #+begin_src emacs-lisp :results silent
-  (use-package vterm
-    :when ddavis-v-is-cc7
-    :ensure t)
+  (use-package vterm :when ddavis-v-is-cc7 :ensure t)
 
   (defun ddavis/remote-vterm (user-at-machine)
     (interactive "sMachine: ")
