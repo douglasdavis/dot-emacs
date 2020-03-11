@@ -151,8 +151,7 @@
 
   (use-package emacs
     :bind (:map package-menu-mode-map
-                ("q" . kill-buffer-and-window)
-                ("C-g" . kill-buffer-and-window)))
+                ("q" . kill-buffer-and-window)))
 #+end_src
 
 ** Some local Emacs Lisp
@@ -1397,7 +1396,6 @@ usage of both.
   (use-package help-mode
     :bind
     (:map help-mode-map
-          ("C-g" . kill-buffer-and-window)
           ("q" . kill-buffer-and-window)))
 
   (use-package helpful
@@ -1406,8 +1404,7 @@ usage of both.
            ("C-h v" . #'helpful-variable)
            ("C-h k" . #'helpful-key)
            :map helpful-mode-map
-           ("q" . kill-buffer-and-window)
-           ("C-g" . kill-buffer-and-window)))
+           ("q" . kill-buffer-and-window)))
 #+end_src
 
 * Hydra
