@@ -600,13 +600,12 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
 
 #+begin_src emacs-lisp :results silent
   (when ddavis-v-is-cc7
-    (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig"))
-
-  (use-package pdf-tools
-    :when ddavis-v-is-cc7
-    :config
-    (pdf-tools-install)
-    (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))
+    (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig")
+    (use-package pdf-tools
+      :config
+      (pdf-tools-install)
+      (setq-default pdf-view-display-size 'fit-page)
+      (setq TeX-view-program-selection '((output-pdf "PDF Tools")))))
 #+end_src
 
 ** Thesis
