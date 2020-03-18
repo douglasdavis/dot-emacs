@@ -358,13 +358,15 @@
                  ("B" projectile-switch-to-buffer-other-window  "switch (OW)")
                  ("f" projectile-find-file                      "file")
                  ("F" projectile-find-file-other-window         "file (OW)")
-                 ("s" projectile-switch-project                 "switch project"))
+                 ("s" projectile-switch-project                 "switch project")
+                 ("u" projectile-find-file-in-known-projects    "find in known"))
 
      "Search" (("r" ddavis/helm-project-search                  "ripgrep")
                ("o" projectile-multi-occur                      "multioccur"))
 
-     "Misc" (("k" projectile-kill-buffers                       "Kill em")
-             ("i" projectile-ibuffer                            "ibuffer"))))
+     "Misc" (("a" projectile-add-known-project                  "add to known")
+             ("i" projectile-ibuffer                            "ibuffer")
+             ("k" projectile-kill-buffers                       "Kill em"))))
 
   (define-key projectile-mode-map (kbd "C-c p") 'hydra-projectile/body)
 #+end_src
@@ -542,32 +544,23 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
 ** Hydra
 
 #+begin_src emacs-lisp :results silent
-  (defhydra hydra-lsp (:exit t :hint nil)
-    "
-   Buffer^^               Server^^                   Symbol
-  -------------------------------------------------------------------------------------
-   [_f_] format           [_M-r_] restart            [_d_] declaration  [_i_] implementation  [_o_] documentation
-   [_m_] imenu            [_S_]   shutdown           [_D_] definition   [_t_] type            [_r_] rename
-   [_x_] execute action   [_M-s_] describe session   [_R_] references   [_s_] signature"
-    ("d" lsp-find-declaration)
-    ("D" lsp-ui-peek-find-definitions)
-    ("R" lsp-ui-peek-find-references)
-    ("i" lsp-ui-peek-find-implementation)
-    ("t" lsp-find-type-definition)
-    ("s" lsp-signature-help)
-    ("o" lsp-describe-thing-at-point)
-    ("r" lsp-rename)
+  (pretty-hydra-define hydra-lsp (:exit t :hint nil :quit-key "q")
+    ("Finding" (("d" lsp-find-declaration             "find declaration")
+                ("D" lsp-ui-peek-find-definitions     "peek find declaration")
+                ("R" lsp-ui-peek-find-references      "peek find refs")
+                ("i" lsp-ui-peek-find-implementation  "peek find implementation")
+                ("t" lsp-find-type-defition           "find type definition"))
 
-    ("f" lsp-format-buffer)
-    ("m" lsp-ui-imenu)
-    ("x" lsp-execute-code-action)
+     "Misc" (("f" lsp-format-buffer                   "format buffer")
+             ("m" lsp-ui-imenu                        "ui menu")
+             ("x" lsp-execute-code-action             "execeute code action")
+             ("s" lsp-signature-help                  "sig help")
+             ("o" lsp-describe-thing-at-point         "describe thing at point")
+             ("r" lsp-rename                          "rename"))
 
-    ("M-s" lsp-describe-session)
-    ("M-r" lsp-restart-workspace)
-    ("S" lsp-shutdown-workspace)
-
-    ("C-g" nil :color blue)
-    ("q" nil :color blue))
+     "Sesion" (("M-s" lsp-describe-session            "describe session")
+               ("M-r" lsp-restart-workspace           "restart workspace")
+               ("S" lsp-shutdown-workspace            "shutdown workspace"))))
 
   (define-key lsp-mode-map (kbd "C-c l") 'hydra-lsp/body)
 #+end_src
