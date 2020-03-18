@@ -721,6 +721,7 @@ Add some flyspell hooks for a few modes.
 ** misc
 
 #+begin_src emacs-lisp :results silent
+  (setq custom-safe-themes t)
   (global-display-line-numbers-mode)
   (setq column-number-mode t)
 #+end_src
@@ -728,31 +729,34 @@ Add some flyspell hooks for a few modes.
 ** themes
 
 #+begin_src emacs-lisp :results silent
+  (defvar ddavis-v-use-gruvbox t
+    "t if we want to use gruvbox")
   (defvar ddavis-v-use-local-theme nil
-    "t if we want to use the local copy gruvbox")
+    "t if we want to use the local copy of gruvbox")
 
-  (when (and ddavis-v-use-local-theme
-             (package-installed-p 'gruvbox-theme))
-    (package-delete (car (cdr (assoc 'gruvbox-theme package-alist)))))
+  (when ddavis-v-use-gruvbox
+    (when (and ddavis-v-use-local-theme
+               (package-installed-p 'gruvbox-theme))
+      (package-delete (car (cdr (assoc 'gruvbox-theme package-alist)))))
 
-  (unless ddavis-v-use-local-theme
-    (unless (package-installed-p 'gruvbox-theme)
-      (package-refresh-contents)
-      (package-install 'gruvbox-theme)))
+    (unless ddavis-v-use-local-theme
+      (unless (package-installed-p 'gruvbox-theme)
+        (package-refresh-contents)
+        (package-install 'gruvbox-theme)))
 
-  (setq custom-safe-themes t)
+    (use-package gruvbox
+      :if ddavis-v-use-local-theme
+      :load-path "~/.emacs.d/git-repos/emacs-theme-gruvbox"
+      :config
+      (add-to-list 'custom-theme-load-path "~/.emacs.d/git-repos/emacs-theme-gruvbox")
+      (load-theme 'gruvbox t))
 
-  (use-package gruvbox
-    :if ddavis-v-use-local-theme
-    :load-path "~/.emacs.d/git-repos/emacs-theme-gruvbox"
-    :config
-    (add-to-list 'custom-theme-load-path "~/.emacs.d/git-repos/emacs-theme-gruvbox")
-    (load-theme 'gruvbox t))
+    (use-package gruvbox-theme
+      :unless ddavis-v-use-local-theme
+      :config
+      (load-theme 'gruvbox t))
 
-  (use-package gruvbox-theme
-    :unless ddavis-v-use-local-theme
-    :config
-    (load-theme 'gruvbox t))
+    (set-face-attribute 'link nil :foreground "#458588"))
 
   (let ((line (face-attribute 'mode-line :underline)))
     (set-face-attribute 'mode-line           nil :overline   line)
@@ -761,8 +765,6 @@ Add some flyspell hooks for a few modes.
     (set-face-attribute 'mode-line           nil :box        nil)
     (set-face-attribute 'mode-line-inactive  nil :box        nil)
     (set-face-attribute 'mode-line-buffer-id nil :box        nil))
-
-  (set-face-attribute 'link nil :foreground "#458588")
 #+end_src
 
 ** fonts
