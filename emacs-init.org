@@ -397,7 +397,13 @@
           helm-ff-skip-boring-files t)
     (helm-autoresize-mode 1)
     (helm-mode 1))
+#+end_src
 
+** Helm searching
+
+A nice [[https://www.manueluberti.eu/emacs/2020/02/22/ripgrepping-with-helm/][blog post]] describes how to use ripgrep with pure Helm.
+
+#+begin_src emacs-lisp :results silent
   (setq helm-grep-ag-command (concat ddavis-v-rg-exe
                                      " --color=always"
                                      " --smart-case"
@@ -425,7 +431,11 @@
   With WITH-TYPES, ask for file types to search in."
     (interactive "P")
     (ddavis/helm-rg (projectile-project-root) with-types))
+#+end_src
 
+** Other helm extensions
+
+#+begin_src emacs-lisp :results silent
   (use-package helm-projectile
     :ensure t
     :init (setq projectile-completion-system 'helm
