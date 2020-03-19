@@ -320,11 +320,126 @@
     (setq uniquify-after-kill-buffer-p t))
 #+end_src
 
+* Looks
+** misc
+
+#+begin_src emacs-lisp :results silent
+  (setq custom-safe-themes t)
+  (global-display-line-numbers-mode)
+  (setq column-number-mode t)
+#+end_src
+
+** themes
+
+#+begin_src emacs-lisp :results silent
+  (defvar ddavis-v-use-gruvbox t
+    "t if we want to use gruvbox")
+  (defvar ddavis-v-use-local-theme nil
+    "t if we want to use the local copy of gruvbox")
+
+  (when ddavis-v-use-gruvbox
+    (when (and ddavis-v-use-local-theme
+               (package-installed-p 'gruvbox-theme))
+      (package-delete (car (cdr (assoc 'gruvbox-theme package-alist)))))
+
+    (unless ddavis-v-use-local-theme
+      (unless (package-installed-p 'gruvbox-theme)
+        (package-refresh-contents)
+        (package-install 'gruvbox-theme)))
+
+    (use-package gruvbox
+      :if ddavis-v-use-local-theme
+      :load-path "~/.emacs.d/git-repos/emacs-theme-gruvbox"
+      :config
+      (add-to-list 'custom-theme-load-path "~/.emacs.d/git-repos/emacs-theme-gruvbox")
+      (load-theme 'gruvbox t))
+
+    (use-package gruvbox-theme
+      :unless ddavis-v-use-local-theme
+      :config
+      (load-theme 'gruvbox t))
+
+    (set-face-attribute 'link nil :foreground "#458588"))
+
+  ;; (let ((line (face-attribute 'mode-line :underline)))
+  ;;   (set-face-attribute 'mode-line           nil :overline   line)
+  ;;   (set-face-attribute 'mode-line-inactive  nil :overline   line)
+  ;;   (set-face-attribute 'mode-line-inactive  nil :underline  line)
+  ;;   (set-face-attribute 'mode-line           nil :box        nil)
+  ;;   (set-face-attribute 'mode-line-inactive  nil :box        nil)
+  ;;   (set-face-attribute 'mode-line-buffer-id nil :box        nil))
+#+end_src
+
+** fonts
+
+#+begin_src emacs-lisp :results silent
+  (when window-system
+    (when ddavis-v-is-cc7
+      (set-face-attribute 'default nil
+                          :family "JetBrains Mono"
+                          :weight 'medium
+                          :height 130))
+    (when ddavis-v-is-mac
+      (setq mac-allow-anti-aliasing t)
+      (set-face-attribute 'default nil
+                          :family "JetBrains Mono"
+                          :weight 'medium
+                          :height 120))
+    (when ddavis-v-is-pion
+      (set-face-attribute 'default nil
+                          :family "Source Code Pro"
+                          :weight 'semibold
+                          :height 130))
+    (when ddavis-v-is-dobian
+      (set-face-attribute 'default nil
+                          :family "Terminus (TTF)"
+                          :weight 'regular
+                          :height 90))
+    (add-to-list 'default-frame-alist '(height . 72))
+    (add-to-list 'default-frame-alist '(width . 234)))
+#+end_src
+
+** extend
+
+from https://github.com/emacs-helm/helm/issues/2213; Fix issue with
+the new :extend face attribute in emacs-27 Prefer to extend to EOL as
+in previous emacs.
+
+#+begin_src emacs-lisp :results silent
+  (defun tv/extend-faces-matching (regexp)
+    (cl-loop for f in (face-list)
+             for face = (symbol-name f)
+             when (and (string-match regexp face)
+                       (eq (face-attribute f :extend t 'default)
+                           'unspecified))
+             do (set-face-attribute f nil :extend t)))
+
+  (defun ddavis/init-extend-faces ()
+    (when (fboundp 'set-face-extend)
+      (with-eval-after-load "mu4e"
+        (tv/extend-faces-matching "\\`mu4e"))
+      (with-eval-after-load "org"
+        (tv/extend-faces-matching "\\`org"))
+      (with-eval-after-load "magit"
+        (tv/extend-faces-matching "\\`magit"))
+      (with-eval-after-load "helm"
+        (tv/extend-faces-matching "\\`helm"))))
+
+  (ddavis/init-extend-faces)
+#+end_src
 * Hydra
 
 #+begin_src emacs-lisp :results silent
   (use-package hydra :ensure t)
   (use-package pretty-hydra :ensure t)
+  (use-package hydra-posframe
+    :load-path "~/.emacs.d/git-repos/hydra-posframe"
+    :hook (after-init . hydra-posframe-enable)
+    :init
+    (setq hydra-posframe-border-width 2)
+    ;;(setq hydra-posframe-parameters '((left-fringe . 5)(right-fringe . 5)))
+    :custom-face (hydra-posframe-border-face ((t (:background "gray10"))))
+    :custom-face (hydra-posframe-face ((t (:background "gray10")))))
 #+end_src
 
 * Projectile
@@ -496,9 +611,9 @@ A nice [[https://www.manueluberti.eu/emacs/2020/02/22/ripgrepping-with-helm/][bl
            (lsp-mode . company-mode)
            (LaTeX-mode . company-mode))
     :config
-    (setq company-clang-executable ddavis-v-clang-exe)
     (setq company-minimum-prefix-length 2)
     (setq company-idle-delay 0.1))
+  ;;  (add-to-list 'company-backends 'company-capf))
 #+end_src
 
 * Version control
@@ -715,114 +830,6 @@ Add some flyspell hooks for a few modes.
            (markdown-mode . flyspell-mode)
            (message-mode . flyspell-mode)
            (mu4e-compose-mode .flyspell-mode)))
-#+end_src
-
-* Looks
-** misc
-
-#+begin_src emacs-lisp :results silent
-  (setq custom-safe-themes t)
-  (global-display-line-numbers-mode)
-  (setq column-number-mode t)
-#+end_src
-
-** themes
-
-#+begin_src emacs-lisp :results silent
-  (defvar ddavis-v-use-gruvbox t
-    "t if we want to use gruvbox")
-  (defvar ddavis-v-use-local-theme nil
-    "t if we want to use the local copy of gruvbox")
-
-  (when ddavis-v-use-gruvbox
-    (when (and ddavis-v-use-local-theme
-               (package-installed-p 'gruvbox-theme))
-      (package-delete (car (cdr (assoc 'gruvbox-theme package-alist)))))
-
-    (unless ddavis-v-use-local-theme
-      (unless (package-installed-p 'gruvbox-theme)
-        (package-refresh-contents)
-        (package-install 'gruvbox-theme)))
-
-    (use-package gruvbox
-      :if ddavis-v-use-local-theme
-      :load-path "~/.emacs.d/git-repos/emacs-theme-gruvbox"
-      :config
-      (add-to-list 'custom-theme-load-path "~/.emacs.d/git-repos/emacs-theme-gruvbox")
-      (load-theme 'gruvbox t))
-
-    (use-package gruvbox-theme
-      :unless ddavis-v-use-local-theme
-      :config
-      (load-theme 'gruvbox t))
-
-    (set-face-attribute 'link nil :foreground "#458588"))
-
-  (let ((line (face-attribute 'mode-line :underline)))
-    (set-face-attribute 'mode-line           nil :overline   line)
-    (set-face-attribute 'mode-line-inactive  nil :overline   line)
-    (set-face-attribute 'mode-line-inactive  nil :underline  line)
-    (set-face-attribute 'mode-line           nil :box        nil)
-    (set-face-attribute 'mode-line-inactive  nil :box        nil)
-    (set-face-attribute 'mode-line-buffer-id nil :box        nil))
-#+end_src
-
-** fonts
-
-#+begin_src emacs-lisp :results silent
-  (when window-system
-    (when ddavis-v-is-cc7
-      (set-face-attribute 'default nil
-                          :family "JetBrains Mono"
-                          :weight 'medium
-                          :height 130))
-    (when ddavis-v-is-mac
-      (setq mac-allow-anti-aliasing t)
-      (set-face-attribute 'default nil
-                          :family "JetBrains Mono"
-                          :weight 'medium
-                          :height 120))
-    (when ddavis-v-is-pion
-      (set-face-attribute 'default nil
-                          :family "Source Code Pro"
-                          :weight 'semibold
-                          :height 130))
-    (when ddavis-v-is-dobian
-      (set-face-attribute 'default nil
-                          :family "Terminus (TTF)"
-                          :weight 'regular
-                          :height 90))
-    (add-to-list 'default-frame-alist '(height . 72))
-    (add-to-list 'default-frame-alist '(width . 234)))
-#+end_src
-
-** extend
-
-from https://github.com/emacs-helm/helm/issues/2213; Fix issue with
-the new :extend face attribute in emacs-27 Prefer to extend to EOL as
-in previous emacs.
-
-#+begin_src emacs-lisp :results silent
-  (defun tv/extend-faces-matching (regexp)
-    (cl-loop for f in (face-list)
-             for face = (symbol-name f)
-             when (and (string-match regexp face)
-                       (eq (face-attribute f :extend t 'default)
-                           'unspecified))
-             do (set-face-attribute f nil :extend t)))
-
-  (defun ddavis/init-extend-faces ()
-    (when (fboundp 'set-face-extend)
-      (with-eval-after-load "mu4e"
-        (tv/extend-faces-matching "\\`mu4e"))
-      (with-eval-after-load "org"
-        (tv/extend-faces-matching "\\`org"))
-      (with-eval-after-load "magit"
-        (tv/extend-faces-matching "\\`magit"))
-      (with-eval-after-load "helm"
-        (tv/extend-faces-matching "\\`helm"))))
-
-  (ddavis/init-extend-faces)
 #+end_src
 
 * Auth and password-store
@@ -1137,10 +1144,10 @@ My [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] setup
            :map mu4e-main-mode-map
            ("j" . ddavis/mu4e-jump-via-helm)
            :map mu4e-view-mode-map
+           ("d" . mu4e-view-mark-for-delete)
+           ("D" . mu4e-view-mark-for-trash)
            ("M" . mu4e-action-view-in-w3m)
-           ("j" . ddavis/mu4e-jump-via-helm)
-           ("d" . mu4e-headers-mark-for-delete)
-           ("D" . mu4e-headers-mark-for-trash))
+           ("j" . ddavis/mu4e-jump-via-helm))
     :config
     (setq mu4e-mu-binary ddavis-v-mu-exe
           mu4e-change-filenames-when-moving t
@@ -1495,7 +1502,7 @@ usage of both.
           erc-kill-server-buffer-on-quit t
           erc-kill-buffer-on-part t
           erc-fill-function 'erc-fill-static
-          erc-fill-static-center 16
+          erc-fill-static-center 19
           erc-prompt (lambda () (concat (buffer-name) " >>>"))))
 
   (use-package erc-track
