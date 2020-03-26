@@ -564,7 +564,7 @@ A nice [[https://www.manueluberti.eu/emacs/2020/02/22/ripgrepping-with-helm/][bl
     :ensure t
     :after wgrep
     :config
-    (setq rg-executable ddavis-v-rg-exe
+    (setq rg-executable (expand-file-name ddavis-v-rg-exe)
           rg-group-result t
           rg-hide-command t)
 
