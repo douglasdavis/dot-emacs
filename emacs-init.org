@@ -410,6 +410,7 @@ in previous emacs.
 
   (ddavis/init-extend-faces)
 #+end_src
+
 * Hydra
 
 #+begin_src emacs-lisp :results silent
@@ -553,6 +554,29 @@ A nice [[https://www.manueluberti.eu/emacs/2020/02/22/ripgrepping-with-helm/][bl
     :ensure t
     :demand
     :bind (("C-h b" . helm-descbinds)))
+#+end_src
+
+* rg.el
+
+#+begin_src emacs-lisp :results silent
+  (use-package rg
+    :ensure t
+    :after wgrep
+    :config
+    (setq rg-executable ddavis-v-rg-exe
+          rg-group-result t
+          rg-hide-command t)
+
+    (rg-define-search ddavis/grep-vc-or-dir
+      :query ask
+      :format regexp
+      :files "everything"
+      :dir (let ((proj (projectile-project-root)))
+             (if proj
+                 proj
+               default-directory))
+      :confirm prefix
+      :flags ("--hidden -g !.git")))
 #+end_src
 
 * eshell
