@@ -41,89 +41,77 @@
   (defconst ddavis-v-is-grads-18 (string= (system-name) "grads-18.internal.phy.duke.edu")
     "true if on grads-18 Duke physics machine")
 
-  (defconst ddavis-v-is-pion (string= (system-name) "pion")
-    "true if on pion box")
-
   (defconst ddavis-v-is-dobian (string= (system-name) "dobian")
     "true if on dobian box")
 
-  (defconst ddavis-v-is-linux-desktop (or ddavis-v-is-pion ddavis-v-is-cc7)
-    "true if on either pion or cc7")
+  (defconst ddavis-v-is-linux-desktop (or nil ddavis-v-is-cc7)
+    "true if personal linux desktop")
 
   (defconst ddavis-v-enable-mu4e
     (or ddavis-v-is-mac
-        ddavis-v-is-pion
         ddavis-v-is-cc7
         ddavis-v-is-grads-18)
     "a flag for conditionally setting up mu4e stuff")
 
   (defconst ddavis-v-enable-irc
     (or ddavis-v-is-mac
-        ddavis-v-is-pion
         ddavis-v-is-dobian
         ddavis-v-is-grads-18
         ddavis-v-is-cc7)
     "a flag for conditionally setting up erc and circe")
 
+  (defconst ddavis-v-llvm-bin
+    (cond (ddavis-v-is-mac "~/Software/LLVM/releases/10.x/bin")
+          (ddavis-v-is-cc7 "~/Software/LLVM/releases/master/bin")
+          (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin")
+          (ddavis-v-is-dobian "/usr/bin"))
+    "machine dependent llvm installation path")
+
   (defconst ddavis-v-clangd-exe
-    (cond (ddavis-v-is-mac "~/Software/LLVM/releases/10.x/bin/clangd")
-          (ddavis-v-is-cc7 "~/Software/LLVM/releases/10.0.0/bin/clangd")
-          (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clangd")
-          (ddavis-v-is-dobian "/usr/bin/clangd")
-          (ddavis-v-is-pion "/usr/bin/clangd"))
-    "machine dependent clangd executable string")
+    (if (file-exists-p ddavis-v-llvm-bin)
+        (concat (file-name-as-directory ddavis-v-llvm-bin) "clangd")
+      nil))
 
   (defconst ddavis-v-clang-exe
-    (cond (ddavis-v-is-mac "~/Software/LLVM/releases/10.x/bin/clang")
-          (ddavis-v-is-cc7 "~/Software/LLVM/releases/10.0.0/bin/clang")
-          (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clang")
-          (ddavis-v-is-dobian "/usr/bin/clang")
-          (ddavis-v-is-pion "/usr/bin/clang"))
-    "machine dependent clang executable string")
+    (if (file-exists-p ddavis-v-llvm-bin)
+        (concat (file-name-as-directory ddavis-v-llvm-bin) "clang")
+      nil))
 
   (defconst ddavis-v-clang-format-exe
-    (cond (ddavis-v-is-mac "~/Software/LLVM/releases/10.x/bin/clang-format")
-          (ddavis-v-is-cc7 "~/Software/LLVM/releases/10.0.0/bin/clang-format")
-          (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin/clang-format")
-          (ddavis-v-is-dobian "/usr/bin/clang-format")
-          (ddavis-v-is-pion "/usr/bin/clang-format"))
-    "machine dependent clang-format executable string")
+    (if (file-exists-p ddavis-v-llvm-bin)
+        (concat (file-name-as-directory ddavis-v-llvm-bin) "clang-format")
+      nil))
 
   (defconst ddavis-v-rg-exe
     (cond (ddavis-v-is-mac "/usr/local/bin/rg")
           (ddavis-v-is-cc7 "~/.cargo/bin/rg")
           (ddavis-v-is-grads-18 "~/.cargo/bin/rg")
-          (ddavis-v-is-dobian "~/.cargo/bin/rg")
-          (ddavis-v-is-pion "/usr/bin/rg"))
+          (ddavis-v-is-dobian "~/.cargo/bin/rg"))
     "machine dependent ripgrep executable string")
 
   (defconst ddavis-v-fd-exe
     (cond (ddavis-v-is-mac "/usr/local/bin/fd")
           (ddavis-v-is-cc7 "~/.cargo/bin/fd")
           (ddavis-v-is-grads-18 "~/.cargo/bin/fd")
-          (ddavis-v-is-dobian "~/.cargo/bin/fd")
-          (ddavis-v-is-pion "/usr/bin/fd"))
+          (ddavis-v-is-dobian "~/.cargo/bin/fd"))
     "machine dependent fd executable string")
 
   (defconst ddavis-v-sendmail-program
     (cond (ddavis-v-is-mac "~/Software/localbase/bin/msmtp")
           (ddavis-v-is-cc7 "~/Software/localbase/bin/msmtp")
-          (ddavis-v-is-grads-18 "/usr/bin/msmtp")
-          (ddavis-v-is-pion "/usr/bin/msmtp"))
+          (ddavis-v-is-grads-18 "/usr/bin/msmtp"))
     "machine dependent msmtp executable string")
 
   (defconst ddavis-v-mu-exe
     (cond (ddavis-v-is-mac "~/Software/mu/releases/1.3.9/bin/mu")
           (ddavis-v-is-cc7 "/usr/local/bin/mu")
-          (ddavis-v-is-grads-18 "~/Software/localbase/bin/mu")
-          (ddavis-v-is-pion "/usr/bin/mu"))
+          (ddavis-v-is-grads-18 "~/Software/localbase/bin/mu"))
     "machine dependent mu executable string")
 
   (defconst ddavis-v-mu4e-dir
     (cond (ddavis-v-is-mac "~/Software/mu/releases/1.3.9/share/emacs/site-lisp/mu4e")
           (ddavis-v-is-grads-18 "~/Software/localbase/share/emacs/site-lisp/mu4e")
-          (ddavis-v-is-cc7 "/usr/local/share/emacs/site-lisp/mu4e")
-          (ddavis-v-is-pion "/usr/share/emacs/site-lisp/mu4e"))
+          (ddavis-v-is-cc7 "/usr/local/share/emacs/site-lisp/mu4e"))
     "machine dependent mu4e installation location string")
 #+end_src
 
@@ -385,11 +373,6 @@
                           :family "JetBrains Mono"
                           :weight 'medium
                           :height 120))
-    (when ddavis-v-is-pion
-      (set-face-attribute 'default nil
-                          :family "Source Code Pro"
-                          :weight 'semibold
-                          :height 130))
     (when ddavis-v-is-dobian
       (set-face-attribute 'default nil
                           :family "Terminus (TTF)"
@@ -437,7 +420,6 @@ in previous emacs.
     :hook (after-init . hydra-posframe-enable)
     :init
     (setq hydra-posframe-border-width 2)
-    ;;(setq hydra-posframe-parameters '((left-fringe . 5)(right-fringe . 5)))
     :custom-face (hydra-posframe-border-face ((t (:background "gray10"))))
     :custom-face (hydra-posframe-face ((t (:background "gray10")))))
 #+end_src
@@ -1007,10 +989,6 @@ Setting up authentication with encryption
   (when ddavis-v-is-cc7
     (setq browse-url-browser-function 'browse-url-generic
           browse-url-generic-program "/home/ddavis/Software/localbase/bin/firefox"))
-
-  (when ddavis-v-is-pion
-    (setq browse-url-browser-function 'browse-url-generic
-          browse-url-generic-program "firefox-developer-edition"))
 #+end_src
 
 * Dired
@@ -1202,7 +1180,7 @@ My [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] setup
                         ( mu4e-drafts-folder      . "/duke/Drafts" )
                         ( mu4e-reply-to-address   . "ddavis@phy.duke.edu" )))))
 
-    (when (or ddavis-v-is-mac ddavis-v-is-cc7 ddavis-v-is-pion)
+    (when (or ddavis-v-is-mac ddavis-v-is-cc7)
       (add-to-list 'mu4e-contexts
                    (make-mu4e-context
                     :name "gmail"
