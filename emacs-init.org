@@ -773,13 +773,14 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
 #+begin_src emacs-lisp :results silent
   (use-package auctex
     :mode ("\\.tex\\'" . TeX-latex-mode)
-    :config
-    (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
-    (setq-default TeX-master nil)
-    (setq font-latex-fontify-sectioning 1.0
+    :init
+    (setq font-latex-fontify-sectioning 'color
           font-latex-fontify-script nil
           TeX-source-correlate-mode 'synctex
-          TeX-source-correlate-start-server t))
+          TeX-source-correlate-start-server t)
+    (setq-default TeX-master nil)
+    :config
+    (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))
 
   (use-package reftex
     :after auctex
