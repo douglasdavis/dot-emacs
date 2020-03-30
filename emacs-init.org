@@ -416,13 +416,6 @@ in previous emacs.
 #+begin_src emacs-lisp :results silent
   (use-package hydra :ensure t)
   (use-package pretty-hydra :ensure t)
-  (use-package hydra-posframe
-    :load-path "~/.emacs.d/git-repos/hydra-posframe"
-    :hook (after-init . hydra-posframe-enable)
-    :init
-    (setq hydra-posframe-border-width 2)
-    :custom-face (hydra-posframe-border-face ((t (:background "gray10"))))
-    :custom-face (hydra-posframe-face ((t (:background "gray10")))))
 #+end_src
 
 * Projectile
