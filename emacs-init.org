@@ -399,8 +399,8 @@ in previous emacs.
 
   (defun ddavis/init-extend-faces ()
     (when (fboundp 'set-face-extend)
-      (with-eval-after-load "mu4e"
-        (tv/extend-faces-matching "\\`mu4e"))
+      ;; (with-eval-after-load "mu4e"
+      ;;   (tv/extend-faces-matching "\\`mu4e"))
       (with-eval-after-load "org"
         (tv/extend-faces-matching "\\`org"))
       (with-eval-after-load "magit"
@@ -408,7 +408,8 @@ in previous emacs.
       (with-eval-after-load "helm"
         (tv/extend-faces-matching "\\`helm"))))
 
-  (ddavis/init-extend-faces)
+  (unless (version< emacs-version "27")
+    (ddavis/init-extend-faces))
 #+end_src
 
 * Hydra
