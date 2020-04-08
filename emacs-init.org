@@ -1236,17 +1236,17 @@ My [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] setup
     (add-to-list 'mu4e-bookmarks
                  (make-mu4e-bookmark
                   :name "Unread short"
-                  :query "flag:unread and (m:/duke* or m:/cern* or m:/fastmail/INBOX or m:/gmail/INBOX*)"
+                  :query "flag:unread AND (m:/duke* or m:/cern* or m:/fastmail/INBOX or m:/gmail/INBOX*)"
                   :key ?u))
     (add-to-list 'mu4e-bookmarks
                  (make-mu4e-bookmark
                   :name "Recent personal"
-                  :query "date:14d..now and (m:/fastmail/INBOX or m:/gmail/INBOX*)"
+                  :query "date:14d..now AND (m:/fastmail/INBOX or m:/gmail/INBOX*)"
                   :key ?p))
     (add-to-list 'mu4e-bookmarks
                  (make-mu4e-bookmark
                   :name "Unread all"
-                  :query "flag:unread and not flag:trashed"
+                  :query "flag:unread AND NOT flag:trashed"
                   :key ?U))
     (add-to-list 'mu4e-bookmarks
                  (make-mu4e-bookmark
@@ -1256,22 +1256,22 @@ My [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] setup
     (add-to-list 'mu4e-bookmarks
                  (make-mu4e-bookmark
                   :name "Last day's work"
-                  :query "date:1d..now and not m:/fastmail* and not m:/gmail*"
+                  :query "date:1d..now AND NOT m:/fastmail* AND NOT m:/gmail* AND NOT m:/cern/Mailing\\ Lists/JEDI*"
                   :key ?w))
     (add-to-list 'mu4e-bookmarks
                  (make-mu4e-bookmark
                   :name "Recent work"
-                  :query "date:3d..now and not m:/fastmail* and not m:/gmail*"
+                  :query "date:3d..now AND NOT m:/fastmail* AND NOT m:/gmail* AND NOT m:/cern/Mailing\\ Lists/JEDI*"
                   :key ?r))
     (add-to-list 'mu4e-bookmarks
                  (make-mu4e-bookmark
                   :name "Duke recent"
-                  :query "date:5d..now and m:/duke*"
+                  :query "date:5d..now AND m:/duke*"
                   :key ?d))
     (add-to-list 'mu4e-bookmarks
                  (make-mu4e-bookmark
                   :name "CERN recent"
-                  :query "date:2d..now and m:/cern*"
+                  :query "date:2d..now AND m:/cern*"
                   :key ?c))
     (add-to-list 'mu4e-bookmarks
                  (make-mu4e-bookmark
