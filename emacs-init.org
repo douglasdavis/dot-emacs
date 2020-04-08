@@ -895,7 +895,8 @@ Setting up authentication with encryption
         kept-old-versions 2
         version-control t)
 
-  (scroll-bar-mode -1)
+  (unless ddavis-v-is-grads-18
+    (scroll-bar-mode -1))
   (tool-bar-mode -1)
   (tooltip-mode -1)
   (menu-bar-mode -1)
