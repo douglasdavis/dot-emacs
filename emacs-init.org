@@ -63,7 +63,7 @@
   (defconst ddavis-v-llvm-bin
     (cond (ddavis-v-is-mac "/usr/local/opt/llvm/bin")
           (ddavis-v-is-cc7 "~/Software/LLVM/releases/10.x/bin")
-          (ddavis-v-is-grads-18 "~/Software/LLVM/releases/master/bin")
+          (ddavis-v-is-grads-18 "~/Software/LLVM/releases/10.x/bin")
           (ddavis-v-is-dobian "/usr/bin"))
     "machine dependent llvm installation path")
 
