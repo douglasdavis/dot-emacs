@@ -613,7 +613,12 @@ A nice [[https://www.manueluberti.eu/emacs/2020/02/22/ripgrepping-with-helm/][bl
     :config
     (setq company-minimum-prefix-length 2)
     (setq company-idle-delay 0.1))
-  ;;  (add-to-list 'company-backends 'company-capf))
+
+  (defun ddavis/company-capf-to-front ()
+    (if (member 'company-capf company-backends)
+        (setq company-backends
+              (cons 'company-capf (remove 'company-capf company-backends)))
+      (add-to-list 'company-backends 'company-capf)))
 #+end_src
 
 * Version control
@@ -648,6 +653,7 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
   (use-package lsp-mode
     :ensure t
     :commands lsp
+    :hook (lsp-mode . ddavis/company-capf-to-front)
     :init
     (setq lsp-clients-clangd-executable ddavis-v-clangd-exe)
     (setq lsp-prefer-capf t)
