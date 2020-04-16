@@ -839,6 +839,19 @@ Add some flyspell hooks for a few modes.
            (mu4e-compose-mode .flyspell-mode)))
 #+end_src
 
+* smartparens
+
+#+begin_src emacs-lisp :results silent
+  (use-package smartparens
+    :ensure t
+    :hook ((python-mode . smartparens-mode)
+           (c-mode-common . smartparens-mode)
+           (emacs-lisp-mode . smartparens-mode))
+    :config
+    (require 'smartparens-config))
+
+#+end_src
+
 * Auth and password-store
 
 Setting up authentication with encryption
