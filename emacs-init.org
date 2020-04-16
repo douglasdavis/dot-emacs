@@ -785,7 +785,7 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
     :after auctex
     :hook (LaTeX-mode . reftex-mode))
 
-  (use-package helm-bibtex :ensure t)
+  ;; (use-package helm-bibtex :ensure t)
   (use-package company-bibtex :ensure t)
 #+end_src
 
@@ -981,10 +981,10 @@ Setting up authentication with encryption
           '(("https://planet.scipy.org/feed.xml" python)
             ("https://planet.emacslife.com/atom.xml" emacs)
             ("https://ddavis.io/index.xml" blog)
-            ("http://pragmaticemacs.com/feed/" emacs)
-            ("http://feeds.podtrac.com/zKq6WZZLTlbM" nyt podcast)
-            ("https://www.npr.org/rss/podcast.php?id=510310" npr podcast)
-            ("https://www.npr.org/rss/podcast.php?id=510318" npr podcast)))
+            ("http://pragmaticemacs.com/feed/" emacs)))
+    ;; ("http://feeds.podtrac.com/zKq6WZZLTlbM" nyt podcast)
+    ;; ("https://www.npr.org/rss/podcast.php?id=510310" npr podcast)
+    ;; ("https://www.npr.org/rss/podcast.php?id=510318" npr podcast)))
 
 
     ;; Entries older than 3 weeks are marked as read
@@ -1006,7 +1006,6 @@ Setting up authentication with encryption
       (start-process "elfeed-mpv" nil "mpv"
                      "--speed" speed
                      podcast-link)))
-
 #+end_src
 
 * Browser
