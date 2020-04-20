@@ -793,7 +793,7 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
     :after auctex
     :hook (LaTeX-mode . reftex-mode))
 
-  ;; (use-package helm-bibtex :ensure t)
+  (use-package helm-bibtex :ensure t)
   (use-package company-bibtex :ensure t)
 #+end_src
 
