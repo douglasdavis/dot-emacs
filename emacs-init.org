@@ -609,6 +609,7 @@ A nice [[https://www.manueluberti.eu/emacs/2020/02/22/ripgrepping-with-helm/][bl
            (yaml-mode . company-mode)
            (conf-mode . company-mode)
            (lsp-mode . company-mode)
+           (eglot-managed-mode . company-mode)
            (LaTeX-mode . company-mode))
     :config
     (setq company-minimum-prefix-length 2)
@@ -667,12 +668,12 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
     (setq lsp-ui-sideline-show-hover nil))
 
   (use-package lsp-python-ms :ensure t)
-  (use-package company-lsp :ensure t :commands company-lsp)
   (use-package helm-lsp :commands helm-lsp-workspace-symbol)
 
   (use-package eglot
     :ensure t
     :commands eglot
+    :hook (eglot-managed-mode . ddavis/company-capf-to-front)
     :init
     (setq eglot-server-programs
           `((python-mode "pyls")
