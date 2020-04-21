@@ -849,7 +849,9 @@ Add some flyspell hooks for a few modes.
 
 * smartparens
 
-#+begin_src emacs-lisp :results silent
+Not using for now
+
+#+begin_src
   (use-package smartparens
     :ensure t
     :hook ((python-mode . smartparens-mode)
@@ -857,7 +859,6 @@ Add some flyspell hooks for a few modes.
            (emacs-lisp-mode . smartparens-mode))
     :config
     (require 'smartparens-config))
-
 #+end_src
 
 * Auth and password-store
