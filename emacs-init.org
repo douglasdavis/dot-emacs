@@ -964,7 +964,6 @@ Setting up authentication with encryption
     :ensure t
     :hook (after-init . which-key-mode))
 
-
   (use-package iedit
     :ensure t
     :bind ("C-c ;" . 'iedit-mode))
@@ -986,9 +985,8 @@ Setting up authentication with encryption
 ** Modes
 
 #+begin_src emacs-lisp :results silent
-  (use-package emacs
-    :mode (("mbsyncrc" . conf-mode)
-           ("msmtprc" . conf-mode)))
+  (use-package rst
+    :hook (rst-mode . (lambda () (local-unset-key (kbd "C-c 4")))))
 #+end_src
 
 * Elfeed
