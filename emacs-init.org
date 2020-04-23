@@ -301,6 +301,7 @@
 
 #+begin_src emacs-lisp :results silent
   (use-package uniquify
+    :demand t
     :config
     (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
     (setq uniquify-strip-common-suffix t)
@@ -906,10 +907,10 @@ Setting up authentication with encryption
 
 #+begin_src emacs-lisp :results silent
   ;; misc seq's
-  (setq ring-bell-function 'ignore)
-  (setq echo-keystrokes 0.001)
+  (setq ring-bell-function 'ignore
+        visible-bell nil)
+  (setq echo-keystrokes 0.01)
   (setq inhibit-startup-screen t)
-  (setq-default show-paren-delay 0)
   (setq-default indent-tabs-mode nil)
 
   ;; we don't like Emacs backups
@@ -923,12 +924,17 @@ Setting up authentication with encryption
         kept-old-versions 2
         version-control t)
 
-  (unless ddavis-v-is-grads-18
+  (when (fboundp 'scroll-bar-mode)
     (scroll-bar-mode -1))
-  (tool-bar-mode -1)
-  (tooltip-mode -1)
-  (menu-bar-mode -1)
+  (when (fboundp 'tool-bar-mode)
+    (tool-bar-mode -1))
+  (when (fboundp 'tooltip-mode)
+    (tooltip-mode -1))
+  (when (fboundp 'menu-bar-mode)
+    (menu-bar-mode -1))
+
   (show-paren-mode 1)
+  (setq-default show-paren-delay 0)
 
   ;; delete trailing whitepace in a few modes
   (mapc
@@ -946,6 +952,8 @@ Setting up authentication with encryption
      cmake-mode-hook
      fundamental-mode-hook
      LaTeX-mode-hook))
+
+  (setq require-final-newline t)
 #+end_src
 
 ** Some packages
