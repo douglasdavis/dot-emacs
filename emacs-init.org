@@ -158,35 +158,18 @@
       (exec-path-from-shell-initialize))
   #+end_src
 
-* Utils
+* Utility functions
 
 #+begin_src emacs-lisp :results silent
+  (defun dinit ()
+    "Open up init file"
+    (interactive)
+    (find-file "~/.emacs.d/dot-emacs/emacs-init.org"))
+
   (defun ddavis/enable-cua-selection ()
     "turn on cua-selection-mode"
     (interactive)
     (cua-selection-mode t))
-
-  ;; See the following for more details
-  ;;     https://emacs.stackexchange.com/a/50215/8887
-  ;; and also see the following on a recent GNU/Linux or similar system:
-  ;;     /usr/share/doc/fontconfig/fontconfig-user.html
-  ;; for the explanation of spacing=100
-  ;; also see the following UNIX StackExchange answer:
-  ;;    https://unix.stackexchange.com/a/363368/13105
-  (defun ddavis/compare-monospace-font-families ()
-    "Display a list of all monospace font faces. Tested on GNU/Linux."
-    (interactive)
-    (pop-to-buffer "*Monospace Fonts*")
-    (erase-buffer)
-    (dolist (font-name (seq-filter (lambda (font)
-                                     (when-let ((info (font-info font)))
-                                       (string-match-p "spacing=100" (aref info 1))))
-                                   (font-family-list)))
-      (insert
-       (propertize
-        (concat "1 l; 0 O o [ < = > ] " font-name ")\n")
-        'font-lock-face `((:family
-                           ,(format "%s" (font-get (font-spec :name font-name) :family))))))))
 
   (defun ddavis/move-line-up ()
     "Move up the current line."
@@ -219,6 +202,8 @@
       (pop-to-buffer result-buffer)))
 
   (defun ddavis/toggle-window-split ()
+    "If we have two windows this will toggle if the windows are
+  separated vertically or horizontally"
     (interactive)
     (if (= (count-windows) 2)
         (let* ((this-win-buffer (window-buffer))
@@ -242,6 +227,28 @@
             (set-window-buffer (next-window) next-win-buffer)
             (select-window first-win)
             (if this-win-2nd (other-window 1))))))
+
+  (defun ddavis/compare-monospace-font-families ()
+    "Display a list of all monospace font faces. Tested on
+  GNU/Linux. See the following for more details
+  https://emacs.stackexchange.com/a/50215/8887. Also see the
+  following on a recent GNU/Linux or similar system:
+  /usr/share/doc/fontconfig/fontconfig-user.html. For the
+  explanation of spacing=100. also see the following UNIX
+  StackExchange answer:
+  https://unix.stackexchange.com/a/363368/13105"
+    (interactive)
+    (pop-to-buffer "*Monospace Fonts*")
+    (erase-buffer)
+    (dolist (font-name (seq-filter (lambda (font)
+                                     (when-let ((info (font-info font)))
+                                       (string-match-p "spacing=100" (aref info 1))))
+                                   (font-family-list)))
+      (insert
+       (propertize
+        (concat "1 l; 0 O o [ < = > ] " font-name ")\n")
+        'font-lock-face `((:family
+                           ,(format "%s" (font-get (font-spec :name font-name) :family))))))))
 #+end_src
 
 * Org
@@ -889,15 +896,6 @@ Setting up authentication with encryption
 ** Bindings
 
 #+begin_src emacs-lisp :results silent
-  (global-unset-key (kbd "C-d"))
-
-  (defun ddavis/open-init ()
-    (interactive)
-    (find-file "~/.emacs.d/dot-emacs/emacs-init.org"))
-
-  (use-package emacs
-    :bind ("C-d f" . ddavis/open-init))
-
   (bind-key (kbd "C-x \\") #'ddavis/toggle-window-split)
   (bind-key (kbd "C-c q") #'auto-fill-mode)
 #+end_src
