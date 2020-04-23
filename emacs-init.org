@@ -136,9 +136,7 @@
     :config
     (setq auto-package-update-delete-old-versions t))
 
-  (use-package emacs
-    :bind (:map package-menu-mode-map
-                ("q" . kill-buffer-and-window)))
+  (bind-key (kbd "q") #'kill-buffer-and-window package-menu-mode-map)
 #+end_src
 
 ** Some local Emacs Lisp
@@ -898,9 +896,10 @@ Setting up authentication with encryption
     (find-file "~/.emacs.d/dot-emacs/emacs-init.org"))
 
   (use-package emacs
-    :bind (("C-c q" . auto-fill-mode)
-           ("C-x \\" . ddavis/toggle-window-split)
-           ("C-d f" . ddavis/open-init)))
+    :bind ("C-d f" . ddavis/open-init))
+
+  (bind-key (kbd "C-x \\") #'ddavis/toggle-window-split)
+  (bind-key (kbd "C-c q") #'auto-fill-mode)
 #+end_src
 
 ** Random
@@ -1360,28 +1359,26 @@ Some configuration specific to using Emacs on macOS.
     (setq-default mac-command-modifier 'super)
     (setq-default ns-function-modifier 'hyper)
     (setq-default mac-function-modifier 'hyper)
-    (global-set-key [(meta shift up)]  'ddavis/move-line-up)
-    (global-set-key [(meta shift down)]  'ddavis/move-line-down))
+    (global-set-key [(meta shift up)]  #'ddavis/move-line-up)
+    (global-set-key [(meta shift down)]  #'ddavis/move-line-down))
 
-  (use-package emacs
-    :if ddavis-v-is-mac
-    :bind (("s-/" . previous-buffer)
-           ("s-\\" . ddavis/toggle-window-split)
-           ("s-1" . delete-other-windows)
-           ("s-2" . split-window-below)
-           ("s-3" . split-window-right)
-           ("s-5" . projectile-find-file-in-known-projects)
-           ("s-4" . mu4e)
-           ("s-d" . ddavis/open-init)
-           ("s-b" . helm-buffers-list)
-           ("s-f" . helm-find-files)
-           ("s-g" . magit-status)
-           ("s-o" . other-window)
-           ("s-p" . helm-projectile)
-           ("s-r" . ddavis/helm-project-search)
-           ("s-u" . ddavis/switch-to-or-start-gnus)
-           ("s-w" . ddavis/delete-frame-or-window)))
-
+  (when ddavis-v-is-mac
+    (bind-key (kbd "s-/") #'previous-buffer)
+    (bind-key (kbd "s-\\") #'ddavis/toggle-window-split)
+    (bind-key (kbd "s-1") #'delete-other-windows)
+    (bind-key (kbd "s-2") #'split-window-below)
+    (bind-key (kbd "s-3") #'split-window-right)
+    (bind-key (kbd "s-5") #'projectile-find-file-in-known-projects)
+    (bind-key (kbd "s-4") #'mu4e)
+    (bind-key (kbd "s-d") #'ddavis/open-init)
+    (bind-key (kbd "s-b") #'helm-buffers-list)
+    (bind-key (kbd "s-f") #'helm-find-files)
+    (bind-key (kbd "s-g") #'magit-status)
+    (bind-key (kbd "s-o") #'other-window)
+    (bind-key (kbd "s-p") #'helm-projectile)
+    (bind-key (kbd "s-r") #'ddavis/helm-project-search)
+    (bind-key (kbd "s-u") #'ddavis/switch-to-or-start-gnus)
+    (bind-key (kbd "s-w") #'ddavis/delete-frame-or-window))
 #+end_src
 
 * IRC
