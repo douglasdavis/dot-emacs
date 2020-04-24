@@ -1262,7 +1262,6 @@ My [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] setup
                              ( mu4e-drafts-folder     . "/fastmail/Drafts" )
                              ( mu4e-reply-to-address  . "ddavis@ddavis.io" )))))
 
-
     (setq mu4e-bookmarks ())
     (add-to-list 'mu4e-bookmarks
                  (make-mu4e-bookmark
@@ -1368,7 +1367,7 @@ Some configuration specific to using Emacs on macOS.
     (bind-key (kbd "s-3") #'split-window-right)
     (bind-key (kbd "s-5") #'projectile-find-file-in-known-projects)
     (bind-key (kbd "s-4") #'mu4e)
-    (bind-key (kbd "s-d") #'ddavis/open-init)
+    (bind-key (kbd "s-d") #'dinit)
     (bind-key (kbd "s-b") #'helm-buffers-list)
     (bind-key (kbd "s-f") #'helm-find-files)
     (bind-key (kbd "s-g") #'magit-status)
