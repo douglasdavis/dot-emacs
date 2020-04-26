@@ -62,8 +62,8 @@
 
   (defconst ddavis-v-llvm-bin
     (cond (ddavis-v-is-mac "/usr/local/opt/llvm/bin")
-          (ddavis-v-is-cc7 "~/Software/LLVM/releases/10.x/bin")
-          (ddavis-v-is-grads-18 "~/Software/LLVM/releases/10.x/bin")
+          (ddavis-v-is-cc7 "~/software/llvm/releases/10.x/bin")
+          (ddavis-v-is-grads-18 "~/software/llvm/releases/10.x/bin")
           (ddavis-v-is-dobian "/usr/bin"))
     "machine dependent llvm installation path")
 
@@ -97,20 +97,20 @@
     "machine dependent fd executable string")
 
   (defconst ddavis-v-sendmail-program
-    (cond (ddavis-v-is-mac "~/Software/localbase/bin/msmtp")
-          (ddavis-v-is-cc7 "~/Software/localbase/bin/msmtp")
+    (cond (ddavis-v-is-mac "~/software/localbase/bin/msmtp")
+          (ddavis-v-is-cc7 "~/software/localbase/bin/msmtp")
           (ddavis-v-is-grads-18 "/usr/bin/msmtp"))
     "machine dependent msmtp executable string")
 
   (defconst ddavis-v-mu-exe
-    (cond (ddavis-v-is-mac "~/Software/mu/releases/1.4/bin/mu")
+    (cond (ddavis-v-is-mac "~/software/mu/releases/1.4/bin/mu")
           (ddavis-v-is-cc7 "/usr/local/bin/mu")
-          (ddavis-v-is-grads-18 "~/Software/localbase/bin/mu"))
+          (ddavis-v-is-grads-18 "~/software/localbase/bin/mu"))
     "machine dependent mu executable string")
 
   (defconst ddavis-v-mu4e-dir
-    (cond (ddavis-v-is-mac "~/Software/mu/releases/1.4/share/emacs/site-lisp/mu4e")
-          (ddavis-v-is-grads-18 "~/Software/localbase/share/emacs/site-lisp/mu4e")
+    (cond (ddavis-v-is-mac "~/software/mu/releases/1.4/share/emacs/site-lisp/mu4e")
+          (ddavis-v-is-grads-18 "~/software/localbase/share/emacs/site-lisp/mu4e")
           (ddavis-v-is-cc7 "/usr/local/share/emacs/site-lisp/mu4e"))
     "machine dependent mu4e installation location string")
 #+end_src
@@ -1038,7 +1038,7 @@ Setting up authentication with encryption
 #+begin_src emacs-lisp :results silent
   (when ddavis-v-is-cc7
     (setq browse-url-browser-function 'browse-url-generic
-          browse-url-generic-program "/home/ddavis/Software/localbase/bin/firefox"))
+          browse-url-generic-program "/home/ddavis/software/localbase/bin/firefox"))
 #+end_src
 
 * Dired
