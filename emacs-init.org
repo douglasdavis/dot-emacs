@@ -49,8 +49,7 @@
 
   (defconst ddavis-v-enable-mu4e
     (or ddavis-v-is-mac
-        ddavis-v-is-cc7
-        ddavis-v-is-grads-18)
+        ddavis-v-is-cc7)
     "a flag for conditionally setting up mu4e stuff")
 
   (defconst ddavis-v-enable-irc
@@ -62,7 +61,7 @@
 
   (defconst ddavis-v-llvm-bin
     (cond (ddavis-v-is-mac "/usr/local/opt/llvm/bin")
-          (ddavis-v-is-cc7 "/home/ddavis/software/llvm/releases/10.x/bin")
+          (ddavis-v-is-cc7 "/home/ddavis/software/specific/llvm/10.x/bin")
           (ddavis-v-is-grads-18 "/home/drd25/software/specific/llvm/10.x/bin")
           (ddavis-v-is-dobian "/usr/bin"))
     "machine dependent llvm installation path")
@@ -98,7 +97,7 @@
 
   (defconst ddavis-v-sendmail-program
     (cond (ddavis-v-is-mac "/Users/ddavis/software/localbase/bin/msmtp")
-          (ddavis-v-is-cc7 "/home/ddavis/software/localbase/bin/msmtp")
+          (ddavis-v-is-cc7 "/usr/local/bin/msmtp")
           (ddavis-v-is-grads-18 "/usr/bin/msmtp"))
     "machine dependent msmtp executable string")
 
