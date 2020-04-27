@@ -1037,7 +1037,7 @@ Setting up authentication with encryption
 #+begin_src emacs-lisp :results silent
   (when ddavis-v-is-cc7
     (setq browse-url-browser-function 'browse-url-generic
-          browse-url-generic-program "/home/ddavis/software/localbase/bin/firefox"))
+          browse-url-generic-program "/usr/local/bin/firefox"))
 #+end_src
 
 * Dired
