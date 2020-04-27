@@ -102,13 +102,13 @@
     "machine dependent msmtp executable string")
 
   (defconst ddavis-v-mu-exe
-    (cond (ddavis-v-is-mac "/Users/ddavis/software/mu/releases/1.4/bin/mu")
+    (cond (ddavis-v-is-mac "/Users/ddavis/software/localbase/bin/mu")
           (ddavis-v-is-cc7 "/usr/local/bin/mu")
           (ddavis-v-is-grads-18 "/home/drd25/software/localbase/bin/mu"))
     "machine dependent mu executable string")
 
   (defconst ddavis-v-mu4e-dir
-    (cond (ddavis-v-is-mac "/Users/ddavis/software/mu/releases/1.4/share/emacs/site-lisp/mu4e")
+    (cond (ddavis-v-is-mac "/Users/ddavis/software/localbase/share/emacs/site-lisp/mu4e")
           (ddavis-v-is-grads-18 "/home/drd25/software/localbase/share/emacs/site-lisp/mu4e")
           (ddavis-v-is-cc7 "/usr/local/share/emacs/site-lisp/mu4e"))
     "machine dependent mu4e installation location string")
