@@ -609,7 +609,7 @@ A nice [[https://www.manueluberti.eu/emacs/2020/02/22/ripgrepping-with-helm/][bl
     :ensure t
     :hook ((emacs-lisp-mode . company-mode)
            (python-mode . company-mode)
-           (mu4e-compoes-mode . company-mode)
+           (mu4e-compose-mode . company-mode)
            (sh-mode . company-mode)
            (yaml-mode . company-mode)
            (conf-mode . company-mode)
@@ -664,7 +664,9 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
     (setq lsp-clients-clangd-executable ddavis-v-clangd-exe)
     (setq lsp-prefer-capf t)
     (setq lsp-enable-on-type-formatting nil)
-    (setq lsp-auto-guess-root nil))
+    (setq lsp-auto-guess-root nil)
+    :config
+    (define-key lsp-mode-map (kbd "C-c l") 'hydra-lsp/body))
 
   (use-package lsp-ui
     :ensure t
@@ -672,7 +674,7 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
     :init
     (setq lsp-ui-sideline-show-hover nil))
 
-  (use-package lsp-python-ms :ensure t)
+  ;; (use-package lsp-python-ms :ensure t)
   (use-package helm-lsp :commands helm-lsp-workspace-symbol)
 
   (use-package eglot
@@ -705,8 +707,6 @@ Configuration for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] or [[https
      "Sesion" (("M-s" lsp-describe-session            "describe session")
                ("M-r" lsp-restart-workspace           "restart workspace")
                ("S" lsp-shutdown-workspace            "shutdown workspace"))))
-
-  (define-key lsp-mode-map (kbd "C-c l") 'hydra-lsp/body)
 #+end_src
 
 * Python
@@ -849,7 +849,7 @@ Add some flyspell hooks for a few modes.
            (LaTeX-mode . flyspell-mode)
            (markdown-mode . flyspell-mode)
            (message-mode . flyspell-mode)
-           (mu4e-compose-mode .flyspell-mode)))
+           (mu4e-compose-mode . flyspell-mode)))
 #+end_src
 
 * smartparens
