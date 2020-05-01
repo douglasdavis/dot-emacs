@@ -434,8 +434,9 @@ in previous emacs.
     (setq projectile-track-known-projects-automatically nil
           projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
           projectile-globally-ignored-directories '(".git" "__pycache__")
-          projectile-globally-ignored-files '(".DS_Store"))
-    (projectile-mode))
+          projectile-globally-ignored-files '(".DS_Store")
+          projectile-enable-caching t)
+    (projectile-mode +1))
 
   (defun ddavis/projectile-proj-find-function (dir)
     (let ((root (projectile-project-root dir)))
