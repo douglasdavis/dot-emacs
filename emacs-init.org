@@ -255,7 +255,7 @@
 #+begin_src emacs-lisp :results silent
   (use-package org
     :ensure t
-    :config
+    :init
     (setq org-src-fontify-natively t)
     (setq org-structure-template-alist
           (append org-structure-template-alist
@@ -263,21 +263,17 @@
                     ("py" . "src python :results silent")
                     ("cpp" . "src C++")))))
 
-  (use-package org
-    :if ddavis-v-is-mac
-    :bind (:map org-mode-map
-                ("<A-down>" . org-move-subtree-down)
-                ("<A-up>" . org-move-subtree-up)
-                ("<A-left>" . org-promote-subtree)
-                ("<A-right>" . org-demote-subtree)))
+  (when ddavis-v-is-mac
+    (bind-key "<A-down>" #'org-move-subtree-down org-mode-map)
+    (bind-key "<A-up>" #'org-move-subtree-up org-mode-map)
+    (bind-key "<A-left>" #'org-promote-subtree)
+    (bind-key "<A-right>" #'org-demote-subtree))
 
-  (use-package org
-    :unless ddavis-v-is-mac
-    :bind (:map org-mode-map
-                ("<s-down>" . org-move-subtree-down)
-                ("<s-up>" . org-move-subtree-up)
-                ("<s-left>" . org-promote-subtree)
-                ("<s-right>" . org-demote-subtree)))
+  (unless ddavis-v-is-mac
+    (bind-key "<s-down>" #'org-move-subtree-down org-mode-map)
+    (bind-key "<s-up>" #'org-move-subtree-up org-mode-map)
+    (bind-key "<s-left>" #'org-promote-subtree)
+    (bind-key "<s-right>" #'org-demote-subtree))
 
   ;; builtin ox packages
   (use-package ox :after org)
@@ -1549,9 +1545,10 @@ usage of both.
     :ensure t
     :bind (("C-h f" . #'helpful-callable)
            ("C-h v" . #'helpful-variable)
+           ("C-h o" . #'helpful-symbol)
            ("C-h k" . #'helpful-key)
            :map helpful-mode-map
-           ("q" . kill-buffer-and-window)))
+           ("q" . #'kill-buffer-and-window)))
 #+end_src
 
 * Tramp
@@ -1572,7 +1569,7 @@ usage of both.
 * vterm
 
 #+begin_src emacs-lisp :results silent
-  (use-package vterm :when ddavis-v-is-cc7 :ensure t)
+  (use-package vterm :when ddavis-v-is-cc7 :ensure t :defer t :commands vterm)
 
   (defun ddavis/remote-vterm (user-at-machine)
     (interactive "sMachine: ")
