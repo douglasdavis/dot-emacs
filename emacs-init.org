@@ -1568,7 +1568,9 @@ usage of both.
 
 * vterm
 
-#+begin_src emacs-lisp :results silent
+don't use for now
+
+#+begin_src
   (use-package vterm :when ddavis-v-is-cc7 :ensure t :defer t :commands vterm)
 
   (defun ddavis/remote-vterm (user-at-machine)
