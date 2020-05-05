@@ -25,7 +25,9 @@
 ;;; Code:
 
 ;; plenty of RAM
-(let ((gc-cons-threshold most-positive-fixnum))
+(let ((gc-cons-threshold (* 1000 1024 1024)))
+  (setq comp-deferred-compilation t
+        comp-async-jobs-number 5)
   (require 'ob-tangle)
   (org-babel-load-file (concat user-emacs-directory "dot-emacs/emacs-init.org"))
   (garbage-collect))
