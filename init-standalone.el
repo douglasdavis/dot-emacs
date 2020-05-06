@@ -337,6 +337,7 @@ to extend to EOL as in previous emacs."
   :bind-keymap ("C-c P" . projectile-command-map)
   :config
   (setq projectile-track-known-projects-automatically nil
+        projectile-completion-system 'helm
         projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
         projectile-globally-ignored-directories '(".git" "__pycache__")
         projectile-globally-ignored-files '(".DS_Store")
