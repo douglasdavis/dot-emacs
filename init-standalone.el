@@ -34,47 +34,24 @@
 (when (boundp 'load-prefer-newer)
   (setq load-prefer-newer t))
 
-(fset 'yes-or-no-p 'y-or-n-p)
-
-(setq custom-file (concat user-emacs-directory "custom.el"))
-
-(setq user-mail-address "ddavis@ddavis.io"
-      user-login-name "ddavis"
-      user-full-name "Doug Davis")
-
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(when (version< emacs-version "27")
-  (package-initialize))
-
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-
-(eval-when-compile
-  (require 'use-package)
-  (require 'bind-key))
-
-(use-package auto-package-update
-  :ensure t
-  :config
-  (setq auto-package-update-delete-old-versions t))
-
-(use-package s
-  :ensure t
-  :demand t)
+(defun ddavis/str-contains? (needle s &optional ignore-case)
+  (declare (pure t) (side-effect-free t))
+  (not (null (string-match-p (regexp-quote needle) (system-name)))))
 
 (defconst dd-on-mac (eq system-type 'darwin)
   "true if on a mac")
 
-(defconst dd-on-cc7 (s-contains? "cc7" (system-name))
+(defconst dd-on-cc7 (ddavis/str-contains? "cc7" (system-name))
   "true if on cc7 box")
 
-(defconst dd-on-grads-18 (s-contains? "grads-18" (system-name))
+(defconst dd-on-grads-18 (ddavis/str-contains? "grads-18" (system-name))
   "true if on grads-18 box")
 
 (defconst dd-on-generic-linux (or dd-on-cc7 dd-on-grads-18)
   "true if on any linux machine")
+
+(defconst dd-on-spar (ddavis/str-contains? "spar01" (system-name))
+  "true if on a BNL SPAR machine")
 
 (defconst dd-enable-mu4e (or dd-on-cc7 dd-on-mac)
   "true if on a machine where we want to be able to use mu4e")
@@ -85,25 +62,29 @@
 (defconst dd-mu-exe
   (cond (dd-on-mac "/Users/ddavis/software/localbase/bin/mu")
         (dd-on-cc7 "/usr/local/bin/mu")
-        (dd-on-grads-18 "/home/drd25/software/localbase/bin/mu"))
+        (dd-on-grads-18 "/home/drd25/software/localbase/bin/mu")
+        (dd-on-spar nil))
   "machine dependent mu executable string")
 
 (defconst dd-mu4e-dir
   (cond (dd-on-mac "/Users/ddavis/software/localbase/share/emacs/site-lisp/mu4e")
         (dd-on-cc7 "/usr/local/share/emacs/site-lisp/mu4e")
-        (dd-on-grads-18 "/home/drd25/software/localbase/share/emacs/site-lisp/mu4e"))
+        (dd-on-grads-18 "/home/drd25/software/localbase/share/emacs/site-lisp/mu4e")
+        (dd-on-spar nil))
   "machine dependent mu4e installation location string")
 
 (defconst dd-sendmail-exe
   (cond (dd-on-mac "/Users/ddavis/software/localbase/bin/msmtp")
         (dd-on-cc7 "/usr/local/bin/msmtp")
-        (dd-on-grads-18 "/usr/bin/msmtp"))
+        (dd-on-grads-18 "/usr/bin/msmtp")
+        (dd-on-spar nil))
   "machine dependent msmtp executable string")
 
 (defvar dd-llvm-bin-path
   (cond (dd-on-mac "/usr/local/opt/llvm/bin")
         (dd-on-cc7 "/home/ddavis/software/specific/llvm/10.x/bin")
-        (dd-on-grads-18 "/home/drd25/software/specific/llvm/10.x/bin"))
+        (dd-on-grads-18 "/home/drd25/software/specific/llvm/10.x/bin")
+        (dd-on-spar nil))
   "machine dependent llvm bin path")
 
 (defvar dd-clangd-exe
@@ -124,18 +105,51 @@
 (defconst dd-rg-exe
   (cond (dd-on-mac "/usr/local/bin/rg")
         (dd-on-cc7 "/home/ddavis/.cargo/bin/rg")
-        (dd-on-grads-18 "/home/drd25/.cargo/bin/rg"))
+        (dd-on-grads-18 "/home/drd25/.cargo/bin/rg")
+        (dd-on-spar "~/.bin/rg"))
   "machine dependent ripgrep executable string")
 
 (defconst dd-fd-exe
   (cond (dd-on-mac "/usr/local/bin/fd")
         (dd-on-cc7 "/home/ddavis/.cargo/bin/fd")
-        (dd-on-grads-18 "/home/drd25/.cargo/bin/fd"))
+        (dd-on-grads-18 "/home/drd25/.cargo/bin/fd")
+        (dd-on-spar nil))
   "machine dependent fd executable string")
 
 (setq default-directory (cond (dd-on-mac "/Users/ddavis/")
                               (dd-on-cc7 "/home/ddavis/")
-                              (dd-on-grads-18 "/home/drd25/")))
+                              (dd-on-grads-18 "/home/drd25/")
+                              (dd-on-spar "/usatlas/u/ddavis")))
+
+(fset 'yes-or-no-p 'y-or-n-p)
+
+(setq custom-file (concat user-emacs-directory "custom.el"))
+
+(setq user-mail-address "ddavis@ddavis.io"
+      user-login-name "ddavis"
+      user-full-name "Doug Davis")
+
+(require 'package)
+(unless dd-on-spar
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
+(when dd-on-spar
+  (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t))
+
+(when (version< emacs-version "27")
+  (package-initialize))
+
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(eval-when-compile
+  (require 'use-package)
+  (require 'bind-key))
+
+(use-package auto-package-update
+  :ensure t
+  :config
+  (setq auto-package-update-delete-old-versions t))
 
 (defun dd/open-init ()
   "Open up Emacs init file."
