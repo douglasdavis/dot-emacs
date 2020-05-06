@@ -53,6 +53,9 @@
 (defconst dd-on-spar (ddavis/str-contains? "spar01" (system-name))
   "true if on a BNL SPAR machine")
 
+(when dd-on-spar
+  (global-set-key (kbd "C-d") 'delete-backward-char))
+
 (defconst dd-enable-mu4e (or dd-on-cc7 dd-on-mac)
   "true if on a machine where we want to be able to use mu4e")
 
@@ -88,18 +91,24 @@
   "machine dependent llvm bin path")
 
 (defvar dd-clangd-exe
-  (if (file-exists-p dd-llvm-bin-path)
-      (concat (file-name-as-directory dd-llvm-bin-path) "clangd")
+  (if dd-llvm-bin-path
+      (if (file-exists-p dd-llvm-bin-path)
+	  (concat (file-name-as-directory dd-llvm-bin-path) "clangd")
+	nil)
     nil))
 
 (defvar dd-clang-format-exe
-  (if (file-exists-p dd-llvm-bin-path)
-      (concat (file-name-as-directory dd-llvm-bin-path) "clang-format")
+  (if dd-llvm-bin-path
+      (if (file-exists-p dd-llvm-bin-path)
+	  (concat (file-name-as-directory dd-llvm-bin-path) "clang-format")
+	nil)
     nil))
 
 (defvar dd-clang-exe
-  (if (file-exists-p dd-llvm-bin-path)
-      (concat (file-name-as-directory dd-llvm-bin-path) "clang")
+  (if dd-llvm-bin-path
+      (if (file-exists-p dd-llvm-bin-path)
+	  (concat (file-name-as-directory dd-llvm-bin-path) "clang")
+	nil)
     nil))
 
 (defconst dd-rg-exe
@@ -563,6 +572,12 @@ to extend to EOL as in previous emacs."
 (use-package modern-cpp-font-lock
   :ensure t
   :hook (c++-mode . modern-c++-font-lock-mode))
+
+(when dd-on-spar
+  (defun ddavis/cpp-fix-backspace ()
+    (global-set-key (kbd "C-d") 'delete-backward-char)
+    (local-unset-key (kbd "C-d")))
+  (add-hook 'c++-mode-hook #'ddavis/cpp-fix-backspace)))
 
 (use-package auctex
   :mode ("\\.tex\\'" . TeX-latex-mode)
