@@ -128,7 +128,7 @@
 (setq default-directory (cond (dd-on-mac "/Users/ddavis/")
                               (dd-on-cc7 "/home/ddavis/")
                               (dd-on-grads-18 "/home/drd25/")
-                              (dd-on-spar "/usatlas/u/ddavis")))
+                              (dd-on-spar "/usatlas/u/ddavis/")))
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
