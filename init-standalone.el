@@ -577,7 +577,7 @@ to extend to EOL as in previous emacs."
   (defun ddavis/cpp-fix-backspace ()
     (global-set-key (kbd "C-d") 'delete-backward-char)
     (local-unset-key (kbd "C-d")))
-  (add-hook 'c++-mode-hook #'ddavis/cpp-fix-backspace)))
+  (add-hook 'c++-mode-hook #'ddavis/cpp-fix-backspace))
 
 (use-package auctex
   :mode ("\\.tex\\'" . TeX-latex-mode)
