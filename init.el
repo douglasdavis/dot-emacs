@@ -115,9 +115,8 @@
       user-full-name "Doug Davis")
 
 (require 'package)
-(unless dd-on-spar
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
-(when dd-on-spar
+(if dd-on-spar
+    (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
   (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t))
 
 (when (version< emacs-version "27")
