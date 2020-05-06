@@ -303,13 +303,13 @@ to extend to EOL as in previous emacs."
                  ("S" projectile-switch-project                 "switch project")
                  ("u" projectile-find-file-in-known-projects    "find in known"))
 
-     "Search" (("r" dd/helm-project-search                  "ripgrep (helm)")
-               ("s" dd/ripgrep-proj-or-dir                  "ripgrep (rg.el)")
-               ("o" projectile-multi-occur                      "multioccur"))
+     "Search" (("r" dd/helm-project-search  "ripgrep (helm)")
+               ("s" dd/ripgrep-proj-or-dir  "ripgrep (rg.el)")
+               ("o" projectile-multi-occur  "multioccur"))
 
-     "Misc" (("a" projectile-add-known-project                  "add to known")
-             ("i" projectile-ibuffer                            "ibuffer")
-             ("k" projectile-kill-buffers                       "Kill em"))))
+     "Misc" (("a" projectile-add-known-project  "add to known")
+             ("i" projectile-ibuffer            "ibuffer")
+             ("k" projectile-kill-buffers       "Kill em"))))
   :bind ("C-c p" . #'hydra-projectile/body)
   :bind-keymap ("C-c P" . projectile-command-map)
   :config
@@ -457,16 +457,16 @@ to extend to EOL as in previous emacs."
                 ("i" lsp-ui-peek-find-implementation  "peek find implementation")
                 ("t" lsp-find-type-defition           "find type definition"))
 
-     "Misc" (("f" lsp-format-buffer                   "format buffer")
-             ("m" lsp-ui-imenu                        "ui menu")
-             ("x" lsp-execute-code-action             "execeute code action")
-             ("s" lsp-signature-help                  "sig help")
-             ("o" lsp-describe-thing-at-point         "describe thing at point")
-             ("r" lsp-rename                          "rename"))
+     "Misc" (("f" lsp-format-buffer            "format buffer")
+             ("m" lsp-ui-imenu                 "ui menu")
+             ("x" lsp-execute-code-action      "execeute code action")
+             ("s" lsp-signature-help           "sig help")
+             ("o" lsp-describe-thing-at-point  "describe thing at point")
+             ("r" lsp-rename                   "rename"))
 
-     "Sesion" (("M-s" lsp-describe-session            "describe session")
-               ("M-r" lsp-restart-workspace           "restart workspace")
-               ("S" lsp-shutdown-workspace            "shutdown workspace"))))
+     "Sesion" (("M-s" lsp-describe-session   "describe session")
+               ("M-r" lsp-restart-workspace  "restart workspace")
+               ("S" lsp-shutdown-workspace   "shutdown workspace"))))
   :bind (:map lsp-mode-map
               ("C-c l" . #'hydra-lsp/body)))
 
@@ -1223,8 +1223,14 @@ s-u on macOS."
                 :query "date:1w..now"
                 :key ?7)))
 
-
 ;; end of init file so set a more reasonable threshold
 (setq gc-cons-threshold (* 100 1024 1024))
+
+(use-package gcmh
+  :ensure t
+  :demand t
+  :config
+  (gcmh-mode 1))
+
 
 ;;; end of init.el
