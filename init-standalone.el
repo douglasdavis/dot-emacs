@@ -678,8 +678,12 @@ to extend to EOL as in previous emacs."
   (yas-global-mode 1))
 
 (use-package yasnippet-snippets :ensure t)
-(use-package deadgrep :ensure t)
 (use-package cmake-mode :ensure t)
+
+(use-package deadgrep
+  :ensure t
+  :init
+  (setq deadgrep-executable dd-rg-exe))
 
 (use-package which-key
   :ensure t
