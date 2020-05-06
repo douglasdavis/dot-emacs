@@ -1204,11 +1204,6 @@ s-u on macOS."
                 :key ?c))
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
-                :name "Emacs"
-                :query "m:/fastmail/Lists/emacs-devel or m:/fastmail/Lists/help-gnu-emacs"
-                :key ?e))
-  (add-to-list 'mu4e-bookmarks
-               (make-mu4e-bookmark
                 :name "Last 1 day"
                 :query "date:1d..now"
                 :key ?1))

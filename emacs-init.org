@@ -1299,11 +1299,6 @@ My [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] setup
                   :key ?c))
     (add-to-list 'mu4e-bookmarks
                  (make-mu4e-bookmark
-                  :name "Emacs"
-                  :query "m:/fastmail/Lists/emacs-devel or m:/fastmail/Lists/help-gnu-emacs"
-                  :key ?e))
-    (add-to-list 'mu4e-bookmarks
-                 (make-mu4e-bookmark
                   :name "Last 1 day"
                   :query "date:1d..now"
                   :key ?1))
