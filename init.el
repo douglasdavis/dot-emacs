@@ -486,10 +486,6 @@ to extend to EOL as in previous emacs."
         `((python-mode "pyls")
           ((c++-mode c-mode) ,dd-clangd-exe))))
 
-(use-package python
-  :defer t
-  :hook python-mode-hook)
-
 (use-package pydoc :ensure t)
 (use-package helm-pydoc :ensure t)
 (use-package elpy :ensure t)
@@ -500,28 +496,35 @@ to extend to EOL as in previous emacs."
   :config
   (setenv "WORKON_HOME" "~/.pyenv/versions"))
 
-(defun dd/get-pyvenv-name ()
-  "grab the name of the active pyvenv (nil if not defined)"
-  (when pyvenv-virtual-env
-    (car (last (split-string (directory-file-name pyvenv-virtual-env) "/")))))
+(defun dd/py-workon-project-venv ()
+  "Call pyenv-workon with the current projectile project name.
+
+This will return the full path of the associated virtual
+environment found in $WORKON_HOME, or nil if the environment does
+not exist."
+  (let ((pname (projectile-project-name)))
+    (pyvenv-workon pname)
+    (if (file-directory-p pyvenv-virtual-env)
+        pyvenv-virtual-env
+      (pyvenv-deactivate))))
 
 (defun dd/py-auto-lsp ()
-  "turn on lsp mode in a Python project by trying to
-  automatically determine which pyenv virtual environment to
-  activate based on the project name"
+  "Turn on lsp mode in a Python project with some automated logic.
+
+Try to automatically determine which pyenv virtual environment to
+activate based on the project name, using
+`dd/py-workon-project-venv'. If successful, call `lsp'. If we
+cannot determine the virtualenv automatically, first call the
+interactive `pyvenv-workon' function before `lsp'"
   (interactive)
-  (if (and pyvenv-virtual-env
-           (file-directory-p pyvenv-virtual-env)
-           (string= projectile-project-name (dd/get-pyvenv-name)))
-      (lsp)
-    (pyvenv-workon (projectile-project-name))
-    (if (file-directory-p pyvenv-virtual-env)
+  (let ((pvenv (dd/py-workon-project-venv)))
+    (if pvenv
         (lsp)
       (progn
-        (message (format "%s does not exist, set manually"
-                         pyvenv-virtual-env))
         (call-interactively #'pyvenv-workon)
         (lsp)))))
+
+(bind-key (kbd "C-c C-a") #'dd/py-auto-lsp python-mode-map)
 
 (defun dd/eglot-prep-for-python ()
   "prepare python eglot setup"
@@ -648,21 +651,16 @@ to extend to EOL as in previous emacs."
 (show-paren-mode 1)
 (setq-default show-paren-delay 0)
 
-(mapc
- (lambda (language-mode-hook)
-   (add-hook language-mode-hook
-             (lambda ()
-               (add-to-list 'write-file-functions 'delete-trailing-whitespace))))
- '(text-mode-hook
-   c-mode-common-hook
-   emacs-lisp-mode-hook
-   python-mode-hook
-   markdown-mode-hook
-   bash-mode-hook
-   sh-mode-hook
-   cmake-mode-hook
-   fundamental-mode-hook
-   LaTeX-mode-hook))
+(defun dd/d-t-w ()
+  "add `delete-trailing-whitespace' to `write-file-functions'
+
+Since `write-file-functions' is a permanent local list, this is a
+convenience function to add the `delete-trailing-whitespace'
+function to that list. Should be added to a mode hook."
+  (add-to-list 'write-file-functions 'delete-trailing-whitespace))
+
+(add-hook 'text-mode-hook #'dd/d-t-w)
+(add-hook 'prog-mode-hook #'dd/d-t-w)
 
 (setq require-final-newline t)
 
