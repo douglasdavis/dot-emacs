@@ -47,7 +47,8 @@
 
 ;; for native-comp branch
 (when dd-on-cc7
-  (setq comp-async-black-list '("/home/ddavis/.emacs.d/elpa/markdown-mode-20200507.2325/markdown-mode.el",
+  (setq comp-async-black-list '("/home/ddavis/.emacs.d/elpa/markdown-mode-20200507.2325/markdown-mode.el"
+                                "/home/ddavis/software/repos/emacs-native-comp/lisp/org/org.el"
                                 "/home/ddavis/.emacs.d/elpa/lsp-mode-20200507.2113/lsp-mode.el")))
 (when dd-on-grads-18
   (setq comp-async-black-list '("/home/drd25/.emacs.d/elpa/markdown-mode-20200507.1539/markdown-mode.el"
