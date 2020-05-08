@@ -124,8 +124,8 @@
 
 (require 'package)
 (if dd-on-spar
-    (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-  (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t))
+    (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
 
 (when (version< emacs-version "27")
   (package-initialize))
@@ -497,6 +497,10 @@ to extend to EOL as in previous emacs."
   :ensure t
   :config
   (setenv "WORKON_HOME" "~/.pyenv/versions"))
+
+(use-package python
+  :mode ("\\.py'" . python-mode)
+  :interpreter ("python" . python-mode))
 
 (defun dd/py-workon-project-venv ()
   "Call pyenv-workon with the current projectile project name.
