@@ -316,7 +316,7 @@ to extend to EOL as in previous emacs."
      "Misc" (("a" projectile-add-known-project  "add to known")
              ("i" projectile-ibuffer            "ibuffer")
              ("k" projectile-kill-buffers       "Kill em"))))
-  :bind ("C-c p" . #'hydra-projectile/body)
+  :bind ("C-c p" . hydra-projectile/body)
   :bind-keymap ("C-c P" . projectile-command-map)
   :config
   (setq projectile-track-known-projects-automatically nil
@@ -578,6 +578,10 @@ interactive `pyvenv-workon' function before `lsp'"
 (use-package helm-bibtex :ensure t)
 (use-package company-bibtex :ensure t)
 
+(use-package multiple-cursors
+  :ensure t
+  :bind (("C-c C-<" . mc/mark-all-symbols-like-this)))
+
 (when dd-on-cc7
   (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig")
   (use-package pdf-tools
@@ -698,7 +702,7 @@ function to that list. Should be added to a mode hook."
 
 (use-package ace-window
   :ensure t
-  :bind ("M-o" . 'ace-window))
+  :bind ("M-o" . ace-window))
 
 (use-package rst
   :hook (rst-mode . (lambda () (interactive) (local-unset-key (kbd "C-c 4")))))
