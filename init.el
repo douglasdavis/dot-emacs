@@ -447,6 +447,7 @@ to extend to EOL as in previous emacs."
   (setq lsp-prefer-capf t)
   (setq lsp-enable-on-type-formatting nil)
   (setq lsp-auto-guess-root nil)
+  (setq lsp-pyls-configuration-sources ["flake8"])
   (pretty-hydra-define hydra-lsp (:exit t :hint nil :quit-key "q")
     ("Finding" (("d" lsp-find-declaration             "find declaration")
                 ("D" lsp-ui-peek-find-definitions     "peek find declaration")
