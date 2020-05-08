@@ -410,17 +410,11 @@ to extend to EOL as in previous emacs."
          (eglot-managed-mode . company-mode)
          (LaTeX-mode . company-mode))
   :config
+  (setq company-backends (cons 'company-capf (remove 'company-capf company-backends)))
   (setq company-minimum-prefix-length 2)
   (setq company-idle-delay 0.1))
 
-(defun dd/company-capf-to-front ()
-  (if (member 'company-capf company-backends)
-      (setq company-backends
-            (cons 'company-capf (remove 'company-capf company-backends)))
-    (add-to-list 'company-backends 'company-capf)))
-
 (use-package vc
-  :demand t
   :init
   (setq vc-follow-symlinks t))
 
@@ -443,7 +437,6 @@ to extend to EOL as in previous emacs."
 (use-package lsp-mode
   :ensure t
   :commands lsp
-  :hook (lsp-mode . #'dd/company-capf-to-front)
   :init
   (setq lsp-clients-clangd-executable dd-clangd-exe)
   (setq lsp-prefer-capf t)
