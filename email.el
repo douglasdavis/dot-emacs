@@ -1,14 +1,39 @@
+;;; email.el --- Emacs init email configuration      -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2020  Doug Davis
+
+;; Author: Doug Davis <ddavis@ddavis.io>
+;; Keywords: mail, init
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; my email setup with mu4e
+
+;;; Code:
 
 (defconst dd-mu-exe
   (cond (dd-on-mac "/Users/ddavis/software/localbase/bin/mu")
-        (dd-on-cc7 "/usr/local/bin/mu")
+        (dd-on-cc7 "/home/ddavis/software/specific/mu/1.4/bin/mu")
         (dd-on-grads-18 "/home/drd25/software/localbase/bin/mu")
         (dd-on-spar nil))
   "machine dependent mu executable string")
 
 (defconst dd-mu4e-dir
   (cond (dd-on-mac "/Users/ddavis/software/localbase/share/emacs/site-lisp/mu4e")
-        (dd-on-cc7 "/usr/local/share/emacs/site-lisp/mu4e")
+        (dd-on-cc7 "/home/ddavis/software/specific/mu/1.4/share/emacs/site-lisp/mu4e")
         (dd-on-grads-18 "/home/drd25/software/localbase/share/emacs/site-lisp/mu4e")
         (dd-on-spar nil))
   "machine dependent mu4e installation location string")
@@ -19,7 +44,6 @@
         (dd-on-grads-18 "/usr/bin/msmtp")
         (dd-on-spar nil))
   "machine dependent msmtp executable string")
-
 
 (setq message-send-mail-function 'message-send-mail-with-sendmail
       message-sendmail-f-is-evil t
@@ -210,3 +234,6 @@
                 :name "Last 7 days"
                 :query "date:1w..now"
                 :key ?7)))
+
+
+;;; end of email.el

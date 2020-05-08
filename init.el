@@ -25,6 +25,30 @@
 ;;; Code:
 
 ;; for native-comp branch
+
+(defun dd/str-contains? (subs s &optional ignore-case)
+  (declare (pure t) (side-effect-free t))
+  (not (null (string-match-p (regexp-quote subs) (system-name)))))
+
+(defconst dd-on-mac (eq system-type 'darwin)
+  "true if on a mac")
+
+(defconst dd-on-cc7 (dd/str-contains? "cc7" (system-name))
+  "true if on cc7 box")
+
+(defconst dd-on-grads-18 (dd/str-contains? "grads-18" (system-name))
+  "true if on grads-18 box")
+
+(defconst dd-on-spar (dd/str-contains? "spar01" (system-name))
+  "true if on a BNL SPAR machine")
+
+;; for native-comp branch
+(when dd-on-cc7
+  (setq comp-async-black-list '("/home/ddavis/.emacs.d/elpa/markdown-mode-20200507.2325/markdown-mode.el",
+                                "/home/ddavis/.emacs.d/elpa/lsp-mode-20200507.2113/lsp-mode.el")))
+(when dd-on-grads-18
+  (setq comp-async-black-list '("/home/drd25/.emacs.d/elpa/markdown-mode-20200507.1539/markdown-mode.el"
+                                "/home/drd25/.emacs.d/elpa/lsp-mode-20200507.523/lsp-mode.el")))
 (setq comp-deferred-compilation t
       comp-async-jobs-number 5)
 
@@ -33,25 +57,6 @@
 
 (when (boundp 'load-prefer-newer)
   (setq load-prefer-newer t))
-
-(defun ddavis/str-contains? (needle s &optional ignore-case)
-  (declare (pure t) (side-effect-free t))
-  (not (null (string-match-p (regexp-quote needle) (system-name)))))
-
-(defconst dd-on-mac (eq system-type 'darwin)
-  "true if on a mac")
-
-(defconst dd-on-cc7 (ddavis/str-contains? "cc7" (system-name))
-  "true if on cc7 box")
-
-(defconst dd-on-grads-18 (ddavis/str-contains? "grads-18" (system-name))
-  "true if on grads-18 box")
-
-(defconst dd-on-generic-linux (or dd-on-cc7 dd-on-grads-18)
-  "true if on any linux machine")
-
-(defconst dd-on-spar (ddavis/str-contains? "spar01" (system-name))
-  "true if on a BNL SPAR machine")
 
 (when dd-on-spar
   (global-set-key (kbd "C-d") 'delete-backward-char))
@@ -546,10 +551,10 @@ interactive `pyvenv-workon' function before `lsp'"
   :hook (c++-mode . modern-c++-font-lock-mode))
 
 (when dd-on-spar
-  (defun ddavis/cpp-fix-backspace ()
+  (defun dd/cpp-fix-backspace ()
     (global-set-key (kbd "C-d") 'delete-backward-char)
     (local-unset-key (kbd "C-d")))
-  (add-hook 'c++-mode-hook #'ddavis/cpp-fix-backspace))
+  (add-hook 'c++-mode-hook #'dd/cpp-fix-backspace))
 
 (use-package auctex
   :mode ("\\.tex\\'" . TeX-latex-mode)
