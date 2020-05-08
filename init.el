@@ -198,6 +198,7 @@
 
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns x))
+  :demand t
   :ensure t
   :config
   (exec-path-from-shell-initialize))
@@ -211,19 +212,18 @@
         (append org-structure-template-alist
                 '(("el" . "src emacs-lisp :results silent")
                   ("py" . "src python :results silent")
-                  ("cpp" . "src C++")))))
+                  ("cpp" . "src C++"))))
+  (when dd-on-mac
+    (bind-key "<A-down>" 'org-move-subtree-down org-mode-map)
+    (bind-key "<A-up>" 'org-move-subtree-up org-mode-map)
+    (bind-key "<A-left>" 'org-promote-subtree)
+    (bind-key "<A-right>" 'org-demote-subtree))
 
-(when dd-on-mac
-  (bind-key "<A-down>" #'org-move-subtree-down org-mode-map)
-  (bind-key "<A-up>" #'org-move-subtree-up org-mode-map)
-  (bind-key "<A-left>" #'org-promote-subtree)
-  (bind-key "<A-right>" #'org-demote-subtree))
-
-(unless dd-on-mac
-  (bind-key "<s-down>" #'org-move-subtree-down org-mode-map)
-  (bind-key "<s-up>" #'org-move-subtree-up org-mode-map)
-  (bind-key "<s-left>" #'org-promote-subtree)
-  (bind-key "<s-right>" #'org-demote-subtree))
+  (unless dd-on-mac
+    (bind-key "<s-down>" 'org-move-subtree-down org-mode-map)
+    (bind-key "<s-up>" 'org-move-subtree-up org-mode-map)
+    (bind-key "<s-left>" 'org-promote-subtree)
+    (bind-key "<s-right>" 'org-demote-subtree)))
 
 (use-package ox :after org)
 (use-package ox-beamer :after ox)
