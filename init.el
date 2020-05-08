@@ -653,7 +653,7 @@ interactive `pyvenv-workon' function before `lsp'"
 (show-paren-mode 1)
 (setq-default show-paren-delay 0)
 
-(defun dd/d-t-w ()
+(defun dd/del-trail-white ()
   "add `delete-trailing-whitespace' to `write-file-functions'
 
 Since `write-file-functions' is a permanent local list, this is a
@@ -661,8 +661,8 @@ convenience function to add the `delete-trailing-whitespace'
 function to that list. Should be added to a mode hook."
   (add-to-list 'write-file-functions 'delete-trailing-whitespace))
 
-(add-hook 'text-mode-hook #'dd/d-t-w)
-(add-hook 'prog-mode-hook #'dd/d-t-w)
+(add-hook 'text-mode-hook #'dd/del-trail-white)
+(add-hook 'prog-mode-hook #'dd/del-trail-white)
 
 (setq require-final-newline t)
 
@@ -685,7 +685,7 @@ function to that list. Should be added to a mode hook."
 
 (use-package iedit
   :ensure t
-  :bind ("C-c ;" . 'iedit-mode))
+  :bind ("C-c ;" . iedit-mode))
 
 (use-package markdown-mode
   :ensure t
@@ -763,8 +763,8 @@ function to that list. Should be added to a mode hook."
     ("C-g" nil :color blue)
     ("." nil :color blue))
   :bind (:map dired-mode-map
-              ("." . #'hydra-dired/body)
-              ("q" . #'kill-current-buffer))
+              ("." . hydra-dired/body)
+              ("q" . kill-current-buffer))
   :hook (dired-mode . hl-line-mode))
 
 (use-package all-the-icons :ensure t)
@@ -794,13 +794,13 @@ Command+w to behave similar to other macOS applications."
 
 (use-package helpful
   :ensure t
-  :bind (("C-h f" . #'helpful-callable)
-         ("C-h v" . #'helpful-variable)
-         ("C-h o" . #'helpful-symbol)
-         ("C-h ." . #'helpful-at-point)
-         ("C-h k" . #'helpful-key)
+  :bind (("C-h f" . helpful-callable)
+         ("C-h v" . helpful-variable)
+         ("C-h o" . helpful-symbol)
+         ("C-h ." . helpful-at-point)
+         ("C-h k" . helpful-key)
          :map helpful-mode-map
-         ("q" . #'kill-buffer-and-window)))
+         ("q" . kill-buffer-and-window)))
 
 (use-package tramp
   :defer 5
