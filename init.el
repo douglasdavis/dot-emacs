@@ -26,6 +26,9 @@
 
 ;; for native-comp branch
 
+(setq initial-scratch-message
+      (format ";; This is GNU Emacs %s\n\n" emacs-version))
+
 (defun dd/str-contains? (subs s &optional ignore-case)
   (declare (pure t) (side-effect-free t))
   (not (null (string-match-p (regexp-quote subs) (system-name)))))
