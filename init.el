@@ -802,16 +802,24 @@ Command+w to behave similar to other macOS applications."
          :map helpful-mode-map
          ("q" . kill-buffer-and-window)))
 
+(defun dd/scratch-buffer ()
+  "create a scratch buffer"
+  (interactive)
+  (switch-to-buffer (get-buffer-create "*scratch*"))
+  (lisp-interaction-mode)
+  (when (eq (buffer-size (get-buffer-create "*scratch*")) 0)
+    (insert initial-scratch-message)))
+
 (use-package tramp
   :defer 5
   :config
-  (setq tramp-default-method "ssh"))
-
-(defun dd/cleanup-tramp ()
-  (interactive)
-  (tramp-cleanup-all-buffers)
-  (tramp-cleanup-all-connections)
-  (find-file "~/."))
+  (setq tramp-default-method "ssh")
+  (defun dd/cleanup-tramp ()
+    (interactive)
+    (tramp-cleanup-all-buffers)
+    (tramp-cleanup-all-connections)
+    (find-file "~/.")
+    (dd/scratch-buffer)))
 
 (defun dd/load-dot-emacs-git-file (fname)
   (load-file
