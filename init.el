@@ -46,17 +46,17 @@
   "true if on a BNL SPAR machine")
 
 ;; for native-comp branch
-(setq comp-deferred-compilation t
-      comp-async-jobs-number 5
-      comp-async-black-list '("markdown-mode.el"
-                              "yasnippet.el"
-                              "gnus.el"
-                              "util-modes.el"
-                              "mml.el"
-                              "help-mode.el"
-                              "cal-menu.el"
-                              "org.el"
-                              "lsp-mode.el"))
+(setq comp-async-jobs-number 5
+      comp-deferred-compilation t
+      comp-deferred-compilation-black-list '("/markdown-mode.el$"
+                                             "/yasnippet.el$"
+                                             "/gnus.el$"
+                                             "/util-modes.el$"
+                                             "/mml.el$"
+                                             "/help-mode.el$"
+                                             "/cal-menu.el$"
+                                             "/org.el$"
+                                             "/lsp-mode.el$"))
 
 ;; 2GB threshold while init is loaded
 (setq gc-cons-threshold (* 2000 1024 1024))
