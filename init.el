@@ -46,15 +46,17 @@
   "true if on a BNL SPAR machine")
 
 ;; for native-comp branch
-(when dd-on-cc7
-  (setq comp-async-black-list '("/home/ddavis/.emacs.d/elpa/markdown-mode-20200507.2325/markdown-mode.el"
-                                "/home/ddavis/software/repos/emacs-native-comp/lisp/org/org.el"
-                                "/home/ddavis/.emacs.d/elpa/lsp-mode-20200508.1525/lsp-mode.el")))
-(when dd-on-grads-18
-  (setq comp-async-black-list '("/home/drd25/.emacs.d/elpa/markdown-mode-20200507.2325/markdown-mode.el"
-                                "/home/drd25/.emacs.d/elpa/lsp-mode-20200508.1525/lsp-mode.el")))
 (setq comp-deferred-compilation t
-      comp-async-jobs-number 5)
+      comp-async-jobs-number 5
+      comp-async-black-list '("markdown-mode.el"
+                              "yasnippet.el"
+                              "gnus.el"
+                              "util-modes.el"
+                              "mml.el"
+                              "help-mode.el"
+                              "cal-menu.el"
+                              "org.el"
+                              "lsp-mode.el"))
 
 ;; 2GB threshold while init is loaded
 (setq gc-cons-threshold (* 2000 1024 1024))
