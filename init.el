@@ -56,6 +56,7 @@
                                              "help-mode.el"
                                              "cal-menu.el"
                                              "org.el"
+                                             "org-table.el"
                                              "lsp-mode.el"))
 
 ;; 2GB threshold while init is loaded
@@ -488,7 +489,6 @@ to extend to EOL as in previous emacs."
 (use-package eglot
   :ensure t
   :commands eglot
-  :hook (eglot-managed-mode . dd/company-capf-to-front)
   :init
   (setq eglot-server-programs
         `((python-mode "pyls")
