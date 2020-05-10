@@ -55,6 +55,7 @@
                                              "mml.el"
                                              "help-mode.el"
                                              "cal-menu.el"
+                                             "flycheck.el"
                                              "org.el"
                                              "org-table.el"
                                              "lsp-mode.el"))
