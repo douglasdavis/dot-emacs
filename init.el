@@ -346,8 +346,8 @@ to extend to EOL as in previous emacs."
 
 (use-package helm
   :ensure t
-  :init (setq helm-autoresize-max-height 50
-              helm-autoresize-min-height 30)
+  :demand t
+  :bind-keymap ("C-x c" . helm-command-map)
   :bind (("C-x C-f" . helm-find-files)
          ("C-x C-t" . find-file)
          ("C-x r b" . helm-bookmarks)
@@ -356,18 +356,20 @@ to extend to EOL as in previous emacs."
          :map helm-map
          ("<tab>" . helm-execute-persistent-action))
   :config
-  (setq helm-split-window-in-side-p t
+  (setq helm-autoresize-max-height 40
+        helm-autoresize-min-height 20
+        helm-split-window-in-side-p t
         helm-split-window-default-side 'below
         helm-idle-delay 0.0
         helm-input-idle-delay 0.01
         helm-quick-update t
-        helm-ff-skip-boring-files t)
-  (setq helm-grep-ag-command (concat dd-rg-exe
+        helm-grep-file-path-style 'relative
+        helm-ff-skip-boring-files t
+        helm-grep-ag-command (concat dd-rg-exe
                                      " --color=always"
                                      " --smart-case"
                                      " --no-heading"
-                                     " --line-number %s %s %s")
-        helm-grep-file-path-style 'relative)
+                                     " --line-number %s %s %s"))
   (helm-autoresize-mode 1)
   (helm-mode 1))
 
