@@ -347,7 +347,6 @@ to extend to EOL as in previous emacs."
 (use-package helm
   :ensure t
   :demand t
-  :bind-keymap ("C-x c" . helm-map)
   :bind (("C-x C-f" . helm-find-files)
          ("C-x C-t" . find-file)
          ("C-x r b" . helm-bookmarks)
@@ -356,6 +355,8 @@ to extend to EOL as in previous emacs."
          :map helm-map
          ("<tab>" . helm-execute-persistent-action))
   :config
+  (require 'helm-config)
+  (global-set-key (kbd "C-x c") 'helm-command-prefix)
   (setq helm-autoresize-max-height 40
         helm-autoresize-min-height 20
         helm-split-window-in-side-p t
