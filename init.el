@@ -52,6 +52,7 @@
                                              "cider-browse-ns.el"
                                              "flycheck.el"
                                              "gnus.el"
+                                             "gnus-art.el"
                                              "gnus-sum.el"
                                              "help-mode.el"
                                              "lsp-mode.el"
