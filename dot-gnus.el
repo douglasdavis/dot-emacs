@@ -20,6 +20,9 @@
                   (nnimap-authinfo-file "~/.emacs.d/.authinfo.gpg"))))
   (setq gnus-message-archive-group "nnimap+fastmail:Sent")
 
+  (setq message-dont-reply-to-names
+        '("ddavis@phy.duke.edu" "ddavis@ddavis.io" "ddavis@cern.ch"))
+
   (setq message-directory "~/.emacs.d/gnusmail/"
         gnus-home-directory "~/.emacs.d/gnusnews"
         gnus-dribble-directory "~/.emacs.d/gnusnews"

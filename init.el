@@ -49,6 +49,7 @@
 (setq comp-async-jobs-number 5
       comp-deferred-compilation t
       comp-deferred-compilation-black-list '("cal-menu.el"
+                                             "cc-mode.el"
                                              "cider-browse-ns.el"
                                              "flycheck.el"
                                              "gnus.el"
@@ -347,15 +348,13 @@ to extend to EOL as in previous emacs."
   :ensure t
   :init (setq helm-autoresize-max-height 50
               helm-autoresize-min-height 30)
-  :bind (("C-x C-f" . #'helm-find-files)
-         ("C-x C-t" . #'find-file)
-         ("C-x r b" . #'helm-bookmarks)
-         ("C-x m" . #'helm-M-x)
-         ("C-x b" . #'helm-buffers-list)
+  :bind (("C-x C-f" . helm-find-files)
+         ("C-x C-t" . find-file)
+         ("C-x r b" . helm-bookmarks)
+         ("C-x m" . helm-M-x)
+         ("C-x b" . helm-buffers-list)
          :map helm-map
-         ("<tab>" . #'helm-execute-persistent-action)
-         :map helm-command-map
-         ("r" . #'dd/helm-project-search))
+         ("<tab>" . helm-execute-persistent-action))
   :config
   (setq helm-split-window-in-side-p t
         helm-split-window-default-side 'below
