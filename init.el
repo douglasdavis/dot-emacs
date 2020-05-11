@@ -48,17 +48,19 @@
 ;; for native-comp branch
 (setq comp-async-jobs-number 5
       comp-deferred-compilation t
-      comp-deferred-compilation-black-list '("markdown-mode.el"
-                                             "yasnippet.el"
-                                             "gnus.el"
-                                             "util-modes.el"
-                                             "mml.el"
-                                             "help-mode.el"
-                                             "cal-menu.el"
+      comp-deferred-compilation-black-list '("cal-menu.el"
+                                             "cider-browse-ns.el"
                                              "flycheck.el"
+                                             "gnus.el"
+                                             "gnus-sum.el"
+                                             "help-mode.el"
+                                             "lsp-mode.el"
+                                             "markdown-mode.el"
+                                             "mml.el"
                                              "org.el"
                                              "org-table.el"
-                                             "lsp-mode.el"))
+                                             "yasnippet.el"
+                                             "util-modes.el"))
 
 ;; 2GB threshold while init is loaded
 (setq gc-cons-threshold (* 2000 1024 1024))
