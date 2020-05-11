@@ -102,7 +102,7 @@
   :when dd-enable-irc
   :after circe
   :ensure t
-  :bind (:map helm-command-map ("i" . helm-circe)))
+  :bind (:map helm-map ("i" . helm-circe)))
 
 (defvar dd-nick-face-list '()
   "See https://www.emacswiki.org/emacs/ErcNickColors#toc1")
