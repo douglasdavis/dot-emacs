@@ -345,7 +345,6 @@ to extend to EOL as in previous emacs."
 
 (use-package helm
   :ensure t
-  :demand t
   :init (setq helm-autoresize-max-height 50
               helm-autoresize-min-height 30)
   :bind (("C-x C-f" . #'helm-find-files)
@@ -358,7 +357,6 @@ to extend to EOL as in previous emacs."
          :map helm-command-map
          ("r" . #'dd/helm-project-search))
   :config
-  (require 'helm-config)
   (setq helm-split-window-in-side-p t
         helm-split-window-default-side 'below
         helm-idle-delay 0.0
@@ -378,7 +376,6 @@ to extend to EOL as in previous emacs."
   "Search in DIRECTORY with ripgrep.
   With WITH-TYPES, ask for file types to search in."
   (interactive "P")
-  (require 'helm-adaptive)
   (helm-grep-ag-1 (expand-file-name directory)
                   (helm-aif (and with-types
                                  (helm-grep-ag-get-types))
@@ -540,24 +537,10 @@ interactive `pyvenv-workon' function before `lsp'"
         (call-interactively #'pyvenv-workon)
         (lsp)))))
 
-(bind-key (kbd "C-c C-a") #'dd/py-auto-lsp python-mode-map)
-
-(defun dd/eglot-prep-for-python ()
-  "prepare python eglot setup"
-  (interactive)
-  (setq company-backends (cons 'company-capf (remove 'company-capf company-backends)))
-  (add-to-list 'eglot-server-programs '(python-mode . ("pyls"))))
-
+(bind-key (kbd "C-c C-a") 'dd/py-auto-lsp python-mode-map)
 
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 (add-to-list 'auto-mode-alist '("\\.icc\\'" . c++-mode))
-
-(defun dd/eglot-prep-for-cpp ()
-  "enable variables and hooks for eglot cpp IDE"
-  (interactive)
-  (require 'eglot)
-  (setq company-backends (cons 'company-capf (remove 'company-capf company-backends)))
-  (add-to-list 'eglot-server-programs `((c++-mode cc-mode) ,dd-clangd-exe)))
 
 (use-package clang-format
   :ensure t
@@ -679,8 +662,8 @@ convenience function to add the `delete-trailing-whitespace'
 function to that list. Should be added to a mode hook."
   (add-to-list 'write-file-functions 'delete-trailing-whitespace))
 
-(add-hook 'text-mode-hook #'dd/del-trail-white)
-(add-hook 'prog-mode-hook #'dd/del-trail-white)
+(add-hook 'text-mode-hook 'dd/del-trail-white)
+(add-hook 'prog-mode-hook 'dd/del-trail-white)
 
 (setq require-final-newline t)
 
