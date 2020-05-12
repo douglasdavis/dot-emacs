@@ -586,10 +586,6 @@ interactive `pyvenv-workon' function before `lsp'"
   (setq lsp-latex-texlab-executable
         "/home/ddavis/software/repos/texlab/target/release/texlab")))
 
-(use-package multiple-cursors
-  :ensure t
-  :bind (("C-c C-<" . mc/mark-all-symbols-like-this)))
-
 (when dd-on-cc7
   (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig")
   (use-package pdf-tools
@@ -615,6 +611,10 @@ interactive `pyvenv-workon' function before `lsp'"
         bibtex-completion-bibliography `(,dd-thesis-bib)
         reftex-plug-into-AUCTeX t)
   (find-file dd-thesis-file))
+
+(use-package multiple-cursors
+  :ensure t
+  :bind (("C-c C-<" . mc/mark-all-symbols-like-this)))
 
 (use-package flyspell
   :hook ((org-mode . flyspell-mode)
