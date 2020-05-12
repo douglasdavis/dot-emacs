@@ -45,24 +45,29 @@
 (defconst dd-on-spar (dd/str-contains? "spar01" (system-name))
   "true if on a BNL SPAR machine")
 
+(fset 'yes-or-no-p 'y-or-n-p)
+
 ;; for native-comp branch
-(setq comp-async-jobs-number 5
-      comp-deferred-compilation t
-      comp-deferred-compilation-black-list '("cal-menu.el"
-                                             "cc-mode.el"
-                                             "cider-browse-ns.el"
-                                             "flycheck.el"
-                                             "gnus.el"
-                                             "gnus-art.el"
-                                             "gnus-sum.el"
-                                             "help-mode.el"
-                                             "lsp-mode.el"
-                                             "markdown-mode.el"
-                                             "mml.el"
-                                             "org.el"
-                                             "org-table.el"
-                                             "yasnippet.el"
-                                             "util-modes.el"))
+(when (fboundp 'native-compile-async)
+  (if (yes-or-no-p "async compile?")
+      (setq comp-async-jobs-number 5
+            comp-deferred-compilation t
+            comp-deferred-compilation-black-list '("cal-menu.el"
+                                                   "cc-mode.el"
+                                                   "cider-browse-ns.el"
+                                                   "flycheck.el"
+                                                   "gnus.el"
+                                                   "gnus-art.el"
+                                                   "gnus-sum.el"
+                                                   "help-mode.el"
+                                                   "lsp-mode.el"
+                                                   "markdown-mode.el"
+                                                   "mml.el"
+                                                   "org.el"
+                                                   "org-table.el"
+                                                   "yasnippet.el"
+                                                   "util-modes.el"))
+    (setq comp-deferred-compilation nil)))
 
 ;; 2GB threshold while init is loaded
 (setq gc-cons-threshold (* 2000 1024 1024))
@@ -122,8 +127,6 @@
                               (dd-on-cc7 "/home/ddavis/")
                               (dd-on-grads-18 "/home/drd25/")
                               (dd-on-spar "/usatlas/u/ddavis/")))
-
-(fset 'yes-or-no-p 'y-or-n-p)
 
 (setq custom-file (concat user-emacs-directory "custom.el"))
 
