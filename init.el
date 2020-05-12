@@ -580,6 +580,12 @@ interactive `pyvenv-workon' function before `lsp'"
 (use-package helm-bibtex :ensure t)
 (use-package company-bibtex :ensure t)
 
+(use-package lsp-latex
+  :when dd-on-cc7
+  :init
+  (setq lsp-latex-texlab-executable
+        "/home/ddavis/software/repos/texlab/target/release/texlab")))
+
 (use-package multiple-cursors
   :ensure t
   :bind (("C-c C-<" . mc/mark-all-symbols-like-this)))
