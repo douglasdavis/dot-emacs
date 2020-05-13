@@ -584,7 +584,8 @@ interactive `pyvenv-workon' function before `lsp'"
   :when dd-on-cc7
   :init
   (setq lsp-latex-texlab-executable
-        "/home/ddavis/software/repos/texlab/target/release/texlab")))
+        "/home/ddavis/software/repos/texlab/target/release/texlab")
+  (add-to-list 'exec-path (file-name-directory lsp-latex-texlab-executable)))
 
 (when dd-on-cc7
   (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig")
