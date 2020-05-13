@@ -31,7 +31,7 @@
 
 (defun dd/str-contains? (subs s &optional ignore-case)
   (declare (pure t) (side-effect-free t))
-  (not (null (string-match-p (regexp-quote subs) (system-name)))))
+  (not (null (string-match-p (regexp-quote subs) s))))
 
 (defconst dd-on-mac (eq system-type 'darwin)
   "true if on a mac")
