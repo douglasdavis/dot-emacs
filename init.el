@@ -216,37 +216,10 @@
   :config
   (exec-path-from-shell-initialize))
 
-(use-package org
-  :ensure t
+(use-package display-line-numbers
   :init
-  (setq org-src-fontify-natively t)
-  :config
-  (setq org-structure-template-alist
-        (append org-structure-template-alist
-                '(("el" . "src emacs-lisp :results silent")
-                  ("py" . "src python :results silent")
-                  ("cpp" . "src C++"))))
-  (when dd-on-mac
-    (bind-key "<A-down>" 'org-move-subtree-down org-mode-map)
-    (bind-key "<A-up>" 'org-move-subtree-up org-mode-map)
-    (bind-key "<A-left>" 'org-promote-subtree)
-    (bind-key "<A-right>" 'org-demote-subtree))
-
-  (unless dd-on-mac
-    (bind-key "<s-down>" 'org-move-subtree-down org-mode-map)
-    (bind-key "<s-up>" 'org-move-subtree-up org-mode-map)
-    (bind-key "<s-left>" 'org-promote-subtree)
-    (bind-key "<s-right>" 'org-demote-subtree)))
-
-(use-package ox :after org)
-(use-package ox-beamer :after ox)
-(use-package ox-md :after ox)
-(use-package ox-hugo
-  :ensure t :after ox)
-(use-package ox-reveal
-  :ensure t :after ox)
-(use-package htmlize
-  :ensure t)
+  (make-variable-buffer-local 'display-line-numbers-width-start)
+  (global-display-line-numbers-mode))
 
 (use-package uniquify
   :demand t
@@ -256,7 +229,6 @@
   (setq uniquify-after-kill-buffer-p t))
 
 (setq custom-safe-themes t)
-(global-display-line-numbers-mode)
 (setq column-number-mode t)
 
 (use-package gruvbox-theme
@@ -444,9 +416,9 @@ to extend to EOL as in previous emacs."
 (use-package magit
   :ensure t
   :demand
-  :bind (("C-x g" . #'magit-status)
+  :bind (("C-x g" . magit-status)
          :map magit-status-mode-map
-         ("q" . #'dd/magit-kill-buffers)))
+         ("q" . dd/magit-kill-buffers)))
 
 (setq read-process-output-max (* 2 1024 1024))
 
@@ -477,7 +449,7 @@ to extend to EOL as in previous emacs."
                ("M-r" lsp-restart-workspace  "restart workspace")
                ("S" lsp-shutdown-workspace   "shutdown workspace"))))
   :bind (:map lsp-mode-map
-              ("C-c l" . #'hydra-lsp/body)))
+              ("C-c l" . hydra-lsp/body)))
 
 (use-package lsp-python-ms
   :ensure t)
@@ -622,9 +594,42 @@ interactive `pyvenv-workon' function before `lsp'"
          (message-mode . flyspell-mode)
          (mu4e-compose-mode . flyspell-mode)))
 
+(use-package org
+  :ensure t
+  :init
+  (setq org-src-fontify-natively t)
+  :hook (org-mode . (lambda () (interactive)
+                      (setq-local display-line-numbers-width-start
+                                  t)))
+  :config
+  (setq org-structure-template-alist
+        (append org-structure-template-alist
+                '(("el" . "src emacs-lisp :results silent")
+                  ("py" . "src python :results silent")
+                  ("cpp" . "src C++"))))
+  (when dd-on-mac
+    (bind-key "<A-down>" 'org-move-subtree-down org-mode-map)
+    (bind-key "<A-up>" 'org-move-subtree-up org-mode-map)
+    (bind-key "<A-left>" 'org-promote-subtree)
+    (bind-key "<A-right>" 'org-demote-subtree))
+
+  (unless dd-on-mac
+    (bind-key "<s-down>" 'org-move-subtree-down org-mode-map)
+    (bind-key "<s-up>" 'org-move-subtree-up org-mode-map)
+    (bind-key "<s-left>" 'org-promote-subtree)
+    (bind-key "<s-right>" 'org-demote-subtree)))
+
+(use-package ox :after org)
+(use-package ox-beamer :after ox)
+(use-package ox-md :after ox)
+(use-package ox-hugo :after ox :ensure t)
+(use-package ox-reveal :after ox :ensure t)
+(use-package htmlize :after ox :ensure t)
+
 (use-package auth-source
   :init
-  (setq auth-sources '("~/.emacs.d/.authinfo.gpg")))
+  (setq auth-sources
+        (list (concat user-emacs-directory ".authinfo.gpg"))))
 
 (use-package epa-file
   :config
@@ -648,8 +653,8 @@ interactive `pyvenv-workon' function before `lsp'"
       backup-by-copying t
       backup-directory-alist '(("." . "~/.saves"))
       delete-old-versions t
-      kept-new-versions 3
-      kept-old-versions 2
+      kept-new-versions 2
+      kept-old-versions 1
       version-control t)
 
 (when (fboundp 'scroll-bar-mode)
