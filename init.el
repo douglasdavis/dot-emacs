@@ -24,8 +24,6 @@
 
 ;;; Code:
 
-;; for native-comp branch
-
 (setq initial-scratch-message
       (format ";; This is GNU Emacs %s\n\n" emacs-version))
 
@@ -128,18 +126,18 @@
                               (dd-on-grads-18 "/home/drd25/")
                               (dd-on-spar "/usatlas/u/ddavis/")))
 
-(setq custom-file (concat user-emacs-directory "custom.el"))
-
 (setq user-mail-address "ddavis@ddavis.io"
       user-login-name "ddavis"
       user-full-name "Doug Davis")
+
+(setq custom-file (concat user-emacs-directory "custom.el"))
 
 (require 'package)
 (if dd-on-spar
     (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
 
-(when (version< emacs-version "27")
+(when (< emacs-major-version 27)
   (package-initialize))
 
 (unless (package-installed-p 'use-package)
