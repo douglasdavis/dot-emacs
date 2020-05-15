@@ -194,19 +194,18 @@
 (defun dd/toggle-window-split ()
   "If two windows are present; toggle the split axis."
   (interactive)
-  (unless helm-alive-p
-    (if (= (length (window-list)) 2)
-        (let ((buf (current-buffer))
-              before-height)
-          (with-current-buffer buf
-            (setq before-height (window-height))
-            (delete-window)
-            (set-window-buffer
-             (select-window (if (= (window-height) before-height)
-                                (split-window-vertically)
-                              (split-window-horizontally)))
-             buf)))
-      (user-error "Can toggle split only with two windows"))))
+  (if (= (length (window-list)) 2)
+      (let ((buf (current-buffer))
+            before-height)
+        (with-current-buffer buf
+          (setq before-height (window-height))
+          (delete-window)
+          (set-window-buffer
+           (select-window (if (= (window-height) before-height)
+                              (split-window-vertically)
+                            (split-window-horizontally)))
+           buf)))
+    (user-error "Can toggle split only with two windows")))
 (bind-key (kbd "C-x \\") #'dd/toggle-window-split)
 
 (use-package exec-path-from-shell
@@ -236,7 +235,8 @@
   (load-theme 'gruvbox t)
   (set-face-attribute 'link nil :foreground "#458588"))
 
-(when window-system
+(use-package faces
+  :init
   (when dd-on-cc7
     (set-face-attribute 'default nil
                         :family "JetBrains Mono"
@@ -247,9 +247,10 @@
     (set-face-attribute 'default nil
                         :family "JetBrains Mono"
                         :weight 'medium
-                        :height 120))
-  (add-to-list 'default-frame-alist '(height . 72))
-  (add-to-list 'default-frame-alist '(width . 234)))
+                        :height 120)))
+
+(add-to-list 'default-frame-alist '(height . 72))
+(add-to-list 'default-frame-alist '(width . 234))
 
 (defun tv/extend-faces-matching (regexp)
   "From https://github.com/emacs-helm/helm/issues/2213
@@ -344,8 +345,8 @@ to extend to EOL as in previous emacs."
                                      " --smart-case"
                                      " --no-heading"
                                      " --line-number %s %s %s"))
-  (helm-autoresize-mode 1)
-  (helm-mode 1))
+  (helm-mode +1)
+  (helm-autoresize-mode 1))
 
 (defun dd/helm-rg (directory &optional with-types)
   "Search in DIRECTORY with ripgrep.
@@ -406,26 +407,26 @@ to extend to EOL as in previous emacs."
   :init
   (setq vc-follow-symlinks t))
 
-(defun dd/magit-kill-buffers ()
-  "See `https://manuel-uberti.github.io/emacs/2018/02/17/magit-bury-buffer/'"
-  (interactive)
-  (let ((buffers (magit-mode-get-buffers)))
-    (magit-restore-window-configuration)
-    (mapc #'kill-buffer buffers)))
-
 (use-package magit
   :ensure t
   :demand
   :bind (("C-x g" . magit-status)
          :map magit-status-mode-map
-         ("q" . dd/magit-kill-buffers)))
+         ("q" . dd/magit-kill-buffers))
+  :config
+  (defun dd/magit-kill-buffers ()
+    "See `https://manuel-uberti.github.io/emacs/2018/02/17/magit-bury-buffer/'"
+    (interactive)
+    (let ((buffers (magit-mode-get-buffers)))
+      (magit-restore-window-configuration)
+      (mapc #'kill-buffer buffers))))
 
-(setq read-process-output-max (* 2 1024 1024))
 
 (use-package lsp-mode
   :ensure t
   :commands lsp
   :init
+  (setq read-process-output-max (* 2 1024 1024))
   (setq lsp-clients-clangd-executable dd-clangd-exe)
   (setq lsp-prefer-capf t)
   (setq lsp-enable-on-type-formatting nil)
@@ -445,9 +446,9 @@ to extend to EOL as in previous emacs."
              ("o" lsp-describe-thing-at-point  "describe thing at point")
              ("r" lsp-rename                   "rename"))
 
-     "Sesion" (("M-s" lsp-describe-session   "describe session")
-               ("M-r" lsp-restart-workspace  "restart workspace")
-               ("S" lsp-shutdown-workspace   "shutdown workspace"))))
+     "Session" (("M-s" lsp-describe-session   "describe session")
+                ("M-r" lsp-restart-workspace  "restart workspace")
+                ("S" lsp-shutdown-workspace   "shutdown workspace"))))
   :bind (:map lsp-mode-map
               ("C-c l" . hydra-lsp/body)))
 
@@ -482,40 +483,45 @@ to extend to EOL as in previous emacs."
 
 (use-package python
   :mode ("\\.py'" . python-mode)
-  :interpreter ("python" . python-mode))
+  :interpreter ("python" . python-mode)
+  :bind (:map python-mode-map
+              ("C-c C-a" . dd/py-auto-lsp))
+  :config
+  (defun dd/py-workon-project-venv ()
+    "Call pyenv-workon with the current projectile project name.
+  This will return the full path of the associated virtual
+  environment found in $WORKON_HOME, or nil if the environment
+  does not exist."
+    (let ((pname (projectile-project-name)))
+      (pyvenv-workon pname)
+      (if (file-directory-p pyvenv-virtual-env)
+          pyvenv-virtual-env
+        (pyvenv-deactivate))))
 
-(defun dd/py-workon-project-venv ()
-  "Call pyenv-workon with the current projectile project name.
+  (defun dd/py-auto-lsp ()
+    "Turn on lsp mode in a Python project with some automated logic.
+  Try to automatically determine which pyenv virtual environment
+  to activate based on the project name, using
+  `dd/py-workon-project-venv'. If successful, call `lsp'. If we
+  cannot determine the virtualenv automatically, first call the
+  interactive `pyvenv-workon' function before `lsp'"
+    (interactive)
+    (let ((pvenv (dd/py-workon-project-venv)))
+      (if pvenv
+          (lsp)
+        (progn
+          (call-interactively #'pyvenv-workon)
+          (lsp))))))
 
-This will return the full path of the associated virtual
-environment found in $WORKON_HOME, or nil if the environment does
-not exist."
-  (let ((pname (projectile-project-name)))
-    (pyvenv-workon pname)
-    (if (file-directory-p pyvenv-virtual-env)
-        pyvenv-virtual-env
-      (pyvenv-deactivate))))
-
-(defun dd/py-auto-lsp ()
-  "Turn on lsp mode in a Python project with some automated logic.
-
-Try to automatically determine which pyenv virtual environment to
-activate based on the project name, using
-`dd/py-workon-project-venv'. If successful, call `lsp'. If we
-cannot determine the virtualenv automatically, first call the
-interactive `pyvenv-workon' function before `lsp'"
-  (interactive)
-  (let ((pvenv (dd/py-workon-project-venv)))
-    (if pvenv
-        (lsp)
-      (progn
-        (call-interactively #'pyvenv-workon)
-        (lsp)))))
-
-(bind-key (kbd "C-c C-a") 'dd/py-auto-lsp python-mode-map)
-
-(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
-(add-to-list 'auto-mode-alist '("\\.icc\\'" . c++-mode))
+(use-package cc-mode
+  :mode (("\\.h\\(h?\\|xx\\|pp\\)\\'" . c++-mode)
+         ("\\.icc\\'" . c++-mode))
+  :config
+  (when dd-on-spar
+    (defun dd/cpp-fix-backspace ()
+      (global-set-key (kbd "C-d") 'delete-backward-char)
+      (local-unset-key (kbd "C-d")))
+    (add-hook 'c++-mode-hook #'dd/cpp-fix-backspace)))
 
 (use-package clang-format
   :ensure t
@@ -525,12 +531,6 @@ interactive `pyvenv-workon' function before `lsp'"
 (use-package modern-cpp-font-lock
   :ensure t
   :hook (c++-mode . modern-c++-font-lock-mode))
-
-(when dd-on-spar
-  (defun dd/cpp-fix-backspace ()
-    (global-set-key (kbd "C-d") 'delete-backward-char)
-    (local-unset-key (kbd "C-d")))
-  (add-hook 'c++-mode-hook #'dd/cpp-fix-backspace))
 
 (use-package auctex
   :mode ("\\.tex\\'" . TeX-latex-mode)
@@ -641,7 +641,6 @@ interactive `pyvenv-workon' function before `lsp'"
 (bind-key (kbd "C-c q") #'auto-fill-mode)
 
 (setq echo-keystrokes 0.01
-      inhibit-startup-screen t
       ring-bell-function 'ignore
       visible-bell nil)
 
@@ -657,30 +656,45 @@ interactive `pyvenv-workon' function before `lsp'"
       kept-old-versions 1
       version-control t)
 
-(when (fboundp 'scroll-bar-mode)
-  (scroll-bar-mode -1))
-(when (fboundp 'tool-bar-mode)
-  (tool-bar-mode -1))
-(when (fboundp 'tooltip-mode)
-  (tooltip-mode -1))
-(when (fboundp 'menu-bar-mode)
-  (menu-bar-mode -1))
+(use-package scroll-bar
+  :init
+  (when (fboundp 'scroll-bar-mode)
+    (scroll-bar-mode -1)))
 
-(show-paren-mode 1)
-(setq-default show-paren-delay 0)
+(use-package tool-bar
+  :init
+  (when (fboundp 'tool-bar-mode)
+    (tool-bar-mode -1)))
 
-(defun dd/del-trail-white ()
-  "add `delete-trailing-whitespace' to `write-file-functions'
+(use-package tooltip
+  :init
+  (when (fboundp 'tooltip-mode)
+    (tooltip-mode -1)))
 
-Since `write-file-functions' is a permanent local list, this is a
-convenience function to add the `delete-trailing-whitespace'
-function to that list. Should be added to a mode hook."
-  (add-to-list 'write-file-functions 'delete-trailing-whitespace))
+(use-package menu-bar
+  :init
+  (when (fboundp 'menu-bar-mode)
+    (menu-bar-mode -1)))
 
-(add-hook 'text-mode-hook 'dd/del-trail-white)
-(add-hook 'prog-mode-hook 'dd/del-trail-white)
+(setq inhibit-startup-screen t)
 
-(setq require-final-newline t)
+(use-package paren
+  :init
+  (show-paren-mode 1)
+  (setq-default show-paren-delay 0))
+
+(use-package whitespace
+  :init
+  (setq require-final-newline t)
+  :config
+  (defun dd/del-trail-white ()
+    "Add `delete-trailing-whitespace' to `write-file-functions'.
+  Since `write-file-functions' is a permanent local list, this is
+  a convenience function to add the `delete-trailing-whitespace'
+  function to that list. Should be added to a mode hook."
+    (add-to-list 'write-file-functions 'delete-trailing-whitespace))
+  (add-hook 'text-mode-hook 'dd/del-trail-white)
+  (add-hook 'prog-mode-hook 'dd/del-trail-white))
 
 (use-package yasnippet
   :ensure t
