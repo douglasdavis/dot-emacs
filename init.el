@@ -231,9 +231,15 @@
 (setq column-number-mode t)
 
 (use-package gruvbox-theme
+  :unless dd-on-mac
   :config
   (load-theme 'gruvbox t)
   (set-face-attribute 'link nil :foreground "#458588"))
+
+(use-package modus-operandi-theme
+  :when dd-on-mac
+  :config
+  (load-theme 'modus-operandi t))
 
 (use-package faces
   :init
