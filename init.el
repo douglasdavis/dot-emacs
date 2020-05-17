@@ -444,7 +444,10 @@ use WITH-TYPES, ask for file types to search in."
   (setq lsp-prefer-capf t)
   (setq lsp-enable-on-type-formatting nil)
   (setq lsp-auto-guess-root nil)
-  (setq lsp-pyls-configuration-sources ["flake8"])
+  (setq lsp-pyls-plugins-autopep8-enabled nil
+        lsp-pyls-plugins-pycodestyle-enabled nil
+        lsp-pyls-plugins-flake8-enabled t
+        lsp-pyls-configuration-sources ["flake8"])
   (pretty-hydra-define hydra-lsp (:exit t :hint nil :quit-key "q")
     ("Finding" (("d" lsp-find-declaration             "find declaration")
                 ("D" lsp-ui-peek-find-definitions     "peek find declaration")
