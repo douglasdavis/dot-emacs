@@ -28,20 +28,21 @@
       (format ";; This is GNU Emacs %s\n\n" emacs-version))
 
 (defun dd/str-contains? (subs s)
+  "Check for SUBS in in S."
   (declare (pure t) (side-effect-free t))
   (not (null (string-match-p (regexp-quote subs) s))))
 
 (defconst dd-on-mac (eq system-type 'darwin)
-  "true if on a mac")
+  "For checking if on a mac.")
 
 (defconst dd-on-cc7 (dd/str-contains? "cc7" (system-name))
-  "true if on cc7 box")
+  "For checking if on cc7 box.")
 
 (defconst dd-on-grads-18 (dd/str-contains? "grads-18" (system-name))
-  "true if on grads-18 box")
+  "For checking if on grads-18 box.")
 
 (defconst dd-on-spar (dd/str-contains? "spar01" (system-name))
-  "true if on a BNL SPAR machine")
+  "For checking if on a BNL SPAR machine.")
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
@@ -77,14 +78,14 @@
   (global-set-key (kbd "C-d") 'delete-backward-char))
 
 (defconst dd-enable-irc (or dd-on-cc7 dd-on-mac dd-on-grads-18)
-  "true if on machine where we want to be able to use IRC")
+  "For checking if on machine where we want to be able to use IRC.")
 
 (defvar dd-llvm-bin-path
   (cond (dd-on-mac "/usr/local/opt/llvm/bin")
         (dd-on-cc7 "/home/ddavis/software/specific/llvm/10.x/bin")
         (dd-on-grads-18 "/home/drd25/software/specific/llvm/10.x/bin")
         (dd-on-spar nil))
-  "machine dependent llvm bin path")
+  "Machine dependent llvm bin path.")
 
 (defvar dd-clangd-exe
   (if dd-llvm-bin-path
@@ -112,14 +113,14 @@
         (dd-on-cc7 "/home/ddavis/.cargo/bin/rg")
         (dd-on-grads-18 "/home/drd25/.cargo/bin/rg")
         (dd-on-spar "~/.bin/rg"))
-  "machine dependent ripgrep executable string")
+  "Machine dependent ripgrep executable string.")
 
 (defconst dd-fd-exe
   (cond (dd-on-mac "/usr/local/bin/fd")
         (dd-on-cc7 "/home/ddavis/.cargo/bin/fd")
         (dd-on-grads-18 "/home/drd25/.cargo/bin/fd")
         (dd-on-spar nil))
-  "machine dependent fd executable string")
+  "Machine dependent fd executable string.")
 
 (setq default-directory (cond (dd-on-mac "/Users/ddavis/")
                               (dd-on-cc7 "/home/ddavis/")
@@ -180,7 +181,7 @@
   (indent-according-to-mode))
 
 (defun dd/copy-lines-matching-re (re)
-  "Put lines matching re in a buffer named *matching*."
+  "Put lines matching RE in a buffer named *matching*."
   (interactive "sRegexp to match: ")
   (let ((result-buffer (get-buffer-create "*matching*")))
     (with-current-buffer result-buffer
@@ -218,9 +219,9 @@
   :config
   (exec-path-from-shell-initialize))
 
+(make-variable-buffer-local 'display-line-numbers-width-start)
 (use-package display-line-numbers
   :init
-  (make-variable-buffer-local 'display-line-numbers-width-start)
   (global-display-line-numbers-mode))
 
 (use-package uniquify
@@ -262,29 +263,29 @@
 (add-to-list 'default-frame-alist '(height . 72))
 (add-to-list 'default-frame-alist '(width . 234))
 
-(defun tv/extend-faces-matching (regexp)
-  "From https://github.com/emacs-helm/helm/issues/2213
+;; (defun tv/extend-faces-matching (regexp)
+;;   "From https://github.com/emacs-helm/helm/issues/2213
 
-Fix issue with the new :extend face attribute in emacs-27 Prefer
-to extend to EOL as in previous emacs."
-  (cl-loop for f in (face-list)
-           for face = (symbol-name f)
-           when (and (string-match regexp face)
-                     (eq (face-attribute f :extend t 'default)
-                         'unspecified))
-           do (set-face-attribute f nil :extend t)))
+;; Fix issue with the new :extend face attribute in emacs-27 Prefer
+;; to extend to EOL as in previous emacs."
+;;   (cl-loop for f in (face-list)
+;;            for face = (symbol-name f)
+;;            when (and (string-match regexp face)
+;;                      (eq (face-attribute f :extend t 'default)
+;;                          'unspecified))
+;;            do (set-face-attribute f nil :extend t)))
 
-(defun dd/init-extend-faces ()
-  (when (fboundp 'set-face-extend)
-    (with-eval-after-load "org"
-      (tv/extend-faces-matching "\\`org"))
-    (with-eval-after-load "magit"
-      (tv/extend-faces-matching "\\`magit"))
-    (with-eval-after-load "helm"
-      (tv/extend-faces-matching "\\`helm"))))
+;; (defun dd/init-extend-faces ()
+;;   (when (fboundp 'set-face-extend)
+;;     (with-eval-after-load "org"
+;;       (tv/extend-faces-matching "\\`org"))
+;;     (with-eval-after-load "magit"
+;;       (tv/extend-faces-matching "\\`magit"))
+;;     (with-eval-after-load "helm"
+;;       (tv/extend-faces-matching "\\`helm"))))
 
-(unless (version< emacs-version "27")
-  (dd/init-extend-faces))
+;; (unless (version< emacs-version "27")
+;;   (dd/init-extend-faces))
 
 (use-package hydra :ensure t)
 (use-package pretty-hydra :ensure t)
@@ -321,6 +322,7 @@ to extend to EOL as in previous emacs."
   (projectile-mode +1))
 
 (defun dd/projectile-proj-find-function (dir)
+  "Check if DIR is a project defined by projectile."
   (let ((root (projectile-project-root dir)))
     (and root (cons 'transient root))))
 
@@ -343,7 +345,7 @@ to extend to EOL as in previous emacs."
   (global-set-key (kbd "C-x c") 'helm-command-prefix)
   (setq helm-autoresize-max-height 40
         helm-autoresize-min-height 20
-        helm-split-window-in-side-p t
+        helm-split-window-inside-p t
         helm-split-window-default-side 'below
         helm-idle-delay 0.0
         helm-input-idle-delay 0.01
@@ -360,7 +362,8 @@ to extend to EOL as in previous emacs."
 
 (defun dd/helm-rg (directory &optional with-types)
   "Search in DIRECTORY with ripgrep.
-  With WITH-TYPES, ask for file types to search in."
+
+use WITH-TYPES, ask for file types to search in."
   (interactive "P")
   (helm-grep-ag-1 (expand-file-name directory)
                   (helm-aif (and with-types
@@ -374,7 +377,8 @@ to extend to EOL as in previous emacs."
 
 (defun dd/helm-project-search (&optional with-types)
   "Search in current project with rippgrep.
-  With WITH-TYPES, ask for file types to search in."
+
+use WITH-TYPES, ask for file types to search in."
   (interactive "P")
   (dd/helm-rg (projectile-project-root) with-types))
 
@@ -456,8 +460,8 @@ to extend to EOL as in previous emacs."
              ("r" lsp-rename                   "rename"))
 
      "Session" (("M-s" lsp-describe-session   "describe session")
-                ("M-r" lsp-restart-workspace  "restart workspace")
-                ("S" lsp-shutdown-workspace   "shutdown workspace"))))
+                ("M-r" lsp-workspace-restart  "restart workspace")
+                ("S" lsp-workspace-shutdown   "shutdown workspace"))))
   :bind (:map lsp-mode-map
               ("C-c l" . hydra-lsp/body)))
 
@@ -578,6 +582,7 @@ to extend to EOL as in previous emacs."
 (defvar dd-thesis-file nil)
 
 (defun dd/work-on-thesis ()
+  "DWIM style function for working on thesis."
   (interactive)
   (when (file-exists-p "~/Desktop/thesis/biblio/refs.bib")
     (setq dd-thesis-file "~/Desktop/thesis/dissertation.tex"
@@ -844,7 +849,7 @@ Command+w to behave similar to other macOS applications."
          ("q" . kill-buffer-and-window)))
 
 (defun dd/scratch-buffer ()
-  "create a scratch buffer"
+  "Create a scratch buffer."
   (interactive)
   (switch-to-buffer (get-buffer-create "*scratch*"))
   (lisp-interaction-mode)
@@ -863,6 +868,7 @@ Command+w to behave similar to other macOS applications."
     (dd/scratch-buffer)))
 
 (defun dd/load-dot-emacs-git-file (fname)
+  "Load FNAME from my dot-emacs git repository."
   (load-file
    (concat (file-name-directory (file-truename (or load-file-name buffer-file-name)))
            fname)))
@@ -886,4 +892,5 @@ Command+w to behave similar to other macOS applications."
   (gcmh-mode 1))
 
 
-;;; end of init.el
+(provide 'init)
+;;; init.el ends here
