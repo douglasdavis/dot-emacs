@@ -63,7 +63,7 @@
 (use-package circe
   :when dd-enable-irc
   :ensure t
-  :hook (circe-chat-mode . dd/circe-prompt)
+  :hook (circe-chat-mode-hook . dd/circe-prompt)
   :config
   (setq circe-network-options
         `(("Freenode"
@@ -151,8 +151,8 @@
 
 (use-package erc
   :when dd-enable-irc
-  :hook ((erc-notify . dd/erc-notify)
-         (erc-insert-modify . dd/erc-insert-modify-hook))
+  :hook ((erc-notify-hook . dd/erc-notify)
+         (erc-insert-modify-hook . dd/erc-insert-modify-hook))
   :custom-face (erc-notice-face ((t (:foreground "#ebcb8b"))))
   :config
   (setq erc-user-full-name "Doug Davis"

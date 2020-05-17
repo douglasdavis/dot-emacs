@@ -61,8 +61,11 @@
   ;; (define-key gnus-group-mode-map (kbd "q") 'quit-window)
   ;; (define-key gnus-group-mode-map (kbd "Q") 'gnus-group-exit)
 
-  ;; agent
   (setq mail-user-agent 'gnus-user-agent) ; also works with `sendmail-user-agent'
+  (setq gnus-gcc-mark-as-read t)
+  (setq gnus-novice-user nil)
+
+  ;; agent
   (setq gnus-agent t)
   (setq gnus-agent-article-alist-save-format 1)  ; uncompressed
   (setq gnus-agent-cache t)
@@ -75,6 +78,7 @@
   (setq gnus-agent-mark-unread-after-downloaded t)
   (setq gnus-agent-queue-mail t)        ; queue if unplugged
   (setq gnus-agent-synchronize-flags nil)
+
   ;; article
   (setq gnus-article-browse-delete-temp 'ask)
   (setq gnus-article-over-scroll nil)
@@ -89,15 +93,23 @@
   (setq gnus-mode-line-image-cache nil)
   (setq gnus-treat-display-smileys nil)
   (setq gnus-article-mode-line-format "Gnus: %S %m")
+  (setq gnus-visible-headers
+        '("^From:" "^To:" "^Cc:" "^Newsgroups:" "^Subject:" "^Date:"
+          "Followup-To:" "Reply-To:" "^Organization:" "^X-Newsreader:"
+          "^X-Mailer:"))
+
   ;; asynchronous
   (setq gnus-asynchronous t)
   (setq gnus-use-article-prefetch 15)
+
   ;; checking sources
   (setq gnus-check-new-newsgroups 'ask-server)
   (setq gnus-read-active-file 'some)
+
   ;; dribble
   (setq gnus-use-dribble-file t)
   (setq gnus-always-read-dribble-file t)
+
   ;; groups
   (setq gnus-level-subscribed 6)
   (setq gnus-level-unsubscribed 7)
@@ -127,14 +139,24 @@
   (setq gnus-summary-mode-line-format "Gnus: %p (%U)")
 
   (when window-system
-    (setq gnus-sum-thread-tree-indent "  "
-          gnus-sum-thread-tree-root "" ;; "● "
-          gnus-sum-thread-tree-false-root "" ;; "◯ "
-          gnus-sum-thread-tree-single-indent "" ;; "◎ "
-          gnus-sum-thread-tree-vertical        "│"
-          gnus-sum-thread-tree-leaf-with-other "├─► "
-          gnus-sum-thread-tree-single-leaf     "╰─► "))
-
+    (setq gnus-sum-thread-tree-indent "  ")
+    (setq gnus-sum-thread-tree-root "● ")
+    (setq gnus-sum-thread-tree-false-root "◯ ")
+    (setq gnus-sum-thread-tree-single-indent "* ") ;; ◎ ")
+    (setq gnus-sum-thread-tree-vertical        "│")
+    (setq gnus-sum-thread-tree-leaf-with-other "├─► ")
+    (setq gnus-sum-thread-tree-single-leaf     "╰─► "))
+  ;; (setq gnus-summary-line-format
+  ;;       (concat
+  ;;        "%0{%U%R%z%}"
+  ;;        "%3{│%}" "%1{%d%}" "%3{│%}" ;; date
+  ;;        "  "
+  ;;        "%4{%-20,20f%}"               ;; name
+  ;;        "  "
+  ;;        "%3{│%}"
+  ;;        " "
+  ;;        "%1{%B%}"
+  ;;        "%s\n"))
   (setq gnus-summary-display-arrow t)
 
   ;; (setq gnus-sum-thread-tree-false-root "")
@@ -143,7 +165,7 @@
   ;; (setq gnus-sum-thread-tree-root "")
   ;; (setq gnus-sum-thread-tree-single-leaf "└─➤ ")
   ;; (setq gnus-sum-thread-tree-vertical "│")
-  :hook ((gnus-summary-mode . hl-line-mode)
-         (gnus-group-mode . hl-line-mode)
-         (gnus-server-mode . hl-line-mode)
-         (gnus-group-mode . gnus-topic-mode)))
+  :hook ((gnus-summary-mode-hook . hl-line-mode)
+         (gnus-group-mode-hook . hl-line-mode)
+         (gnus-server-mode-hook . hl-line-mode)
+         (gnus-group-mode-hook . gnus-topic-mode)))

@@ -145,6 +145,9 @@
   (package-install 'use-package))
 
 (eval-when-compile
+  (setq use-package-hook-name-suffix nil))
+
+(eval-when-compile
   (require 'use-package)
   (require 'bind-key))
 
@@ -239,7 +242,15 @@
 (use-package modus-operandi-theme
   :when dd-on-mac
   :config
-  (load-theme 'modus-operandi t))
+  (load-theme 'modus-operandi t)
+  (defun dark ()
+    (interactive)
+    (disable-theme 'modus-operandi)
+    (load-theme 'gruvbox t))
+  (defun light ()
+    (interactive)
+    (disable-theme 'gruvbox)
+    (load-theme 'modus-operandi t)))
 
 (use-package faces
   :init
@@ -395,15 +406,15 @@ to extend to EOL as in previous emacs."
 
 (use-package company
   :ensure t
-  :hook ((emacs-lisp-mode . company-mode)
-         (python-mode . company-mode)
-         (mu4e-compose-mode . company-mode)
-         (sh-mode . company-mode)
-         (yaml-mode . company-mode)
-         (conf-mode . company-mode)
-         (lsp-mode . company-mode)
-         (eglot-managed-mode . company-mode)
-         (LaTeX-mode . company-mode))
+  :hook ((emacs-lisp-mode-hook . company-mode)
+         (python-mode-hook . company-mode)
+         (mu4e-compose-mode-hook . company-mode)
+         (sh-mode-hook . company-mode)
+         (yaml-mode-hook . company-mode)
+         (conf-mode-hook . company-mode)
+         (lsp-mode-hook . company-mode)
+         (eglot-managed-mode-hook . company-mode)
+         (LaTeX-mode-hook . company-mode))
   :config
   (setq company-backends (cons 'company-capf (remove 'company-capf company-backends)))
   (setq company-minimum-prefix-length 2)
@@ -536,7 +547,7 @@ to extend to EOL as in previous emacs."
 
 (use-package modern-cpp-font-lock
   :ensure t
-  :hook (c++-mode . modern-c++-font-lock-mode))
+  :hook (c++-mode-hook . modern-c++-font-lock-mode))
 
 (use-package auctex
   :mode ("\\.tex\\'" . TeX-latex-mode)
@@ -551,7 +562,7 @@ to extend to EOL as in previous emacs."
 
 (use-package reftex
   :after auctex
-  :hook (LaTeX-mode . reftex-mode))
+  :hook (LaTeX-mode-hook . reftex-mode))
 
 (use-package helm-bibtex :ensure t)
 (use-package company-bibtex :ensure t)
@@ -594,19 +605,19 @@ to extend to EOL as in previous emacs."
   :bind (("C-c C-<" . mc/mark-all-symbols-like-this)))
 
 (use-package flyspell
-  :hook ((org-mode . flyspell-mode)
-         (LaTeX-mode . flyspell-mode)
-         (markdown-mode . flyspell-mode)
-         (message-mode . flyspell-mode)
-         (mu4e-compose-mode . flyspell-mode)))
+  :hook ((org-mode-hook . flyspell-mode)
+         (LaTeX-mode-hook . flyspell-mode)
+         (markdown-mode-hook . flyspell-mode)
+         (message-mode-hook . flyspell-mode)
+         (mu4e-compose-mode-hook . flyspell-mode)))
 
 (use-package org
   :ensure t
   :init
   (setq org-src-fontify-natively t)
-  :hook (org-mode . (lambda () (interactive)
-                      (setq-local display-line-numbers-width-start
-                                  t)))
+  :hook (org-mode-hook . (lambda () (interactive)
+                           (setq-local display-line-numbers-width-start
+                                       t)))
   :config
   (setq org-structure-template-alist
         (append org-structure-template-alist
@@ -737,7 +748,9 @@ to extend to EOL as in previous emacs."
   :bind ("M-o" . ace-window))
 
 (use-package rst
-  :hook (rst-mode . (lambda () (interactive) (local-unset-key (kbd "C-c 4")))))
+  :hook (rst-mode-hook . (lambda ()
+                           (interactive)
+                           (local-unset-key (kbd "C-c 4")))))
 
 (use-package browse-url
   :init
@@ -801,17 +814,17 @@ to extend to EOL as in previous emacs."
   :bind (:map dired-mode-map
               ("." . hydra-dired/body)
               ("q" . kill-current-buffer))
-  :hook (dired-mode . hl-line-mode))
+  :hook (dired-mode-hook . hl-line-mode))
 
 (use-package all-the-icons :ensure t)
 
 (use-package all-the-icons-dired
   :ensure t
-  :hook (dired-mode . all-the-icons-dired-mode))
+  :hook (dired-mode-hook . all-the-icons-dired-mode))
 
 (use-package diredfl
   :ensure t
-  :hook (dired-mode . diredfl-mode))
+  :hook (dired-mode-hook . diredfl-mode))
 
 (defun dd/delete-frame-or-window ()
   "If we have multiple frames delete the current one.
