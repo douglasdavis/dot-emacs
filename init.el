@@ -233,24 +233,17 @@
 (setq custom-safe-themes t)
 (setq column-number-mode t)
 
-(use-package gruvbox-theme
-  :unless dd-on-mac
-  :config
-  (load-theme 'gruvbox t)
-  (set-face-attribute 'link nil :foreground "#458588"))
+(unless (package-installed-p 'doom-themes)
+  (package-refresh-contents)
+  (package-install 'doom-themes))
 
-(use-package modus-operandi-theme
-  :when dd-on-mac
+(use-package doom-themes
   :config
-  (load-theme 'modus-operandi t)
-  (defun dark ()
-    (interactive)
-    (disable-theme 'modus-operandi)
-    (load-theme 'gruvbox t))
-  (defun light ()
-    (interactive)
-    (disable-theme 'gruvbox)
-    (load-theme 'modus-operandi t)))
+  (load-theme 'doom-gruvbox t))
+
+(use-package doom-modeline
+  :ensure
+  :hook (after-init-hook . doom-modeline-mode))
 
 (use-package faces
   :init
@@ -438,7 +431,6 @@ to extend to EOL as in previous emacs."
       (magit-restore-window-configuration)
       (mapc #'kill-buffer buffers))))
 
-
 (use-package lsp-mode
   :ensure t
   :commands lsp
@@ -448,7 +440,7 @@ to extend to EOL as in previous emacs."
   (setq lsp-prefer-capf t)
   (setq lsp-enable-on-type-formatting nil)
   (setq lsp-auto-guess-root nil)
-  ;; (setq lsp-pyls-configuration-sources ["flake8"])
+  (setq lsp-pyls-configuration-sources ["flake8"])
   (pretty-hydra-define hydra-lsp (:exit t :hint nil :quit-key "q")
     ("Finding" (("d" lsp-find-declaration             "find declaration")
                 ("D" lsp-ui-peek-find-definitions     "peek find declaration")
