@@ -20,10 +20,18 @@
 
 ;;; Commentary:
 
-;; mac specific emacs init configuration
+;; mac specific Emacs init configuration
 
 ;;; Code:
 
+(defun dd/delete-frame-or-window ()
+  "If we have multiple frames delete the current one.
+If only one delete the window; this is really just for binding
+Command+w to behave similar to other macOS applications."
+  (interactive)
+  (if (< (count-windows) 2)
+      (delete-frame)
+    (delete-window)))
 
 (when (memq window-system '(mac ns))
   (setq browse-url-browser-function 'browse-url-default-macosx-browser)
@@ -55,4 +63,4 @@
 (bind-key (kbd "s-u") #'gnus)
 (bind-key (kbd "s-w") #'dd/delete-frame-or-window)
 
-;;; end of macos.el
+;;; macos.el ends here

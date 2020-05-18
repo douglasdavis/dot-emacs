@@ -377,8 +377,7 @@ use WITH-TYPES, ask for file types to search in."
 
 (defun dd/helm-project-search (&optional with-types)
   "Search in current project with rippgrep.
-
-use WITH-TYPES, ask for file types to search in."
+Use WITH-TYPES to ask for file types to search in."
   (interactive "P")
   (dd/helm-rg (projectile-project-root) with-types))
 
@@ -826,16 +825,6 @@ use WITH-TYPES, ask for file types to search in."
   :ensure t
   :hook (dired-mode-hook . diredfl-mode))
 
-(defun dd/delete-frame-or-window ()
-  "If we have multiple frames delete the current one.
-
-If only one delete the window; this is really just for binding
-Command+w to behave similar to other macOS applications."
-  (interactive)
-  (if (< (count-windows) 2)
-      (delete-frame)
-    (delete-window)))
-
 (use-package help-mode
   :bind
   (:map help-mode-map
@@ -843,6 +832,8 @@ Command+w to behave similar to other macOS applications."
 
 (use-package helpful
   :ensure t
+  :init
+  (setq helpful-max-highlight 15000)
   :bind (("C-h f" . helpful-callable)
          ("C-h v" . helpful-variable)
          ("C-h o" . helpful-symbol)
