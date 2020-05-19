@@ -691,14 +691,18 @@
   (setq erc-fill-function 'erc-fill-static)
   (setq erc-fill-static-center 19)
   (setq erc-prompt (lambda () (concat (buffer-name) " >>>")))
+  (setq erc-hide-list '("JOIN" "PART" "QUIT"))
+  (setq erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
+  (setq erc-track-exclude-types '("JOIN" "MODE" "NICK" "PART" "QUIT"
+                                  "324" "329" "332" "333" "353" "477"))
+  (add-to-list 'erc-modules 'notifications)
+  (add-to-list 'erc-modules 'spelling)
   (defvar dd-nick-face-list '()
     "See https://www.emacswiki.org/emacs/ErcNickColors#toc1")
-
   (defvar dd-erc-colors-list
     '("#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#fe8019"
       "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e")
     "See https://www.emacswiki.org/emacs/ErcNickColors#toc1")
-
   (defun dd/build-nick-face-list ()
     "See https://www.emacswiki.org/emacs/ErcNickColors#toc1"
     (setq i -1)
@@ -711,7 +715,6 @@
                     (list (list t (list :foreground COLOR)))
                     (format "Nick face %d" i))))
            dd-erc-colors-list)))
-
   (defun dd/erc-insert-modify-hook ()
     "See https://www.emacswiki.org/emacs/ErcNickColors#toc1"
     (if (null dd-nick-face-list) (dd/build-nick-face-list))
