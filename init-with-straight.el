@@ -147,12 +147,12 @@
   (setq mac-allow-anti-aliasing t)
   (set-face-attribute 'default nil
                       :family "JetBrains Mono"
-                      :weight 'medium
+                      :weight 'regular
                       :height 120))
 (when dd-on-cc7
   (set-face-attribute 'default nil
                       :family "JetBrains Mono"
-                      :weight 'medium
+                      :weight 'semi-bold
                       :height 130))
 
 (defun dd/copy-lines-matching-re (re)
