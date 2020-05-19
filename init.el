@@ -49,11 +49,12 @@
 ;; for native-comp branch
 (when (fboundp 'native-compile-async)
   (if (yes-or-no-p "async compile?")
-      (setq comp-async-jobs-number 5
+      (setq comp-async-jobs-number 4
             comp-deferred-compilation t
             comp-deferred-compilation-black-list '("cal-menu.el"
                                                    "cc-mode.el"
                                                    "cider-browse-ns.el"
+                                                   "ert.el"
                                                    "flycheck.el"
                                                    "gnus.el"
                                                    "gnus-art.el"
