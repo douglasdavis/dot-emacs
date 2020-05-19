@@ -206,6 +206,8 @@
            buf)))
     (user-error "Can toggle split only with two windows")))
 
+(add-hook 'emacs-lisp-mode-hook 'prettify-symbols-mode)
+
 ;; sec02:
 ;; use-package setup
 
@@ -792,6 +794,12 @@
 ;; some package-free bindings and macOS specifics
 
 (bind-key (kbd "C-x \\") #'dd/toggle-window-split)
+
+(bind-key (kbd "C-w") (lambda ()
+                        (interactive)
+                        (if (region-active-p)
+                            (kill-region (region-beginning) (region-end))
+                          (dd/delete-frame-or-window))))
 
 (when dd-on-mac
   (when (memq window-system '(mac ns))
