@@ -43,27 +43,31 @@
 (when (boundp 'load-prefer-newer)
   (setq load-prefer-newer t))
 
+(fset 'yes-or-no-p 'y-or-n-p)
+
 ;; for native-comp branch
 (when (fboundp 'native-compile-async)
   (if (yes-or-no-p "async compile?")
       (setq comp-async-jobs-number 4
             comp-deferred-compilation t
-            comp-deferred-compilation-black-list '("cal-menu.el"
-                                                   "cc-mode.el"
-                                                   "cider-browse-ns.el"
-                                                   "ert.el"
-                                                   "flycheck.el"
-                                                   "gnus.el"
-                                                   "gnus-art.el"
-                                                   "gnus-sum.el"
-                                                   "help-mode.el"
-                                                   "lsp-mode.el"
-                                                   "markdown-mode.el"
-                                                   "mml.el"
-                                                   "org.el"
-                                                   "org-table.el"
-                                                   "yasnippet.el"
-                                                   "util-modes.el"))
+            comp-deferred-compilation-black-list
+            '("cal-menu.el"
+              "cc-mode.el"
+              "cider-browse-ns.el"
+              "erc.el"
+              "ert.el"
+              "flycheck.el"
+              "gnus.el"
+              "gnus-art.el"
+              "gnus-sum.el"
+              "help-mode.el"
+              "lsp-mode.el"
+              "markdown-mode.el"
+              "mml.el"
+              "org.el"
+              "org-table.el"
+              "yasnippet.el"
+              "util-modes.el"))
     (setq comp-deferred-compilation nil)))
 
 (setq user-mail-address "ddavis@ddavis.io"
@@ -101,8 +105,6 @@
 
 (setq initial-scratch-message
       (format ";; This is GNU Emacs %s\n\n" emacs-version))
-
-(fset 'yes-or-no-p 'y-or-n-p)
 
 (setq echo-keystrokes 0.01
       ring-bell-function 'ignore
