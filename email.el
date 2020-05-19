@@ -77,6 +77,9 @@
   (add-to-list 'mm-discouraged-alternatives "text/html")
   (add-to-list 'mm-discouraged-alternatives "text/richtext"))
 
+(setq mu4e-html2text-command "w3m -T text/html")
+(setq w3m-default-desplay-inline-images t)
+
 (use-package mu4e
   :load-path dd-mu4e-dir
   :commands (mu4e mu4e-update-mail-and-index)
@@ -103,7 +106,6 @@
         mu4e-user-mail-address-list '()
         mu4e-attachment-dir (expand-file-name "~/Downloads/")
         mu4e-change-filenames-when-moving t)
-
   (setq mu4e-compose-reply-ignore-address
         '("notifications@github\\.com"
           "ddavis@ddavis\\.io"
@@ -112,9 +114,6 @@
           "douglas\\.davis@duke\\.edu"
           "douglas\\.davis@cern\\.ch"
           "ddavis@cern\\.ch"))
-
-  (setq w3m-default-desplay-inline-images t)
-
   (setq mu4e-contexts
         `( ,(make-mu4e-context
              :name "cern"
@@ -145,7 +144,6 @@
                       ( mu4e-sent-folder        . "/duke/Sent" )
                       ( mu4e-drafts-folder      . "/duke/Drafts" )
                       ( mu4e-reply-to-address   . "ddavis@phy.duke.edu" )))))
-
   (when (or dd-on-mac dd-on-cc7)
     (add-to-list 'mu4e-contexts
                  (make-mu4e-context
@@ -177,7 +175,6 @@
                            ( mu4e-sent-folder       . "/fastmail/Sent" )
                            ( mu4e-drafts-folder     . "/fastmail/Drafts" )
                            ( mu4e-reply-to-address  . "ddavis@ddavis.io" )))))
-
   (setq mu4e-bookmarks ())
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
