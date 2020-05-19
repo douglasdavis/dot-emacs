@@ -675,6 +675,55 @@
   :after circe
   :bind (:map helm-command-map ("i" . helm-circe)))
 
+(use-package erc
+  :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac)
+  :commands erc
+  :init
+  (setq erc-prompt-for-password nil)
+  (setq erc-user-full-name "Doug Davis")
+  :config
+  (setq erc-track-enable-keybindings nil)
+  (setq erc-kill-buffer-on-part t)
+  (setq erc-kill-server-buffer-on-quit t)
+  (setq erc-fill-function 'erc-fill-static)
+  (setq erc-fill-static-center 19)
+  (setq erc-prompt (lambda () (concat (buffer-name) " >>>")))
+  (defvar dd-nick-face-list '()
+    "See https://www.emacswiki.org/emacs/ErcNickColors#toc1")
+
+  (defvar dd-erc-colors-list
+    '("#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#fe8019"
+      "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e")
+    "See https://www.emacswiki.org/emacs/ErcNickColors#toc1")
+
+  (defun dd/build-nick-face-list ()
+    "See https://www.emacswiki.org/emacs/ErcNickColors#toc1"
+    (setq i -1)
+    (setq dd-nick-face-list
+          (mapcar
+           (lambda (COLOR)
+             (setq i (1+ i))
+             (list (custom-declare-face
+                    (make-symbol (format "erc-nick-face-%d" i))
+                    (list (list t (list :foreground COLOR)))
+                    (format "Nick face %d" i))))
+           dd-erc-colors-list)))
+
+  (defun dd/erc-insert-modify-hook ()
+    "See https://www.emacswiki.org/emacs/ErcNickColors#toc1"
+    (if (null dd-nick-face-list) (dd/build-nick-face-list))
+    (save-excursion
+      (goto-char (point-min))
+      (if (looking-at "<\\([^>]*\\)>")
+          (let ((nick (match-string 1)))
+            (put-text-property (match-beginning 1) (match-end 1)
+                               'face (nth
+                                      (mod (string-to-number
+                                            (substring (md5 nick) 0 4) 16)
+                                           (length dd-nick-face-list))
+                                      dd-nick-face-list))))))
+  (add-hook 'erc-insert-modify-hook 'dd/erc-insert-modify-hook))
+
 (use-package gcmh
   :straight t
   :demand t
