@@ -54,7 +54,6 @@
             '("cal-menu.el"
               "cc-mode.el"
               "cider-browse-ns.el"
-              "erc.el"
               "ert.el"
               "flycheck.el"
               "gnus.el"
