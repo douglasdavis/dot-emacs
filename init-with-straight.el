@@ -431,19 +431,26 @@
 
 (use-package company
   :straight t
-  :hook ((emacs-lisp-mode-hook . company-mode)
-         (python-mode-hook . company-mode)
-         (mu4e-compose-mode-hook . company-mode)
-         (sh-mode-hook . company-mode)
-         (yaml-mode-hook . company-mode)
-         (conf-mode-hook . company-mode)
-         (lsp-mode-hook . company-mode)
+  :hook ((cider-repl-mode-hook . company-mode)
+         (clojure-mode-hook . company-mode)
+         (conf-colon-mode-hook . company-mode)
+         (conf-toml-mode-hook . company-mode)
          (eglot-managed-mode-hook . company-mode)
-         (LaTeX-mode-hook . company-mode))
+         (emacs-lisp-mode-hook . company-mode)
+         (LaTeX-mode-hook . company-mode)
+         (lsp-mode-hook . company-mode)
+         (mu4e-compose-mode-hook . company-mode)
+         (python-mode-hook . company-mode)
+         (sh-mode-hook . company-mode)
+         (yaml-mode-hook . company-mode))
   :config
   (setq company-backends (cons 'company-capf (remove 'company-capf company-backends)))
   (setq company-minimum-prefix-length 2)
   (setq company-idle-delay 0.1))
+
+(use-package company-box
+  :straight t
+  :hook (company-mode-hook . company-box-mode))
 
 (use-package magit
   :straight t
