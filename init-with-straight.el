@@ -60,7 +60,19 @@
               "gnus-art.el"
               "gnus-sum.el"
               "help-mode.el"
-              "lsp-mode.el"
+              "lsp-csharp.el"
+              "lsp-css.el"
+              "lsp-elm.el"
+              "lsp-erlang.el"
+              "lsp-eslint.el"
+              "lsp-fsharp.el"
+              "lsp-gdscript.sl"
+              "lsp-json.el"
+              "lsp-serenate.el"
+              "lsp-solargraph.el"
+              "lsp-terraform.el"
+              "lsp-vhdl.el"
+              "lsp-xml.el"
               "markdown-mode.el"
               "mml.el"
               "org.el"
@@ -501,7 +513,7 @@
   :straight t
   :commands lsp-ui-mode
   :init
-  (setq lsp-ui-sideline-show-hover t))
+  (setq lsp-ui-sideline-show-hover nil))
 
 (use-package eglot
   :straight t
