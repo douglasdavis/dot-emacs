@@ -152,9 +152,9 @@
                       :height 120))
 (when dd-on-cc7
   (set-face-attribute 'default nil
-                      :family "JetBrains Mono"
-                      :weight 'semi-bold
-                      :height 130))
+                      :family "Fantasque Sans Mono"
+                      :weight 'regular
+                      :height 140))
 
 (defun dd/copy-lines-matching-re (re)
   "Put lines matching RE in a buffer named *matching*."
@@ -528,6 +528,11 @@
 (use-package blacken
   :straight t)
 
+(use-package cider
+  :when (or dd-on-mac dd-on-cc7)
+  :straight t
+  :commands cider-jack-in)
+
 (use-package which-key
   :straight t
   :demand t
@@ -544,9 +549,7 @@
 
 (use-package yasnippet
   :straight t
-  :demand t
-  :config
-  (yas-global-mode 1))
+  :bind ("C-x y" . yas-global-mode))
 
 (use-package yasnippet-snippets
   :straight t)
