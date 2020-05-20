@@ -512,8 +512,9 @@
 (use-package lsp-ui
   :straight t
   :commands lsp-ui-mode
-  :init
-  (setq lsp-ui-sideline-show-hover nil))
+  :config
+  (setq lsp-ui-doc-max-width 92
+        lsp-ui-sideline-show-hover nil))
 
 (use-package eglot
   :straight t
