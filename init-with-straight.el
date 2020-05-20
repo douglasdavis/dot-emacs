@@ -758,7 +758,7 @@
     (setq TeX-view-program-selection '((output-pdf "PDF Tools")))))
 
 (use-package org
-  :straight t
+  :straight (:type built-in)
   :init
   (setq org-src-fontify-natively t)
   :hook (org-mode-hook . (lambda () (interactive)
