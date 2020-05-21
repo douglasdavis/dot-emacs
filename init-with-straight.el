@@ -627,18 +627,15 @@
           ("http://pragmaticemacs.com/feed/" emacs)
           ("http://feeds.podtrac.com/zKq6WZZLTlbM" nyt podcast)))
   :config
-  ;; Entries older than 3 weeks are marked as read
   (add-hook 'elfeed-new-entry-hook
-            (elfeed-make-tagger :before "3 weeks ago"
-                                :remove 'unread))
-  (setq-default elfeed-search-filter "@21-days-ago")
-  (defun dd/elfeed-play-enclosure-with-mpv ()
-    "Play enclosure link with mpv."
-    (interactive)
-    (let ((podcast-link (nth 0 (car (elfeed-entry-enclosures elfeed-show-entry)))))
-      (message "Opening %s with with mpv..." podcast-link)
-      (start-process "elfeed-mpv" "*mpv*" "mpv" "--quiet" "--vid=no"
-                     "--speed=1.33" podcast-link))))
+            (elfeed-make-tagger :before "3 weeks ago" :remove 'unread))
+  (setq-default elfeed-search-filter "@21-days-ago"))
+
+(use-package elcast
+  :straight (:host github :repo "douglasdavis/elcast")
+  :after elfeed
+  :init
+  (setq elcast-playback-speed 1.4))
 
 (use-package password-store
   :straight t

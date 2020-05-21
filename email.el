@@ -77,7 +77,7 @@
   (add-to-list 'mm-discouraged-alternatives "text/html")
   (add-to-list 'mm-discouraged-alternatives "text/richtext"))
 
-(setq mu4e-html2text-command "w3m -T text/html")
+;; (setq mu4e-html2text-command "w3m -T text/html")
 (setq w3m-default-desplay-inline-images t)
 
 (use-package mu4e
