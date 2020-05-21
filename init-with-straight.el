@@ -295,7 +295,7 @@
       (concat (file-name-as-directory dd-llvm-bin-path) exe-name)))
   (defvar dd-llvm-bin-path
     (cond (dd-on-mac "/usr/local/opt/llvm/bin")
-          (dd-on-cc7 "/home/ddavis/software/specific/llvm/10.x/bin")
+          (dd-on-cc7 "/home/ddavis/software/specific/llvm/master/bin")
           (dd-on-grads-18 "/home/drd25/software/specific/llvm/10.x/bin")
           (dd-on-spar nil))
     "Machine dependent llvm bin path.")
