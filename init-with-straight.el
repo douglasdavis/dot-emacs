@@ -164,9 +164,9 @@
                       :height 120))
 (when dd-on-cc7
   (set-face-attribute 'default nil
-                      :family "Fantasque Sans Mono"
+                      :family "JetBrains Mono"
                       :weight 'regular
-                      :height 140))
+                      :height 130))
 
 (defun dd/copy-lines-matching-re (re)
   "Put lines matching RE in a buffer named *matching*."
