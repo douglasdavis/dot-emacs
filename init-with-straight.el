@@ -664,6 +664,7 @@
            :nick "ddavis"
            :nickserv-password dd/irc-pw-freenode
            :nickserv-identify-confirmation "Freenode password accepted for ddavis"
+           :channels (:after-auth "#emacs" "#lobsters" "#lobsters-boil")
            :tls t)
           ("Gitter"
            :server-buffer-name "Gitter"
