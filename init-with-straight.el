@@ -633,7 +633,7 @@
 
 (use-package elcast
   :straight (:host github :repo "douglasdavis/elcast")
-  :after elfeed
+  :commands elcast-play
   :init
   (setq elcast-playback-speed 1.4))
 
