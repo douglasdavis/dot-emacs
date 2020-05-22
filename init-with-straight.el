@@ -569,7 +569,8 @@
 
 (use-package yasnippet
   :straight t
-  :bind ("C-x y" . yas-global-mode))
+  :demand t
+  (yas-global-mode 1))
 
 (use-package yasnippet-snippets
   :straight t)
