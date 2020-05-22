@@ -24,11 +24,81 @@
 
 ;;; Code:
 
-(setq initial-scratch-message
-      (format ";; This is GNU Emacs %s\n\n" emacs-version))
+;; sec00:
+;; preamble stuff
+
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+(when (boundp 'load-prefer-newer)
+  (setq load-prefer-newer t))
+
+(fset 'yes-or-no-p 'y-or-n-p)
+
+;; for native-comp branch
+(when (fboundp 'native-compile-async)
+  (if (yes-or-no-p "async compile?")
+      (setq comp-async-jobs-number 4
+            comp-deferred-compilation t
+            comp-deferred-compilation-black-list
+            '("cal-menu.el"
+              "cc-mode.el"
+              "cider-browse-ns.el"
+              "ert.el"
+              "flycheck.el"
+              "gnus.el"
+              "gnus-art.el"
+              "gnus-sum.el"
+              "help-mode.el"
+              "lsp-csharp.el"
+              "lsp-css.el"
+              "lsp-elm.el"
+              "lsp-erlang.el"
+              "lsp-eslint.el"
+              "lsp-fsharp.el"
+              "lsp-gdscript.sl"
+              "lsp-json.el"
+              "lsp-serenate.el"
+              "lsp-solargraph.el"
+              "lsp-terraform.el"
+              "lsp-vhdl.el"
+              "lsp-xml.el"
+              "markdown-mode.el"
+              "mml.el"
+              "org.el"
+              "org-table.el"
+              "yasnippet.el"
+              "util-modes.el"))
+    (setq comp-deferred-compilation nil)))
+
+(setq user-mail-address "ddavis@ddavis.io"
+      user-login-name "ddavis"
+      user-full-name "Doug Davis")
+
+(setq default-directory
+      (file-name-directory
+       (directory-file-name user-emacs-directory)))
+
+(setq custom-file (concat user-emacs-directory "custom.el"))
+
+;; 2GB threshold while init is loaded
+(setq gc-cons-threshold (* 2000 1024 1024))
+
+;; sec01:
+;; general setup not associated with packages
 
 (defun dd/str-contains? (subs s)
-  "Check for SUBS in in S."
+  "Check for SUBS in S via `string-match-p'."
   (declare (pure t) (side-effect-free t))
   (not (null (string-match-p (regexp-quote subs) s))))
 
@@ -44,142 +114,59 @@
 (defconst dd-on-spar (dd/str-contains? "spar01" (system-name))
   "For checking if on a BNL SPAR machine.")
 
-(fset 'yes-or-no-p 'y-or-n-p)
+(setq initial-scratch-message
+      (format ";; This is GNU Emacs %s\n\n" emacs-version))
 
-;; for native-comp branch
-(when (fboundp 'native-compile-async)
-  (if (yes-or-no-p "async compile?")
-      (setq comp-async-jobs-number 4
-            comp-deferred-compilation t
-            comp-deferred-compilation-black-list '("cal-menu.el"
-                                                   "cc-mode.el"
-                                                   "cider-browse-ns.el"
-                                                   "ert.el"
-                                                   "flycheck.el"
-                                                   "gnus.el"
-                                                   "gnus-art.el"
-                                                   "gnus-sum.el"
-                                                   "help-mode.el"
-                                                   "lsp-mode.el"
-                                                   "markdown-mode.el"
-                                                   "mml.el"
-                                                   "org.el"
-                                                   "org-table.el"
-                                                   "yasnippet.el"
-                                                   "util-modes.el"))
-    (setq comp-deferred-compilation nil)))
+(setq echo-keystrokes 0.01
+      ring-bell-function 'ignore
+      visible-bell nil)
 
-;; 2GB threshold while init is loaded
-(setq gc-cons-threshold (* 2000 1024 1024))
+(setq-default indent-tabs-mode nil)
 
-(when (boundp 'load-prefer-newer)
-  (setq load-prefer-newer t))
+(setq auto-save-list-file-prefix nil
+      create-lockfiles nil
+      auto-save-list-file-prefix nil
+      backup-by-copying t
+      backup-directory-alist '(("." . "~/.saves"))
+      delete-old-versions t
+      kept-new-versions 2
+      kept-old-versions 1
+      version-control t)
 
-(when dd-on-spar
-  (global-set-key (kbd "C-d") 'delete-backward-char))
+(when (fboundp 'scroll-bar-mode)
+  (scroll-bar-mode -1))
 
-(defconst dd-enable-irc (or dd-on-cc7 dd-on-mac dd-on-grads-18)
-  "For checking if on machine where we want to be able to use IRC.")
+(when (fboundp 'tool-bar-mode)
+  (tool-bar-mode -1))
 
-(defvar dd-llvm-bin-path
-  (cond (dd-on-mac "/usr/local/opt/llvm/bin")
-        (dd-on-cc7 "/home/ddavis/software/specific/llvm/10.x/bin")
-        (dd-on-grads-18 "/home/drd25/software/specific/llvm/10.x/bin")
-        (dd-on-spar nil))
-  "Machine dependent llvm bin path.")
+(when (fboundp 'tooltip-mode)
+  (tooltip-mode -1))
 
-(defvar dd-clangd-exe
-  (if dd-llvm-bin-path
-      (if (file-exists-p dd-llvm-bin-path)
-	  (concat (file-name-as-directory dd-llvm-bin-path) "clangd")
-	nil)
-    nil))
+(when (fboundp 'menu-bar-mode)
+  (if dd-on-mac
+      (menu-bar-mode +1)
+    (menu-bar-mode -1)))
 
-(defvar dd-clang-format-exe
-  (if dd-llvm-bin-path
-      (if (file-exists-p dd-llvm-bin-path)
-	  (concat (file-name-as-directory dd-llvm-bin-path) "clang-format")
-	nil)
-    nil))
+(setq inhibit-startup-screen t)
 
-(defvar dd-clang-exe
-  (if dd-llvm-bin-path
-      (if (file-exists-p dd-llvm-bin-path)
-	  (concat (file-name-as-directory dd-llvm-bin-path) "clang")
-	nil)
-    nil))
+(column-number-mode +1)
+(make-variable-buffer-local 'display-line-numbers-width-start)
+(global-display-line-numbers-mode)
 
-(defconst dd-rg-exe
-  (cond (dd-on-mac "/usr/local/bin/rg")
-        (dd-on-cc7 "/home/ddavis/.cargo/bin/rg")
-        (dd-on-grads-18 "/home/drd25/.cargo/bin/rg")
-        (dd-on-spar "~/.bin/rg"))
-  "Machine dependent ripgrep executable string.")
+(add-to-list 'default-frame-alist '(height . 72))
+(add-to-list 'default-frame-alist '(width . 234))
 
-(defconst dd-fd-exe
-  (cond (dd-on-mac "/usr/local/bin/fd")
-        (dd-on-cc7 "/home/ddavis/.cargo/bin/fd")
-        (dd-on-grads-18 "/home/drd25/.cargo/bin/fd")
-        (dd-on-spar nil))
-  "Machine dependent fd executable string.")
-
-(setq default-directory (cond (dd-on-mac "/Users/ddavis/")
-                              (dd-on-cc7 "/home/ddavis/")
-                              (dd-on-grads-18 "/home/drd25/")
-                              (dd-on-spar "/usatlas/u/ddavis/")))
-
-(setq user-mail-address "ddavis@ddavis.io"
-      user-login-name "ddavis"
-      user-full-name "Doug Davis")
-
-(setq custom-file (concat user-emacs-directory "custom.el"))
-
-(require 'package)
-(if dd-on-spar
-    (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
-
-(when (< emacs-major-version 27)
-  (package-initialize))
-
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-
-(eval-when-compile
-  (setq use-package-hook-name-suffix nil))
-
-(eval-when-compile
-  (require 'use-package)
-  (require 'bind-key))
-
-(use-package auto-package-update
-  :ensure t
-  :config
-  (setq auto-package-update-delete-old-versions t))
-
-(defun dd/open-init ()
-  "Open up Emacs init file."
-  (interactive)
-  (find-file
-   (concat
-    (file-name-as-directory
-     user-emacs-directory) "init.el")))
-
-(defun dd/move-line-up ()
-  "Move the current line up."
-  (interactive)
-  (transpose-lines 1)
-  (forward-line -2)
-  (indent-according-to-mode))
-
-(defun dd/move-line-down ()
-  "Move the current line down."
-  (interactive)
-  (forward-line 1)
-  (transpose-lines 1)
-  (forward-line -1)
-  (indent-according-to-mode))
+(when dd-on-mac
+  (setq mac-allow-anti-aliasing t)
+  (set-face-attribute 'default nil
+                      :family "JetBrains Mono"
+                      :weight 'regular
+                      :height 120))
+(when dd-on-cc7
+  (set-face-attribute 'default nil
+                      :family "JetBrains Mono"
+                      :weight 'regular
+                      :height 130))
 
 (defun dd/copy-lines-matching-re (re)
   "Put lines matching RE in a buffer named *matching*."
@@ -196,6 +183,26 @@
                  result-buffer))))
     (pop-to-buffer result-buffer)))
 
+(defun dd/del-trail-white ()
+  "Add `delete-trailing-whitespace' to `write-file-functions'.
+  Since `write-file-functions' is a permanent local list, this is
+  a convenience function to add the `delete-trailing-whitespace'
+  function to that list. Should be added to a mode hook."
+  (add-to-list 'write-file-functions 'delete-trailing-whitespace))
+
+(add-hook 'text-mode-hook 'dd/del-trail-white)
+(add-hook 'prog-mode-hook 'dd/del-trail-white)
+(setq require-final-newline t)
+
+(defun dd/delete-frame-or-window ()
+  "If we have multiple frames delete the current one.
+  If only one delete the window; this is really just for binding
+  Command+w to behave similar to other macOS applications."
+  (interactive)
+  (if (< (count-windows) 2)
+      (delete-frame)
+    (delete-window)))
+
 (defun dd/toggle-window-split ()
   "If two windows are present; toggle the split axis."
   (interactive)
@@ -211,294 +218,99 @@
                             (split-window-horizontally)))
            buf)))
     (user-error "Can toggle split only with two windows")))
-(bind-key (kbd "C-x \\") #'dd/toggle-window-split)
 
-(use-package exec-path-from-shell
-  :if (memq window-system '(mac ns x))
-  :demand t
-  :ensure t
-  :config
-  (exec-path-from-shell-initialize))
+(add-hook 'emacs-lisp-mode-hook 'prettify-symbols-mode)
 
-(make-variable-buffer-local 'display-line-numbers-width-start)
-(use-package display-line-numbers
+;; sec02:
+;; use-package setup
+
+(straight-use-package 'use-package)
+(eval-when-compile
+  (setq use-package-hook-name-suffix nil))
+
+;; sec03:
+;; use-package for some core Emacs packages.
+
+(use-package help-mode
+  :bind
+  (:map help-mode-map
+        ("q" . kill-buffer-and-window)))
+
+(use-package auth-source
+  :when (or dd-on-mac dd-on-cc7 dd-on-grads-18)
   :init
-  (global-display-line-numbers-mode))
+  (setq auth-sources
+        (list (concat user-emacs-directory ".authinfo.gpg"))))
+
+(use-package epa-file
+  :when (or dd-on-mac dd-on-cc7 dd-on-grads-18)
+  :config
+  (epa-file-enable)
+  (if dd-on-mac
+      (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
+    (custom-set-variables '(epg-gpg-program "/usr/bin/gpg2"))))
 
 (use-package uniquify
-  :demand t
-  :config
-  (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
-  (setq uniquify-strip-common-suffix t)
-  (setq uniquify-after-kill-buffer-p t))
-
-(setq custom-safe-themes t)
-(setq column-number-mode t)
-
-(unless (package-installed-p 'doom-themes)
-  (package-refresh-contents)
-  (package-install 'doom-themes))
-
-(use-package doom-themes
-  :config
-  (load-theme 'doom-gruvbox t))
-
-(use-package doom-modeline
-  :ensure
-  :hook (after-init-hook . doom-modeline-mode))
-
-(use-package faces
   :init
-  (when dd-on-cc7
-    (set-face-attribute 'default nil
-                        :family "JetBrains Mono"
-                        :weight 'medium
-                        :height 130))
-  (when dd-on-mac
-    (setq mac-allow-anti-aliasing t)
-    (set-face-attribute 'default nil
-                        :family "JetBrains Mono"
-                        :weight 'medium
-                        :height 120)))
+  (setq uniquify-buffer-name-style 'post-forward-angle-brackets
+        uniquify-strip-common-suffix t
+        uniquify-after-kill-buffer-p t))
 
-(add-to-list 'default-frame-alist '(height . 72))
-(add-to-list 'default-frame-alist '(width . 234))
-
-;; (defun tv/extend-faces-matching (regexp)
-;;   "From https://github.com/emacs-helm/helm/issues/2213
-
-;; Fix issue with the new :extend face attribute in emacs-27 Prefer
-;; to extend to EOL as in previous emacs."
-;;   (cl-loop for f in (face-list)
-;;            for face = (symbol-name f)
-;;            when (and (string-match regexp face)
-;;                      (eq (face-attribute f :extend t 'default)
-;;                          'unspecified))
-;;            do (set-face-attribute f nil :extend t)))
-
-;; (defun dd/init-extend-faces ()
-;;   (when (fboundp 'set-face-extend)
-;;     (with-eval-after-load "org"
-;;       (tv/extend-faces-matching "\\`org"))
-;;     (with-eval-after-load "magit"
-;;       (tv/extend-faces-matching "\\`magit"))
-;;     (with-eval-after-load "helm"
-;;       (tv/extend-faces-matching "\\`helm"))))
-
-;; (unless (version< emacs-version "27")
-;;   (dd/init-extend-faces))
-
-(use-package hydra :ensure t)
-(use-package pretty-hydra :ensure t)
-
-(use-package projectile
-  :ensure t
-  :demand t
-  :init
-  (pretty-hydra-define hydra-projectile
-    (:exit t :hint nil :title (projectile-project-root) :quit-key "q")
-    ("Movement" (("b" projectile-switch-to-buffer               "switch")
-                 ("B" projectile-switch-to-buffer-other-window  "switch (OW)")
-                 ("f" projectile-find-file                      "file")
-                 ("F" projectile-find-file-other-window         "file (OW)")
-                 ("S" projectile-switch-project                 "switch project")
-                 ("u" projectile-find-file-in-known-projects    "find in known"))
-
-     "Search" (("r" dd/helm-project-search  "ripgrep (helm)")
-               ("s" dd/ripgrep-proj-or-dir  "ripgrep (rg.el)")
-               ("o" projectile-multi-occur  "multioccur"))
-
-     "Misc" (("a" projectile-add-known-project  "add to known")
-             ("i" projectile-ibuffer            "ibuffer")
-             ("k" projectile-kill-buffers       "Kill em"))))
-  :bind ("C-c p" . hydra-projectile/body)
-  :bind-keymap ("C-c P" . projectile-command-map)
+(use-package tramp
+  :defer 5
   :config
-  (setq projectile-track-known-projects-automatically nil
-        projectile-completion-system 'helm
-        projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
-        projectile-globally-ignored-directories '(".git" "__pycache__")
-        projectile-globally-ignored-files '(".DS_Store")
-        projectile-enable-caching t)
-  (projectile-mode +1))
-
-(defun dd/projectile-proj-find-function (dir)
-  "Check if DIR is a project defined by projectile."
-  (let ((root (projectile-project-root dir)))
-    (and root (cons 'transient root))))
-
-(use-package project
-  :config
-  (add-to-list 'project-find-functions #'dd/projectile-proj-find-function))
-
-(use-package helm
-  :ensure t
-  :demand t
-  :bind (("C-x C-f" . helm-find-files)
-         ("C-x C-t" . find-file)
-         ("C-x r b" . helm-bookmarks)
-         ("C-x m" . helm-M-x)
-         ("C-x b" . helm-buffers-list)
-         :map helm-map
-         ("<tab>" . helm-execute-persistent-action))
-  :config
-  (require 'helm-config)
-  (global-set-key (kbd "C-x c") 'helm-command-prefix)
-  (setq helm-autoresize-max-height 40
-        helm-autoresize-min-height 20
-        helm-split-window-inside-p t
-        helm-split-window-default-side 'below
-        helm-idle-delay 0.0
-        helm-input-idle-delay 0.01
-        helm-quick-update t
-        helm-grep-file-path-style 'relative
-        helm-ff-skip-boring-files t
-        helm-grep-ag-command (concat dd-rg-exe
-                                     " --color=always"
-                                     " --smart-case"
-                                     " --no-heading"
-                                     " --line-number %s %s %s"))
-  (helm-mode +1)
-  (helm-autoresize-mode 1))
-
-(defun dd/helm-rg (directory &optional with-types)
-  "Search in DIRECTORY with ripgrep.
-
-use WITH-TYPES, ask for file types to search in."
-  (interactive "P")
-  (helm-grep-ag-1 (expand-file-name directory)
-                  (helm-aif (and with-types
-                                 (helm-grep-ag-get-types))
-                      (helm-comp-read
-                       "RG type: " it
-                       :must-match t
-                       :marked-candidates t
-                       :fc-transformer 'helm-adaptive-sort
-                       :buffer "*helm rg types*"))))
-
-(defun dd/helm-project-search (&optional with-types)
-  "Search in current project with rippgrep.
-Use WITH-TYPES to ask for file types to search in."
-  (interactive "P")
-  (dd/helm-rg (projectile-project-root) with-types))
-
-(use-package rg
-  :ensure t
-  :after wgrep
-  :init
-  (setq rg-executable (expand-file-name dd-rg-exe)
-        rg-group-result t
-        rg-hide-command t)
-  :config
-  (rg-define-search dd/ripgrep-proj-or-dir
-    :query ask
-    :format regexp
-    :files "everything"
-    :dir (let ((proj (projectile-project-root)))
-           (if proj
-               proj
-             default-directory))
-    :confirm prefix
-    :flags ("--hidden -g !.git")))
-
-(use-package company
-  :ensure t
-  :hook ((emacs-lisp-mode-hook . company-mode)
-         (python-mode-hook . company-mode)
-         (mu4e-compose-mode-hook . company-mode)
-         (sh-mode-hook . company-mode)
-         (yaml-mode-hook . company-mode)
-         (conf-mode-hook . company-mode)
-         (lsp-mode-hook . company-mode)
-         (eglot-managed-mode-hook . company-mode)
-         (LaTeX-mode-hook . company-mode))
-  :config
-  (setq company-backends (cons 'company-capf (remove 'company-capf company-backends)))
-  (setq company-minimum-prefix-length 2)
-  (setq company-idle-delay 0.1))
+  (setq tramp-default-method "ssh")
+  (defun dd/cleanup-tramp ()
+    (interactive)
+    (tramp-cleanup-all-buffers)
+    (tramp-cleanup-all-connections)
+    (find-file "~/.")
+    (dd/scratch-buffer)))
 
 (use-package vc
   :init
   (setq vc-follow-symlinks t))
 
-(use-package magit
-  :ensure t
-  :demand
-  :bind (("C-x g" . magit-status)
-         :map magit-status-mode-map
-         ("q" . dd/magit-kill-buffers))
+(use-package dired
+  :bind (:map dired-mode-map
+              ("q" . #'kill-current-buffer)))
+
+(use-package paren
+  :init
+  (show-paren-mode 1)
+  (setq-default show-paren-delay 0))
+
+(use-package browse-url
+  :init
+  (when dd-on-cc7
+    (setq browse-url-browser-function 'browse-url-generic
+          browse-url-generic-program "/usr/local/bin/firefox")))
+
+(use-package cc-mode
+  :mode (("\\.h\\(h?\\|xx\\|pp\\)\\'" . c++-mode)
+         ("\\.icc\\'" . c++-mode))
+  :init
+  (defun dd/llvm-project-exe (exe-name)
+    (when (and dd-llvm-bin-path (file-exists-p dd-llvm-bin-path))
+      (concat (file-name-as-directory dd-llvm-bin-path) exe-name)))
+  (defvar dd-llvm-bin-path
+    (cond (dd-on-mac "/usr/local/opt/llvm/bin")
+          (dd-on-cc7 "/home/ddavis/software/specific/llvm/master/bin")
+          (dd-on-grads-18 "/home/drd25/software/specific/llvm/10.x/bin")
+          (dd-on-spar nil))
+    "Machine dependent llvm bin path.")
+  (defvar dd-clangd-exe (dd/llvm-project-exe "clangd"))
+  (defvar dd-clang-format-exe (dd/llvm-project-exe "clang-format"))
+  (defvar dd-clang-exe (dd/llvm-project-exe "clang"))
   :config
-  (defun dd/magit-kill-buffers ()
-    "See `https://manuel-uberti.github.io/emacs/2018/02/17/magit-bury-buffer/'"
-    (interactive)
-    (let ((buffers (magit-mode-get-buffers)))
-      (magit-restore-window-configuration)
-      (mapc #'kill-buffer buffers))))
-
-(use-package lsp-mode
-  :ensure t
-  :commands lsp
-  :init
-  (setq read-process-output-max (* 2 1024 1024))
-  (setq lsp-clients-clangd-executable dd-clangd-exe)
-  (setq lsp-prefer-capf t)
-  (setq lsp-enable-on-type-formatting nil)
-  (setq lsp-auto-guess-root nil)
-  (setq lsp-pyls-plugins-autopep8-enabled nil
-        lsp-pyls-plugins-pycodestyle-enabled nil
-        lsp-pyls-plugins-flake8-enabled t
-        lsp-pyls-configuration-sources ["flake8"])
-  (pretty-hydra-define hydra-lsp (:exit t :hint nil :quit-key "q")
-    ("Finding" (("d" lsp-find-declaration             "find declaration")
-                ("D" lsp-ui-peek-find-definitions     "peek find declaration")
-                ("R" lsp-ui-peek-find-references      "peek find refs")
-                ("i" lsp-ui-peek-find-implementation  "peek find implementation")
-                ("t" lsp-find-type-defition           "find type definition"))
-
-     "Misc" (("f" lsp-format-buffer            "format buffer")
-             ("m" lsp-ui-imenu                 "ui menu")
-             ("x" lsp-execute-code-action      "execeute code action")
-             ("s" lsp-signature-help           "sig help")
-             ("o" lsp-describe-thing-at-point  "describe thing at point")
-             ("r" lsp-rename                   "rename"))
-
-     "Session" (("M-s" lsp-describe-session   "describe session")
-                ("M-r" lsp-workspace-restart  "restart workspace")
-                ("S" lsp-workspace-shutdown   "shutdown workspace"))))
-  :bind (:map lsp-mode-map
-              ("C-c l" . hydra-lsp/body)))
-
-(use-package lsp-python-ms
-  :ensure t)
-
-(use-package lsp-ui
-  :ensure t
-  :commands lsp-ui-mode
-  :init
-  (setq lsp-ui-sideline-show-hover nil))
-
-(use-package helm-lsp :commands helm-lsp-workspace-symbol)
-
-(use-package eglot
-  :ensure t
-  :commands eglot
-  :init
-  (setq eglot-server-programs
-        `((python-mode "pyls")
-          ((c++-mode c-mode) ,dd-clangd-exe))))
-
-(use-package pydoc :ensure t)
-(use-package helm-pydoc :ensure t)
-(use-package elpy :ensure t)
-(use-package blacken :ensure t)
-
-(use-package pyvenv
-  :ensure t
-  :config
-  (setenv "WORKON_HOME" "~/.pyenv/versions"))
+  (when dd-on-spar
+    (defun dd/cpp-fix-backspace ()
+      (global-set-key (kbd "C-d") 'delete-backward-char)
+      (local-unset-key (kbd "C-d")))
+    (add-hook 'c++-mode-hook #'dd/cpp-fix-backspace)))
 
 (use-package python
-  :mode ("\\.py'" . python-mode)
+  :mode ("\\.py\\'" . python-mode)
   :interpreter ("python" . python-mode)
   :bind (:map python-mode-map
               ("C-c C-a" . dd/py-auto-lsp))
@@ -529,26 +341,425 @@ Use WITH-TYPES to ask for file types to search in."
           (call-interactively #'pyvenv-workon)
           (lsp))))))
 
-(use-package cc-mode
-  :mode (("\\.h\\(h?\\|xx\\|pp\\)\\'" . c++-mode)
-         ("\\.icc\\'" . c++-mode))
+(use-package flyspell
+  :hook ((org-mode-hook . flyspell-mode)
+         (LaTeX-mode-hook . flyspell-mode)
+         (markdown-mode-hook . flyspell-mode)
+         (message-mode-hook . flyspell-mode)
+         (mu4e-compose-mode-hook . flyspell-mode)))
+
+;; sec04:
+;; now we exploit use-package for third party packages via straight.el
+
+(use-package exec-path-from-shell
+  :straight t
+  :demand t
   :config
-  (when dd-on-spar
-    (defun dd/cpp-fix-backspace ()
-      (global-set-key (kbd "C-d") 'delete-backward-char)
-      (local-unset-key (kbd "C-d")))
-    (add-hook 'c++-mode-hook #'dd/cpp-fix-backspace)))
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
+
+(use-package all-the-icons-dired
+  :straight t
+  :hook (dired-mode-hook . all-the-icons-dired-mode))
+
+(use-package hydra
+  :straight t)
+
+(use-package pretty-hydra
+  :straight t)
+
+(use-package helm
+  :straight t
+  :demand t
+  :bind (("C-x C-f" . helm-find-files)
+         ("C-x C-t" . find-file)
+         ("C-x r b" . helm-bookmarks)
+         ("C-x m" . helm-M-x)
+         ("C-x b" . helm-buffers-list)
+         :map helm-map
+         ("<tab>" . helm-execute-persistent-action))
+  :config
+  (require 'helm-config)
+  (global-set-key (kbd "C-x c") 'helm-command-prefix)
+  (setq helm-autoresize-max-height 40
+        helm-autoresize-min-height 20
+        helm-split-window-inside-p t
+        helm-split-window-default-side 'below
+        helm-idle-delay 0.0
+        helm-input-idle-delay 0.01
+        helm-quick-update t
+        helm-grep-file-path-style 'relative
+        helm-ff-skip-boring-files t
+        helm-grep-ag-command (concat (executable-find "rg")
+                                     " --color=always"
+                                     " --smart-case"
+                                     " --no-heading"
+                                     " --line-number %s %s %s"))
+  (helm-mode +1)
+  (helm-autoresize-mode 1))
+
+(use-package projectile
+  :straight t
+  :demand t
+  :init
+  (pretty-hydra-define hydra-projectile
+    (:exit t :hint nil :title (projectile-project-root) :quit-key "q")
+    ("Movement" (("b" projectile-switch-to-buffer               "switch")
+                 ("B" projectile-switch-to-buffer-other-window  "switch (OW)")
+                 ("f" projectile-find-file                      "file")
+                 ("F" projectile-find-file-other-window         "file (OW)")
+                 ("S" projectile-switch-project                 "switch project")
+                 ("u" projectile-find-file-in-known-projects    "find in known"))
+
+     "Search" (("r" dd/ripgrep-proj-or-dir  "ripgrep (rg.el)")
+               ("s" dd/ripgrep-proj-or-dir  "ripgrep (rg.el)")
+               ("o" projectile-multi-occur  "multioccur"))
+
+     "Misc" (("a" projectile-add-known-project  "add to known")
+             ("i" projectile-ibuffer            "ibuffer")
+             ("k" projectile-kill-buffers       "Kill em"))))
+  :bind ("C-c p" . hydra-projectile/body)
+  :bind-keymap ("C-c P" . projectile-command-map)
+  :config
+  (setq projectile-track-known-projects-automatically nil
+        projectile-completion-system 'helm
+        projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
+        projectile-globally-ignored-directories '(".git" "__pycache__")
+        projectile-globally-ignored-files '(".DS_Store")
+        projectile-enable-caching nil)
+  (projectile-mode +1))
+
+(use-package company
+  :straight t
+  :hook ((cider-repl-mode-hook . company-mode)
+         (clojure-mode-hook . company-mode)
+         (conf-colon-mode-hook . company-mode)
+         (conf-toml-mode-hook . company-mode)
+         (eglot-managed-mode-hook . company-mode)
+         (emacs-lisp-mode-hook . company-mode)
+         (LaTeX-mode-hook . company-mode)
+         (lsp-mode-hook . company-mode)
+         (mu4e-compose-mode-hook . company-mode)
+         (python-mode-hook . company-mode)
+         (sh-mode-hook . company-mode)
+         (yaml-mode-hook . company-mode))
+  :config
+  (setq company-backends (cons 'company-capf (remove 'company-capf company-backends)))
+  (setq company-minimum-prefix-length 2)
+  (setq company-idle-delay 0.1))
+
+(use-package company-box
+  :straight t
+  :hook (company-mode-hook . company-box-mode))
+
+(use-package magit
+  :straight t
+  :bind (("C-x g" . magit-status)
+         :map magit-status-mode-map
+         ("q" . dd/magit-kill-buffers))
+  :config
+  (defun dd/magit-kill-buffers ()
+    "See `https://manuel-uberti.github.io/emacs/2018/02/17/magit-bury-buffer/'"
+    (interactive)
+    (let ((buffers (magit-mode-get-buffers)))
+      (magit-restore-window-configuration)
+      (mapc #'kill-buffer buffers))))
+
+(use-package rg
+  :straight t
+  :after wgrep
+  :init
+  (setq rg-group-result t
+        rg-hide-command t)
+  :config
+  (rg-define-search dd/ripgrep-proj-or-dir
+    :query ask
+    :format regexp
+    :files "everything"
+    :dir (let ((proj (projectile-project-root)))
+           (if proj
+               proj
+             default-directory))
+    :confirm prefix
+    :flags ("--hidden -g !.git")))
+
+(use-package lsp-mode
+  :straight t
+  :commands lsp
+  :init
+  (setq read-process-output-max (* 10 1024 1024))
+  (setq lsp-clients-clangd-executable dd-clangd-exe)
+  (setq lsp-prefer-capf t)
+  (setq lsp-enable-on-type-formatting nil)
+  (setq lsp-auto-guess-root nil)
+  (setq lsp-pyls-plugins-autopep8-enabled nil
+        lsp-pyls-plugins-pycodestyle-enabled nil
+        lsp-pyls-plugins-flake8-enabled t
+        lsp-pyls-configuration-sources ["flake8"])
+  (pretty-hydra-define hydra-lsp (:exit t :hint nil :quit-key "q")
+    ("Finding" (("d" lsp-find-declaration             "find declaration")
+                ("D" lsp-ui-peek-find-definitions     "peek find declaration")
+                ("R" lsp-ui-peek-find-references      "peek find refs")
+                ("i" lsp-ui-peek-find-implementation  "peek find implementation")
+                ("t" lsp-find-type-defition           "find type definition"))
+
+     "Misc" (("f" lsp-format-buffer            "format buffer")
+             ("m" lsp-ui-imenu                 "ui menu")
+             ("x" lsp-execute-code-action      "execeute code action")
+             ("s" lsp-signature-help           "sig help")
+             ("o" lsp-describe-thing-at-point  "describe thing at point")
+             ("r" lsp-rename                   "rename"))
+
+     "Session" (("M-s" lsp-describe-session   "describe session")
+                ("M-r" lsp-workspace-restart  "restart workspace")
+                ("S" lsp-workspace-shutdown   "shutdown workspace"))))
+  :bind (:map lsp-mode-map
+              ("C-c l" . hydra-lsp/body)))
+
+(use-package lsp-ui
+  :straight t
+  :commands lsp-ui-mode
+  :config
+  (setq lsp-ui-doc-max-width 92
+        lsp-ui-sideline-show-hover nil))
+
+(use-package eglot
+  :straight t
+  :commands eglot
+  :init
+  (setq eglot-server-programs
+        `((python-mode "pyls")
+          ((c++-mode c-mode) ,dd-clangd-exe))))
 
 (use-package clang-format
-  :ensure t
+  :straight t
   :init
   (setq clang-format-executable dd-clang-format-exe))
 
 (use-package modern-cpp-font-lock
-  :ensure t
+  :straight t
   :hook (c++-mode-hook . modern-c++-font-lock-mode))
 
-(use-package auctex
+(use-package pyvenv
+  :straight t
+  :config
+  (setenv "WORKON_HOME" "~/.pyenv/versions"))
+
+(use-package blacken
+  :straight t)
+
+(use-package cider
+  :when (or dd-on-mac dd-on-cc7)
+  :straight t
+  :commands cider-jack-in)
+
+(use-package which-key
+  :straight t
+  :demand t
+  :config
+  (which-key-mode))
+
+(use-package doom-modeline
+  :straight t
+  :demand t
+  :init
+  (setq doom-modeline-mu4e (or dd-on-mac dd-on-cc7))
+  :config
+  (doom-modeline-mode 1))
+
+(use-package yasnippet
+  :straight t
+  :demand t
+  (yas-global-mode 1))
+
+(use-package yasnippet-snippets
+  :straight t)
+
+(use-package cmake-mode
+  :straight t
+  :mode ("CMakeLists.txt" "\\.cmake\\'"))
+
+(use-package iedit
+  :straight t
+  :bind ("C-c ;" . iedit-mode))
+
+(use-package markdown-mode
+  :straight t
+  :mode "\\.md\\'")
+
+(use-package yaml-mode
+  :straight t
+  :mode ("\\.yml\\'" "\\.yaml\\'"))
+
+(use-package ace-window
+  :straight t
+  :bind ("M-o" . ace-window))
+
+(use-package helpful
+  :straight t
+  :init
+  (setq helpful-max-highlight 15000)
+  :bind (("C-h f" . helpful-callable)
+         ("C-h v" . helpful-variable)
+         ("C-h o" . helpful-symbol)
+         ("C-h ." . helpful-at-point)
+         ("C-h k" . helpful-key)
+         :map helpful-mode-map
+         ("q" . kill-buffer-and-window)))
+
+(use-package doom-themes
+  :straight t
+  :demand t
+  :init
+  (setq custom-safe-themes t)
+  :config
+  (load-theme 'doom-gruvbox t))
+
+(use-package elfeed
+  :straight t
+  :commands elfeed
+  :bind ("C-x w" . 'elfeed)
+  :init
+  (setq shr-use-fonts nil)
+  (setq elfeed-feeds
+        '(("https://planet.scipy.org/feed.xml" python)
+          ("https://planet.emacslife.com/atom.xml" emacs)
+          ("https://ddavis.io/index.xml" blog)
+          ("http://pragmaticemacs.com/feed/" emacs)
+          ("http://feeds.podtrac.com/zKq6WZZLTlbM" nyt podcast)))
+  :config
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :before "3 weeks ago" :remove 'unread))
+  (setq-default elfeed-search-filter "@21-days-ago"))
+
+(use-package elcast
+  :straight (:host github :repo "douglasdavis/elcast")
+  :commands elcast-play
+  :init
+  (setq elcast-playback-speed 1.4))
+
+(use-package password-store
+  :straight t
+  :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac)
+  :commands (password-store-copy
+             password-store-get
+             password-store-edit
+             password-store-insert))
+
+(use-package circe
+  :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac)
+  :straight t
+  :commands circe
+  :hook (circe-chat-mode-hook . dd/circe-prompt)
+  :init
+  (defun dd/irc-pw-freenode (server)
+    (password-store-get "Freenode"))
+  (defun dd/irc-pw-gitter (server)
+    (password-store-get "Gitter"))
+  (defun dd/circe-prompt ()
+    (lui-set-prompt
+     (propertize (format "%s >>> " (buffer-name)) 'face 'circe-prompt-face)))
+  :config
+  (setq circe-network-options
+        `(("Freenode"
+           :nick "ddavis"
+           :nickserv-password dd/irc-pw-freenode
+           :nickserv-identify-confirmation "Freenode password accepted for ddavis"
+           :channels (:after-auth "#emacs" "#lobsters" "#lobsters-boil")
+           :tls t)
+          ("Gitter"
+           :server-buffer-name "Gitter"
+           :host "irc.gitter.im"
+           :port "6697"
+           :nick "douglasdavis"
+           :pass dd/irc-pw-gitter
+           :tls t)))
+  (require 'circe-color-nicks)
+  (setq circe-color-nicks-pool-type
+        '("#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#fe8019"
+          "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e"))
+  (enable-circe-color-nicks)
+  (setq circe-use-cycle-completion t
+        circe-reduce-lurker-spam t
+        circe-format-say "<{nick}> {body}"
+        lui-fill-type 19
+        lui-fill-column 77
+        circe-color-nicks-everywhere t)
+  (setq helm-mode-no-completion-in-region-in-modes
+        '(circe-channel-mode
+          circe-query-mode
+          circe-server-mode))
+  (setq circe-default-part-message
+        (concat "Closed Circe (" circe-version ") buffer in GNU Emacs (" emacs-version ")"))
+  (setq circe-default-quit-message
+        (concat "Quit Circe (" circe-version ") in GNU Emacs (" emacs-version ")")))
+
+(use-package helm-circe
+  :straight t
+  :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac)
+  :after circe
+  :bind (:map helm-command-map ("i" . helm-circe)))
+
+(use-package erc
+  :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac)
+  :commands erc
+  :init
+  (setq erc-prompt-for-password nil)
+  (setq erc-user-full-name "Doug Davis")
+  :config
+  (setq erc-track-enable-keybindings nil)
+  (setq erc-kill-buffer-on-part t)
+  (setq erc-kill-server-buffer-on-quit t)
+  (setq erc-fill-function 'erc-fill-static)
+  (setq erc-fill-static-center 19)
+  (setq erc-prompt (lambda () (concat (buffer-name) " >>>")))
+  (setq erc-hide-list '("JOIN" "PART" "QUIT"))
+  (setq erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
+  (setq erc-track-exclude-types '("JOIN" "MODE" "NICK" "PART" "QUIT"
+                                  "324" "329" "332" "333" "353" "477"))
+  (add-to-list 'erc-modules 'notifications)
+  (add-to-list 'erc-modules 'spelling)
+  (defvar dd-nick-face-list '()
+    "See https://www.emacswiki.org/emacs/ErcNickColors#toc1")
+  (defvar dd-erc-colors-list
+    '("#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#fe8019"
+      "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e")
+    "See https://www.emacswiki.org/emacs/ErcNickColors#toc1")
+  (defun dd/build-nick-face-list ()
+    "See https://www.emacswiki.org/emacs/ErcNickColors#toc1"
+    (setq i -1)
+    (setq dd-nick-face-list
+          (mapcar
+           (lambda (COLOR)
+             (setq i (1+ i))
+             (list (custom-declare-face
+                    (make-symbol (format "erc-nick-face-%d" i))
+                    (list (list t (list :foreground COLOR)))
+                    (format "Nick face %d" i))))
+           dd-erc-colors-list)))
+  (defun dd/erc-insert-modify-hook ()
+    "See https://www.emacswiki.org/emacs/ErcNickColors#toc1"
+    (if (null dd-nick-face-list) (dd/build-nick-face-list))
+    (save-excursion
+      (goto-char (point-min))
+      (if (looking-at "<\\([^>]*\\)>")
+          (let ((nick (match-string 1)))
+            (put-text-property (match-beginning 1) (match-end 1)
+                               'face (nth
+                                      (mod (string-to-number
+                                            (substring (md5 nick) 0 4) 16)
+                                           (length dd-nick-face-list))
+                                      dd-nick-face-list))))))
+  (add-hook 'erc-insert-modify-hook 'dd/erc-insert-modify-hook))
+
+(use-package gcmh
+  :straight t
+  :demand t
+  :init
+  (gcmh-mode 1))
+
+(use-package latex
+  :straight auctex
   :mode ("\\.tex\\'" . TeX-latex-mode)
   :init
   (setq font-latex-fontify-sectioning 'color
@@ -559,60 +770,17 @@ Use WITH-TYPES to ask for file types to search in."
   :config
   (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))
 
-(use-package reftex
-  :after auctex
-  :hook (LaTeX-mode-hook . reftex-mode))
-
-(use-package helm-bibtex :ensure t)
-(use-package company-bibtex :ensure t)
-
-(use-package lsp-latex
-  :when dd-on-cc7
-  :init
-  (setq lsp-latex-texlab-executable
-        "/home/ddavis/software/repos/texlab/target/release/texlab")
-  (add-to-list 'exec-path (file-name-directory lsp-latex-texlab-executable)))
-
 (when dd-on-cc7
   (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig")
   (use-package pdf-tools
+    :straight t
     :config
     (pdf-tools-install)
     (setq-default pdf-view-display-size 'fit-page)
     (setq TeX-view-program-selection '((output-pdf "PDF Tools")))))
 
-(defvar dd-thesis-bib nil)
-(defvar dd-thesis-file nil)
-
-(defun dd/work-on-thesis ()
-  "DWIM style function for working on thesis."
-  (interactive)
-  (when (file-exists-p "~/Desktop/thesis/biblio/refs.bib")
-    (setq dd-thesis-file "~/Desktop/thesis/dissertation.tex"
-          dd-thesis-bib "~/Desktop/thesis/biblio/refs.bib"))
-  (when (file-exists-p "~/Documents/thesis/biblio/refs.bib")
-    (setq dd-thesis-file "~/Documents/thesis/dissertation.tex"
-          dd-thesis-bib "~/Documents/thesis/biblio/refs.bib"))
-  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-  (add-to-list 'company-backends 'company-bibtex)
-  (setq company-bibtex-bibliography `(,dd-thesis-bib)
-        bibtex-completion-bibliography `(,dd-thesis-bib)
-        reftex-plug-into-AUCTeX t)
-  (find-file dd-thesis-file))
-
-(use-package multiple-cursors
-  :ensure t
-  :bind (("C-c C-<" . mc/mark-all-symbols-like-this)))
-
-(use-package flyspell
-  :hook ((org-mode-hook . flyspell-mode)
-         (LaTeX-mode-hook . flyspell-mode)
-         (markdown-mode-hook . flyspell-mode)
-         (message-mode-hook . flyspell-mode)
-         (mu4e-compose-mode-hook . flyspell-mode)))
-
 (use-package org
-  :ensure t
+  :straight (:type built-in)
   :init
   (setq org-src-fontify-natively t)
   :hook (org-mode-hook . (lambda () (interactive)
@@ -636,256 +804,58 @@ Use WITH-TYPES to ask for file types to search in."
     (bind-key "<s-left>" 'org-promote-subtree)
     (bind-key "<s-right>" 'org-demote-subtree)))
 
-(use-package ox :after org)
-(use-package ox-beamer :after ox)
-(use-package ox-md :after ox)
-(use-package ox-hugo :after ox :ensure t)
-(use-package ox-reveal :after ox :ensure t)
-(use-package htmlize :after ox :ensure t)
+(use-package ox-hugo
+  :straight t
+  :after ox)
 
-(use-package auth-source
-  :init
-  (setq auth-sources
-        (list (concat user-emacs-directory ".authinfo.gpg"))))
+(use-package ox-reveal
+  :straight t
+  :after ox)
 
-(use-package epa-file
-  :config
-  (epa-file-enable)
-  (if dd-on-mac
-      (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
-    (custom-set-variables '(epg-gpg-program "/usr/bin/gpg2"))))
+(use-package htmlize
+  :straight t
+  :after ox)
 
-(bind-key (kbd "C-c q") #'auto-fill-mode)
+;; sec05:
+;; some package-free bindings and macOS specifics
 
-(setq echo-keystrokes 0.01
-      ring-bell-function 'ignore
-      visible-bell nil)
+(bind-key (kbd "C-x \\") #'dd/toggle-window-split)
 
-(setq-default indent-tabs-mode nil)
-
-(setq auto-save-list-file-prefix nil
-      create-lockfiles nil
-      auto-save-list-file-prefix nil
-      backup-by-copying t
-      backup-directory-alist '(("." . "~/.saves"))
-      delete-old-versions t
-      kept-new-versions 2
-      kept-old-versions 1
-      version-control t)
-
-(use-package scroll-bar
-  :init
-  (when (fboundp 'scroll-bar-mode)
-    (scroll-bar-mode -1)))
-
-(use-package tool-bar
-  :init
-  (when (fboundp 'tool-bar-mode)
-    (tool-bar-mode -1)))
-
-(use-package tooltip
-  :init
-  (when (fboundp 'tooltip-mode)
-    (tooltip-mode -1)))
-
-(use-package menu-bar
-  :init
-  (when (fboundp 'menu-bar-mode)
-    (menu-bar-mode -1)))
-
-(setq inhibit-startup-screen t)
-
-(use-package paren
-  :init
-  (show-paren-mode 1)
-  (setq-default show-paren-delay 0))
-
-(use-package whitespace
-  :init
-  (setq require-final-newline t)
-  :config
-  (defun dd/del-trail-white ()
-    "Add `delete-trailing-whitespace' to `write-file-functions'.
-  Since `write-file-functions' is a permanent local list, this is
-  a convenience function to add the `delete-trailing-whitespace'
-  function to that list. Should be added to a mode hook."
-    (add-to-list 'write-file-functions 'delete-trailing-whitespace))
-  (add-hook 'text-mode-hook 'dd/del-trail-white)
-  (add-hook 'prog-mode-hook 'dd/del-trail-white))
-
-(use-package yasnippet
-  :ensure t
-  :config
-  (yas-global-mode 1))
-
-(use-package yasnippet-snippets :ensure t)
-(use-package cmake-mode :ensure t)
-
-(use-package deadgrep
-  :ensure t
-  :init
-  (setq deadgrep-executable dd-rg-exe))
-
-(use-package which-key
-  :ensure t
-  :hook (after-init . which-key-mode))
-
-(use-package iedit
-  :ensure t
-  :bind ("C-c ;" . iedit-mode))
-
-(use-package markdown-mode
-  :ensure t
-  :mode ("\\.md\\'" . markdown-mode))
-
-(use-package yaml-mode
-  :ensure t
-  :mode (("\\.yml\\'" . yaml-mode)
-         ("\\.yaml\\'" . yaml-mode)))
-
-(use-package ace-window
-  :ensure t
-  :bind ("M-o" . ace-window))
-
-(use-package rst
-  :hook (rst-mode-hook . (lambda ()
-                           (interactive)
-                           (local-unset-key (kbd "C-c 4")))))
-
-(use-package browse-url
-  :init
-  (when dd-on-cc7
-    (setq browse-url-browser-function 'browse-url-generic
-          browse-url-generic-program "/usr/local/bin/firefox")))
-
-(use-package dired
-  :init
-  (defhydra hydra-dired (:hint nil :color pink)
-    "
-    _+_ mkdir          _v_ view         _m_ mark           _(_ details        _i_ insert-subdir  wdired
-    _C_ copy           _O_ view other   _U_ unmark all     _)_ omit-mode      _$_ hide-subdir    C-x C-q : edit
-    _D_ delete         _o_ open other   _u_ unmark         _l_ redisplay      _w_ kill-subdir    C-c C-c : commit
-    _R_ rename         _M_ chmod        _t_ toggle         _g_ revert buf     _e_ ediff          C-c ESC : abort
-    _Y_ rel symlink    _G_ chgrp        _E_ extension mark _s_ sort           _=_ pdiff
-    _S_ symlink        ^ ^              _F_ find marked    _._ toggle hydra   \\ flyspell
-    _r_ rsync          ^ ^              ^ ^                ^ ^                _?_ summary
-    _z_ compress-file  _A_ find regexp
-    _Z_ compress       _Q_ repl regexp
-
-    T - tag prefix
-    "
-    ("\\" dired-do-ispell)
-    ("(" dired-hide-details-mode)
-    (")" dired-omit-mode)
-    ("+" dired-create-directory)
-    ("=" diredp-ediff)         ;; smart diff
-    ("?" dired-summary)
-    ("$" diredp-hide-subdir-nomove)
-    ("A" dired-do-find-regexp)
-    ("C" dired-do-copy)        ;; Copy all marked files
-    ("D" dired-do-delete)
-    ("E" dired-mark-extension)
-    ("e" dired-ediff-files)
-    ("F" dired-do-find-marked-files)
-    ("G" dired-do-chgrp)
-    ("g" revert-buffer)        ;; read all directories again (refresh)
-    ("i" dired-maybe-insert-subdir)
-    ("l" dired-do-redisplay)   ;; relist the marked or singel directory
-    ("M" dired-do-chmod)
-    ("m" dired-mark)
-    ("O" dired-display-file)
-    ("o" dired-find-file-other-window)
-    ("Q" dired-do-find-regexp-and-replace)
-    ("R" dired-do-rename)
-    ("r" dired-do-rsynch)
-    ("S" dired-do-symlink)
-    ("s" dired-sort-toggle-or-edit)
-    ("t" dired-toggle-marks)
-    ("U" dired-unmark-all-marks)
-    ("u" dired-unmark)
-    ("v" dired-view-file)      ;; q to exit, s to search, = gets line #
-    ("w" dired-kill-subdir)
-    ("Y" dired-do-relsymlink)
-    ("z" diredp-compress-this-file)
-    ("Z" dired-do-compress)
-    ("q" nil)
-    ("C-g" nil :color blue)
-    ("." nil :color blue))
-  :bind (:map dired-mode-map
-              ("." . hydra-dired/body)
-              ("q" . kill-current-buffer))
-  :hook (dired-mode-hook . hl-line-mode))
-
-(use-package all-the-icons :ensure t)
-
-(use-package all-the-icons-dired
-  :ensure t
-  :hook (dired-mode-hook . all-the-icons-dired-mode))
-
-(use-package diredfl
-  :ensure t
-  :hook (dired-mode-hook . diredfl-mode))
-
-(use-package help-mode
-  :bind
-  (:map help-mode-map
-        ("q" . kill-buffer-and-window)))
-
-(use-package helpful
-  :ensure t
-  :init
-  (setq helpful-max-highlight 15000)
-  :bind (("C-h f" . helpful-callable)
-         ("C-h v" . helpful-variable)
-         ("C-h o" . helpful-symbol)
-         ("C-h ." . helpful-at-point)
-         ("C-h k" . helpful-key)
-         :map helpful-mode-map
-         ("q" . kill-buffer-and-window)))
-
-(defun dd/scratch-buffer ()
-  "Create a scratch buffer."
-  (interactive)
-  (switch-to-buffer (get-buffer-create "*scratch*"))
-  (lisp-interaction-mode)
-  (when (eq (buffer-size (get-buffer-create "*scratch*")) 0)
-    (insert initial-scratch-message)))
-
-(use-package tramp
-  :defer 5
-  :config
-  (setq tramp-default-method "ssh")
-  (defun dd/cleanup-tramp ()
-    (interactive)
-    (tramp-cleanup-all-buffers)
-    (tramp-cleanup-all-connections)
-    (find-file "~/.")
-    (dd/scratch-buffer)))
-
-(defun dd/load-dot-emacs-git-file (fname)
-  "Load FNAME from my dot-emacs git repository."
-  (load-file
-   (concat (file-name-directory (file-truename (or load-file-name buffer-file-name)))
-           fname)))
+(bind-key (kbd "C-w") (lambda ()
+                        (interactive)
+                        (if (region-active-p)
+                            (kill-region (region-beginning) (region-end))
+                          (dd/delete-frame-or-window))))
 
 (when dd-on-mac
-  (dd/load-dot-emacs-git-file "macos.el"))
+  (when (memq window-system '(mac ns))
+    (setq browse-url-browser-function 'browse-url-default-macosx-browser)
+    (setq-default ns-alternate-modifier 'meta)
+    (setq-default mac-option-modifier 'meta)
+    (setq-default ns-right-alternate-modifier nil)
+    (setq-default ns-command-modifier 'super)
+    (setq-default mac-command-modifier 'super)
+    (setq-default ns-function-modifier 'hyper)
+    (setq-default mac-function-modifier 'hyper))
+
+  (bind-key (kbd "s-\\") #'dd/toggle-window-split)
+  (bind-key (kbd "s-/") #'previous-buffer)
+  (bind-key (kbd "s-1") #'delete-other-windows)
+  (bind-key (kbd "s-2") #'split-window-below)
+  (bind-key (kbd "s-3") #'split-window-right)
+  (bind-key (kbd "s-5") #'projectile-find-file-in-known-projects)
+  (bind-key (kbd "s-4") #'mu4e)
+  (bind-key (kbd "s-b") #'helm-buffers-list)
+  (bind-key (kbd "s-f") #'helm-find-files)
+  (bind-key (kbd "s-g") #'magit-status)
+  (bind-key (kbd "s-o") #'other-window)
+  (bind-key (kbd "s-p") #'projectile-find-file)
+  (bind-key (kbd "s-r") #'dd/ripgrep-proj-or-dir)
+  (bind-key (kbd "s-u") #'gnus)
+  (bind-key (kbd "s-w") #'dd/delete-frame-or-window))
+
+;; sec06:
+;; email setup is in dedicated file
+
 (when (or dd-on-mac dd-on-cc7)
-  (dd/load-dot-emacs-git-file "rss.el"))
-(when dd-enable-irc
-  (dd/load-dot-emacs-git-file "irc.el"))
-(when (or dd-on-cc7 dd-on-mac)
-  (dd/load-dot-emacs-git-file "email.el"))
-
-;; end of init file so set a more reasonable threshold
-(setq gc-cons-threshold (* 100 1024 1024))
-
-(use-package gcmh
-  :ensure t
-  :demand t
-  :config
-  (gcmh-mode 1))
-
-
-(provide 'init)
-;;; init.el ends here
+  (load-file "~/.emacs.d/dot-emacs/email.el"))
