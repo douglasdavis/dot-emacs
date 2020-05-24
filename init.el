@@ -483,6 +483,9 @@
     :confirm prefix
     :flags ("--hidden -g !.git")))
 
+(use-package flycheck
+  :straight t)
+
 (use-package lsp-mode
   :straight t
   :commands lsp
@@ -492,6 +495,7 @@
   (setq lsp-prefer-capf t)
   (setq lsp-enable-on-type-formatting nil)
   (setq lsp-auto-guess-root nil)
+  (setq lsp-diagnostic-package :flycheck)
   (setq lsp-pyls-plugins-autopep8-enabled nil
         lsp-pyls-plugins-pycodestyle-enabled nil
         lsp-pyls-plugins-flake8-enabled t
