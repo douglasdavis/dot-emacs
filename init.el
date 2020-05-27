@@ -554,7 +554,7 @@
 
 (use-package pyvenv
   :straight t
-  :config
+  :init
   (setenv "WORKON_HOME" "~/.pyenv/versions"))
 
 (use-package blacken
