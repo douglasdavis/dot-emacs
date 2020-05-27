@@ -398,6 +398,10 @@
   (helm-mode +1)
   (helm-autoresize-mode 1))
 
+(use-package helm-descbinds
+  :straight t
+  :commands helm-descbinds)
+
 (use-package projectile
   :straight t
   :demand t
@@ -820,6 +824,15 @@
 (use-package htmlize
   :straight t
   :after ox)
+
+(use-package dashboard
+  :straight t
+  :init
+  (setq dashboard-center-content t
+        dashboard-items '((recents . 5)
+                          (projects . 5)))
+  :config
+  (dashboard-setup-startup-hook))
 
 ;; sec05:
 ;; some package-free bindings and macOS specifics
