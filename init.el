@@ -51,7 +51,8 @@
       (setq comp-async-jobs-number 4
             comp-deferred-compilation t
             comp-deferred-compilation-black-list
-            '("cal-menu.el"
+            '("bibtex.el"
+              "cal-menu.el"
               "cc-mode.el"
               "cider-browse-ns.el"
               "ert.el"
