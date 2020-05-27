@@ -829,6 +829,8 @@
   :straight t
   :init
   (setq dashboard-center-content t
+        dashboard-startup-banner 'logo
+        dashboard-set-navigator t
         dashboard-items '((recents . 5)
                           (projects . 5)))
   :config
