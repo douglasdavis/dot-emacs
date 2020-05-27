@@ -420,10 +420,11 @@
                ("o" projectile-multi-occur  "multioccur"))
 
      "Misc" (("a" projectile-add-known-project  "add to known")
+             ("h" helm-projectile               "helm projectile")
              ("i" projectile-ibuffer            "ibuffer")
              ("k" projectile-kill-buffers       "Kill em"))))
-  :bind ("C-c p" . hydra-projectile/body)
-  :bind-keymap ("C-c P" . projectile-command-map)
+  :bind ("C-c P" . hydra-projectile/body)
+  :bind-keymap ("C-c p" . projectile-command-map)
   :config
   (setq projectile-track-known-projects-automatically nil
         projectile-completion-system 'helm
@@ -432,6 +433,9 @@
         projectile-globally-ignored-files '(".DS_Store")
         projectile-enable-caching nil)
   (projectile-mode +1))
+
+(use-package helm-projectile
+  :straight t)
 
 (use-package company
   :straight t
