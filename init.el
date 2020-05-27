@@ -867,7 +867,7 @@
   (bind-key (kbd "s-f") #'helm-find-files)
   (bind-key (kbd "s-g") #'magit-status)
   (bind-key (kbd "s-o") #'other-window)
-  (bind-key (kbd "s-p") #'projectile-find-file)
+  (bind-key (kbd "s-p") #'hydra-projectile/body)
   (bind-key (kbd "s-r") #'dd/ripgrep-proj-or-dir)
   (bind-key (kbd "s-u") #'gnus)
   (bind-key (kbd "s-w") #'dd/delete-frame-or-window))
