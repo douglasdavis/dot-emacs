@@ -226,6 +226,40 @@ Command+w to behave similar to other macOS applications."
 
 (add-hook 'emacs-lisp-mode-hook 'prettify-symbols-mode)
 
+(defun keyboard-quit-context+ ()
+  "Quit current context.
+This function is a combination of `keyboard-quit' and
+`keyboard-escape-quit' with some parts omitted and some custom
+behavior added."
+  (interactive)
+  (cond ((region-active-p)
+         ;; Avoid adding the region to the window selection.
+         (setq saved-region-selection nil)
+         (let (select-active-regions)
+           (deactivate-mark)))
+        ((eq last-command 'mode-exited) nil)
+        (current-prefix-arg
+         nil)
+        (defining-kbd-macro
+          (message
+           (substitute-command-keys
+            "Quit is ignored during macro defintion, use
+            \\[kmacro-end-macro] if you want to stop macro
+            definition"))
+          (cancel-kbd-macro-events))
+        ((active-minibuffer-window)
+         (when (get-buffer-window "*Completions*")
+           ;; hide completions first so point stays in active window
+           ;; when outside the minibuffer
+           (minibuffer-hide-completions))
+         (abort-recursive-edit))
+        (t
+         ;; if we got this far just use the default so we don't miss
+         ;; any upstream changes
+         (keyboard-quit))))
+
+(global-set-key [remap keyboard-quit] #'keyboard-quit-context+)
+
 ;; sec02:
 ;; use-package setup
 
@@ -377,35 +411,35 @@ Command+w to behave similar to other macOS applications."
 (use-package pretty-hydra
   :straight t)
 
-(use-package helm
-  :straight t
-  :demand t
-  :bind (("C-x C-f" . helm-find-files)
-         ("C-x C-t" . find-file)
-         ("C-x r b" . helm-bookmarks)
-         ("C-x m" . helm-M-x)
-         ("C-x b" . helm-buffers-list)
-         :map helm-map
-         ("<tab>" . helm-execute-persistent-action))
-  :config
-  (require 'helm-config)
-  (global-set-key (kbd "C-x c") 'helm-command-prefix)
-  (setq helm-autoresize-max-height 40
-        helm-autoresize-min-height 20
-        helm-split-window-inside-p t
-        helm-split-window-default-side 'below
-        helm-idle-delay 0.0
-        helm-input-idle-delay 0.01
-        helm-quick-update t
-        helm-grep-file-path-style 'relative
-        helm-ff-skip-boring-files t
-        helm-grep-ag-command (concat (executable-find "rg")
-                                     " --color=always"
-                                     " --smart-case"
-                                     " --no-heading"
-                                     " --line-number %s %s %s"))
-  (helm-mode +1)
-  (helm-autoresize-mode 1))
+;; (use-package helm
+;;   :straight t
+;;   :demand t
+;;   :bind (("C-x C-f" . helm-find-files)
+;;          ("C-x C-t" . find-file)
+;;          ("C-x r b" . helm-bookmarks)
+;;          ("C-x m" . helm-M-x)
+;;          ("C-x b" . helm-buffers-list)
+;;          :map helm-map
+;;          ("<tab>" . helm-execute-persistent-action))
+;;   :config
+;;   (require 'helm-config)
+;;   (global-set-key (kbd "C-x c") 'helm-command-prefix)
+;;   (setq helm-autoresize-max-height 40
+;;         helm-autoresize-min-height 20
+;;         helm-split-window-inside-p t
+;;         helm-split-window-default-side 'below
+;;         helm-idle-delay 0.0
+;;         helm-input-idle-delay 0.01
+;;         helm-quick-update t
+;;         helm-grep-file-path-style 'relative
+;;         helm-ff-skip-boring-files t
+;;         helm-grep-ag-command (concat (executable-find "rg")
+;;                                      " --color=always"
+;;                                      " --smart-case"
+;;                                      " --no-heading"
+;;                                      " --line-number %s %s %s"))
+;;   ;; (helm-mode +1)
+;;   (helm-autoresize-mode 1))
 
 (use-package helm-descbinds
   :straight t
@@ -436,7 +470,7 @@ Command+w to behave similar to other macOS applications."
   :bind-keymap ("C-c p" . projectile-command-map)
   :config
   (setq projectile-track-known-projects-automatically nil
-        projectile-completion-system 'helm
+        projectile-completion-system 'default
         projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
         projectile-globally-ignored-directories '(".git" "__pycache__")
         projectile-globally-ignored-files '(".DS_Store")
@@ -635,7 +669,10 @@ Command+w to behave similar to other macOS applications."
   :init
   (setq custom-safe-themes t)
   :config
-  (load-theme 'doom-gruvbox t))
+  (when dd-on-mac
+    (load-theme 'doom-solarized-light t))
+  (unless dd-on-mac
+    (load-theme 'doom-gruvbox t)))
 
 (use-package elfeed
   :straight t
@@ -715,11 +752,11 @@ Command+w to behave similar to other macOS applications."
   (setq circe-default-quit-message
         (concat "Quit Circe (" circe-version ") in GNU Emacs (" emacs-version ")")))
 
-(use-package helm-circe
-  :straight t
-  :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac)
-  :after circe
-  :bind (:map helm-command-map ("i" . helm-circe)))
+;; (use-package helm-circe
+;;   :straight t
+;;   :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac)
+;;   :after circe
+;;   :bind (:map helm-command-map ("i" . helm-circe)))
 
 (use-package erc
   :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac)
@@ -877,8 +914,10 @@ Command+w to behave similar to other macOS applications."
   (bind-key (kbd "s-3") #'split-window-right)
   (bind-key (kbd "s-5") #'projectile-find-file-in-known-projects)
   (bind-key (kbd "s-4") #'mu4e)
-  (bind-key (kbd "s-b") #'helm-buffers-list)
-  (bind-key (kbd "s-f") #'helm-find-files)
+  ;;(bind-key (kbd "s-b") #'helm-buffers-list)
+  ;;(bind-key (kbd "s-f") #'helm-find-files)
+  (bind-key (kbd "s-b") #'switch-to-buffer)
+  (bind-key (kbd "s-f") #'find-file)
   (bind-key (kbd "s-g") #'magit-status)
   (bind-key (kbd "s-o") #'other-window)
   (bind-key (kbd "s-p") #'hydra-projectile/body)
@@ -891,3 +930,14 @@ Command+w to behave similar to other macOS applications."
 
 (when (or dd-on-mac dd-on-cc7)
   (load-file "~/.emacs.d/dot-emacs/email.el"))
+
+
+;; sec07:
+;; experimenting
+
+(straight-use-package 'orderless)
+(straight-use-package 'selectrum)
+(selectrum-mode +1)
+(setq completion-styles '(orderless))
+(setq selectrum-refine-candidates-function #'orderless-filter)
+(setq selectrum-highlight-candidates-function #'orderless-highlight-matches)
