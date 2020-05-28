@@ -935,9 +935,16 @@ behavior added."
 ;; sec07:
 ;; experimenting
 
-(straight-use-package 'orderless)
-(straight-use-package 'selectrum)
-(selectrum-mode +1)
-(setq completion-styles '(orderless))
-(setq selectrum-refine-candidates-function #'orderless-filter)
-(setq selectrum-highlight-candidates-function #'orderless-highlight-matches)
+(use-package orderless
+  :straight t
+  :demand t
+  :init
+  (setq completion-styles '(orderless)))
+
+(use-package selectrum
+  :straight t
+  :demand t
+  :config
+  (selectrum-mode +1)
+  (setq selectrum-refine-candidates-function #'orderless-filter)
+  (setq selectrum-highlight-candidates-function #'orderless-highlight-matches))
