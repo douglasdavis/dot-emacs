@@ -44,6 +44,7 @@
   (setq load-prefer-newer t))
 
 (fset 'yes-or-no-p 'y-or-n-p)
+(setq confirm-kill-emacs 'y-or-n-p)
 
 ;; for native-comp branch
 (when (fboundp 'native-compile-async)
@@ -128,11 +129,14 @@
       create-lockfiles nil
       auto-save-list-file-prefix nil
       backup-by-copying t
-      backup-directory-alist '(("." . "~/.saves"))
+      backup-directory-alist '((".*" . "~/.saves"))
+      auto-save-file-name-transforms '((".*" "~/.saves" t))
       delete-old-versions t
       kept-new-versions 2
       kept-old-versions 1
       version-control t)
+
+(setq sentence-end-double-space nil)
 
 (when (fboundp 'scroll-bar-mode)
   (scroll-bar-mode -1))
@@ -186,9 +190,9 @@
 
 (defun dd/del-trail-white ()
   "Add `delete-trailing-whitespace' to `write-file-functions'.
-  Since `write-file-functions' is a permanent local list, this is
-  a convenience function to add the `delete-trailing-whitespace'
-  function to that list. Should be added to a mode hook."
+Since `write-file-functions' is a permanent local list, this is a
+convenience function to add the `delete-trailing-whitespace'
+function to that list. Should be added to a mode hook."
   (add-to-list 'write-file-functions 'delete-trailing-whitespace))
 
 (add-hook 'text-mode-hook 'dd/del-trail-white)
@@ -197,8 +201,8 @@
 
 (defun dd/delete-frame-or-window ()
   "If we have multiple frames delete the current one.
-  If only one delete the window; this is really just for binding
-  Command+w to behave similar to other macOS applications."
+If only one delete the window; this is really just for binding
+Command+w to behave similar to other macOS applications."
   (interactive)
   (if (< (count-windows) 2)
       (delete-frame)
@@ -273,8 +277,12 @@
   (setq vc-follow-symlinks t))
 
 (use-package dired
+  :init
+  (setq-default dired-listing-switches "-alh")
   :bind (:map dired-mode-map
-              ("q" . #'kill-current-buffer)))
+              ("q" . #'kill-current-buffer))
+  :config
+  (setq dired-recursive-copies 'always))
 
 (use-package paren
   :init
@@ -673,13 +681,11 @@
   (defun dd/circe-prompt ()
     (lui-set-prompt
      (propertize (format "%s >>> " (buffer-name)) 'face 'circe-prompt-face)))
-  :config
   (setq circe-network-options
-        `(("Freenode"
+        '(("Freenode"
            :nick "ddavis"
            :nickserv-password dd/irc-pw-freenode
-           :nickserv-identify-confirmation "Freenode password accepted for ddavis"
-           :channels (:after-auth "#emacs" "#lobsters" "#lobsters-boil")
+           :channels (:after-auth "#emacs" "#lobsters" "#lobsters-boil" "#sr.ht")
            :tls t)
           ("Gitter"
            :server-buffer-name "Gitter"
@@ -688,6 +694,7 @@
            :nick "douglasdavis"
            :pass dd/irc-pw-gitter
            :tls t)))
+  :config
   (require 'circe-color-nicks)
   (setq circe-color-nicks-pool-type
         '("#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#fe8019"
