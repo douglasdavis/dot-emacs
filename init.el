@@ -945,5 +945,6 @@ behavior added."
   :demand t
   :config
   (selectrum-mode +1)
+  (setq enable-recursive-minibuffers t)
   (setq selectrum-refine-candidates-function #'orderless-filter)
   (setq selectrum-highlight-candidates-function #'orderless-highlight-matches))
