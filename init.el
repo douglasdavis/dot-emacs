@@ -129,8 +129,7 @@
       create-lockfiles nil
       auto-save-list-file-prefix nil
       backup-by-copying t
-      backup-directory-alist '((".*" . "~/.saves"))
-      auto-save-file-name-transforms '((".*" "~/.saves" t))
+      backup-directory-alist '(("." . "~/.saves"))
       delete-old-versions t
       kept-new-versions 2
       kept-old-versions 1
