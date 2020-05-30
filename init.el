@@ -440,9 +440,9 @@ behavior added."
 ;;   ;; (helm-mode +1)
 ;;   (helm-autoresize-mode 1))
 
-(use-package helm-descbinds
-  :straight t
-  :commands helm-descbinds)
+;; (use-package helm-descbinds
+;;   :straight t
+;;   :commands helm-descbinds)
 
 (use-package projectile
   :straight t
@@ -462,7 +462,7 @@ behavior added."
                ("o" projectile-multi-occur  "multioccur"))
 
      "Misc" (("a" projectile-add-known-project  "add to known")
-             ("h" helm-projectile               "helm projectile")
+             ;; ("h" helm-projectile               "helm projectile")
              ("i" projectile-ibuffer            "ibuffer")
              ("k" projectile-kill-buffers       "Kill em"))))
   :bind ("C-c P" . hydra-projectile/body)
@@ -476,8 +476,8 @@ behavior added."
         projectile-enable-caching nil)
   (projectile-mode +1))
 
-(use-package helm-projectile
-  :straight t)
+;; (use-package helm-projectile
+;;   :straight t)
 
 (use-package company
   :straight t
@@ -742,10 +742,10 @@ behavior added."
         lui-fill-type 19
         lui-fill-column 77
         circe-color-nicks-everywhere t)
-  (setq helm-mode-no-completion-in-region-in-modes
-        '(circe-channel-mode
-          circe-query-mode
-          circe-server-mode))
+  ;; (setq helm-mode-no-completion-in-region-in-modes
+  ;;       '(circe-channel-mode
+  ;;         circe-query-mode
+  ;;         circe-server-mode))
   (setq circe-default-part-message
         (concat "Closed Circe (" circe-version ") buffer in GNU Emacs (" emacs-version ")"))
   (setq circe-default-quit-message
