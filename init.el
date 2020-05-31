@@ -749,7 +749,17 @@ behavior added."
   (setq circe-default-part-message
         (concat "Closed Circe (" circe-version ") buffer in GNU Emacs (" emacs-version ")"))
   (setq circe-default-quit-message
-        (concat "Quit Circe (" circe-version ") in GNU Emacs (" emacs-version ")")))
+        (concat "Quit Circe (" circe-version ") in GNU Emacs (" emacs-version ")"))
+
+  (defun dd/switch-circe-channel ()
+    (interactive)
+    (let ((sources
+           (cl-loop for buf in (buffer-list)
+                    if (eq 'circe-channel-mode (buffer-local-value 'major-mode buf))
+                    collect (buffer-name buf))))
+      (switch-to-buffer (completing-read "Channel: " sources))))
+
+  (bind-key (kbd "C-c C-b") #'dd/switch-circe-channel circe-mode-map))
 
 ;; (use-package helm-circe
 ;;   :straight t
@@ -929,7 +939,6 @@ behavior added."
 
 (when (or dd-on-mac dd-on-cc7)
   (load-file "~/.emacs.d/dot-emacs/email.el"))
-
 
 ;; sec07:
 ;; experimenting
