@@ -63,6 +63,11 @@
   (let ((maildir (helm-comp-read "Maildir: " (mu4e-get-maildirs))))
     (mu4e-headers-search (format "maildir:\"%s\"" maildir))))
 
+(defun dd/mu4e-jump-via-comp-read ()
+  (interactive)
+  (let ((maildir (completing-read "Maildir: " (mu4e-get-maildirs))))
+    (mu4e-headers-search (format "maildir:\"%s\"" maildir))))
+
 (defun mu4e-action-view-in-w3m ()
   "View the body of the message in emacs w3m."
   (interactive)
@@ -85,16 +90,16 @@
   :commands (mu4e mu4e-update-mail-and-index)
   :bind (("C-c 4" . mu4e)
          :map mu4e-headers-mode-map
-         ("j" . dd/mu4e-jump-via-helm)
+         ("j" . dd/mu4e-jump-via-comp-read)
          ("d" . mu4e-headers-mark-for-delete)
          ("D" . mu4e-headers-mark-for-trash)
          :map mu4e-main-mode-map
-         ("j" . dd/mu4e-jump-via-helm)
+         ("j" . dd/mu4e-jump-via-comp-read)
          :map mu4e-view-mode-map
          ("d" . mu4e-view-mark-for-delete)
          ("D" . mu4e-view-mark-for-trash)
          ("M" . mu4e-action-view-in-w3m)
-         ("j" . dd/mu4e-jump-via-helm))
+         ("j" . dd/mu4e-jump-via-comp-read))
   :config
   (setq mu4e-mu-binary dd-mu-exe
         mu4e-change-filenames-when-moving t
