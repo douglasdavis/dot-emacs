@@ -187,15 +187,16 @@
                  result-buffer))))
     (pop-to-buffer result-buffer)))
 
-(defun dd/del-trail-white ()
-  "Add `delete-trailing-whitespace' to `write-file-functions'.
-Since `write-file-functions' is a permanent local list, this is a
-convenience function to add the `delete-trailing-whitespace'
-function to that list. Should be added to a mode hook."
-  (add-to-list 'write-file-functions 'delete-trailing-whitespace))
+;; (defun dd/del-trail-white ()
+;;   "Add `delete-trailing-whitespace' to `write-file-functions'.
+;; Since `write-file-functions' is a permanent local list, this is a
+;; convenience function to add the `delete-trailing-whitespace'
+;; function to that list. Should be added to a mode hook."
+;;   (add-to-list 'write-file-functions 'delete-trailing-whitespace))
 
-(add-hook 'text-mode-hook 'dd/del-trail-white)
-(add-hook 'prog-mode-hook 'dd/del-trail-white)
+;; (add-hook 'text-mode-hook 'dd/del-trail-white)
+;; (add-hook 'prog-mode-hook 'dd/del-trail-white)
+
 (setq require-final-newline t)
 
 (defun dd/delete-frame-or-window ()
@@ -268,6 +269,14 @@ behavior added."
 
 ;; sec03:
 ;; use-package for some core Emacs packages.
+
+(use-package whitespace
+  :init
+  (dolist (hook '(prog-mode-hook text-mode-hook))
+    (add-hook hook #'whitespace-mode))
+  (add-hook 'before-save-hook #'whitespace-cleanup)
+  :config
+  (setq whitespace-style '(face tabs empty trailing)))
 
 (use-package help-mode
   :bind
