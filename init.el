@@ -125,6 +125,8 @@
 
 (setq-default indent-tabs-mode nil)
 
+(setq-default fill-column 88)
+
 (setq auto-save-list-file-prefix nil
       create-lockfiles nil
       auto-save-list-file-prefix nil
@@ -403,6 +405,9 @@ behavior added."
 (use-package all-the-icons-dired
   :straight t
   :hook (dired-mode-hook . all-the-icons-dired-mode))
+
+(use-package visual-fill-column
+  :straight t)
 
 (use-package hydra
   :straight t)
