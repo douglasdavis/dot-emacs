@@ -673,10 +673,7 @@ behavior added."
   :init
   (setq custom-safe-themes t)
   :config
-  (when dd-on-mac
-    (load-theme 'doom-solarized-light t))
-  (unless dd-on-mac
-    (load-theme 'doom-gruvbox t)))
+  (load-theme 'doom-gruvbox t))
 
 (use-package elfeed
   :straight t
