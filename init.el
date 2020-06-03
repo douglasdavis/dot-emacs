@@ -125,8 +125,6 @@
 
 (setq-default indent-tabs-mode nil)
 
-(setq-default fill-column 88)
-
 (setq auto-save-list-file-prefix nil
       create-lockfiles nil
       auto-save-list-file-prefix nil
