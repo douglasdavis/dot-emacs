@@ -485,8 +485,7 @@ behavior added."
         projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
         projectile-globally-ignored-directories '(".git" "__pycache__")
         projectile-globally-ignored-files '(".DS_Store")
-        projectile-enable-caching nil)
-  (projectile-mode +1))
+        projectile-enable-caching nil))
 
 ;; (use-package helm-projectile
 ;;   :straight t)
