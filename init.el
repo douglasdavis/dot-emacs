@@ -422,39 +422,38 @@ behavior added."
 (use-package pretty-hydra
   :straight t)
 
-;; (use-package helm
-;;   :straight t
-;;   :demand t
-;;   :bind (("C-x C-f" . helm-find-files)
-;;          ("C-x C-t" . find-file)
-;;          ("C-x r b" . helm-bookmarks)
-;;          ("C-x m" . helm-M-x)
-;;          ("C-x b" . helm-buffers-list)
-;;          :map helm-map
-;;          ("<tab>" . helm-execute-persistent-action))
-;;   :config
-;;   (require 'helm-config)
-;;   (global-set-key (kbd "C-x c") 'helm-command-prefix)
-;;   (setq helm-autoresize-max-height 40
-;;         helm-autoresize-min-height 20
-;;         helm-split-window-inside-p t
-;;         helm-split-window-default-side 'below
-;;         helm-idle-delay 0.0
-;;         helm-input-idle-delay 0.01
-;;         helm-quick-update t
-;;         helm-grep-file-path-style 'relative
-;;         helm-ff-skip-boring-files t
-;;         helm-grep-ag-command (concat (executable-find "rg")
-;;                                      " --color=always"
-;;                                      " --smart-case"
-;;                                      " --no-heading"
-;;                                      " --line-number %s %s %s"))
-;;   ;; (helm-mode +1)
-;;   (helm-autoresize-mode 1))
+(use-package helm
+  :straight t
+  :demand t
+  :bind (("M-x" . helm-M-x)
+         ("C-x r b" . helm-filtered-bookmarks)
+         ("C-x C-f" . helm-find-files)
+         ("C-x b" . helm-buffers-list)
+         :map helm-map
+         ("<tab>" . helm-execute-persistent-action))
+  :config
+  (require 'helm-config)
+  (global-set-key (kbd "C-x c") 'helm-command-prefix)
+  (setq helm-autoresize-max-height 40
+        helm-autoresize-min-height 20
+        helm-split-window-inside-p t
+        helm-split-window-default-side 'below
+        helm-idle-delay 0.0
+        helm-input-idle-delay 0.01
+        helm-quick-update t
+        helm-grep-file-path-style 'relative
+        helm-ff-skip-boring-files t
+        helm-grep-ag-command (concat (executable-find "rg")
+                                     " --color=always"
+                                     " --smart-case"
+                                     " --no-heading"
+                                     " --line-number %s %s %s"))
+  (helm-mode +1)
+  (helm-autoresize-mode 1))
 
-;; (use-package helm-descbinds
-;;   :straight t
-;;   :commands helm-descbinds)
+(use-package helm-descbinds
+  :straight t
+  :commands helm-descbinds)
 
 (use-package projectile
   :straight t
@@ -474,21 +473,21 @@ behavior added."
                ("o" projectile-multi-occur  "multioccur"))
 
      "Misc" (("a" projectile-add-known-project  "add to known")
-             ;; ("h" helm-projectile               "helm projectile")
+             ("h" helm-projectile               "helm projectile")
              ("i" projectile-ibuffer            "ibuffer")
              ("k" projectile-kill-buffers       "Kill em"))))
   :bind ("C-c P" . hydra-projectile/body)
   :bind-keymap ("C-c p" . projectile-command-map)
   :config
   (setq projectile-track-known-projects-automatically nil
-        projectile-completion-system 'default
+        projectile-completion-system 'helm
         projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
         projectile-globally-ignored-directories '(".git" "__pycache__")
         projectile-globally-ignored-files '(".DS_Store")
         projectile-enable-caching nil))
 
-;; (use-package helm-projectile
-;;   :straight t)
+(use-package helm-projectile
+  :straight t)
 
 (use-package company
   :straight t
@@ -750,10 +749,10 @@ behavior added."
         lui-fill-type 19
         lui-fill-column 77
         circe-color-nicks-everywhere t)
-  ;; (setq helm-mode-no-completion-in-region-in-modes
-  ;;       '(circe-channel-mode
-  ;;         circe-query-mode
-  ;;         circe-server-mode))
+  (setq helm-mode-no-completion-in-region-in-modes
+        '(circe-channel-mode
+          circe-query-mode
+          circe-server-mode))
   (setq circe-default-part-message
         (concat "Closed Circe (" circe-version ") buffer in GNU Emacs (" emacs-version ")"))
   (setq circe-default-quit-message
@@ -769,11 +768,11 @@ behavior added."
 
   (bind-key (kbd "C-c C-b") #'dd/switch-circe-channel circe-mode-map))
 
-;; (use-package helm-circe
-;;   :straight t
-;;   :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac)
-;;   :after circe
-;;   :bind (:map helm-command-map ("i" . helm-circe)))
+(use-package helm-circe
+  :straight t
+  :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac)
+  :after circe
+  :bind (:map helm-command-map ("i" . helm-circe)))
 
 (use-package erc
   :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac)
@@ -961,7 +960,7 @@ behavior added."
   :straight t
   :demand t
   :config
-  (selectrum-mode +1)
+  ;; (selectrum-mode +1)
   (setq enable-recursive-minibuffers t)
   (setq selectrum-refine-candidates-function #'orderless-filter)
   (setq selectrum-highlight-candidates-function #'orderless-highlight-matches))
