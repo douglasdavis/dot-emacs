@@ -51,36 +51,37 @@
   (if (yes-or-no-p "async compile?")
       (setq comp-async-jobs-number 4
             comp-deferred-compilation t
-            comp-deferred-compilation-black-list
-            '("bibtex.el"
-              "cal-menu.el"
-              "cc-mode.el"
-              "cider-browse-ns.el"
-              "ert.el"
-              "flycheck.el"
-              "gnus.el"
-              "gnus-art.el"
-              "gnus-sum.el"
-              "help-mode.el"
-              "lsp-csharp.el"
-              "lsp-css.el"
-              "lsp-elm.el"
-              "lsp-erlang.el"
-              "lsp-eslint.el"
-              "lsp-fsharp.el"
-              "lsp-gdscript.sl"
-              "lsp-json.el"
-              "lsp-serenate.el"
-              "lsp-solargraph.el"
-              "lsp-terraform.el"
-              "lsp-vhdl.el"
-              "lsp-xml.el"
-              "markdown-mode.el"
-              "mml.el"
-              "org.el"
-              "org-table.el"
-              "yasnippet.el"
-              "util-modes.el"))
+            comp-deferred-compilation-black-list '())
+    ;; comp-deferred-compilation-black-list '()
+    ;; '("bibtex.el"
+    ;;   "cal-menu.el"
+    ;;   "cc-mode.el"
+    ;;   "cider-browse-ns.el"
+    ;;   "ert.el"
+    ;;   "flycheck.el"
+    ;;   "gnus.el"
+    ;;   "gnus-art.el"
+    ;;   "gnus-sum.el"
+    ;;   "help-mode.el"
+    ;;   "lsp-csharp.el"
+    ;;   "lsp-css.el"
+    ;;   "lsp-elm.el"
+    ;;   "lsp-erlang.el"
+    ;;   "lsp-eslint.el"
+    ;;   "lsp-fsharp.el"
+    ;;   "lsp-gdscript.sl"
+    ;;   "lsp-json.el"
+    ;;   "lsp-serenate.el"
+    ;;   "lsp-solargraph.el"
+    ;;   "lsp-terraform.el"
+    ;;   "lsp-vhdl.el"
+    ;;   "lsp-xml.el"
+    ;;   "markdown-mode.el"
+    ;;   "mml.el"
+    ;;   "org.el"
+    ;;   "org-table.el"
+    ;;   "yasnippet.el"
+    ;;   "util-modes.el"))
     (setq comp-deferred-compilation nil)))
 
 (setq user-mail-address "ddavis@ddavis.io"
@@ -434,11 +435,11 @@ behavior added."
   :config
   (require 'helm-config)
   (global-set-key (kbd "C-x c") 'helm-command-prefix)
-  (setq helm-autoresize-max-height 40
+  (setq helm-autoresize-max-height 30
         helm-autoresize-min-height 20
         helm-split-window-inside-p t
         helm-split-window-default-side 'below
-        helm-idle-delay 0.0
+        helm-idle-delay 0.01
         helm-input-idle-delay 0.01
         helm-quick-update t
         helm-grep-file-path-style 'relative
@@ -912,7 +913,7 @@ behavior added."
                             (kill-region (region-beginning) (region-end))
                           (dd/delete-frame-or-window))))
 
-(when dd-on-mac
+(when (or dd-on-mac dd-on-cc7)
   (when (memq window-system '(mac ns))
     (setq browse-url-browser-function 'browse-url-default-macosx-browser)
     (setq-default ns-alternate-modifier 'meta)
@@ -930,10 +931,8 @@ behavior added."
   (bind-key (kbd "s-3") #'split-window-right)
   (bind-key (kbd "s-5") #'projectile-find-file-in-known-projects)
   (bind-key (kbd "s-4") #'mu4e)
-  ;;(bind-key (kbd "s-b") #'helm-buffers-list)
-  ;;(bind-key (kbd "s-f") #'helm-find-files)
-  (bind-key (kbd "s-b") #'switch-to-buffer)
-  (bind-key (kbd "s-f") #'find-file)
+  (bind-key (kbd "s-b") #'helm-buffers-list)
+  (bind-key (kbd "s-f") #'helm-find-files)
   (bind-key (kbd "s-g") #'magit-status)
   (bind-key (kbd "s-o") #'other-window)
   (bind-key (kbd "s-p") #'hydra-projectile/body)
@@ -964,3 +963,27 @@ behavior added."
   (setq enable-recursive-minibuffers t)
   (setq selectrum-refine-candidates-function #'orderless-filter)
   (setq selectrum-highlight-candidates-function #'orderless-highlight-matches))
+
+;; (use-package exwm
+;;   :straight t
+;;   :config
+;;   (exwm-enable)
+;;   (require 'exwm-randr)
+;;   (setq exwm-randr-workspace-output-plist '(0 "DP-2"))
+;;   (add-hook 'exwm-randr-screen-change-hook
+;;             (lambda ()
+;;               (start-process-shell-command
+;;                "xrandr" nil "xrandr --output DP-4 --right-of DP-2")))
+;;   (exwm-randr-enable)
+;;   (require 'exwm-systemtray)
+;;   (exwm-systemtray-enable)
+;;   (setq exwm-input-global-keys `(([?\s-r] . exwm-reset)
+;;                                  ([?\s-&] . (lambda (command)
+;;                                               (interactive (list (read-shell-command "$ ")))
+;;                                               (start-process-shell-command command nil command)))
+;;                                  ,@(mapcar (lambda (i)
+;;                                              `(,(kbd (format "s-%d" i)) .
+;;                                                (lambda ()
+;;                                                  (interactive)
+;;                                                  (exwm-workspace-switch-create ,i))))
+;;                                            (number-sequence 0 9)))))
