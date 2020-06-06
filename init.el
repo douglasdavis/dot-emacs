@@ -891,16 +891,16 @@ behavior added."
   :straight t
   :after ox)
 
-(use-package dashboard
-  :straight t
-  :init
-  (setq dashboard-center-content t
-        dashboard-startup-banner 'logo
-        dashboard-set-navigator t
-        dashboard-items '((recents . 5)
-                          (projects . 5)))
-  :config
-  (dashboard-setup-startup-hook))
+;; (use-package dashboard
+;;   :straight t
+;;   :init
+;;   (setq dashboard-center-content t
+;;         dashboard-startup-banner 'logo
+;;         dashboard-set-navigator t
+;;         dashboard-items '((recents . 5)
+;;                           (projects . 5)))
+;;   :config
+;;   (dashboard-setup-startup-hook))
 
 ;; sec05:
 ;; some package-free bindings and macOS specifics
