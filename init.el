@@ -673,13 +673,20 @@ behavior added."
          :map helpful-mode-map
          ("q" . kill-buffer-and-window)))
 
-(use-package doom-themes
-  :straight t
+;; (use-package doom-themes
+;;   :straight t
+;;   :demand t
+;;   :init
+;;   (setq custom-safe-themes t)
+;;   :config
+;;   (load-theme 'doom-gruvbox t))
+
+(use-package gruvbox
+  :straight gruvbox-theme
   :demand t
-  :init
-  (setq custom-safe-themes t)
   :config
-  (load-theme 'doom-gruvbox t))
+  (setq custom-safe-themes t)
+  (load-theme 'gruvbox t))
 
 (use-package elfeed
   :straight t
