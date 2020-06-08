@@ -271,6 +271,35 @@ behavior added."
 ;; sec03:
 ;; use-package for some core Emacs packages.
 
+
+(use-package org
+  :straight (:type built-in)
+  :init
+  (setq org-src-fontify-natively t)
+  :hook (org-mode-hook . (lambda () (interactive)
+                           (setq-local display-line-numbers-width-start
+                                       t)))
+  :config
+  (setq org-structure-template-alist
+        (append org-structure-template-alist
+                '(("el" . "src emacs-lisp :results silent")
+                  ("py" . "src python :results silent")
+                  ("cpp" . "src C++"))))
+  (when dd-on-mac
+    (bind-key "<A-down>" 'org-move-subtree-down org-mode-map)
+    (bind-key "<A-up>" 'org-move-subtree-up org-mode-map)
+    (bind-key "<A-left>" 'org-promote-subtree)
+    (bind-key "<A-right>" 'org-demote-subtree))
+
+  (unless dd-on-mac
+    (bind-key "<s-down>" 'org-move-subtree-down org-mode-map)
+    (bind-key "<s-up>" 'org-move-subtree-up org-mode-map)
+    (bind-key "<s-left>" 'org-promote-subtree)
+    (bind-key "<s-right>" 'org-demote-subtree)))
+
+(use-package project
+  :straight (:type built-in))
+
 (use-package whitespace
   :init
   (dolist (hook '(prog-mode-hook text-mode-hook))
@@ -596,6 +625,10 @@ behavior added."
         `((python-mode "pyls")
           ((c++-mode c-mode) ,dd-clangd-exe))))
 
+(use-package eldoc-box
+  :straight t
+  :hook (eglot-managed-mode-hook . eldoc-box-hover-at-point-mode))
+
 (use-package clang-format
   :straight t
   :init
@@ -861,31 +894,6 @@ behavior added."
     (setq-default pdf-view-display-size 'fit-page)
     (setq TeX-view-program-selection '((output-pdf "PDF Tools")))))
 
-(use-package org
-  :straight (:type built-in)
-  :init
-  (setq org-src-fontify-natively t)
-  :hook (org-mode-hook . (lambda () (interactive)
-                           (setq-local display-line-numbers-width-start
-                                       t)))
-  :config
-  (setq org-structure-template-alist
-        (append org-structure-template-alist
-                '(("el" . "src emacs-lisp :results silent")
-                  ("py" . "src python :results silent")
-                  ("cpp" . "src C++"))))
-  (when dd-on-mac
-    (bind-key "<A-down>" 'org-move-subtree-down org-mode-map)
-    (bind-key "<A-up>" 'org-move-subtree-up org-mode-map)
-    (bind-key "<A-left>" 'org-promote-subtree)
-    (bind-key "<A-right>" 'org-demote-subtree))
-
-  (unless dd-on-mac
-    (bind-key "<s-down>" 'org-move-subtree-down org-mode-map)
-    (bind-key "<s-up>" 'org-move-subtree-up org-mode-map)
-    (bind-key "<s-left>" 'org-promote-subtree)
-    (bind-key "<s-right>" 'org-demote-subtree)))
-
 (use-package ox-hugo
   :straight t
   :after ox)
@@ -955,42 +963,3 @@ behavior added."
 
 ;; sec07:
 ;; experimenting
-
-(use-package orderless
-  :straight t
-  :demand t
-  :init
-  (setq completion-styles '(orderless)))
-
-(use-package selectrum
-  :straight t
-  :demand t
-  :config
-  ;; (selectrum-mode +1)
-  (setq enable-recursive-minibuffers t)
-  (setq selectrum-refine-candidates-function #'orderless-filter)
-  (setq selectrum-highlight-candidates-function #'orderless-highlight-matches))
-
-;; (use-package exwm
-;;   :straight t
-;;   :config
-;;   (exwm-enable)
-;;   (require 'exwm-randr)
-;;   (setq exwm-randr-workspace-output-plist '(0 "DP-2"))
-;;   (add-hook 'exwm-randr-screen-change-hook
-;;             (lambda ()
-;;               (start-process-shell-command
-;;                "xrandr" nil "xrandr --output DP-4 --right-of DP-2")))
-;;   (exwm-randr-enable)
-;;   (require 'exwm-systemtray)
-;;   (exwm-systemtray-enable)
-;;   (setq exwm-input-global-keys `(([?\s-r] . exwm-reset)
-;;                                  ([?\s-&] . (lambda (command)
-;;                                               (interactive (list (read-shell-command "$ ")))
-;;                                               (start-process-shell-command command nil command)))
-;;                                  ,@(mapcar (lambda (i)
-;;                                              `(,(kbd (format "s-%d" i)) .
-;;                                                (lambda ()
-;;                                                  (interactive)
-;;                                                  (exwm-workspace-switch-create ,i))))
-;;                                            (number-sequence 0 9)))))
