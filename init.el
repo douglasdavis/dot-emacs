@@ -507,6 +507,8 @@ behavior added."
   :bind ("C-c P" . hydra-projectile/body)
   :bind-keymap ("C-c p" . projectile-command-map)
   :config
+  (when (executable-find "fd")
+    (setq projectile-git-command "fd . -0 --type f --color=never"))
   (setq projectile-track-known-projects-automatically nil
         projectile-completion-system 'helm
         projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
@@ -722,7 +724,9 @@ behavior added."
 (use-package elfeed
   :ensure t
   :commands elfeed
-  :bind ("C-x w" . 'elfeed)
+  :bind (("C-x w" . 'elfeed)
+         :map elfeed-show-mode-map
+         ("V" . 'visual-fill-column-mode))
   :init
   (setq shr-use-fonts nil)
   (setq elfeed-feeds
