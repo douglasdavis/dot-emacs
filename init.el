@@ -423,7 +423,7 @@ behavior added."
 (use-package helm
   :ensure t
   :demand t
-  :bind (("M-x" . helm-M-x)
+  :bind (("C-x c m" . helm-M-x)
          ("C-x r b" . helm-filtered-bookmarks)
          ("C-x C-f" . helm-find-files)
          ("C-x b" . helm-buffers-list)
