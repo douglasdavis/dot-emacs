@@ -39,36 +39,6 @@
       (setq comp-async-jobs-number 4
             comp-deferred-compilation t
             comp-deferred-compilation-black-list '())
-    ;; comp-deferred-compilation-black-list '()
-    ;; '("bibtex.el"
-    ;;   "cal-menu.el"
-    ;;   "cc-mode.el"
-    ;;   "cider-browse-ns.el"
-    ;;   "ert.el"
-    ;;   "flycheck.el"
-    ;;   "gnus.el"
-    ;;   "gnus-art.el"
-    ;;   "gnus-sum.el"
-    ;;   "help-mode.el"
-    ;;   "lsp-csharp.el"
-    ;;   "lsp-css.el"
-    ;;   "lsp-elm.el"
-    ;;   "lsp-erlang.el"
-    ;;   "lsp-eslint.el"
-    ;;   "lsp-fsharp.el"
-    ;;   "lsp-gdscript.sl"
-    ;;   "lsp-json.el"
-    ;;   "lsp-serenate.el"
-    ;;   "lsp-solargraph.el"
-    ;;   "lsp-terraform.el"
-    ;;   "lsp-vhdl.el"
-    ;;   "lsp-xml.el"
-    ;;   "markdown-mode.el"
-    ;;   "mml.el"
-    ;;   "org.el"
-    ;;   "org-table.el"
-    ;;   "yasnippet.el"
-    ;;   "util-modes.el"))
     (setq comp-deferred-compilation nil)))
 
 (setq user-mail-address "ddavis@ddavis.io"
@@ -81,7 +51,7 @@
 
 (setq custom-file (concat user-emacs-directory "custom.el"))
 
-;; 2GB threshold while init is loaded
+;; 1GB threshold while init is loaded
 (setq gc-cons-threshold (* 1000 1024 1024))
 
 ;; sec01:
