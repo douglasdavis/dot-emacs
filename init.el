@@ -65,6 +65,9 @@
 (defconst dd-on-mac (eq system-type 'darwin)
   "For checking if on a mac.")
 
+(defconst dd-on-abx (dd/str-contains? "abx" (system-name))
+  "For checking of in abx box.")
+
 (defconst dd-on-cc7 (dd/str-contains? "cc7" (system-name))
   "For checking if on cc7 box.")
 
@@ -118,6 +121,11 @@
 (add-to-list 'default-frame-alist '(height . 72))
 (add-to-list 'default-frame-alist '(width . 234))
 
+(when dd-on-abx
+  (set-face-attribute 'default nil
+                      :family "JetBrains Mono"
+                      :weight 'regular
+                      :height 130))
 (when dd-on-mac
   (setq mac-allow-anti-aliasing t)
   (set-face-attribute 'default nil
@@ -713,14 +721,14 @@ behavior added."
 
 (use-package password-store
   :ensure t
-  :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac)
+  :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac dd-on-abx)
   :commands (password-store-copy
              password-store-get
              password-store-edit
              password-store-insert))
 
 (use-package circe
-  :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac)
+  :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac dd-on-abx)
   :ensure t
   :commands circe
   :hook (circe-chat-mode-hook . dd/circe-prompt)
@@ -778,12 +786,12 @@ behavior added."
 
 (use-package helm-circe
   :ensure t
-  :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac)
+  :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac dd-on-abx)
   :after circe
   :bind (:map helm-command-map ("i" . helm-circe)))
 
 (use-package erc
-  :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac)
+  :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac dd-on-abx)
   :commands erc
   :init
   (setq erc-prompt-for-password nil)
@@ -852,8 +860,9 @@ behavior added."
   :config
   (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))
 
-(when dd-on-cc7
-  (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig")
+(when (or dd-on-cc7 dd-on-abx)
+  (when dd-on-abx
+    (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig"))
   (use-package pdf-tools
     :ensure t
     :config
