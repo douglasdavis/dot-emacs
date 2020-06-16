@@ -423,9 +423,10 @@ behavior added."
 (use-package helm
   :ensure t
   :demand t
-  :bind (("C-x c m" . helm-M-x)
+  :bind (("M-x" . helm-M-x)
          ("C-x r b" . helm-filtered-bookmarks)
          ("C-x C-f" . helm-find-files)
+         ("C-x C-t" . find-file)
          ("C-x b" . helm-buffers-list)
          :map helm-map
          ("<tab>" . helm-execute-persistent-action))
