@@ -493,7 +493,8 @@ behavior added."
         projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
         projectile-globally-ignored-directories '(".git" "__pycache__")
         projectile-globally-ignored-files '(".DS_Store")
-        projectile-enable-caching nil))
+        projectile-enable-caching nil)
+  (projectile-mode +1))
 
 (use-package helm-projectile
   :ensure t)
@@ -636,13 +637,13 @@ behavior added."
   :config
   (which-key-mode))
 
-(use-package doom-modeline
-  :ensure t
-  :demand t
-  :init
-  (setq doom-modeline-mu4e (or dd-on-mac dd-on-cc7))
-  :config
-  (doom-modeline-mode 1))
+;; (use-package doom-modeline
+;;   :ensure t
+;;   :demand t
+;;   :init
+;;   (setq doom-modeline-mu4e (or dd-on-mac dd-on-cc7))
+;;   :config
+;;   (doom-modeline-mode 1))
 
 (use-package yasnippet
   :ensure t
