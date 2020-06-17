@@ -290,7 +290,7 @@ behavior added."
         ("q" . kill-buffer-and-window)))
 
 (use-package auth-source
-  :when (or dd-on-mac dd-on-cc7 dd-on-grads-18)
+  :when (or dd-on-mac dd-on-cc7 dd-on-grads-18 dd-on-abx)
   :init
   (setq auth-sources
         (list (concat user-emacs-directory ".authinfo.gpg"))))
@@ -686,20 +686,20 @@ behavior added."
          :map helpful-mode-map
          ("q" . kill-buffer-and-window)))
 
-;; (use-package doom-themes
-;;   :ensure t
-;;   :demand t
-;;   :init
-;;   (setq custom-safe-themes t)
-;;   :config
-;;   (load-theme 'doom-gruvbox t))
-
-(use-package gruvbox
-  :ensure gruvbox-theme
+(use-package doom-themes
+  :ensure t
   :demand t
-  :config
+  :init
   (setq custom-safe-themes t)
-  (load-theme 'gruvbox t))
+  :config
+  (load-theme 'doom-gruvbox t))
+
+;; (use-package gruvbox
+;;   :ensure gruvbox-theme
+;;   :demand t
+;;   :config
+;;   (setq custom-safe-themes t)
+;;   (load-theme 'gruvbox t))
 
 (use-package elfeed
   :ensure t
@@ -935,7 +935,7 @@ behavior added."
 ;; sec06:
 ;; email setup is in dedicated file
 
-(when (or dd-on-mac dd-on-cc7)
+(when (or dd-on-mac dd-on-cc7 dd-on-abx)
   (load-file "~/.emacs.d/dot-emacs/email.el"))
 
 ;; sec07:

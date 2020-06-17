@@ -26,6 +26,7 @@
 
 (defconst dd-mu-exe
   (cond (dd-on-mac "/Users/ddavis/software/localbase/bin/mu")
+        (dd-on-abx "/usr/bin/mu")
         (dd-on-cc7 "/home/ddavis/software/specific/mu/1.4.7/bin/mu")
         (dd-on-grads-18 "/home/drd25/software/localbase/bin/mu")
         (dd-on-spar nil))
@@ -33,6 +34,7 @@
 
 (defconst dd-mu4e-dir
   (cond (dd-on-mac "/Users/ddavis/software/localbase/share/emacs/site-lisp/mu4e")
+        (dd-on-abx "/usr/share/emacs/site-lisp/mu4e")
         (dd-on-cc7 "/home/ddavis/software/specific/mu/1.4.7/share/emacs/site-lisp/mu4e")
         (dd-on-grads-18 "/home/drd25/software/localbase/share/emacs/site-lisp/mu4e")
         (dd-on-spar nil))
@@ -40,6 +42,7 @@
 
 (defconst dd-sendmail-exe
   (cond (dd-on-mac "/Users/ddavis/software/localbase/bin/msmtp")
+        (dd-on-abx "/usr/bin/msmtp")
         (dd-on-cc7 "/usr/local/bin/msmtp")
         (dd-on-grads-18 "/usr/bin/msmtp")
         (dd-on-spar nil))
