@@ -521,9 +521,9 @@ behavior added."
   (setq company-minimum-prefix-length 2)
   (setq company-idle-delay 0.1))
 
-(use-package company-box
-  :ensure t
-  :hook (company-mode-hook . company-box-mode))
+;; (use-package company-box
+;;   :ensure t
+;;   :hook (company-mode-hook . company-box-mode))
 
 (use-package magit
   :ensure t
