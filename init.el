@@ -634,6 +634,10 @@ behavior added."
   :ensure t
   :commands cider-jack-in)
 
+(use-package rainbow-delimiters
+  :ensure t
+  :hook (clojure-mode-hook . rainbow-delimiters-mode))
+
 (use-package which-key
   :ensure t
   :demand t
