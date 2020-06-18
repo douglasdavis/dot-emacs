@@ -419,6 +419,9 @@ behavior added."
   :ensure t
   :hook (dired-mode-hook . all-the-icons-dired-mode))
 
+(use-package crux
+  :ensure t)
+
 (use-package visual-fill-column
   :ensure t)
 
