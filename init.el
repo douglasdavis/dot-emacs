@@ -289,19 +289,19 @@ behavior added."
   (:map help-mode-map
         ("q" . kill-buffer-and-window)))
 
-(use-package auth-source
-  :when (or dd-on-mac dd-on-cc7 dd-on-grads-18 dd-on-abx)
-  :init
-  (setq auth-sources
-        (list (concat user-emacs-directory ".authinfo.gpg"))))
+(when (or dd-on-mac dd-on-cc7 dd-on-grads-18 dd-on-abx)
+  (use-package auth-source
+    :init
+    (setq auth-sources
+          (list (concat user-emacs-directory ".authinfo.gpg")))))
 
-(use-package epa-file
-  :when (or dd-on-mac dd-on-cc7 dd-on-grads-18)
-  :config
-  (epa-file-enable)
-  (if dd-on-mac
-      (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
-    (custom-set-variables '(epg-gpg-program "/usr/bin/gpg2"))))
+(when (or dd-on-mac dd-on-cc7 dd-on-grads-18 dd-on-abx)
+  (use-package epa-file
+    :config
+    (epa-file-enable)
+    (if dd-on-mac
+        (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
+      (custom-set-variables '(epg-gpg-program "/usr/bin/gpg2")))))
 
 (use-package uniquify
   :init
@@ -629,10 +629,10 @@ behavior added."
 (use-package blacken
   :ensure t)
 
-(use-package cider
-  :when (or dd-on-mac dd-on-cc7)
-  :ensure t
-  :commands cider-jack-in)
+(when (or dd-on-mac dd-on-cc7 dd-on-abx)
+  (use-package cider
+    :ensure t
+    :commands cider-jack-in))
 
 (use-package rainbow-delimiters
   :ensure t
@@ -727,76 +727,75 @@ behavior added."
             (elfeed-make-tagger :before "3 weeks ago" :remove 'unread))
   (setq-default elfeed-search-filter "@21-days-ago"))
 
-(use-package password-store
-  :ensure t
-  :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac dd-on-abx)
-  :commands (password-store-copy
-             password-store-get
-             password-store-edit
-             password-store-insert))
+(when (or dd-on-grads-18 dd-on-cc7 dd-on-mac dd-on-abx)
+  (use-package password-store
+    :ensure t
+    :commands (password-store-copy
+               password-store-get
+               password-store-edit
+               password-store-insert)))
 
-(use-package circe
-  :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac dd-on-abx)
-  :ensure t
-  :commands circe
-  :hook (circe-chat-mode-hook . dd/circe-prompt)
-  :init
-  (defun dd/irc-pw-freenode (server)
-    (password-store-get "Freenode"))
-  (defun dd/irc-pw-gitter (server)
-    (password-store-get "Gitter"))
-  (defun dd/circe-prompt ()
-    (lui-set-prompt
-     (propertize (format "%s >>> " (buffer-name)) 'face 'circe-prompt-face)))
-  (setq circe-network-options
-        '(("Freenode"
-           :nick "ddavis"
-           :nickserv-password dd/irc-pw-freenode
-           :channels (:after-auth "#emacs" "#lobsters" "#lobsters-boil" "#sr.ht")
-           :tls t)
-          ("Gitter"
-           :server-buffer-name "Gitter"
-           :host "irc.gitter.im"
-           :port "6697"
-           :nick "douglasdavis"
-           :pass dd/irc-pw-gitter
-           :tls t)))
-  :config
-  (require 'circe-color-nicks)
-  (setq circe-color-nicks-pool-type
-        '("#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#fe8019"
-          "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e"))
-  (enable-circe-color-nicks)
-  (setq circe-use-cycle-completion t
-        circe-reduce-lurker-spam t
-        circe-format-say "<{nick}> {body}"
-        lui-fill-type 19
-        lui-fill-column 77
-        circe-color-nicks-everywhere t)
-  (setq helm-mode-no-completion-in-region-in-modes
-        '(circe-channel-mode
-          circe-query-mode
-          circe-server-mode))
-  (setq circe-default-part-message
-        (concat "Closed Circe (" circe-version ") buffer in GNU Emacs (" emacs-version ")"))
-  (setq circe-default-quit-message
-        (concat "Quit Circe (" circe-version ") in GNU Emacs (" emacs-version ")"))
+(when (or dd-on-grads-18 dd-on-cc7 dd-on-mac dd-on-abx)
+  (use-package circe
+    :ensure t
+    :commands circe
+    :hook (circe-chat-mode-hook . dd/circe-prompt)
+    :init
+    (defun dd/irc-pw-freenode (server)
+      (password-store-get "Freenode"))
+    (defun dd/irc-pw-gitter (server)
+      (password-store-get "Gitter"))
+    (defun dd/circe-prompt ()
+      (lui-set-prompt
+       (propertize (format "%s >>> " (buffer-name)) 'face 'circe-prompt-face)))
+    (setq circe-network-options
+          '(("Freenode"
+             :nick "ddavis"
+             :nickserv-password dd/irc-pw-freenode
+             :channels (:after-auth "#emacs" "#lobsters" "#lobsters-boil" "#sr.ht")
+             :tls t)
+            ("Gitter"
+             :server-buffer-name "Gitter"
+             :host "irc.gitter.im"
+             :port "6697"
+             :nick "douglasdavis"
+             :pass dd/irc-pw-gitter
+             :tls t)))
+    :config
+    (require 'circe-color-nicks)
+    (setq circe-color-nicks-pool-type
+          '("#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#fe8019"
+            "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e"))
+    (enable-circe-color-nicks)
+    (setq circe-use-cycle-completion t
+          circe-reduce-lurker-spam t
+          circe-format-say "<{nick}> {body}"
+          lui-fill-type 19
+          lui-fill-column 77
+          circe-color-nicks-everywhere t)
+    (setq helm-mode-no-completion-in-region-in-modes
+          '(circe-channel-mode
+            circe-query-mode
+            circe-server-mode))
+    (setq circe-default-part-message
+          (concat "Closed Circe (" circe-version ") buffer in GNU Emacs (" emacs-version ")"))
+    (setq circe-default-quit-message
+          (concat "Quit Circe (" circe-version ") in GNU Emacs (" emacs-version ")"))
 
-  (defun dd/switch-circe-channel ()
-    (interactive)
-    (let ((sources
-           (cl-loop for buf in (buffer-list)
-                    if (eq 'circe-channel-mode (buffer-local-value 'major-mode buf))
-                    collect (buffer-name buf))))
-      (switch-to-buffer (completing-read "Channel: " sources))))
+    (defun dd/switch-circe-channel ()
+      (interactive)
+      (let ((sources
+             (cl-loop for buf in (buffer-list)
+                      if (eq 'circe-channel-mode (buffer-local-value 'major-mode buf))
+                      collect (buffer-name buf))))
+        (switch-to-buffer (completing-read "Channel: " sources))))
 
-  (bind-key (kbd "C-c C-b") #'dd/switch-circe-channel circe-mode-map))
+    (bind-key (kbd "C-c C-b") #'dd/switch-circe-channel circe-mode-map))
 
-(use-package helm-circe
-  :ensure t
-  :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac dd-on-abx)
-  :after circe
-  :bind (:map helm-command-map ("i" . helm-circe)))
+  (use-package helm-circe
+    :ensure t
+    :after circe
+    :bind (:map helm-command-map ("i" . helm-circe))))
 
 (use-package erc
   :when (or dd-on-grads-18 dd-on-cc7 dd-on-mac dd-on-abx)
