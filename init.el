@@ -873,7 +873,7 @@ behavior added."
   (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))
 
 (when (or dd-on-cc7 dd-on-abx)
-  (when dd-on-abx
+  (when dd-on-cc7
     (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig"))
   (use-package pdf-tools
     :ensure t
