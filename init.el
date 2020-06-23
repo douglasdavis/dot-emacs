@@ -57,24 +57,24 @@
 ;; sec01:
 ;; general setup not associated with packages
 
-(defun dd/str-contains? (subs s)
-  "Check for SUBS in S via `string-match-p'."
+(defun dd/includes? (s substr)
+  "Clojure like function; t if S includes SUBSTR."
   (declare (pure t) (side-effect-free t))
-  (not (null (string-match-p (regexp-quote subs) s))))
+  (not (null (string-match-p (regexp-quote substr) s))))
 
 (defconst dd-on-mac (eq system-type 'darwin)
   "For checking if on a mac.")
 
-(defconst dd-on-abx (dd/str-contains? "abx" (system-name))
+(defconst dd-on-abx (dd/includes? (system-name) "abx")
   "For checking of in abx box.")
 
-(defconst dd-on-cc7 (dd/str-contains? "cc7" (system-name))
+(defconst dd-on-cc7 (dd/includes? (system-name) "cc7")
   "For checking if on cc7 box.")
 
-(defconst dd-on-grads-18 (dd/str-contains? "grads-18" (system-name))
+(defconst dd-on-grads-18 (dd/includes? (system-name) "grads-18")
   "For checking if on grads-18 box.")
 
-(defconst dd-on-spar (dd/str-contains? "spar01" (system-name))
+(defconst dd-on-spar (dd/includes? (system-name) "spar01")
   "For checking if on a BNL SPAR machine.")
 
 (setq initial-scratch-message
