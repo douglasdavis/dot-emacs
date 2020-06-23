@@ -153,7 +153,7 @@
                       ( mu4e-sent-folder        . "/duke/Sent" )
                       ( mu4e-drafts-folder      . "/duke/Drafts" )
                       ( mu4e-reply-to-address   . "ddavis@phy.duke.edu" )))))
-  (when (or dd-on-mac dd-on-cc7)
+  (when (or dd-on-mac dd-on-cc7 dd-on-abx)
     (add-to-list 'mu4e-contexts
                  (make-mu4e-context
                   :name "gmail"
