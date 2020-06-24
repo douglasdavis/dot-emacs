@@ -457,14 +457,14 @@ behavior added."
         helm-input-idle-delay 0.01
         helm-quick-update t
         helm-grep-file-path-style 'relative
-        helm-ff-skip-boring-files t
+        ;; helm-ff-skip-boring-files t
         helm-grep-ag-command (concat (executable-find "rg")
                                      " --color=always"
                                      " --smart-case"
                                      " --no-heading"
                                      " --line-number %s %s %s"))
   (helm-mode +1)
-  (helm-autoresize-mode 1))
+  (helm-autoresize-mode +1))
 
 (use-package helm-descbinds
   :ensure t
