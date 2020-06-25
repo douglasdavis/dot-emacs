@@ -449,22 +449,21 @@ behavior added."
   :config
   (require 'helm-config)
   (global-set-key (kbd "C-x c") 'helm-command-prefix)
-  (setq helm-autoresize-max-height 30
-        helm-autoresize-min-height 20
+  (setq helm-display-buffer-default-height 20
+        helm-display-buffer-height 20
         helm-split-window-inside-p t
         helm-split-window-default-side 'below
         helm-idle-delay 0.01
         helm-input-idle-delay 0.01
         helm-quick-update t
         helm-grep-file-path-style 'relative
-        ;; helm-ff-skip-boring-files t
+        helm-ff-skip-boring-files t
         helm-grep-ag-command (concat (executable-find "rg")
                                      " --color=always"
                                      " --smart-case"
                                      " --no-heading"
                                      " --line-number %s %s %s"))
-  (helm-mode +1)
-  (helm-autoresize-mode +1))
+  (helm-mode +1))
 
 (use-package helm-descbinds
   :ensure t
