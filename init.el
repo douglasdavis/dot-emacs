@@ -601,7 +601,8 @@ behavior added."
   :ensure t
   :commands lsp-ui-mode
   :config
-  (setq lsp-ui-doc-max-width 92
+  (setq lsp-ui-doc-enable nil
+        lsp-ui-doc-max-width 92
         lsp-ui-sideline-show-hover nil))
 
 (use-package eglot
