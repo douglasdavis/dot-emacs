@@ -35,11 +35,9 @@
 
 ;; for native-comp branch
 (when (fboundp 'native-compile-async)
-  (if (yes-or-no-p "async compile?")
-      (setq comp-async-jobs-number 4
-            comp-deferred-compilation t
-            comp-deferred-compilation-black-list '())
-    (setq comp-deferred-compilation nil)))
+  (setq comp-async-jobs-number 4
+        comp-deferred-compilation t
+        comp-deferred-compilation-black-list '()))
 
 (setq user-mail-address "ddavis@ddavis.io"
       user-login-name "ddavis"
