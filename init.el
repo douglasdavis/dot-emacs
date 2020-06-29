@@ -599,7 +599,7 @@ behavior added."
   :ensure t
   :commands lsp-ui-mode
   :config
-  (setq lsp-ui-doc-enable nil
+  (setq lsp-ui-doc-enable t
         lsp-ui-doc-max-width 92
         lsp-ui-sideline-show-hover nil))
 
