@@ -248,6 +248,11 @@ behavior added."
 ;; sec03:
 ;; use-package for some core Emacs packages.
 
+(use-package server
+  :config
+  (unless (server-running-p)
+    (server-start)))
+
 (use-package org
   :init
   (setq org-src-fontify-natively t)
