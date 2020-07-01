@@ -863,17 +863,18 @@ behavior added."
   :init
   (gcmh-mode 1))
 
-(use-package latex
-  :ensure auctex
-  :mode ("\\.tex\\'" . TeX-latex-mode)
-  :init
-  (setq font-latex-fontify-sectioning 'color
-        font-latex-fontify-script nil
-        TeX-source-correlate-mode 'synctex
-        TeX-source-correlate-start-server t)
-  (setq-default TeX-master nil)
-  :config
-  (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))
+(unless dd-on-spar
+  (use-package latex
+    :ensure auctex
+    :mode ("\\.tex\\'" . TeX-latex-mode)
+    :init
+    (setq font-latex-fontify-sectioning 'color
+          font-latex-fontify-script nil
+          TeX-source-correlate-mode 'synctex
+          TeX-source-correlate-start-server t)
+    (setq-default TeX-master nil)
+    :config
+    (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)))
 
 (when (or dd-on-cc7 dd-on-abx)
   (when dd-on-cc7
@@ -885,17 +886,18 @@ behavior added."
     (setq-default pdf-view-display-size 'fit-page)
     (setq TeX-view-program-selection '((output-pdf "PDF Tools")))))
 
-(use-package ox-hugo
-  :ensure t
-  :after ox)
+(unless dd-on-spar
+  (use-package ox-hugo
+    :ensure t
+    :after ox)
 
-(use-package ox-reveal
-  :ensure t
-  :after ox)
+  (use-package ox-reveal
+    :ensure t
+    :after ox)
 
-(use-package htmlize
-  :ensure t
-  :after ox)
+  (use-package htmlize
+    :ensure t
+    :after ox))
 
 ;; (use-package dashboard
 ;;   :ensure t
