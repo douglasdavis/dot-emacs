@@ -482,14 +482,12 @@ behavior added."
                  ("B" projectile-switch-to-buffer-other-window  "switch (OW)")
                  ("f" projectile-find-file                      "file")
                  ("F" projectile-find-file-other-window         "file (OW)")
-                 ("S" projectile-switch-project                 "switch project")
                  ("u" projectile-find-file-in-known-projects    "find in known"))
-
      "Search" (("r" dd/ripgrep-proj-or-dir  "ripgrep (rg.el)")
                ("s" dd/ripgrep-proj-or-dir  "ripgrep (rg.el)")
                ("o" projectile-multi-occur  "multioccur"))
-
-     "Misc" (("a" projectile-add-known-project  "add to known")
+     "Misc" (("p" projectile-switch-project     "switch project")
+             ("a" projectile-add-known-project  "add to known")
              ("h" helm-projectile               "helm projectile")
              ("i" projectile-ibuffer            "ibuffer")
              ("k" projectile-kill-buffers       "Kill em"))))
