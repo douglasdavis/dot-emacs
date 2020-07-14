@@ -685,7 +685,7 @@ behavior added."
   :straight t)
 
 (use-package cmake-mode
-  :straight t
+  :straight (:host github :repo "emacsmirror/cmake-mode")
   :mode ("CMakeLists.txt" "\\.cmake\\'"))
 
 (use-package iedit
