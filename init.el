@@ -293,11 +293,9 @@ behavior added."
     (bind-key "<s-left>" 'org-promote-subtree)
     (bind-key "<s-right>" 'org-demote-subtree)))
 
-(when dd-on-mac
-  (use-package project
-    :straight t))
-
-(unless dd-on-mac
+(if (< emacs-major-version 28)
+    (use-package project
+      :straight t)
   (use-package project
     :straight (:type built-in)))
 
