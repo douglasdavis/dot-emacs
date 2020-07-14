@@ -27,6 +27,19 @@
 ;; sec00:
 ;; preamble stuff
 
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
 (when (boundp 'load-prefer-newer)
   (setq load-prefer-newer t))
 
@@ -228,17 +241,19 @@ behavior added."
 ;; use-package setup
 
 
-(require 'package)
-(if dd-on-spar
-    (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
+;; (require 'package)
+;; (if dd-on-spar
+;;     (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+;;   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
 
-(when (< emacs-major-version 27)
-  (package-initialize))
+;; (when (< emacs-major-version 27)
+;;   (package-initialize))
 
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+;; (unless (package-installed-p 'use-package)
+;;   (package-refresh-contents)
+;;   (package-install 'use-package))
+
+(straight-use-package 'use-package)
 
 (eval-when-compile
   (require 'use-package)
@@ -254,6 +269,7 @@ behavior added."
     (server-start)))
 
 (use-package org
+  :straight (:type built-in)
   :init
   (setq org-src-fontify-natively t)
   :hook (org-mode-hook . (lambda () (interactive)
@@ -277,7 +293,13 @@ behavior added."
     (bind-key "<s-left>" 'org-promote-subtree)
     (bind-key "<s-right>" 'org-demote-subtree)))
 
-(use-package project)
+(when dd-on-mac
+  (use-package project
+    :straight t))
+
+(unless dd-on-mac
+  (use-package project
+    :straight (:type built-in)))
 
 (use-package whitespace
   :init
@@ -411,36 +433,31 @@ behavior added."
 ;; sec04:
 ;; third party
 
-(use-package auto-package-update
-  :ensure t
-  :init
-  (setq auto-package-update-delete-old-versions t))
-
 (use-package exec-path-from-shell
-  :ensure t
+  :straight t
   :demand t
   :config
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
 
 (use-package all-the-icons-dired
-  :ensure t
+  :straight t
   :hook (dired-mode-hook . all-the-icons-dired-mode))
 
 (use-package crux
-  :ensure t)
+  :straight t)
 
 (use-package visual-fill-column
-  :ensure t)
+  :straight t)
 
 (use-package hydra
-  :ensure t)
+  :straight t)
 
 (use-package pretty-hydra
-  :ensure t)
+  :straight t)
 
 (use-package helm
-  :ensure t
+  :straight t
   :demand t
   :bind (("M-x" . helm-M-x)
          ("C-x r b" . helm-filtered-bookmarks)
@@ -469,11 +486,11 @@ behavior added."
   (helm-mode +1))
 
 (use-package helm-descbinds
-  :ensure t
+  :straight t
   :commands helm-descbinds)
 
 (use-package projectile
-  :ensure t
+  :straight t
   :demand t
   :init
   (pretty-hydra-define hydra-projectile
@@ -505,10 +522,10 @@ behavior added."
   (projectile-mode +1))
 
 (use-package helm-projectile
-  :ensure t)
+  :straight t)
 
 (use-package company
-  :ensure t
+  :straight t
   :hook ((cider-repl-mode-hook . company-mode)
          (clojure-mode-hook . company-mode)
          (conf-colon-mode-hook . company-mode)
@@ -527,11 +544,11 @@ behavior added."
   (setq company-idle-delay 0.1))
 
 ;; (use-package company-box
-;;   :ensure t
+;;   :straight t
 ;;   :hook (company-mode-hook . company-box-mode))
 
 (use-package magit
-  :ensure t
+  :straight t
   :bind (("C-x g" . magit-status)
          :map magit-status-mode-map
          ("q" . dd/magit-kill-buffers))
@@ -544,7 +561,7 @@ behavior added."
       (mapc #'kill-buffer buffers))))
 
 (use-package rg
-  :ensure t
+  :straight t
   :after wgrep
   :init
   (setq rg-group-result t
@@ -562,10 +579,10 @@ behavior added."
     :flags ("--hidden -g !.git")))
 
 (use-package flycheck
-  :ensure t)
+  :straight t)
 
 (use-package lsp-mode
-  :ensure t
+  :straight t
   :commands lsp
   :init
   (setq read-process-output-max (* 10 1024 1024))
@@ -599,7 +616,7 @@ behavior added."
               ("C-c l" . hydra-lsp/body)))
 
 (use-package lsp-ui
-  :ensure t
+  :straight t
   :commands lsp-ui-mode
   :config
   (setq lsp-ui-doc-enable t
@@ -607,7 +624,7 @@ behavior added."
         lsp-ui-sideline-show-hover nil))
 
 (use-package eglot
-  :ensure t
+  :straight t
   :commands eglot
   :init
   (setq eglot-server-programs
@@ -615,43 +632,43 @@ behavior added."
           ((c++-mode c-mode) ,dd-clangd-exe))))
 
 (use-package eldoc-box
-  :ensure t
+  :straight t
   :hook (eglot-managed-mode-hook . eldoc-box-hover-at-point-mode))
 
 (use-package clang-format
-  :ensure t
+  :straight t
   :init
   (setq clang-format-executable dd-clang-format-exe))
 
 (use-package modern-cpp-font-lock
-  :ensure t
+  :straight t
   :hook (c++-mode-hook . modern-c++-font-lock-mode))
 
 (use-package pyvenv
-  :ensure t
+  :straight t
   :init
   (setenv "WORKON_HOME" "~/.pyenv/versions"))
 
 (use-package blacken
-  :ensure t)
+  :straight t)
 
 (when (or dd-on-mac dd-on-cc7 dd-on-abx)
   (use-package cider
-    :ensure t
+    :straight t
     :commands cider-jack-in))
 
 (use-package rainbow-delimiters
-  :ensure t
+  :straight t
   :hook (clojure-mode-hook . rainbow-delimiters-mode))
 
 (use-package which-key
-  :ensure t
+  :straight t
   :demand t
   :config
   (which-key-mode))
 
 ;; (use-package doom-modeline
-;;   :ensure t
+;;   :straight t
 ;;   :demand t
 ;;   :init
 ;;   (setq doom-modeline-mu4e (or dd-on-mac dd-on-cc7))
@@ -659,36 +676,36 @@ behavior added."
 ;;   (doom-modeline-mode 1))
 
 (use-package yasnippet
-  :ensure t
+  :straight t
   :demand t
   :init
   (yas-global-mode 1))
 
 (use-package yasnippet-snippets
-  :ensure t)
+  :straight t)
 
 (use-package cmake-mode
-  :ensure t
+  :straight t
   :mode ("CMakeLists.txt" "\\.cmake\\'"))
 
 (use-package iedit
-  :ensure t
+  :straight t
   :bind ("C-c ;" . iedit-mode))
 
 (use-package markdown-mode
-  :ensure t
+  :straight t
   :mode "\\.md\\'")
 
 (use-package yaml-mode
-  :ensure t
+  :straight t
   :mode ("\\.yml\\'" "\\.yaml\\'"))
 
 (use-package ace-window
-  :ensure t
+  :straight t
   :bind ("M-o" . ace-window))
 
 (use-package helpful
-  :ensure t
+  :straight t
   :init
   (setq helpful-max-highlight 15000)
   :bind (("C-h f" . helpful-callable)
@@ -700,7 +717,7 @@ behavior added."
          ("q" . kill-buffer-and-window)))
 
 (use-package doom-themes
-  :ensure t
+  :straight t
   :demand t
   :init
   (setq custom-safe-themes t)
@@ -715,7 +732,7 @@ behavior added."
 ;;   (load-theme 'gruvbox t))
 
 (use-package elfeed
-  :ensure t
+  :straight t
   :commands elfeed
   :bind (("C-x w" . 'elfeed)
          :map elfeed-show-mode-map
@@ -735,7 +752,7 @@ behavior added."
 
 (when (or dd-on-grads-18 dd-on-cc7 dd-on-mac dd-on-abx)
   (use-package password-store
-    :ensure t
+    :straight t
     :commands (password-store-copy
                password-store-get
                password-store-edit
@@ -743,7 +760,7 @@ behavior added."
 
 (when (or dd-on-grads-18 dd-on-cc7 dd-on-mac dd-on-abx)
   (use-package circe
-    :ensure t
+    :straight t
     :commands circe
     :hook (circe-chat-mode-hook . dd/circe-prompt)
     :init
@@ -799,7 +816,7 @@ behavior added."
     (bind-key (kbd "C-c C-b") #'dd/switch-circe-channel circe-mode-map))
 
   (use-package helm-circe
-    :ensure t
+    :straight t
     :after circe
     :bind (:map helm-command-map ("i" . helm-circe))))
 
@@ -856,14 +873,14 @@ behavior added."
   (add-hook 'erc-insert-modify-hook 'dd/erc-insert-modify-hook))
 
 (use-package gcmh
-  :ensure t
+  :straight t
   :demand t
   :init
   (gcmh-mode 1))
 
 (unless dd-on-spar
   (use-package latex
-    :ensure auctex
+    :straight auctex
     :mode ("\\.tex\\'" . TeX-latex-mode)
     :init
     (setq font-latex-fontify-sectioning 'color
@@ -878,7 +895,7 @@ behavior added."
   (when dd-on-cc7
     (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig"))
   (use-package pdf-tools
-    :ensure t
+    :straight t
     :config
     (pdf-tools-install)
     (setq-default pdf-view-display-size 'fit-page)
@@ -886,19 +903,19 @@ behavior added."
 
 (unless dd-on-spar
   (use-package ox-hugo
-    :ensure t
+    :straight t
     :after ox)
 
   (use-package ox-reveal
-    :ensure t
+    :straight t
     :after ox)
 
   (use-package htmlize
-    :ensure t
+    :straight t
     :after ox))
 
 ;; (use-package dashboard
-;;   :ensure t
+;;   :straight t
 ;;   :init
 ;;   (setq dashboard-center-content t
 ;;         dashboard-startup-banner 'logo
