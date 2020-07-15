@@ -475,7 +475,7 @@ behavior added."
         helm-input-idle-delay 0.01
         helm-quick-update t
         helm-grep-file-path-style 'relative
-        helm-ff-skip-boring-files t
+        helm-ff-cache-mode-lighter ""
         helm-grep-ag-command (concat (executable-find "rg")
                                      " --color=always"
                                      " --smart-case"
@@ -957,7 +957,7 @@ behavior added."
   (bind-key (kbd "s-g") #'magit-status)
   (bind-key (kbd "s-o") #'other-window)
   (bind-key (kbd "s-p") #'hydra-projectile/body)
-  (bind-key (kbd "s-r") #'dd/ripgrep-proj-or-dir)
+  (bind-key (kbd "s-r") #'helm-do-grep-ag)
   (bind-key (kbd "s-u") #'gnus)
   (bind-key (kbd "s-w") #'dd/delete-frame-or-window))
 
