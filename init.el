@@ -458,6 +458,7 @@ behavior added."
         helm-quick-update t
         helm-grep-file-path-style 'relative
         helm-ff-cache-mode-lighter ""
+        helm-ff-cache-mode-lighter-sleep ""
         helm-grep-ag-command (concat (executable-find "rg")
                                      " --color=always"
                                      " --smart-case"
