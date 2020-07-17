@@ -413,6 +413,11 @@ behavior added."
 ;; sec04:
 ;; third party
 
+(use-package auto-package-update
+  :ensure t
+  :init
+  (setq auto-package-update-delete-old-versions t))
+
 (use-package exec-path-from-shell
   :ensure t
   :demand t
