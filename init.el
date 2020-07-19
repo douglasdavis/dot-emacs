@@ -898,7 +898,10 @@ behavior added."
 
   (use-package htmlize
     :ensure t
-    :after ox))
+    :after ox)
+
+  (use-package w3m
+    :ensure t))
 
 ;; (use-package dashboard
 ;;   :ensure t
