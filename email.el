@@ -189,7 +189,7 @@
                (make-mu4e-bookmark
                 :name "Unread short"
                 :query "flag:unread AND (m:/duke* or m:/cern* or m:/fastmail/INBOX or m:/gmail/INBOX*)"
-                :key ?u))
+                :key ?U))
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
                 :name "Recent personal"
@@ -199,7 +199,7 @@
                (make-mu4e-bookmark
                 :name "Unread all"
                 :query "flag:unread AND NOT flag:trashed"
-                :key ?U))
+                :key ?u))
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
                 :name "INBOXes"
