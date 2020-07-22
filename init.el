@@ -72,9 +72,6 @@
 (defconst dd-on-grads-18 (dd/includes? (system-name) "grads-18")
   "For checking if on grads-18 box.")
 
-(defconst dd-on-spar (dd/includes? (system-name) "spar01")
-  "For checking if on a BNL SPAR machine.")
-
 (setq initial-scratch-message
       (format ";; This is GNU Emacs %s\n\n" emacs-version))
 
@@ -227,14 +224,8 @@ behavior added."
 ;; sec02:
 ;; use-package setup
 
-
 (require 'package)
-(if dd-on-spar
-    (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
-
-(when (< emacs-major-version 27)
-  (package-initialize))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -358,18 +349,11 @@ behavior added."
   (defvar dd-llvm-bin-path
     (cond (dd-on-mac "/usr/local/opt/llvm/bin")
           (dd-on-cc7 "/home/ddavis/software/specific/llvm/master/bin")
-          (dd-on-grads-18 "/home/drd25/software/specific/llvm/10.x/bin")
-          (dd-on-spar nil))
+          (dd-on-grads-18 "/home/drd25/software/specific/llvm/10.x/bin"))
     "Machine dependent llvm bin path.")
   (defvar dd-clangd-exe (dd/llvm-project-exe "clangd"))
   (defvar dd-clang-format-exe (dd/llvm-project-exe "clang-format"))
-  (defvar dd-clang-exe (dd/llvm-project-exe "clang"))
-  :config
-  (when dd-on-spar
-    (defun dd/cpp-fix-backspace ()
-      (global-set-key (kbd "C-d") 'delete-backward-char)
-      (local-unset-key (kbd "C-d")))
-    (add-hook 'c++-mode-hook #'dd/cpp-fix-backspace)))
+  (defvar dd-clang-exe (dd/llvm-project-exe "clang")))
 
 (use-package python
   :mode ("\\.py\\'" . python-mode)
@@ -864,18 +848,17 @@ behavior added."
   :init
   (gcmh-mode 1))
 
-(unless dd-on-spar
-  (use-package latex
-    :ensure auctex
-    :mode ("\\.tex\\'" . TeX-latex-mode)
-    :init
-    (setq font-latex-fontify-sectioning 'color
-          font-latex-fontify-script nil
-          TeX-source-correlate-mode 'synctex
-          TeX-source-correlate-start-server t)
-    (setq-default TeX-master nil)
-    :config
-    (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)))
+(use-package latex
+  :ensure auctex
+  :mode ("\\.tex\\'" . TeX-latex-mode)
+  :init
+  (setq font-latex-fontify-sectioning 'color
+        font-latex-fontify-script nil
+        TeX-source-correlate-mode 'synctex
+        TeX-source-correlate-start-server t)
+  (setq-default TeX-master nil)
+  :config
+  (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))
 
 (when (or dd-on-cc7 dd-on-abx)
   (when dd-on-cc7
@@ -887,21 +870,20 @@ behavior added."
     (setq-default pdf-view-display-size 'fit-page)
     (setq TeX-view-program-selection '((output-pdf "PDF Tools")))))
 
-(unless dd-on-spar
-  (use-package ox-hugo
-    :ensure t
-    :after ox)
+(use-package ox-hugo
+  :ensure t
+  :after ox)
 
-  (use-package ox-reveal
-    :ensure t
-    :after ox)
+(use-package ox-reveal
+  :ensure t
+  :after ox)
 
-  (use-package htmlize
-    :ensure t
-    :after ox)
+(use-package htmlize
+  :ensure t
+  :after ox)
 
-  (use-package w3m
-    :ensure t))
+(use-package w3m
+  :ensure t)
 
 ;; (use-package dashboard
 ;;   :ensure t
