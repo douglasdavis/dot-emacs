@@ -31,7 +31,6 @@
   (setq load-prefer-newer t))
 
 (fset 'yes-or-no-p 'y-or-n-p)
-(setq confirm-kill-emacs 'y-or-n-p)
 
 ;; for native-comp branch
 (when (fboundp 'native-compile-async)
@@ -49,7 +48,8 @@
 
 (setq custom-file (concat user-emacs-directory "custom.el"))
 
-;; 1GB threshold while init is loaded
+;; 1GB threshold while init is loaded. at the end of init.el we hand
+;; over the responsbility to gcmh.
 (setq gc-cons-threshold (* 1000 1024 1024))
 
 ;; sec01:
