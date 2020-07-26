@@ -352,6 +352,7 @@ behavior added."
           (dd-on-grads-18 "/home/drd25/software/specific/llvm/10.x/bin"))
     "Machine dependent llvm bin path.")
   (defvar dd-clangd-exe (dd/llvm-project-exe "clangd"))
+  (defvar dd-ccls-exe "/home/ddavis/software/repos/ccls/Release/ccls")
   (defvar dd-clang-format-exe (dd/llvm-project-exe "clang-format"))
   (defvar dd-clang-exe (dd/llvm-project-exe "clang")))
 
@@ -584,6 +585,12 @@ behavior added."
                 ("S" lsp-workspace-shutdown   "shutdown workspace"))))
   :bind (:map lsp-mode-map
               ("C-c l" . hydra-lsp/body)))
+
+(when dd-on-cc7
+  (use-package ccls
+    :ensure t
+    :init
+    (setq ccls-executable dd-ccls-exe)))
 
 (use-package lsp-ui
   :ensure t
