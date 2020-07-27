@@ -556,16 +556,17 @@ behavior added."
   :ensure t
   :commands lsp
   :init
-  (setq read-process-output-max (* 10 1024 1024))
-  (setq lsp-clients-clangd-executable dd-clangd-exe)
-  (setq lsp-prefer-capf t)
-  (setq lsp-enable-on-type-formatting nil)
-  (setq lsp-auto-guess-root nil)
-  (setq lsp-diagnostic-package :flycheck)
-  (setq lsp-pyls-plugins-autopep8-enabled nil
-        lsp-pyls-plugins-pycodestyle-enabled nil
-        lsp-pyls-plugins-flake8-enabled t
-        lsp-pyls-configuration-sources ["flake8"])
+  (setq read-process-output-max (* 10 1024 1024)
+        lsp-keep-workspace-alive nil
+        lsp-clients-clangd-executable dd-clangd-exe
+        lsp-prefer-capf t
+        lsp-enable-on-type-formatting nil
+        lsp-auto-guess-root nil
+        lsp-diagnostic-package :auto)
+  :bind (:map lsp-mode-map
+              ("C-c l" . hydra-lsp/body))
+
+  :config
   (pretty-hydra-define hydra-lsp (:exit t :hint nil :quit-key "q")
     ("Finding" (("d" lsp-find-declaration             "find declaration")
                 ("D" lsp-ui-peek-find-definitions     "peek find declaration")
@@ -582,15 +583,20 @@ behavior added."
 
      "Session" (("M-s" lsp-describe-session   "describe session")
                 ("M-r" lsp-workspace-restart  "restart workspace")
-                ("S" lsp-workspace-shutdown   "shutdown workspace"))))
-  :bind (:map lsp-mode-map
-              ("C-c l" . hydra-lsp/body)))
+                ("S" lsp-workspace-shutdown   "shutdown workspace")))))
 
 (when dd-on-cc7
   (use-package ccls
     :ensure t
     :init
     (setq ccls-executable dd-ccls-exe)))
+
+(use-package lsp-pyls
+  :init
+  (setq lsp-pyls-plugins-autopep8-enabled nil
+        lsp-pyls-plugins-pycodestyle-enabled nil
+        lsp-pyls-plugins-flake8-enabled t
+        lsp-pyls-configuration-sources ["flake8"]))
 
 (use-package lsp-ui
   :ensure t
