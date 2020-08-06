@@ -220,6 +220,19 @@ behavior added."
 
 (global-set-key [remap keyboard-quit] #'keyboard-quit-context+)
 
+(defun dd/google-s (s)
+  (browse-url
+   (format "https://google.com/search?q=%s"
+           (url-hexify-string s))))
+
+(defun dd/google-region ()
+  (interactive)
+  (google-it (buffer-substring (region-beginning) (region-end))))
+
+(defun dd/google-something (s)
+  (interactive "sSearch: ")
+  (google-s s))
+
 ;; sec02:
 ;; use-package setup
 
@@ -936,6 +949,7 @@ behavior added."
     (setq-default mac-function-modifier 'hyper))
 
   (bind-key (kbd "s-\\") #'dd/toggle-window-split)
+  (bind-key (kbd "s-\"") #'dd/google-something)
   (bind-key (kbd "s-/") #'previous-buffer)
   (bind-key (kbd "s-1") #'delete-other-windows)
   (bind-key (kbd "s-2") #'split-window-below)
