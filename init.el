@@ -227,11 +227,11 @@ behavior added."
 
 (defun dd/google-region ()
   (interactive)
-  (google-it (buffer-substring (region-beginning) (region-end))))
+  (dd/google-s (buffer-substring (region-beginning) (region-end))))
 
 (defun dd/google-something (s)
   (interactive "sSearch: ")
-  (google-s s))
+  (dd/google-s s))
 
 ;; sec02:
 ;; use-package setup
