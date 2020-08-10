@@ -81,14 +81,16 @@
 
 (setq-default indent-tabs-mode nil)
 
-(setq auto-save-list-file-prefix nil
-      create-lockfiles nil
-      backup-by-copying t
-      backup-directory-alist '(("." . "~/.saves"))
-      delete-old-versions t
-      kept-new-versions 2
-      kept-old-versions 1
-      version-control t)
+(setq-default auto-save-list-file-prefix nil
+              create-lockfiles nil
+              backup-by-copying t
+              backup-directory-alist '(("." . "~/.saves"))
+              delete-old-versions t
+              kept-new-versions 2
+              kept-old-versions 1
+              version-control t
+              ring-bell-function 'ignore
+              revert-without-query '(".*"))
 
 (setq sentence-end-double-space nil)
 
@@ -294,6 +296,10 @@ behavior added."
   :config
   (setq whitespace-style '(face tabs empty trailing)))
 
+(use-package autorevert
+  :init
+  (global-auto-revert-mode +1))
+
 (use-package help-mode
   :bind
   (:map help-mode-map
@@ -456,6 +462,7 @@ behavior added."
   :config
   (require 'helm-config)
   (global-set-key (kbd "C-x c") 'helm-command-prefix)
+  (setq history-delete-duplicates t)
   (setq helm-display-buffer-default-height 20
         helm-display-buffer-height 20
         helm-split-window-inside-p t
@@ -514,6 +521,10 @@ behavior added."
 
 (use-package company
   :ensure t
+  :bind
+  (:map company-active-map
+        ("TAB" . company-complete-selection)
+        ("<tab>" . company-complete-selection))
   :hook ((cider-repl-mode-hook . company-mode)
          (clojure-mode-hook . company-mode)
          (conf-colon-mode-hook . company-mode)
@@ -528,7 +539,7 @@ behavior added."
          (yaml-mode-hook . company-mode))
   :config
   (setq company-backends (cons 'company-capf (remove 'company-capf company-backends)))
-  (setq company-minimum-prefix-length 2)
+  (setq company-minimum-prefix-length 1)
   (setq company-idle-delay 0.1))
 
 ;; (use-package company-box
@@ -659,7 +670,8 @@ behavior added."
 
 (use-package rainbow-delimiters
   :ensure t
-  :hook (clojure-mode-hook . rainbow-delimiters-mode))
+  :hook ((emacs-lisp-mode-hook . rainbow-delimiters-mode)
+         (clojure-mode-hook . rainbow-delimiters-mode)))
 
 (use-package which-key
   :ensure t
