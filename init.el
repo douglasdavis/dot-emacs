@@ -426,6 +426,10 @@ behavior added."
   :init
   (setq auto-package-update-delete-old-versions t))
 
+(use-package eros
+  :ensure t
+  :hook (emacs-lisp-mode-hook . eros-mode))
+
 (use-package exec-path-from-shell
   :ensure t
   :demand t
