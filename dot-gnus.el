@@ -1,8 +1,6 @@
 (use-package gnus
   :config
   (setq gnus-startup-file "~/.emacs.d/gnusnews/newsrc")
-  (setq user-full-name "Doug Davis"
-        user-mail-address "ddavis@ddavis.io")
   (setq gnus-select-method '(nnnil))
   (setq gnus-secondary-select-methods
         '((nntp "news.gmane.io")
@@ -20,16 +18,13 @@
                   (nnimap-authinfo-file "~/.emacs.d/.authinfo.gpg"))))
   (setq gnus-message-archive-group "nnimap+fastmail:Sent")
 
-  (setq message-dont-reply-to-names
-        '("ddavis@phy.duke.edu" "ddavis@ddavis.io" "ddavis@cern.ch"))
-
   (setq message-directory "~/.emacs.d/gnusmail/"
-        gnus-home-directory "~/.emacs.d/gnusnews"
-        gnus-dribble-directory "~/.emacs.d/gnusnews"
-        gnus-article-save-directory "~/.emacs.d/gnusnews"
-        gnus-directory "~/.emacs.d/gnusnews")
+        gnus-home-directory "~/.emacs.d/gnusnews/"
+        gnus-dribble-directory "~/.emacs.d/gnusnews/"
+        gnus-article-save-directory "~/.emacs.d/gnusnews/"
+        gnus-directory "~/.emacs.d/gnusnews/")
 
-  (setq nnfolder-directory "~/.emacs.d/gnusmail/archive")
+  (setq nnfolder-directory "~/.emacs.d/gnusmail/archive/")
   (setq nndraft-directory "~/.emacs.d/gnusmail/drafts/")
   (setq gnus-parameters
         '(("fastmail"
@@ -71,7 +66,7 @@
   (setq gnus-agent-cache t)
   (setq gnus-agent-confirmation-function 'y-or-n-p)
   (setq gnus-agent-consider-all-articles nil)
-  (setq gnus-agent-directory "~/.News/agent/")
+  (setq gnus-agent-directory "~/.emacs.d/gnusagent")
   (setq gnus-agent-enable-expiration 'ENABLE)
   (setq gnus-agent-expire-all nil)
   (setq gnus-agent-expire-days 30)
@@ -100,7 +95,7 @@
 
   ;; asynchronous
   (setq gnus-asynchronous t)
-  (setq gnus-use-article-prefetch 15)
+  (setq gnus-use-article-prefetch 20)
 
   ;; checking sources
   (setq gnus-check-new-newsgroups 'ask-server)
@@ -146,25 +141,7 @@
     (setq gnus-sum-thread-tree-vertical        "│")
     (setq gnus-sum-thread-tree-leaf-with-other "├─► ")
     (setq gnus-sum-thread-tree-single-leaf     "╰─► "))
-  ;; (setq gnus-summary-line-format
-  ;;       (concat
-  ;;        "%0{%U%R%z%}"
-  ;;        "%3{│%}" "%1{%d%}" "%3{│%}" ;; date
-  ;;        "  "
-  ;;        "%4{%-20,20f%}"               ;; name
-  ;;        "  "
-  ;;        "%3{│%}"
-  ;;        " "
-  ;;        "%1{%B%}"
-  ;;        "%s\n"))
   (setq gnus-summary-display-arrow t)
-
-  ;; (setq gnus-sum-thread-tree-false-root "")
-  ;; (setq gnus-sum-thread-tree-indent " ")
-  ;; (setq gnus-sum-thread-tree-leaf-with-other "├─➤ ")
-  ;; (setq gnus-sum-thread-tree-root "")
-  ;; (setq gnus-sum-thread-tree-single-leaf "└─➤ ")
-  ;; (setq gnus-sum-thread-tree-vertical "│")
   :hook ((gnus-summary-mode-hook . hl-line-mode)
          (gnus-group-mode-hook . hl-line-mode)
          (gnus-server-mode-hook . hl-line-mode)

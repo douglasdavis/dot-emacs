@@ -27,33 +27,32 @@
 (defconst dd-mu-exe
   (cond (dd-on-mac "/Users/ddavis/software/localbase/bin/mu")
         (dd-on-abx "/usr/bin/mu")
-        (dd-on-cc7 "/home/ddavis/software/specific/mu/1.4.10/bin/mu")
-        (dd-on-grads-18 "/home/drd25/software/localbase/bin/mu")
-        (dd-on-spar nil))
+        (dd-on-cc7 "/home/ddavis/software/specific/mu/1.4.10/bin/mu"))
   "machine dependent mu executable string")
 
 (defconst dd-mu4e-dir
   (cond (dd-on-mac "/Users/ddavis/software/localbase/share/emacs/site-lisp/mu4e")
         (dd-on-abx "/usr/share/emacs/site-lisp/mu4e")
-        (dd-on-cc7 "/home/ddavis/software/specific/mu/1.4.10/share/emacs/site-lisp/mu4e")
-        (dd-on-grads-18 "/home/drd25/software/localbase/share/emacs/site-lisp/mu4e")
-        (dd-on-spar nil))
+        (dd-on-cc7 "/home/ddavis/software/specific/mu/1.4.10/share/emacs/site-lisp/mu4e"))
   "machine dependent mu4e installation location string")
 
 (defconst dd-sendmail-exe
   (cond (dd-on-mac "/Users/ddavis/software/localbase/bin/msmtp")
         (dd-on-abx "/usr/bin/msmtp")
-        (dd-on-cc7 "/usr/local/bin/msmtp")
-        (dd-on-grads-18 "/usr/bin/msmtp")
-        (dd-on-spar nil))
+        (dd-on-cc7 "/usr/local/bin/msmtp"))
   "machine dependent msmtp executable string")
 
-(setq message-send-mail-function 'message-send-mail-with-sendmail
+(setq user-mail-address "ddavis@ddavis.io"
+      user-email-address "ddavis@ddavis.io"
+      user-full-name "Doug Davis"
+      sendmail-program dd-sendmail-exe
+      message-send-mail-function 'message-send-mail-with-sendmail
       message-sendmail-f-is-evil t
       message-sendmail-extra-arguments '("--read-envelope-from")
-      message-kill-buffer-on-exit t)
-
-(setq sendmail-program dd-sendmail-exe)
+      message-kill-buffer-on-exit t
+      message-dont-reply-to-names '("ddavis@phy.duke.edu"
+                                    "ddavis@ddavis.io"
+                                    "ddavis@cern.ch"))
 
 (defun dd/reset-standard-name-and-email ()
   (interactive)
@@ -184,7 +183,7 @@
                            ( mu4e-sent-folder       . "/fastmail/Sent" )
                            ( mu4e-drafts-folder     . "/fastmail/Drafts" )
                            ( mu4e-reply-to-address  . "ddavis@ddavis.io" )))))
-  (setq mu4e-bookmarks ())
+  (setq mu4e-bookmarks '())
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
                 :name "Unread short"
