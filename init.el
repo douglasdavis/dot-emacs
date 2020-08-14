@@ -39,7 +39,6 @@
         comp-deferred-compilation-black-list '()))
 
 (setq user-mail-address "ddavis@ddavis.io"
-      user-login-name "ddavis"
       user-full-name "Doug Davis")
 
 (setq default-directory
