@@ -790,7 +790,7 @@ behavior added."
           '(("Freenode"
              :nick "ddavis"
              :nickserv-password dd/irc-pw-freenode
-             :channels (:after-auth "#emacs" "#lobsters" "#lobsters-boil" "#sr.ht")
+             :channels (:after-auth "#emacs" "#lobsters" "#python" "##crustaceans" "#clojure" "#clojure-beginners")
              :tls t)
             ("Gitter"
              :server-buffer-name "Gitter"
