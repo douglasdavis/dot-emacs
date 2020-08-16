@@ -638,7 +638,7 @@ behavior added."
         lsp-ui-sideline-show-hover nil))
 
 (use-package eglot
-  :ensure t
+  :disabled
   :commands eglot
   :init
   (setq eglot-server-programs
