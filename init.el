@@ -78,8 +78,6 @@
       ring-bell-function 'ignore
       visible-bell nil)
 
-(setq-default indent-tabs-mode nil)
-
 (setq-default auto-save-list-file-prefix nil
               create-lockfiles nil
               backup-by-copying t
@@ -108,6 +106,8 @@
     (menu-bar-mode -1)))
 
 (setq inhibit-startup-screen t)
+(setq-default require-final-newline t)
+(setq-default indent-tabs-mode nil)
 
 (column-number-mode +1)
 (make-variable-buffer-local 'display-line-numbers-width-start)
@@ -133,6 +133,32 @@
                       :weight 'regular
                       :height 130))
 
+(defun dd/delete-and-kill-current ()
+  "Delete buffer's current file and kill the buffer."
+  (interactive)
+  (delete-file buffer-file-name)
+  (kill-buffer (buffer-name)))
+
+(defun dd/move-file (new-loc)
+  "Write this file to NEW-LOC, delete the old one.
+Taken from post: https://zck.me/emacs-move-file"
+  (interactive (list (expand-file-name
+                      (if buffer-file-name
+                          (read-file-name "Move file to: ")
+                        (read-file-name "Move file to: "
+                                        default-directory
+                                        (expand-file-name (file-name-nondirectory (buffer-name))
+                                                          default-directory))))))
+  (when (file-exists-p new-loc)
+    (delete-file new-loc))
+  (let ((old-loc (expand-file-name (buffer-file-name))))
+    (message "old file is: %s and new file is %s" old-loc new-loc)
+    (write-file new-loc t)
+    (when (and old-loc
+               (file-exists-p new-loc)
+               (not (string= old-loc new-loc)))
+      (delete-file old-loc))))
+
 (defun dd/copy-lines-matching-re (re)
   "Put lines matching RE in a buffer named *matching*."
   (interactive "sRegexp to match: ")
@@ -154,11 +180,8 @@
 ;; convenience function to add the `delete-trailing-whitespace'
 ;; function to that list. Should be added to a mode hook."
 ;;   (add-to-list 'write-file-functions 'delete-trailing-whitespace))
-
 ;; (add-hook 'text-mode-hook 'dd/del-trail-white)
 ;; (add-hook 'prog-mode-hook 'dd/del-trail-white)
-
-(setq require-final-newline t)
 
 (defun dd/delete-frame-or-window ()
   "If we have multiple frames delete the current one.
@@ -184,8 +207,6 @@ Command+w to behave similar to other macOS applications."
                             (split-window-horizontally)))
            buf)))
     (user-error "Can toggle split only with two windows")))
-
-(add-hook 'emacs-lisp-mode-hook 'prettify-symbols-mode)
 
 (defun keyboard-quit-context+ ()
   "Quit current context.
@@ -357,6 +378,10 @@ behavior added."
   (when dd-on-cc7
     (setq browse-url-browser-function 'browse-url-generic
           browse-url-generic-program "/usr/local/bin/firefox")))
+
+(use-package elisp-mode
+  :init
+  :hook ((emacs-lisp-mode-hook . prettify-symbols-mode)))
 
 (use-package cc-mode
   :mode (("\\.h\\(h?\\|xx\\|pp\\)\\'" . c++-mode)
