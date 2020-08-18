@@ -287,10 +287,6 @@ behavior added."
     (use-package project :ensure t)
   (use-package project))
 
-(use-package minibuffer
-  :init
-  (setq completion-styles '(flex)))
-
 (use-package whitespace
   :init
   (dolist (hook '(prog-mode-hook text-mode-hook))
@@ -552,6 +548,11 @@ behavior added."
 ;; (use-package company-box
 ;;   :ensure t
 ;;   :hook (company-mode-hook . company-box-mode))
+
+(use-package orderless
+  :ensure t
+  :demand t
+  :custom (completion-styles '(basic partial-completion flex orderless emacs22)))
 
 (use-package magit
   :ensure t
