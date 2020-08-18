@@ -710,16 +710,11 @@ behavior added."
 (use-package which-key
   :ensure t
   :demand t
+  :init
   :config
-  (which-key-mode))
-
-;; (use-package doom-modeline
-;;   :ensure t
-;;   :demand t
-;;   :init
-;;   (setq doom-modeline-mu4e (or dd-on-mac dd-on-cc7))
-;;   :config
-;;   (doom-modeline-mode 1))
+  (which-key-mode)
+  (setq which-key-side-window-max-height 0.40
+        which-key-frame-max-height 35))
 
 (use-package yasnippet
   :ensure t
@@ -769,6 +764,12 @@ behavior added."
   (setq custom-safe-themes t)
   :config
   (load-theme 'doom-gruvbox t))
+
+(use-package doom-modeline
+  :ensure t
+  :init
+  (setq doom-modeline-mu4e (or dd-on-mac dd-on-cc7 dd-on-abx))
+  (doom-modeline-mode 1))
 
 ;; (use-package gruvbox
 ;;   :ensure gruvbox-theme
