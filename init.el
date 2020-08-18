@@ -361,6 +361,7 @@ behavior added."
   (setq vc-follow-symlinks t))
 
 (use-package dired
+  :demand t
   :init
   (setq-default dired-listing-switches "-alh")
   :bind (:map dired-mode-map
