@@ -798,23 +798,16 @@ behavior added."
   (setq-default elfeed-search-filter "@21-days-ago"))
 
 (when (or dd-on-grads-18 dd-on-cc7 dd-on-mac dd-on-abx)
-  (use-package password-store
-    :ensure t
-    :commands (password-store-copy
-               password-store-get
-               password-store-edit
-               password-store-insert)))
-
-(when (or dd-on-grads-18 dd-on-cc7 dd-on-mac dd-on-abx)
   (use-package circe
     :ensure t
     :commands circe
     :hook (circe-chat-mode-hook . dd/circe-prompt)
     :init
+    (require 'auth-source-pass)
     (defun dd/irc-pw-freenode (server)
-      (password-store-get "Freenode"))
+      (auth-source-pass-get 'secret "Freenode"))
     (defun dd/irc-pw-gitter (server)
-      (password-store-get "Gitter"))
+      (auth-source-pass-get 'secret "Gitter"))
     (defun dd/circe-prompt ()
       (lui-set-prompt
        (propertize (format "%s >>> " (buffer-name)) 'face 'circe-prompt-face)))
