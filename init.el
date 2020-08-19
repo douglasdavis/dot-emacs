@@ -59,16 +59,16 @@
   (declare (pure t) (side-effect-free t))
   (not (null (string-match-p (regexp-quote substr) s))))
 
-(defconst dd-on-mac (eq system-type 'darwin)
+(defconst dd/on-mac (eq system-type 'darwin)
   "For checking if on a mac.")
 
-(defconst dd-on-abx (dd/includes? (system-name) "abx")
+(defconst dd/on-abx (dd/includes? (system-name) "abx")
   "For checking of in abx box.")
 
-(defconst dd-on-cc7 (dd/includes? (system-name) "cc7")
+(defconst dd/on-cc7 (dd/includes? (system-name) "cc7")
   "For checking if on cc7 box.")
 
-(defconst dd-on-grads-18 (dd/includes? (system-name) "grads-18")
+(defconst dd/on-grads-18 (dd/includes? (system-name) "grads-18")
   "For checking if on grads-18 box.")
 
 (setq initial-scratch-message
@@ -101,7 +101,7 @@
   (tooltip-mode -1))
 
 (when (fboundp 'menu-bar-mode)
-  (if dd-on-mac
+  (if dd/on-mac
       (menu-bar-mode +1)
     (menu-bar-mode -1)))
 
@@ -116,18 +116,18 @@
 (add-to-list 'default-frame-alist '(height . 72))
 (add-to-list 'default-frame-alist '(width . 234))
 
-(when dd-on-abx
+(when dd/on-abx
   (set-face-attribute 'default nil
                       :family "JetBrains Mono"
                       :weight 'regular
                       :height 130))
-(when dd-on-mac
+(when dd/on-mac
   (setq mac-allow-anti-aliasing t)
   (set-face-attribute 'default nil
                       :family "JetBrains Mono"
                       :weight 'regular
                       :height 120))
-(when dd-on-cc7
+(when dd/on-cc7
   (set-face-attribute 'default nil
                       :family "JetBrains Mono"
                       :weight 'regular
@@ -292,13 +292,13 @@ behavior added."
                 '(("el" . "src emacs-lisp :results silent")
                   ("py" . "src python :results silent")
                   ("cpp" . "src C++"))))
-  (when dd-on-mac
+  (when dd/on-mac
     (bind-key "<A-down>" 'org-move-subtree-down org-mode-map)
     (bind-key "<A-up>" 'org-move-subtree-up org-mode-map)
     (bind-key "<A-left>" 'org-promote-subtree)
     (bind-key "<A-right>" 'org-demote-subtree))
 
-  (unless dd-on-mac
+  (unless dd/on-mac
     (bind-key "<s-down>" 'org-move-subtree-down org-mode-map)
     (bind-key "<s-up>" 'org-move-subtree-up org-mode-map)
     (bind-key "<s-left>" 'org-promote-subtree)
@@ -325,17 +325,17 @@ behavior added."
   (:map help-mode-map
         ("q" . kill-buffer-and-window)))
 
-(when (or dd-on-mac dd-on-cc7 dd-on-grads-18 dd-on-abx)
+(when (or dd/on-mac dd/on-cc7 dd/on-grads-18 dd/on-abx)
   (use-package auth-source
     :init
     (setq auth-sources
           (list (concat user-emacs-directory ".authinfo.gpg")))))
 
-(when (or dd-on-mac dd-on-cc7 dd-on-grads-18 dd-on-abx)
+(when (or dd/on-mac dd/on-cc7 dd/on-grads-18 dd/on-abx)
   (use-package epa-file
     :config
     (epa-file-enable)
-    (if dd-on-mac
+    (if dd/on-mac
         (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
       (custom-set-variables '(epg-gpg-program "/usr/bin/gpg2")))))
 
@@ -376,7 +376,7 @@ behavior added."
 
 (use-package browse-url
   :init
-  (when dd-on-cc7
+  (when dd/on-cc7
     (setq browse-url-browser-function 'browse-url-generic
           browse-url-generic-program "/usr/local/bin/firefox")))
 
@@ -389,20 +389,20 @@ behavior added."
          ("\\.icc\\'" . c++-mode))
   :init
   (defun dd/llvm-project-exe (exe-name)
-    (when (and dd-llvm-bin-path (file-exists-p dd-llvm-bin-path))
-      (concat (file-name-as-directory dd-llvm-bin-path) exe-name)))
-  (defvar dd-llvm-bin-path
-    (cond (dd-on-mac "/usr/local/opt/llvm/bin")
-          (dd-on-cc7 "/home/ddavis/software/specific/llvm/master/bin")
-          (dd-on-grads-18 "/home/drd25/software/specific/llvm/10.x/bin"))
+    (when (and dd/llvm-bin-path (file-exists-p dd/llvm-bin-path))
+      (concat (file-name-as-directory dd/llvm-bin-path) exe-name)))
+  (defvar dd/llvm-bin-path
+    (cond (dd/on-mac "/usr/local/opt/llvm/bin")
+          (dd/on-cc7 "/home/ddavis/software/specific/llvm/master/bin")
+          (dd/on-grads-18 "/home/drd25/software/specific/llvm/10.x/bin"))
     "Machine dependent llvm bin path.")
-  (defvar dd-ccls-exe
-    (if dd-on-cc7
+  (defvar dd/ccls-exe
+    (if dd/on-cc7
         "/home/ddavis/software/repos/ccls/Release/ccls"
       nil))
-  (defvar dd-clangd-exe (dd/llvm-project-exe "clangd"))
-  (defvar dd-clang-format-exe (dd/llvm-project-exe "clang-format"))
-  (defvar dd-clang-exe (dd/llvm-project-exe "clang")))
+  (defvar dd/clangd-exe (dd/llvm-project-exe "clangd"))
+  (defvar dd/clang-format-exe (dd/llvm-project-exe "clang-format"))
+  (defvar dd/clang-exe (dd/llvm-project-exe "clang")))
 
 (use-package python
   :mode ("\\.py\\'" . python-mode)
@@ -507,7 +507,14 @@ behavior added."
                                      " --smart-case"
                                      " --no-heading"
                                      " --line-number %s %s %s"))
-  (helm-mode +1))
+  (helm-mode +1)
+  (defun dd/helm-rg-dwim (arg)
+    "Call `helm-grep-ag' from `projectile-project-root' or `default-directory'."
+    (interactive "P")
+    (let ((proj (projectile-project-root)))
+      (if proj
+          (helm-grep-ag (expand-file-name proj) arg)
+        (helm-grep-ag (expand-file-name default-directory) arg)))))
 
 (use-package helm-descbinds
   :ensure t
@@ -620,7 +627,7 @@ behavior added."
   :init
   (setq read-process-output-max (* 10 1024 1024)
         lsp-keep-workspace-alive nil
-        lsp-clients-clangd-executable dd-clangd-exe
+        lsp-clients-clangd-executable dd/clangd-exe
         lsp-prefer-capf t
         lsp-enable-on-type-formatting nil
         lsp-auto-guess-root nil
@@ -647,11 +654,11 @@ behavior added."
                 ("M-r" lsp-workspace-restart  "restart workspace")
                 ("S" lsp-workspace-shutdown   "shutdown workspace")))))
 
-(when dd-on-cc7
+(when dd/on-cc7
   (use-package ccls
     :ensure t
     :init
-    (setq ccls-executable dd-ccls-exe)))
+    (setq ccls-executable dd/ccls-exe)))
 
 (use-package lsp-pyls
   :init
@@ -674,7 +681,7 @@ behavior added."
   :init
   (setq eglot-server-programs
         `((python-mode "pyls")
-          ((c++-mode c-mode) ,dd-clangd-exe))))
+          ((c++-mode c-mode) ,dd/clangd-exe))))
 
 (use-package eldoc-box
   :ensure t
@@ -683,7 +690,7 @@ behavior added."
 (use-package clang-format
   :ensure t
   :init
-  (setq clang-format-executable dd-clang-format-exe))
+  (setq clang-format-executable dd/clang-format-exe))
 
 (use-package modern-cpp-font-lock
   :ensure t
@@ -697,7 +704,7 @@ behavior added."
 (use-package blacken
   :ensure t)
 
-(when (or dd-on-mac dd-on-cc7 dd-on-abx)
+(when (or dd/on-mac dd/on-cc7 dd/on-abx)
   (use-package cider
     :ensure t
     :commands cider-jack-in))
@@ -768,7 +775,7 @@ behavior added."
 (use-package doom-modeline
   :ensure t
   :init
-  (setq doom-modeline-mu4e (or dd-on-mac dd-on-cc7 dd-on-abx))
+  (setq doom-modeline-mu4e (or dd/on-mac dd/on-cc7 dd/on-abx))
   (doom-modeline-mode 1))
 
 ;; (use-package gruvbox
@@ -797,7 +804,7 @@ behavior added."
             (elfeed-make-tagger :before "3 weeks ago" :remove 'unread))
   (setq-default elfeed-search-filter "@21-days-ago"))
 
-(when (or dd-on-grads-18 dd-on-cc7 dd-on-mac dd-on-abx)
+(when (or dd/on-grads-18 dd/on-cc7 dd/on-mac dd/on-abx)
   (use-package circe
     :ensure t
     :commands circe
@@ -884,16 +891,16 @@ behavior added."
     :config
     (add-to-list 'erc-modules 'hl-nicks)))
 
-  ;; (defvar dd-nick-face-list '()
+  ;; (defvar dd/nick-face-list '()
   ;;   "See https://www.emacswiki.org/emacs/ErcNickColors#toc1")
-  ;; (defvar dd-erc-colors-list
+  ;; (defvar dd/erc-colors-list
   ;;   '("#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#fe8019"
   ;;     "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e")
   ;;   "See https://www.emacswiki.org/emacs/ErcNickColors#toc1")
   ;; (defun dd/build-nick-face-list ()
   ;;   "See https://www.emacswiki.org/emacs/ErcNickColors#toc1"
   ;;   (setq i -1)
-  ;;   (setq dd-nick-face-list
+  ;;   (setq dd/nick-face-list
   ;;         (mapcar
   ;;          (lambda (COLOR)
   ;;            (setq i (1+ i))
@@ -901,10 +908,10 @@ behavior added."
   ;;                   (make-symbol (format "erc-nick-face-%d" i))
   ;;                   (list (list t (list :foreground COLOR)))
   ;;                   (format "Nick face %d" i))))
-  ;;          dd-erc-colors-list)))
+  ;;          dd/erc-colors-list)))
   ;; (defun dd/erc-insert-modify-hook ()
   ;;   "See https://www.emacswiki.org/emacs/ErcNickColors#toc1"
-  ;;   (if (null dd-nick-face-list) (dd/build-nick-face-list))
+  ;;   (if (null dd/nick-face-list) (dd/build-nick-face-list))
   ;;   (save-excursion
   ;;     (goto-char (point-min))
   ;;     (if (looking-at "<\\([^>]*\\)>")
@@ -913,8 +920,8 @@ behavior added."
   ;;                              'face (nth
   ;;                                     (mod (string-to-number
   ;;                                           (substring (md5 nick) 0 4) 16)
-  ;;                                          (length dd-nick-face-list))
-  ;;                                     dd-nick-face-list))))))
+  ;;                                          (length dd/nick-face-list))
+  ;;                                     dd/nick-face-list))))))
   ;; (add-hook 'erc-insert-modify-hook 'dd/erc-insert-modify-hook))
 
 (use-package gcmh
@@ -935,8 +942,8 @@ behavior added."
   :config
   (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))
 
-(when (or dd-on-cc7 dd-on-abx)
-  (when dd-on-cc7
+(when (or dd/on-cc7 dd/on-abx)
+  (when dd/on-cc7
     (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig"))
   (use-package pdf-tools
     :ensure t
@@ -982,7 +989,7 @@ behavior added."
                             (kill-region (region-beginning) (region-end))
                           (dd/delete-frame-or-window))))
 
-(when dd-on-mac
+(when dd/on-mac
   (when (memq window-system '(mac ns))
     (setq browse-url-browser-function 'browse-url-default-macosx-browser)
     (setq-default ns-alternate-modifier 'meta)
@@ -1006,14 +1013,14 @@ behavior added."
   (bind-key (kbd "s-g") #'magit-status)
   (bind-key (kbd "s-o") #'other-window)
   (bind-key (kbd "s-p") #'hydra-projectile/body)
-  (bind-key (kbd "s-r") #'helm-do-grep-ag)
+  (bind-key (kbd "s-r") #'dd/helm-rg-dwim)
   (bind-key (kbd "s-u") #'gnus)
   (bind-key (kbd "s-w") #'dd/delete-frame-or-window))
 
 ;; sec06:
 ;; email setup is in dedicated file
 
-(when (or dd-on-mac dd-on-cc7 dd-on-abx)
+(when (or dd/on-mac dd/on-cc7 dd/on-abx)
   (load-file "~/.emacs.d/dot-emacs/email.el"))
 
 ;; sec07:

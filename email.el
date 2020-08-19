@@ -24,28 +24,28 @@
 
 ;;; Code:
 
-(defconst dd-mu-exe
-  (cond (dd-on-mac "/Users/ddavis/software/localbase/bin/mu")
-        (dd-on-abx "/usr/bin/mu")
-        (dd-on-cc7 "/home/ddavis/software/specific/mu/1.4.10/bin/mu"))
+(defconst dd/mu-exe
+  (cond (dd/on-mac "/Users/ddavis/software/localbase/bin/mu")
+        (dd/on-abx "/usr/bin/mu")
+        (dd/on-cc7 "/home/ddavis/software/specific/mu/1.4.10/bin/mu"))
   "machine dependent mu executable string")
 
-(defconst dd-mu4e-dir
-  (cond (dd-on-mac "/Users/ddavis/software/localbase/share/emacs/site-lisp/mu4e")
-        (dd-on-abx "/usr/share/emacs/site-lisp/mu4e")
-        (dd-on-cc7 "/home/ddavis/software/specific/mu/1.4.10/share/emacs/site-lisp/mu4e"))
+(defconst dd/mu4e-dir
+  (cond (dd/on-mac "/Users/ddavis/software/localbase/share/emacs/site-lisp/mu4e")
+        (dd/on-abx "/usr/share/emacs/site-lisp/mu4e")
+        (dd/on-cc7 "/home/ddavis/software/specific/mu/1.4.10/share/emacs/site-lisp/mu4e"))
   "machine dependent mu4e installation location string")
 
-(defconst dd-sendmail-exe
-  (cond (dd-on-mac "/Users/ddavis/software/localbase/bin/msmtp")
-        (dd-on-abx "/usr/bin/msmtp")
-        (dd-on-cc7 "/usr/local/bin/msmtp"))
+(defconst dd/sendmail-exe
+  (cond (dd/on-mac "/Users/ddavis/software/localbase/bin/msmtp")
+        (dd/on-abx "/usr/bin/msmtp")
+        (dd/on-cc7 "/usr/local/bin/msmtp"))
   "machine dependent msmtp executable string")
 
 (setq user-mail-address "ddavis@ddavis.io"
       user-email-address "ddavis@ddavis.io"
       user-full-name "Doug Davis"
-      sendmail-program dd-sendmail-exe
+      sendmail-program dd/sendmail-exe
       message-send-mail-function 'message-send-mail-with-sendmail
       message-sendmail-f-is-evil t
       message-sendmail-extra-arguments '("--read-envelope-from")
@@ -88,7 +88,7 @@
 (setq w3m-default-desplay-inline-images t)
 
 (use-package mu4e
-  :load-path dd-mu4e-dir
+  :load-path dd/mu4e-dir
   :commands (mu4e mu4e-update-mail-and-index)
   :bind (("C-c 4" . mu4e)
          :map mu4e-headers-mode-map
@@ -152,7 +152,7 @@
                       ( mu4e-sent-folder        . "/duke/Sent" )
                       ( mu4e-drafts-folder      . "/duke/Drafts" )
                       ( mu4e-reply-to-address   . "ddavis@phy.duke.edu" )))))
-  (when (or dd-on-mac dd-on-cc7 dd-on-abx)
+  (when (or dd/on-mac dd/on-cc7 dd/on-abx)
     (add-to-list 'mu4e-contexts
                  (make-mu4e-context
                   :name "gmail"
