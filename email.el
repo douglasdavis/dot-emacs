@@ -104,7 +104,7 @@
          ("M" . mu4e-action-view-in-w3m)
          ("j" . dd/mu4e-jump-via-comp-read))
   :config
-  (setq mu4e-mu-binary dd-mu-exe
+  (setq mu4e-mu-binary dd/mu-exe
         mu4e-change-filenames-when-moving t
         mu4e-get-mail-command "true"
         mu4e-update-interval 120
