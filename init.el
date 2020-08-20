@@ -396,10 +396,6 @@ behavior added."
           (dd/on-cc7 "/home/ddavis/software/specific/llvm/master/bin")
           (dd/on-grads-18 "/home/drd25/software/specific/llvm/10.x/bin"))
     "Machine dependent llvm bin path.")
-  (defvar dd/ccls-exe
-    (if dd/on-cc7
-        "/home/ddavis/software/repos/ccls/Release/ccls"
-      nil))
   (defvar dd/clangd-exe (dd/llvm-project-exe "clangd"))
   (defvar dd/clang-format-exe (dd/llvm-project-exe "clang-format"))
   (defvar dd/clang-exe (dd/llvm-project-exe "clang")))
@@ -653,12 +649,6 @@ behavior added."
      "Session" (("M-s" lsp-describe-session   "describe session")
                 ("M-r" lsp-workspace-restart  "restart workspace")
                 ("S" lsp-workspace-shutdown   "shutdown workspace")))))
-
-(when dd/on-cc7
-  (use-package ccls
-    :ensure t
-    :init
-    (setq ccls-executable dd/ccls-exe)))
 
 (use-package lsp-pyls
   :init
