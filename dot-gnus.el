@@ -132,17 +132,27 @@
           (t . "%Y-%m-%d %R")))
   (setq gnus-summary-line-format "%U%R%z %-16,16&user-date;  %4L:%-20,20f  %B%S\n")
   (setq gnus-summary-mode-line-format "Gnus: %p (%U)")
-
   (when window-system
-    (setq gnus-sum-thread-tree-indent "  ")
-    (setq gnus-sum-thread-tree-root "● ")
-    (setq gnus-sum-thread-tree-false-root "◯ ")
-    (setq gnus-sum-thread-tree-single-indent "* ") ;; ◎ ")
-    (setq gnus-sum-thread-tree-vertical        "│")
-    (setq gnus-sum-thread-tree-leaf-with-other "├─► ")
-    (setq gnus-sum-thread-tree-single-leaf     "╰─► "))
   (setq gnus-summary-display-arrow t)
+    (setq-default
+     ;; gnus-user-date-format-alist '((t . "%Y-%m-%d %H:%M"))
+     ;;gnus-thread-sort-functions '(gnus-thread-sort-by-date)
+     gnus-summary-thread-gathering-function 'gnus-gather-threads-by-references
+     gnus-sum-thread-tree-root            ""
+     gnus-sum-thread-tree-false-root      ""
+     gnus-sum-thread-tree-indent          " "
+     gnus-sum-thread-tree-vertical        "│"
+     gnus-sum-thread-tree-leaf-with-other "├► "
+     gnus-sum-thread-tree-single-leaf     "╰► "))
+  (set-face-attribute 'gnus-summary-selected nil :weight 'regular)
+  (set-face-attribute 'gnus-summary-normal-unread nil :weight 'regular)
+  (set-face-attribute 'gnus-summary-high-unread nil :weight 'regular)
+  (set-face-attribute 'gnus-summary-normal-ancient nil :inherit 'regular)
+  (set-face-attribute 'gnus-summary-low-ancient nil :inherit 'regular)
+  (set-face-attribute 'gnus-summary-high-ancient nil :inherit 'regular)
   :hook ((gnus-summary-mode-hook . hl-line-mode)
          (gnus-group-mode-hook . hl-line-mode)
          (gnus-server-mode-hook . hl-line-mode)
-         (gnus-group-mode-hook . gnus-topic-mode)))
+         (gnus-group-mode-hook . gnus-topic-mode))
+  :custom-face
+  (gnus-summary-selected-face ((t (:weight regular)))))

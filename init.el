@@ -484,6 +484,8 @@ behavior added."
          ("C-x b" . helm-buffers-list)
          :map helm-map
          ("<tab>" . helm-execute-persistent-action))
+  :custom-face
+  (helm-ff-file-extension ((t (:foreground "orange"))))
   :config
   (require 'helm-config)
   (global-set-key (kbd "C-x c") 'helm-command-prefix)
