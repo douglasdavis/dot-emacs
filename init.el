@@ -762,7 +762,8 @@ behavior added."
   :init
   (setq custom-safe-themes t)
   :config
-  (load-theme 'doom-gruvbox t))
+  (load-theme 'doom-gruvbox t)
+  (set-face-attribute 'font-lock-doc-face nil :foreground "#a89984"))
 
 (use-package doom-modeline
   :ensure t
