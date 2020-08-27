@@ -757,13 +757,14 @@ behavior added."
          :map helpful-mode-map
          ("q" . kill-buffer-and-window)))
 
-;; (use-package doom-themes
-;;   :ensure t
-;;   :demand t
-;;   :init
-;;   :config
-;;   (load-theme 'doom-gruvbox t)
-;;   (set-face-attribute 'font-lock-doc-face nil :foreground "#a89984"))
+(use-package doom-themes
+  :ensure t
+  :demand t
+  :custom-face
+  (helm-ff-file-extension ((t (:foreground "orange"))))
+  :config
+  (load-theme 'doom-gruvbox t)
+  (set-face-attribute 'font-lock-doc-face nil :foreground "#a89984"))
 
 (use-package doom-modeline
   :ensure t
