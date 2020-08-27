@@ -105,6 +105,7 @@
       (menu-bar-mode +1)
     (menu-bar-mode -1)))
 
+(setq custom-safe-themes t)
 (setq inhibit-startup-screen t)
 (setq-default require-final-newline t)
 (setq-default indent-tabs-mode nil)
@@ -756,14 +757,13 @@ behavior added."
          :map helpful-mode-map
          ("q" . kill-buffer-and-window)))
 
-(use-package doom-themes
-  :ensure t
-  :demand t
-  :init
-  (setq custom-safe-themes t)
-  :config
-  (load-theme 'doom-gruvbox t)
-  (set-face-attribute 'font-lock-doc-face nil :foreground "#a89984"))
+;; (use-package doom-themes
+;;   :ensure t
+;;   :demand t
+;;   :init
+;;   :config
+;;   (load-theme 'doom-gruvbox t)
+;;   (set-face-attribute 'font-lock-doc-face nil :foreground "#a89984"))
 
 (use-package doom-modeline
   :ensure t
@@ -775,7 +775,6 @@ behavior added."
 ;;   :ensure gruvbox-theme
 ;;   :demand t
 ;;   :config
-;;   (setq custom-safe-themes t)
 ;;   (load-theme 'gruvbox t))
 
 (use-package elfeed
