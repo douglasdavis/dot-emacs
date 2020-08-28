@@ -483,7 +483,9 @@ behavior added."
          ("C-x C-f" . helm-find-files)
          ("C-x C-t" . find-file)
          ("C-x b" . helm-buffers-list)
+         ("M-y" . helm-show-kill-ring)
          :map helm-map
+         ("TAB" . helm-execute-persistent-action)
          ("<tab>" . helm-execute-persistent-action))
   :custom-face
   (helm-ff-file-extension ((t (:foreground "orange"))))
@@ -507,6 +509,10 @@ behavior added."
                                      " --no-heading"
                                      " --line-number %s %s %s"))
   (helm-mode +1)
+  (dolist (regexp '("\\*epc con" "\\*helm" "\\*EGLOT" "\\*straight" "\\*Flymake"
+                    "\\*eldoc" "\\*Compile-Log" "\\*xref" "\\*company"
+                    "\\*aw-posframe" "\\*Warnings" "\\*Backtrace"))
+    (add-to-list 'helm-boring-buffer-regexp-list regexp))
   (defun dd/helm-rg-dwim (arg)
     "Call `helm-grep-ag' from `projectile-project-root' or `default-directory'."
     (interactive "P")
@@ -556,6 +562,7 @@ behavior added."
 
 (use-package company
   :ensure t
+  :demand t
   :bind
   (:map company-active-map
         ("TAB" . company-complete-selection)
@@ -573,9 +580,19 @@ behavior added."
          (sh-mode-hook . company-mode)
          (yaml-mode-hook . company-mode))
   :config
+  (make-variable-buffer-local 'company-minimum-prefix-length)
+  (make-variable-buffer-local 'company-idle-delay)
   (setq company-backends (cons 'company-capf (remove 'company-capf company-backends)))
-  (setq company-minimum-prefix-length 1)
-  (setq company-idle-delay 0.1))
+  (setq-default company-minimum-prefix-length 2)
+  (setq-default company-idle-delay 0.2)
+  (defun dd/company-prog-mode  ()
+    (setq company-minimum-prefix-length 1
+          company-idle-delay 0.1))
+  (defun dd/company-text-mode ()
+    (setq company-minimum-prefix-length 3
+          company-idle-delay 0.3))
+  (add-hook 'text-mode-hook #'dd/company-text-mode)
+  (add-hook 'prog-mode-hook #'dd/company-prog-mode))
 
 ;; (use-package company-box
 ;;   :ensure t
