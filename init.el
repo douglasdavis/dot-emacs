@@ -244,15 +244,18 @@ behavior added."
 (global-set-key [remap keyboard-quit] #'keyboard-quit-context+)
 
 (defun dd/google-s (s)
+  "Perform a google search S."
   (browse-url
    (format "https://google.com/search?q=%s"
            (url-hexify-string s))))
 
 (defun dd/google-region ()
+  "Google search the selection region."
   (interactive)
   (dd/google-s (buffer-substring (region-beginning) (region-end))))
 
 (defun dd/google-something (s)
+  "Perform an interactive google search of S."
   (interactive "sSearch: ")
   (dd/google-s s))
 
@@ -269,9 +272,11 @@ behavior added."
   (package-install 'use-package))
 
 (eval-when-compile
-  (require 'use-package)
-  (require 'bind-key)
-  (setq use-package-hook-name-suffix nil))
+  (require 'use-package))
+(require 'bind-key)
+;; (require 'diminish)
+
+(setq use-package-hook-name-suffix nil)
 
 ;; sec03:
 ;; use-package for some core Emacs packages.
@@ -440,6 +445,9 @@ behavior added."
          (message-mode-hook . flyspell-mode)
          (mu4e-compose-mode-hook . flyspell-mode)))
 
+(use-package flymake
+  :hook (emacs-lisp-mode-hook . flymake-mode))
+
 ;; sec04:
 ;; third party
 
@@ -478,41 +486,18 @@ behavior added."
 (use-package helm
   :ensure t
   :demand t
-  :bind (("M-x" . helm-M-x)
-         ("C-x r b" . helm-filtered-bookmarks)
-         ("C-x C-f" . helm-find-files)
-         ("C-x C-t" . find-file)
-         ("C-x b" . helm-buffers-list)
-         ("M-y" . helm-show-kill-ring)
-         :map helm-map
+  :bind (:map helm-map
          ("TAB" . helm-execute-persistent-action)
          ("<tab>" . helm-execute-persistent-action))
-  :custom-face
-  (helm-ff-file-extension ((t (:foreground "orange"))))
+  :bind-keymap ("C-x c" . helm-command-map)
   :config
-  (require 'helm-config)
-  (global-set-key (kbd "C-x c") 'helm-command-prefix)
   (setq history-delete-duplicates t)
   (setq helm-display-buffer-default-height 20
         helm-display-buffer-height 20
         helm-split-window-inside-p t
         helm-split-window-default-side 'below
-        helm-idle-delay 0.01
-        helm-input-idle-delay 0.01
-        helm-quick-update t
-        helm-grep-file-path-style 'relative
-        helm-ff-cache-mode-lighter ""
-        helm-ff-cache-mode-lighter-sleep ""
-        helm-grep-ag-command (concat (executable-find "rg")
-                                     " --color=always"
-                                     " --smart-case"
-                                     " --no-heading"
-                                     " --line-number %s %s %s"))
+        helm-input-idle-delay 0.01)
   (helm-mode +1)
-  (dolist (regexp '("\\*epc con" "\\*helm" "\\*EGLOT" "\\*straight" "\\*Flymake"
-                    "\\*eldoc" "\\*Compile-Log" "\\*xref" "\\*company"
-                    "\\*aw-posframe" "\\*Warnings" "\\*Backtrace"))
-    (add-to-list 'helm-boring-buffer-regexp-list regexp))
   (defun dd/helm-rg-dwim (arg)
     "Call `helm-grep-ag' from `projectile-project-root' or `default-directory'."
     (interactive "P")
@@ -521,6 +506,43 @@ behavior added."
           (helm-grep-ag (expand-file-name proj) arg)
         (helm-grep-ag (expand-file-name default-directory) arg)))))
 
+(use-package helm-command
+  :after helm
+  :bind (("M-x" . helm-M-x)))
+
+(use-package helm-ring
+  :after helm
+  :bind (("M-y" . helm-show-kill-ring)))
+
+(use-package helm-files
+  :after helm
+  :bind (("C-x C-f" . helm-find-files)
+         ("C-x C-t" . find-file))
+  :custom-face
+  (helm-ff-file-extension ((t (:foreground "orange"))))
+  :config
+  (setq helm-ff-cache-mode-lighter ""
+        helm-ff-cache-mode-lighter-sleep ""))
+
+(use-package helm-buffers
+  :after helm
+  :bind (("C-x b" . helm-buffers-list))
+  :config
+  (dolist (regexp '("\\*helm" "\\*lsp" "\\*EGLOT" "\\*straight" "\\*Flymake"
+                    "\\*eldoc" "\\*Compile-Log" "\\*xref" "\\*company"
+                    "\\*Warnings" "\\*Backtrace"))
+    (add-to-list 'helm-boring-buffer-regexp-list regexp)))
+
+(use-package helm-grep
+  :after helm
+  :config
+  (setq helm-grep-file-path-style 'relative)
+  (setq helm-grep-ag-command (concat (executable-find "rg")
+                                     " --color=always"
+                                     " --smart-case"
+                                     " --no-heading"
+                                     " --line-number %s %s %s")))
+
 (use-package helm-descbinds
   :ensure t
   :commands helm-descbinds)
@@ -528,22 +550,6 @@ behavior added."
 (use-package projectile
   :ensure t
   :demand t
-  :init
-  (pretty-hydra-define hydra-projectile
-    (:exit t :hint nil :title (projectile-project-root) :quit-key "q")
-    ("Movement" (("b" projectile-switch-to-buffer               "switch")
-                 ("B" projectile-switch-to-buffer-other-window  "switch (OW)")
-                 ("f" projectile-find-file                      "file")
-                 ("F" projectile-find-file-other-window         "file (OW)")
-                 ("u" projectile-find-file-in-known-projects    "find in known"))
-     "Search" (("r" dd/ripgrep-proj-or-dir  "ripgrep (rg.el)")
-               ("s" dd/ripgrep-proj-or-dir  "ripgrep (rg.el)")
-               ("o" projectile-multi-occur  "multioccur"))
-     "Misc" (("p" projectile-switch-project     "switch project")
-             ("a" projectile-add-known-project  "add to known")
-             ("h" helm-projectile               "helm projectile")
-             ("i" projectile-ibuffer            "ibuffer")
-             ("k" projectile-kill-buffers       "Kill em"))))
   :bind ("C-c P" . hydra-projectile/body)
   :bind-keymap ("C-c p" . projectile-command-map)
   :config
@@ -558,7 +564,24 @@ behavior added."
   (projectile-mode +1))
 
 (use-package helm-projectile
-  :ensure t)
+  :ensure t
+  :after (helm projectile))
+
+(pretty-hydra-define hydra-projectile
+  (:exit t :hint nil :title (projectile-project-root) :quit-key "q")
+  ("Movement" (("b" projectile-switch-to-buffer               "switch")
+               ("B" projectile-switch-to-buffer-other-window  "switch (OW)")
+               ("f" projectile-find-file                      "file")
+               ("F" projectile-find-file-other-window         "file (OW)")
+               ("u" projectile-find-file-in-known-projects    "find in known"))
+   "Search" (("r" dd/ripgrep-proj-or-dir  "ripgrep (rg.el)")
+             ("s" dd/ripgrep-proj-or-dir  "ripgrep (rg.el)")
+             ("o" projectile-multi-occur  "multioccur"))
+   "Misc" (("p" projectile-switch-project     "switch project")
+           ("a" projectile-add-known-project  "add to known")
+           ("h" helm-projectile               "helm projectile")
+           ("i" projectile-ibuffer            "ibuffer")
+           ("k" projectile-kill-buffers       "Kill em"))))
 
 (use-package company
   :ensure t
@@ -593,10 +616,6 @@ behavior added."
           company-idle-delay 0.3))
   (add-hook 'text-mode-hook #'dd/company-text-mode)
   (add-hook 'prog-mode-hook #'dd/company-prog-mode))
-
-;; (use-package company-box
-;;   :ensure t
-;;   :hook (company-mode-hook . company-box-mode))
 
 (use-package orderless
   :ensure t
@@ -640,38 +659,23 @@ behavior added."
 (use-package lsp-mode
   :ensure t
   :commands lsp
-  :init
-  (setq read-process-output-max (* 10 1024 1024)
-        lsp-keep-workspace-alive nil
-        lsp-clients-clangd-executable dd/clangd-exe
-        lsp-prefer-capf t
-        lsp-enable-on-type-formatting nil
-        lsp-auto-guess-root nil
-        lsp-diagnostic-package :auto)
   :bind (:map lsp-mode-map
               ("C-c l" . hydra-lsp/body))
-
+  :init
+  (setq read-process-output-max (* 10 1024 1024))
   :config
-  (pretty-hydra-define hydra-lsp (:exit t :hint nil :quit-key "q")
-    ("Finding" (("d" lsp-find-declaration             "find declaration")
-                ("D" lsp-ui-peek-find-definitions     "peek find declaration")
-                ("R" lsp-ui-peek-find-references      "peek find refs")
-                ("i" lsp-ui-peek-find-implementation  "peek find implementation")
-                ("t" lsp-find-type-defition           "find type definition"))
+  (setq lsp-keep-workspace-alive nil
+        lsp-auto-guess-root nil
+        lsp-enable-on-type-formatting nil))
 
-     "Misc" (("f" lsp-format-buffer            "format buffer")
-             ("m" lsp-ui-imenu                 "ui menu")
-             ("x" lsp-execute-code-action      "execeute code action")
-             ("s" lsp-signature-help           "sig help")
-             ("o" lsp-describe-thing-at-point  "describe thing at point")
-             ("r" lsp-rename                   "rename"))
-
-     "Session" (("M-s" lsp-describe-session   "describe session")
-                ("M-r" lsp-workspace-restart  "restart workspace")
-                ("S" lsp-workspace-shutdown   "shutdown workspace")))))
+(use-package lsp-clangd
+  :after lsp
+  :config
+  (setq lsp-clients-clangd-executable dd/clangd-exe))
 
 (use-package lsp-pyls
-  :init
+  :after lsp
+  :config
   (setq lsp-pyls-plugins-autopep8-enabled nil
         lsp-pyls-plugins-pycodestyle-enabled nil
         lsp-pyls-plugins-flake8-enabled t
@@ -691,7 +695,9 @@ behavior added."
   :init
   (setq eglot-server-programs
         `((python-mode "pyls")
-          ((c++-mode c-mode) ,dd/clangd-exe))))
+          ((c++-mode c-mode) ,dd/clangd-exe)))
+  :config
+  (setq eglot-autoshutdown t))
 
 (use-package eldoc-box
   :ensure t
@@ -699,7 +705,8 @@ behavior added."
 
 (use-package clang-format
   :ensure t
-  :init
+  :after c++-mode
+  :config
   (setq clang-format-executable dd/clang-format-exe))
 
 (use-package modern-cpp-font-lock
@@ -712,7 +719,8 @@ behavior added."
   (setenv "WORKON_HOME" "~/.pyenv/versions"))
 
 (use-package blacken
-  :ensure t)
+  :ensure t
+  :after python)
 
 (when (or dd/on-mac dd/on-cc7 dd/on-abx)
   (use-package cider
@@ -841,17 +849,11 @@ behavior added."
                         "##crustaceans")
              :tls t)))
     :config
-    (require 'circe-color-nicks)
-    (setq circe-color-nicks-pool-type
-          '("#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#fe8019"
-            "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e"))
-    (enable-circe-color-nicks)
     (setq circe-use-cycle-completion t
           circe-reduce-lurker-spam t
           circe-format-say "<{nick}> {body}"
           lui-fill-type 19
-          lui-fill-column 77
-          circe-color-nicks-everywhere t)
+          lui-fill-column 77)
     (setq helm-mode-no-completion-in-region-in-modes
           '(circe-channel-mode
             circe-query-mode
@@ -860,7 +862,6 @@ behavior added."
           (concat "Closed Circe (" circe-version ") buffer in GNU Emacs (" emacs-version ")"))
     (setq circe-default-quit-message
           (concat "Quit Circe (" circe-version ") in GNU Emacs (" emacs-version ")"))
-
     (defun dd/switch-circe-channel ()
       (interactive)
       (let ((sources
@@ -870,6 +871,15 @@ behavior added."
         (switch-to-buffer (completing-read "Channel: " sources))))
 
     (bind-key (kbd "C-c C-b") #'dd/switch-circe-channel circe-mode-map))
+
+  (use-package circe-color-nicks
+    :after circe
+    :config
+    (setq circe-color-nicks-pool-type
+          '("#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#fe8019"
+            "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e"))
+    (setq circe-color-nicks-everywhere t)
+    (enable-circe-color-nicks))
 
   (use-package helm-circe
     :ensure t
@@ -966,10 +976,6 @@ behavior added."
   :ensure t
   :after ox)
 
-(use-package ox-reveal
-  :ensure t
-  :after ox)
-
 (use-package htmlize
   :ensure t
   :after ox)
@@ -1035,3 +1041,7 @@ behavior added."
 
 ;; sec07:
 ;; experimenting
+
+
+(provide 'init)
+;;; init.el ends here
