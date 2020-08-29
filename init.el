@@ -360,7 +360,7 @@ behavior added."
     (tramp-cleanup-all-buffers)
     (tramp-cleanup-all-connections)
     (find-file "~/.")
-    (dd/scratch-buffer)))
+    (switch-to-buffer "*scratch*")))
 
 (use-package vc
   :init
