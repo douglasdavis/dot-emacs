@@ -259,6 +259,21 @@ behavior added."
   (interactive "sSearch: ")
   (dd/google-s s))
 
+(defvar dd/llvm-bin-path
+  (cond (dd/on-mac "/usr/local/opt/llvm/bin")
+        (dd/on-cc7 "/home/ddavis/software/specific/llvm/master/bin")
+        (dd/on-grads-18 "/home/drd25/software/specific/llvm/10.x/bin"))
+  "Machine dependent llvm bin path.")
+
+(defun dd/llvm-project-exe (exe-name)
+  "Get full path of LLVM executable EXE-NAME."
+  (when (and dd/llvm-bin-path (file-exists-p dd/llvm-bin-path))
+    (concat (file-name-as-directory dd/llvm-bin-path) exe-name)))
+
+(defvar dd/clangd-exe (dd/llvm-project-exe "clangd"))
+(defvar dd/clang-format-exe (dd/llvm-project-exe "clang-format"))
+(defvar dd/clang-exe (dd/llvm-project-exe "clang"))
+
 ;; sec02:
 ;; use-package setup
 
@@ -391,20 +406,9 @@ behavior added."
   :hook ((emacs-lisp-mode-hook . prettify-symbols-mode)))
 
 (use-package cc-mode
+  :demand t
   :mode (("\\.h\\(h?\\|xx\\|pp\\)\\'" . c++-mode)
-         ("\\.icc\\'" . c++-mode))
-  :init
-  (defun dd/llvm-project-exe (exe-name)
-    (when (and dd/llvm-bin-path (file-exists-p dd/llvm-bin-path))
-      (concat (file-name-as-directory dd/llvm-bin-path) exe-name)))
-  (defvar dd/llvm-bin-path
-    (cond (dd/on-mac "/usr/local/opt/llvm/bin")
-          (dd/on-cc7 "/home/ddavis/software/specific/llvm/master/bin")
-          (dd/on-grads-18 "/home/drd25/software/specific/llvm/10.x/bin"))
-    "Machine dependent llvm bin path.")
-  (defvar dd/clangd-exe (dd/llvm-project-exe "clangd"))
-  (defvar dd/clang-format-exe (dd/llvm-project-exe "clang-format"))
-  (defvar dd/clang-exe (dd/llvm-project-exe "clang")))
+         ("\\.icc\\'" . c++-mode)))
 
 (use-package python
   :mode ("\\.py\\'" . python-mode)
@@ -670,7 +674,7 @@ behavior added."
 
 (use-package lsp-clangd
   :after lsp
-  :config
+  :init
   (setq lsp-clients-clangd-executable dd/clangd-exe))
 
 (use-package lsp-pyls
