@@ -132,7 +132,10 @@
   (set-face-attribute 'default nil
                       :family "JetBrains Mono"
                       :weight 'regular
-                      :height 130))
+                      :height 130)
+  (set-fontset-font t 'symbol
+                    (font-spec :family "Noto Color Emoji")
+                    nil 'prepend))
 
 (defun dd/delete-and-kill-current ()
   "Delete buffer's current file and kill the buffer."
