@@ -418,6 +418,8 @@ behavior added."
   :interpreter ("python" . python-mode)
   :bind (:map python-mode-map
               ("C-c C-a" . dd/py-auto-lsp))
+  :init
+  (setq python-indent-guess-indent-offset nil)
   :config
   (defun dd/py-workon-project-venv ()
     "Call pyenv-workon with the current projectile project name.
@@ -669,16 +671,12 @@ behavior added."
   :bind (:map lsp-mode-map
               ("C-c l" . hydra-lsp/body))
   :init
+  (setq lsp-clients-clangd-executable dd/clangd-exe)
   (setq read-process-output-max (* 10 1024 1024))
   :config
   (setq lsp-keep-workspace-alive nil
         lsp-auto-guess-root nil
         lsp-enable-on-type-formatting nil))
-
-(use-package lsp-clangd
-  :after lsp
-  :init
-  (setq lsp-clients-clangd-executable dd/clangd-exe))
 
 (use-package lsp-pyls
   :after lsp
