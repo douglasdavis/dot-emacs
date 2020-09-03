@@ -332,6 +332,14 @@ behavior added."
     (use-package project :ensure t)
   (use-package project))
 
+(if (< emacs-major-version 28)
+    (progn
+      (use-package eldoc
+        :ensure t
+        :config
+        (load "eldoc")))
+  (use-package eldoc))
+
 (use-package whitespace
   :init
   (dolist (hook '(prog-mode-hook text-mode-hook))
