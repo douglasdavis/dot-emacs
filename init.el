@@ -567,8 +567,10 @@ behavior added."
 (use-package projectile
   :ensure t
   :demand t
-  :bind ("C-c P" . hydra-projectile/body)
   :bind-keymap ("C-c p" . projectile-command-map)
+  :bind (:map projectile-command-map
+              ("r" . dd/ripgrep-proj-or-dir)
+              ("g" . dd/helm-rg-dwim))
   :config
   (when (executable-find "fd")
     (setq projectile-git-command "fd . -0 --type f --color=never"))
@@ -599,6 +601,7 @@ behavior added."
            ("h" helm-projectile               "helm projectile")
            ("i" projectile-ibuffer            "ibuffer")
            ("k" projectile-kill-buffers       "Kill em"))))
+(bind-key (kbd "C-c P") #'hydra-projectile/body)
 
 (use-package company
   :ensure t
@@ -1041,7 +1044,7 @@ behavior added."
   (bind-key (kbd "s-f") #'helm-find-files)
   (bind-key (kbd "s-g") #'magit-status)
   (bind-key (kbd "s-o") #'other-window)
-  (bind-key (kbd "s-p") #'hydra-projectile/body)
+  (bind-key (kbd "s-p") #'projectile-command-map)
   (bind-key (kbd "s-r") #'dd/helm-rg-dwim)
   (bind-key (kbd "s-u") #'gnus)
   (bind-key (kbd "s-w") #'dd/delete-frame-or-window))
