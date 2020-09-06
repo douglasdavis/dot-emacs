@@ -34,9 +34,7 @@
 
 ;; for native-comp branch
 (when (fboundp 'native-compile-async)
-  (setq comp-async-jobs-number 4
-        comp-deferred-compilation t
-        comp-deferred-compilation-black-list '()))
+  (setq comp-deferred-compilation t))
 
 (setq user-mail-address "ddavis@ddavis.io"
       user-full-name "Doug Davis")
