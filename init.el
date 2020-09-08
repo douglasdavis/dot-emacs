@@ -30,10 +30,8 @@
 (when (boundp 'load-prefer-newer)
   (setq load-prefer-newer t))
 
-(fset 'yes-or-no-p 'y-or-n-p)
-
-;; for native-comp branch
-(when (fboundp 'native-compile-async)
+;; for native comp branch
+(when (boundp 'comp-deferred-compilation)
   (setq comp-deferred-compilation t))
 
 (setq user-mail-address "ddavis@ddavis.io"
@@ -44,10 +42,6 @@
        (directory-file-name user-emacs-directory)))
 
 (setq custom-file (concat user-emacs-directory "custom.el"))
-
-;; 1GB threshold while init is loaded. at the end of init.el we hand
-;; over the responsbility to gcmh.
-(setq gc-cons-threshold (* 1000 1024 1024))
 
 ;; sec01:
 ;; general setup not associated with packages
@@ -75,6 +69,8 @@
 (setq echo-keystrokes 0.01
       ring-bell-function 'ignore
       visible-bell nil)
+
+(fset 'yes-or-no-p 'y-or-n-p)
 
 (setq-default auto-save-list-file-prefix nil
               create-lockfiles nil
@@ -121,7 +117,8 @@
                       :weight 'regular
                       :height 130))
 (when dd/on-mac
-  (setq mac-allow-anti-aliasing t)
+  (when (boundp 'mac-allow-anti-aliasing)
+    (setq mac-allow-anti-aliasing t))
   (set-face-attribute 'default nil
                       :family "JetBrains Mono"
                       :weight 'regular
@@ -289,10 +286,8 @@ behavior added."
 
 (eval-when-compile
   (require 'use-package))
-(require 'bind-key)
-;; (require 'diminish)
-
 (setq use-package-hook-name-suffix nil)
+(require 'bind-key)
 
 ;; sec03:
 ;; use-package for some core Emacs packages.
@@ -704,7 +699,7 @@ behavior added."
         lsp-ui-sideline-show-hover nil))
 
 (use-package eglot
-  :disabled
+  :ensure t
   :commands eglot
   :init
   (setq eglot-server-programs
@@ -715,7 +710,10 @@ behavior added."
 
 (use-package eldoc-box
   :ensure t
-  :hook (eglot-managed-mode-hook . eldoc-box-hover-at-point-mode))
+  :hook (eglot-managed-mode-hook . eldoc-box-hover-at-point-mode)
+  :init
+  (setq eldoc-box-clear-with-C-g t
+        eldoc-box-fringe-use-same-bg nil))
 
 (use-package clang-format
   :ensure t

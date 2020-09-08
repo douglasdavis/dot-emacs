@@ -193,18 +193,18 @@
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
                 :name "Unread short"
-                :query "flag:unread AND (m:/duke* or m:/cern* or m:/fastmail/INBOX or m:/gmail/INBOX*)"
+                :query "flag:unread and (m:/duke* or m:/cern* or m:/fastmail/INBOX or m:/gmail/INBOX*)"
                 :key ?U))
-  (add-to-list 'mu4e-bookmarks
-               (make-mu4e-bookmark
-                :name "Recent personal"
-                :query "date:14d..now AND (m:/fastmail/INBOX or m:/gmail/INBOX*)"
-                :key ?p))
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
                 :name "Unread all"
                 :query "flag:unread AND NOT flag:trashed"
                 :key ?u))
+  (add-to-list 'mu4e-bookmarks
+               (make-mu4e-bookmark
+                :name "Recent personal"
+                :query "date:2w..now AND (m:/fastmail/INBOX or m:/gmail/INBOX*)"
+                :key ?p))
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
                 :name "INBOXes"
@@ -213,12 +213,16 @@
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
                 :name "Last day's work"
-                :query "date:1d..now AND NOT m:/fastmail* AND NOT m:/gmail* AND NOT m:/cern/Mailing\\ Lists/JEDI*"
+                :query (concat "date:1d..now "
+                               "and not m:/fastmail* "
+                               "and not m:/gmail* "
+                               "and not m:/cern/Mailing\\ Lists/CERN-JIRA "
+                               "and not m:/cern/Mailing\\ Lists/JEDI*")
                 :key ?w))
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
                 :name "Recent work"
-                :query "date:3d..now AND NOT m:/fastmail* AND NOT m:/gmail* AND NOT m:/cern/Mailing\\ Lists/JEDI*"
+                :query "date:3d..now AND NOT m:/fastmail* "
                 :key ?r))
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
