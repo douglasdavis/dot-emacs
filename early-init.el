@@ -3,7 +3,9 @@
 (setq gc-cons-threshold most-positive-fixnum)
 
 (require 'package)
-(setq package-user-dir (concat user-emacs-directory "elpa-" emacs-version))
+(if (fboundp 'native-compile)
+    (setq package-user-dir (concat user-emacs-directory "elpa-" emacs-version "-native"))
+  (setq package-user-dir (concat user-emacs-directory "elpa-" emacs-version)))
 
 (setq frame-inhibit-implied-resize t)
 

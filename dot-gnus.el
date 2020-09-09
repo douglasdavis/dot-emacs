@@ -133,7 +133,7 @@
   (setq gnus-summary-line-format "%U%R%z %-16,16&user-date;  %4L:%-20,20f  %B%S\n")
   (setq gnus-summary-mode-line-format "Gnus: %p (%U)")
   (when window-system
-  (setq gnus-summary-display-arrow t)
+    (setq gnus-summary-display-arrow t)
     (setq-default
      ;; gnus-user-date-format-alist '((t . "%Y-%m-%d %H:%M"))
      ;;gnus-thread-sort-functions '(gnus-thread-sort-by-date)

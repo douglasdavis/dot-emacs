@@ -30,10 +30,6 @@
 (when (boundp 'load-prefer-newer)
   (setq load-prefer-newer t))
 
-;; for native comp branch
-(when (boundp 'comp-deferred-compilation)
-  (setq comp-deferred-compilation t))
-
 (setq user-mail-address "ddavis@ddavis.io"
       user-full-name "Doug Davis")
 
@@ -45,6 +41,11 @@
 
 ;; sec01:
 ;; general setup not associated with packages
+
+;; for native comp branch
+(defconst dd/using-native-comp (fboundp 'native-comp-available-p))
+(when dd/using-native-comp
+  (setq comp-deferred-compilation t))
 
 (defun dd/includes? (s substr)
   "Clojure like function; t if S includes SUBSTR."
@@ -1055,7 +1056,7 @@ behavior added."
 ;; experimenting
 
 
-(when dd/on-cc7
+(when (and dd/on-cc7 (not dd/using-native-comp))
   (use-package ligature
     :load-path "~/.emacs.d/site-lisp"
     :config
