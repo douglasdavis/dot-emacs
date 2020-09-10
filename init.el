@@ -904,13 +904,14 @@ behavior added."
     :init
     (setq erc-prompt-for-password nil)
     (setq erc-user-full-name "Doug Davis")
+    (setq erc-rename-buffers t)
     :config
     (setq erc-track-enable-keybindings nil)
     (setq erc-kill-buffer-on-part t)
     (setq erc-kill-server-buffer-on-quit t)
     (setq erc-fill-function 'erc-fill-static)
     (setq erc-fill-static-center 19)
-    (setq erc-prompt (lambda () (concat (buffer-name) " >>>")))
+    (setq erc-prompt (lambda () (concat (buffer-name) " >")))
     (setq erc-hide-list '("JOIN" "PART" "QUIT"))
     (setq erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
     (setq erc-track-exclude-types '("JOIN" "MODE" "NICK" "PART" "QUIT"
@@ -994,7 +995,9 @@ behavior added."
   :after ox)
 
 (use-package w3m
-  :ensure t)
+  :ensure t
+  :config
+  (setq w3m-default-display-inline-images t))
 
 ;; (use-package dashboard
 ;;   :ensure t

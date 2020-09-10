@@ -28,22 +28,24 @@
   (cond (dd/on-mac "/Users/ddavis/software/localbase/bin/mu")
         (dd/on-abx "/usr/bin/mu")
         (dd/on-cc7 "/home/ddavis/software/specific/mu/1.4.10/bin/mu"))
-  "machine dependent mu executable string")
+  "Machine dependent mu executable string.")
 
 (defconst dd/mu4e-dir
   (cond (dd/on-mac "/Users/ddavis/software/localbase/share/emacs/site-lisp/mu4e")
         (dd/on-abx "/usr/share/emacs/site-lisp/mu4e")
         (dd/on-cc7 "/home/ddavis/software/specific/mu/1.4.10/share/emacs/site-lisp/mu4e"))
-  "machine dependent mu4e installation location string")
+  "Machine dependent mu4e installation location string.")
 
 (defconst dd/sendmail-exe
   (cond (dd/on-mac "/Users/ddavis/software/localbase/bin/msmtp")
         (dd/on-abx "/usr/bin/msmtp")
         (dd/on-cc7 "/usr/local/bin/msmtp"))
-  "machine dependent msmtp executable string")
+  "Machine dependent msmtp executable string.")
+
+(require 'sendmail)
+(require 'message)
 
 (setq user-mail-address "ddavis@ddavis.io"
-      user-email-address "ddavis@ddavis.io"
       user-full-name "Doug Davis"
       sendmail-program dd/sendmail-exe
       message-send-mail-function 'message-send-mail-with-sendmail
@@ -55,37 +57,33 @@
                                     "ddavis@cern.ch"))
 
 (defun dd/reset-standard-name-and-email ()
+  "Reset mail address and name to default."
   (interactive)
   (setq user-mail-address "ddavis@ddavis.io"
-        user-email-address "ddavis@ddavis.io"
         user-full-name "Doug Davis"))
 
 (defun dd/mu4e-jump-via-helm ()
+  "Jump maildirs via Helm."
   (interactive)
   (let ((maildir (helm-comp-read "Maildir: " (mu4e-get-maildirs))))
     (mu4e-headers-search (format "maildir:\"%s\"" maildir))))
 
 (defun dd/mu4e-jump-via-comp-read ()
+  "Jump maildirs using `completing-read'."
   (interactive)
   (let ((maildir (completing-read "Maildir: " (mu4e-get-maildirs))))
     (mu4e-headers-search (format "maildir:\"%s\"" maildir))))
 
 (defun mu4e-action-view-in-w3m ()
-  "View the body of the message in emacs w3m."
+  "View the body of the message in Emacs w3m."
   (interactive)
   (w3m-browse-url (concat "file://"
                           (mu4e~write-body-to-html (mu4e-message-at-point t)))))
-
-(defun dd/mu4e-toggle-gnus ()
-  (interactive)
-  (setq mu4e-view-use-gnus (not mu4e-view-use-gnus)))
 
 (with-eval-after-load "mm-decode"
   (add-to-list 'mm-discouraged-alternatives "text/html")
   (add-to-list 'mm-discouraged-alternatives "text/richtext"))
 
-;; (setq mu4e-html2text-command "w3m -T text/html")
-(setq w3m-default-desplay-inline-images t)
 
 (use-package mu4e
   :load-path dd/mu4e-dir
@@ -104,6 +102,11 @@
          ("M" . mu4e-action-view-in-w3m)
          ("j" . dd/mu4e-jump-via-comp-read))
   :config
+  (defun dd/mu4e-toggle-gnus ()
+    "Toggle Gnus view mode in mu4e."
+    (interactive)
+    (setq mu4e-view-use-gnus (not mu4e-view-use-gnus)))
+
   (set-face-attribute 'mu4e-header-highlight-face nil :weight 'regular)
   ;; (setq  mu4e-use-fancy-chars nil
   ;;        mu4e-headers-thread-connection-prefix '("│"   . "│")
