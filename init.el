@@ -298,6 +298,9 @@ behavior added."
   (unless (server-running-p)
     (server-start)))
 
+(use-package ibuffer
+  :bind (("C-x C-b" . ibuffer-other-window)))
+
 (use-package org
   :init
   (setq org-src-fontify-natively t)
@@ -494,91 +497,91 @@ behavior added."
 (use-package pretty-hydra
   :ensure t)
 
-(use-package helm
-  :ensure t
-  :demand t
-  :bind (:map helm-map
-         ("TAB" . helm-execute-persistent-action)
-         ("<tab>" . helm-execute-persistent-action))
-  :bind-keymap ("C-x c" . helm-command-map)
-  :config
-  (setq history-delete-duplicates t)
-  (setq helm-display-buffer-default-height 20
-        helm-display-buffer-height 20
-        helm-split-window-inside-p t
-        helm-split-window-default-side 'below
-        helm-input-idle-delay 0.01)
-  (helm-mode +1)
-  (defun dd/helm-rg-dwim (arg)
-    "Call `helm-grep-ag' from `projectile-project-root' or `default-directory'."
-    (interactive "P")
-    (let ((proj (projectile-project-root)))
-      (if proj
-          (helm-grep-ag (expand-file-name proj) arg)
-        (helm-grep-ag (expand-file-name default-directory) arg)))))
+;; (use-package helm
+;;   :ensure t
+;;   :demand t
+;;   :bind (:map helm-map
+;;          ("TAB" . helm-execute-persistent-action)
+;;          ("<tab>" . helm-execute-persistent-action))
+;;   :bind-keymap ("C-x c" . helm-command-map)
+;;   :config
+;;   (setq history-delete-duplicates t)
+;;   (setq helm-display-buffer-default-height 20
+;;         helm-display-buffer-height 20
+;;         helm-split-window-inside-p t
+;;         helm-split-window-default-side 'below
+;;         helm-input-idle-delay 0.01)
+;;   (helm-mode +1)
+;;   (defun dd/helm-rg-dwim (arg)
+;;     "Call `helm-grep-ag' from `projectile-project-root' or `default-directory'."
+;;     (interactive "P")
+;;     (let ((proj (projectile-project-root)))
+;;       (if proj
+;;           (helm-grep-ag (expand-file-name proj) arg)
+;;         (helm-grep-ag (expand-file-name default-directory) arg)))))
 
-(use-package helm-command
-  :after helm
-  :bind (("M-x" . helm-M-x)))
+;; (use-package helm-command
+;;   :after helm
+;;   :bind (("M-x" . helm-M-x)))
 
-(use-package helm-ring
-  :after helm
-  :bind (("M-y" . helm-show-kill-ring)))
+;; (use-package helm-ring
+;;   :after helm
+;;   :bind (("M-y" . helm-show-kill-ring)))
 
-(use-package helm-files
-  :after helm
-  :bind (("C-x C-f" . helm-find-files)
-         ("C-x C-t" . find-file))
-  :custom-face
-  (helm-ff-file-extension ((t (:foreground "orange"))))
-  :config
-  (setq helm-ff-cache-mode-lighter ""
-        helm-ff-cache-mode-lighter-sleep ""))
+;; (use-package helm-files
+;;   :after helm
+;;   :bind (("C-x C-f" . helm-find-files)
+;;          ("C-x C-t" . find-file))
+;;   :custom-face
+;;   (helm-ff-file-extension ((t (:foreground "orange"))))
+;;   :config
+;;   (setq helm-ff-cache-mode-lighter ""
+;;         helm-ff-cache-mode-lighter-sleep ""))
 
-(use-package helm-buffers
-  :after helm
-  :bind (("C-x b" . helm-buffers-list))
-  :config
-  (dolist (regexp '("\\*helm" "\\*lsp" "\\*EGLOT" "\\*straight" "\\*Flymake"
-                    "\\*eldoc" "\\*Compile-Log" "\\*xref" "\\*company"
-                    "\\*Warnings" "\\*Backtrace"))
-    (add-to-list 'helm-boring-buffer-regexp-list regexp)))
+;; (use-package helm-buffers
+;;   :after helm
+;;   :bind (("C-x b" . helm-buffers-list))
+;;   :config
+;;   (dolist (regexp '("\\*helm" "\\*lsp" "\\*EGLOT" "\\*straight" "\\*Flymake"
+;;                     "\\*eldoc" "\\*Compile-Log" "\\*xref" "\\*company"
+;;                     "\\*Warnings" "\\*Backtrace"))
+;;     (add-to-list 'helm-boring-buffer-regexp-list regexp)))
 
-(use-package helm-grep
-  :after helm
-  :config
-  (setq helm-grep-file-path-style 'relative)
-  (setq helm-grep-ag-command (concat (executable-find "rg")
-                                     " --color=always"
-                                     " --smart-case"
-                                     " --no-heading"
-                                     " --line-number %s %s %s")))
+;; (use-package helm-grep
+;;   :after helm
+;;   :config
+;;   (setq helm-grep-file-path-style 'relative)
+;;   (setq helm-grep-ag-command (concat (executable-find "rg")
+;;                                      " --color=always"
+;;                                      " --smart-case"
+;;                                      " --no-heading"
+;;                                      " --line-number %s %s %s")))
 
-(use-package helm-descbinds
-  :ensure t
-  :commands helm-descbinds)
+;; (use-package helm-descbinds
+;;   :ensure t
+;;   :commands helm-descbinds)
 
 (use-package projectile
   :ensure t
   :demand t
   :bind-keymap ("C-c p" . projectile-command-map)
-  :bind (:map projectile-command-map
-              ("r" . dd/ripgrep-proj-or-dir)
-              ("g" . dd/helm-rg-dwim))
+  ;; :bind (:map projectile-command-map
+  ;;             ("r" . dd/ripgrep-proj-or-dir)
+  ;;             ("g" . dd/helm-rg-dwim))
   :config
   (when (executable-find "fd")
     (setq projectile-git-command "fd . -0 --type f --color=never"))
   (setq projectile-track-known-projects-automatically nil
-        projectile-completion-system 'helm
+        projectile-completion-system 'ivy
         projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
         projectile-globally-ignored-directories '(".git" "__pycache__")
         projectile-globally-ignored-files '(".DS_Store")
         projectile-enable-caching nil)
   (projectile-mode +1))
 
-(use-package helm-projectile
-  :ensure t
-  :after (helm projectile))
+;; (use-package helm-projectile
+;;   :ensure t
+;;   :after (helm projectile))
 
 (pretty-hydra-define hydra-projectile
   (:exit t :hint nil :title (projectile-project-root) :quit-key "q")
@@ -592,7 +595,7 @@ behavior added."
              ("o" projectile-multi-occur  "multioccur"))
    "Misc" (("p" projectile-switch-project     "switch project")
            ("a" projectile-add-known-project  "add to known")
-           ("h" helm-projectile               "helm projectile")
+           ;;("h" helm-projectile               "helm projectile")
            ("i" projectile-ibuffer            "ibuffer")
            ("k" projectile-kill-buffers       "Kill em"))))
 (bind-key (kbd "C-c P") #'hydra-projectile/body)
@@ -684,7 +687,6 @@ behavior added."
         lsp-enable-on-type-formatting nil))
 
 (use-package lsp-pyls
-  :after lsp
   :config
   (setq lsp-pyls-plugins-autopep8-enabled nil
         lsp-pyls-plugins-pycodestyle-enabled nil
@@ -693,9 +695,12 @@ behavior added."
 
 (use-package lsp-ui
   :ensure t
-  :commands lsp-ui-mode
   :config
   (setq lsp-ui-doc-enable t
+        lsp-ui-doc-include-signature nil
+        lsp-ui-doc-position 'at-point
+        lsp-ui-doc-header t
+        lsp-ui-doc-max-height 25
         lsp-ui-doc-max-width 92
         lsp-ui-sideline-show-hover nil))
 
@@ -798,8 +803,8 @@ behavior added."
 (use-package doom-themes
   :ensure t
   :demand t
-  :custom-face
-  (helm-ff-file-extension ((t (:foreground "orange"))))
+  ;; :custom-face
+  ;; (helm-ff-file-extension ((t (:foreground "orange"))))
   :config
   (load-theme 'doom-gruvbox t)
   (set-face-attribute 'font-lock-doc-face nil :foreground "#a89984"))
@@ -867,10 +872,10 @@ behavior added."
           circe-format-say "<{nick}> {body}"
           lui-fill-type 19
           lui-fill-column 77)
-    (setq helm-mode-no-completion-in-region-in-modes
-          '(circe-channel-mode
-            circe-query-mode
-            circe-server-mode))
+    ;; (setq helm-mode-no-completion-in-region-in-modes
+    ;;       '(circe-channel-mode
+    ;;         circe-query-mode
+    ;;         circe-server-mode))
     (setq circe-default-part-message
           (concat "Closed Circe (" circe-version ") buffer in GNU Emacs (" emacs-version ")"))
     (setq circe-default-quit-message
@@ -894,10 +899,10 @@ behavior added."
     (setq circe-color-nicks-everywhere t)
     (enable-circe-color-nicks))
 
-  (use-package helm-circe
-    :ensure t
-    :after circe
-    :bind (:map helm-command-map ("i" . helm-circe)))
+  ;; (use-package helm-circe
+  ;;   :ensure t
+  ;;   :after circe
+  ;;   :bind (:map helm-command-map ("i" . helm-circe)))
 
   (use-package erc
     :commands erc
@@ -1040,12 +1045,12 @@ behavior added."
   (bind-key (kbd "s-3") #'split-window-right)
   (bind-key (kbd "s-5") #'projectile-find-file-in-known-projects)
   (bind-key (kbd "s-4") #'mu4e)
-  (bind-key (kbd "s-b") #'helm-buffers-list)
-  (bind-key (kbd "s-f") #'helm-find-files)
+  ;; (bind-key (kbd "s-b") #'helm-buffers-list)
+  ;; (bind-key (kbd "s-f") #'helm-find-files)
   (bind-key (kbd "s-g") #'magit-status)
   (bind-key (kbd "s-o") #'other-window)
   (bind-key (kbd "s-p") #'projectile-command-map)
-  (bind-key (kbd "s-r") #'dd/helm-rg-dwim)
+  ;; (bind-key (kbd "s-r") #'dd/helm-rg-dwim)
   (bind-key (kbd "s-u") #'gnus)
   (bind-key (kbd "s-w") #'dd/delete-frame-or-window))
 
@@ -1058,34 +1063,17 @@ behavior added."
 ;; sec07:
 ;; experimenting
 
+(use-package ivy
+  :ensure t
+  :config
+  (setq ivy-height 15
+        ivy-fixed-height-minibuffer t)
+  (ivy-mode +1))
 
-(when (and dd/on-cc7 (not dd/using-native-comp))
-  (use-package ligature
-    :load-path "~/.emacs.d/site-lisp"
-    :config
-    ;; Enable the "www" ligature in every possible major mode
-    (ligature-set-ligatures 't '("www"))
-    ;; Enable traditional ligature support in eww-mode, if the
-    ;; `variable-pitch' face supports it
-    (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
-    ;; Enable all Cascadia Code ligatures in programming modes
-    (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
-                                         ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
-                                         "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
-                                         "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
-                                         "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
-                                         "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
-                                         "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
-                                         "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
-                                         ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
-                                         "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
-                                         "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
-                                         "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
-                                         "\\" "://"))
-    ;; Enables ligature checks globally in all buffers. You can also do it
-    ;; per mode with `ligature-mode'.
-    (global-ligature-mode t)))
-
+(use-package counsel
+  :ensure t
+  :config
+  (counsel-mode +1))
 
 (provide 'init)
 ;;; init.el ends here
