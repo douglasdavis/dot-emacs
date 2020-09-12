@@ -44,7 +44,7 @@
 
 ;; for native comp branch
 (defconst dd/using-native-comp (fboundp 'native-comp-available-p))
-(when dd/using-native-comp
+(when (boundp 'comp-deferred-compilation)
   (setq comp-deferred-compilation t))
 
 (defun dd/includes? (s substr)
