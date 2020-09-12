@@ -1045,12 +1045,13 @@ behavior added."
   (bind-key (kbd "s-3") #'split-window-right)
   (bind-key (kbd "s-5") #'projectile-find-file-in-known-projects)
   (bind-key (kbd "s-4") #'mu4e)
-  ;; (bind-key (kbd "s-b") #'helm-buffers-list)
-  ;; (bind-key (kbd "s-f") #'helm-find-files)
+  (bind-key (kbd "s-f") #'find-file)
+  (bind-key (kbd "s-b") #'switch-to-buffer)
   (bind-key (kbd "s-g") #'magit-status)
   (bind-key (kbd "s-o") #'other-window)
   (bind-key (kbd "s-p") #'projectile-command-map)
-  ;; (bind-key (kbd "s-r") #'dd/helm-rg-dwim)
+  ;; (bind-key (kbd "s-r") #'counsel-rg)
+  (bind-key (kbd "s-r") #'dd/counsel-rg-dwim)
   (bind-key (kbd "s-u") #'gnus)
   (bind-key (kbd "s-w") #'dd/delete-frame-or-window))
 
@@ -1073,7 +1074,15 @@ behavior added."
 (use-package counsel
   :ensure t
   :config
+  (defun dd/counsel-rg-dwim (arg)
+    "Call `counsel-rg' from project root or `default-directory' with ARG."
+    (interactive "P")
+    (let ((proj (projectile-project-root)))
+      (if proj
+          (counsel-rg "" (expand-file-name proj) nil arg)
+        (counsel-rg "" (expand-file-name default-directory) nil arg))))
   (counsel-mode +1))
+
 
 (provide 'init)
 ;;; init.el ends here
