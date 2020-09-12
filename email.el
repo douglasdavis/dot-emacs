@@ -62,12 +62,6 @@
   (setq user-mail-address "ddavis@ddavis.io"
         user-full-name "Doug Davis"))
 
-(defun dd/mu4e-jump-via-helm ()
-  "Jump maildirs via Helm."
-  (interactive)
-  (let ((maildir (helm-comp-read "Maildir: " (mu4e-get-maildirs))))
-    (mu4e-headers-search (format "maildir:\"%s\"" maildir))))
-
 (defun dd/mu4e-jump-via-comp-read ()
   "Jump maildirs using `completing-read'."
   (interactive)
