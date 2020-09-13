@@ -497,77 +497,110 @@ behavior added."
 (use-package pretty-hydra
   :ensure t)
 
-;; (use-package helm
+(use-package helm
+  :ensure t
+  :demand t
+  :bind (:map helm-map
+         ("TAB" . helm-execute-persistent-action)
+         ("<tab>" . helm-execute-persistent-action))
+  :bind-keymap ("C-x c" . helm-command-map)
+  :config
+  (setq history-delete-duplicates t)
+  (setq helm-display-buffer-default-height 20
+        helm-display-buffer-height 20
+        helm-split-window-inside-p t
+        helm-split-window-default-side 'below
+        helm-input-idle-delay 0.01)
+  (helm-mode +1)
+  (defun dd/helm-rg-dwim (arg)
+    "Call `helm-grep-ag' from `projectile-project-root' or `default-directory'."
+    (interactive "P")
+    (let ((proj (projectile-project-root)))
+      (if proj
+          (helm-grep-ag (expand-file-name proj) arg)
+        (helm-grep-ag (expand-file-name default-directory) arg)))))
+
+(use-package helm-command
+  :after helm
+  :bind (("M-x" . helm-M-x)))
+
+(use-package helm-ring
+  :after helm
+  :bind (("M-y" . helm-show-kill-ring)))
+
+(use-package helm-files
+  :after helm
+  :bind (("C-x C-f" . helm-find-files)
+         ("C-x C-t" . find-file))
+  :custom-face
+  (helm-ff-file-extension ((t (:foreground "orange"))))
+  :config
+  (setq helm-ff-cache-mode-lighter ""
+        helm-ff-cache-mode-lighter-sleep ""))
+
+(use-package helm-buffers
+  :after helm
+  :bind (("C-x b" . helm-buffers-list))
+  :config
+  (dolist (regexp '("\\*helm" "\\*lsp" "\\*EGLOT" "\\*straight" "\\*Flymake"
+                    "\\*eldoc" "\\*Compile-Log" "\\*xref" "\\*company"
+                    "\\*Warnings" "\\*Backtrace"))
+    (add-to-list 'helm-boring-buffer-regexp-list regexp)))
+
+(use-package helm-grep
+  :after helm
+  :config
+  (setq helm-grep-file-path-style 'relative)
+  (setq helm-grep-ag-command (concat (executable-find "rg")
+                                     " --color=always"
+                                     " --smart-case"
+                                     " --no-heading"
+                                     " --line-number %s %s %s")))
+
+(use-package helm-descbinds
+  :ensure t
+  :commands helm-descbinds)
+
+(use-package helm-projectile
+  :ensure t
+  :after (helm projectile))
+
+(use-package helm-circe
+  :ensure t
+  :after circe
+  :bind (:map helm-command-map ("i" . helm-circe)))
+
+(setq helm-mode-no-completion-in-region-in-modes
+      '(circe-channel-mode
+        circe-query-mode
+        circe-server-mode))
+
+;; (use-package ivy
 ;;   :ensure t
-;;   :demand t
-;;   :bind (:map helm-map
-;;          ("TAB" . helm-execute-persistent-action)
-;;          ("<tab>" . helm-execute-persistent-action))
-;;   :bind-keymap ("C-x c" . helm-command-map)
 ;;   :config
-;;   (setq history-delete-duplicates t)
-;;   (setq helm-display-buffer-default-height 20
-;;         helm-display-buffer-height 20
-;;         helm-split-window-inside-p t
-;;         helm-split-window-default-side 'below
-;;         helm-input-idle-delay 0.01)
-;;   (helm-mode +1)
-;;   (defun dd/helm-rg-dwim (arg)
-;;     "Call `helm-grep-ag' from `projectile-project-root' or `default-directory'."
+;;   (setq ivy-height 15
+;;         ivy-fixed-height-minibuffer t)
+;;   (ivy-mode +1))
+
+;; (use-package counsel
+;;   :ensure t
+;;   :config
+;;   (defun dd/counsel-rg-dwim (arg)
+;;     "Call `counsel-rg' from project root or `default-directory' with ARG."
 ;;     (interactive "P")
 ;;     (let ((proj (projectile-project-root)))
 ;;       (if proj
-;;           (helm-grep-ag (expand-file-name proj) arg)
-;;         (helm-grep-ag (expand-file-name default-directory) arg)))))
-
-;; (use-package helm-command
-;;   :after helm
-;;   :bind (("M-x" . helm-M-x)))
-
-;; (use-package helm-ring
-;;   :after helm
-;;   :bind (("M-y" . helm-show-kill-ring)))
-
-;; (use-package helm-files
-;;   :after helm
-;;   :bind (("C-x C-f" . helm-find-files)
-;;          ("C-x C-t" . find-file))
-;;   :custom-face
-;;   (helm-ff-file-extension ((t (:foreground "orange"))))
-;;   :config
-;;   (setq helm-ff-cache-mode-lighter ""
-;;         helm-ff-cache-mode-lighter-sleep ""))
-
-;; (use-package helm-buffers
-;;   :after helm
-;;   :bind (("C-x b" . helm-buffers-list))
-;;   :config
-;;   (dolist (regexp '("\\*helm" "\\*lsp" "\\*EGLOT" "\\*straight" "\\*Flymake"
-;;                     "\\*eldoc" "\\*Compile-Log" "\\*xref" "\\*company"
-;;                     "\\*Warnings" "\\*Backtrace"))
-;;     (add-to-list 'helm-boring-buffer-regexp-list regexp)))
-
-;; (use-package helm-grep
-;;   :after helm
-;;   :config
-;;   (setq helm-grep-file-path-style 'relative)
-;;   (setq helm-grep-ag-command (concat (executable-find "rg")
-;;                                      " --color=always"
-;;                                      " --smart-case"
-;;                                      " --no-heading"
-;;                                      " --line-number %s %s %s")))
-
-;; (use-package helm-descbinds
-;;   :ensure t
-;;   :commands helm-descbinds)
+;;           (counsel-rg "" (expand-file-name proj) nil arg)
+;;         (counsel-rg "" (expand-file-name default-directory) nil arg))))
+;;   (counsel-mode +1))
 
 (use-package projectile
   :ensure t
   :demand t
   :bind-keymap ("C-c p" . projectile-command-map)
-  ;; :bind (:map projectile-command-map
-  ;;             ("r" . dd/ripgrep-proj-or-dir)
-  ;;             ("g" . dd/helm-rg-dwim))
+  :bind (:map projectile-command-map
+              ("r" . dd/ripgrep-proj-or-dir)
+              ("g" . dd/counsel-rg-dwim))
   :config
   (when (executable-find "fd")
     (setq projectile-git-command "fd . -0 --type f --color=never"))
@@ -578,10 +611,6 @@ behavior added."
         projectile-globally-ignored-files '(".DS_Store")
         projectile-enable-caching nil)
   (projectile-mode +1))
-
-;; (use-package helm-projectile
-;;   :ensure t
-;;   :after (helm projectile))
 
 (pretty-hydra-define hydra-projectile
   (:exit t :hint nil :title (projectile-project-root) :quit-key "q")
@@ -595,7 +624,6 @@ behavior added."
              ("o" projectile-multi-occur  "multioccur"))
    "Misc" (("p" projectile-switch-project     "switch project")
            ("a" projectile-add-known-project  "add to known")
-           ;;("h" helm-projectile               "helm projectile")
            ("i" projectile-ibuffer            "ibuffer")
            ("k" projectile-kill-buffers       "Kill em"))))
 (bind-key (kbd "C-c P") #'hydra-projectile/body)
@@ -637,7 +665,9 @@ behavior added."
 (use-package orderless
   :ensure t
   :demand t
-  :custom (completion-styles '(basic partial-completion flex orderless emacs22)))
+  :custom (completion-styles '(basic orderless emacs22 partial-completion flex))
+  :config
+  (setq ivy-re-builders-alist '((t . orderless-ivy-re-builder))))
 
 (use-package magit
   :ensure t
@@ -803,8 +833,6 @@ behavior added."
 (use-package doom-themes
   :ensure t
   :demand t
-  ;; :custom-face
-  ;; (helm-ff-file-extension ((t (:foreground "orange"))))
   :config
   (load-theme 'doom-gruvbox t)
   (set-face-attribute 'font-lock-doc-face nil :foreground "#a89984"))
@@ -872,10 +900,6 @@ behavior added."
           circe-format-say "<{nick}> {body}"
           lui-fill-type 19
           lui-fill-column 77)
-    ;; (setq helm-mode-no-completion-in-region-in-modes
-    ;;       '(circe-channel-mode
-    ;;         circe-query-mode
-    ;;         circe-server-mode))
     (setq circe-default-part-message
           (concat "Closed Circe (" circe-version ") buffer in GNU Emacs (" emacs-version ")"))
     (setq circe-default-quit-message
@@ -898,11 +922,6 @@ behavior added."
             "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e"))
     (setq circe-color-nicks-everywhere t)
     (enable-circe-color-nicks))
-
-  ;; (use-package helm-circe
-  ;;   :ensure t
-  ;;   :after circe
-  ;;   :bind (:map helm-command-map ("i" . helm-circe)))
 
   (use-package erc
     :commands erc
@@ -1004,17 +1023,6 @@ behavior added."
   :config
   (setq w3m-default-display-inline-images t))
 
-;; (use-package dashboard
-;;   :ensure t
-;;   :init
-;;   (setq dashboard-center-content t
-;;         dashboard-startup-banner 'logo
-;;         dashboard-set-navigator t
-;;         dashboard-items '((recents . 5)
-;;                           (projects . 5)))
-;;   :config
-;;   (dashboard-setup-startup-hook))
-
 ;; sec05:
 ;; some package-free bindings and macOS specifics
 
@@ -1050,7 +1058,6 @@ behavior added."
   (bind-key (kbd "s-g") #'magit-status)
   (bind-key (kbd "s-o") #'other-window)
   (bind-key (kbd "s-p") #'projectile-command-map)
-  ;; (bind-key (kbd "s-r") #'counsel-rg)
   (bind-key (kbd "s-r") #'dd/counsel-rg-dwim)
   (bind-key (kbd "s-u") #'gnus)
   (bind-key (kbd "s-w") #'dd/delete-frame-or-window))
@@ -1060,28 +1067,6 @@ behavior added."
 
 (when (or dd/on-mac dd/on-cc7 dd/on-abx)
   (load-file "~/.emacs.d/dot-emacs/email.el"))
-
-;; sec07:
-;; experimenting
-
-(use-package ivy
-  :ensure t
-  :config
-  (setq ivy-height 15
-        ivy-fixed-height-minibuffer t)
-  (ivy-mode +1))
-
-(use-package counsel
-  :ensure t
-  :config
-  (defun dd/counsel-rg-dwim (arg)
-    "Call `counsel-rg' from project root or `default-directory' with ARG."
-    (interactive "P")
-    (let ((proj (projectile-project-root)))
-      (if proj
-          (counsel-rg "" (expand-file-name proj) nil arg)
-        (counsel-rg "" (expand-file-name default-directory) nil arg))))
-  (counsel-mode +1))
 
 
 (provide 'init)
