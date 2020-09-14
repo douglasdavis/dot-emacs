@@ -128,7 +128,8 @@
   (set-face-attribute 'default nil
                       :family "JetBrains Mono"
                       :weight 'regular
-                      :height 130)
+                      :height 130))
+(when (or dd/on-abx dd/on-cc7)
   (set-fontset-font t 'symbol
                     (font-spec :family "Noto Color Emoji")
                     nil 'prepend))
