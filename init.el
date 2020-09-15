@@ -129,10 +129,12 @@
                       :family "JetBrains Mono"
                       :weight 'regular
                       :height 130))
-(when (or dd/on-abx dd/on-cc7)
-  (set-fontset-font t 'symbol
-                    (font-spec :family "Noto Color Emoji")
-                    nil 'prepend))
+(when (and (or dd/on-abx dd/on-cc7) (fboundp 'set-fontset-font))
+    (set-fontset-font t 'symbol
+                      (font-spec :family "Noto Color Emoji")
+                      nil 'prepend))
+(when (and dd/on-mac (fboundp 'set-fontset-font))
+    (set-fontset-font t 'unicode "Apple Color Emoji" nil 'prepend))
 
 (defun dd/delete-and-kill-current ()
   "Delete buffer's current file and kill the buffer."
