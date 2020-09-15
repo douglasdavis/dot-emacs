@@ -675,9 +675,7 @@ behavior added."
 (use-package orderless
   :ensure t
   :demand t
-  :custom (completion-styles '(basic orderless emacs22 partial-completion flex))
-  :config
-  (setq ivy-re-builders-alist '((t . orderless-ivy-re-builder))))
+  :custom (completion-styles '(basic orderless emacs22 partial-completion flex)))
 
 (use-package magit
   :ensure t
