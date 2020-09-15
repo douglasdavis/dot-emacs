@@ -277,19 +277,22 @@ behavior added."
 ;; sec02:
 ;; use-package setup
 
-(require 'package)
-(setq package-archives
-      '(("melpa" . "https://melpa.org/packages/")
-        ("gnu" . "https://elpa.gnu.org/packages/")))
+;; (require 'package)
+;; (setq package-archives
+;;       '(("melpa" . "https://melpa.org/packages/")
+;;         ("gnu" . "https://elpa.gnu.org/packages/")))
 
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+;; (unless (package-installed-p 'use-package)
+;;   (package-refresh-contents)
+;;   (package-install 'use-package))
 
-(eval-when-compile
-  (require 'use-package))
-(setq use-package-hook-name-suffix nil)
+;; (eval-when-compile
+;;   (require 'use-package))
+
+(straight-use-package 'use-package)
+(require 'use-package)
 (require 'bind-key)
+(setq use-package-hook-name-suffix nil)
 
 ;; sec03:
 ;; use-package for some core Emacs packages.
@@ -303,7 +306,7 @@ behavior added."
   :bind (("C-x C-b" . ibuffer-other-window)))
 
 (use-package org
-  :load-path "~/software/repos/org-mode/lisp"
+  :straight (:type built-in)
   :init
   (setq org-src-fontify-natively t)
   :hook (org-mode-hook . (lambda () (interactive)
@@ -327,14 +330,14 @@ behavior added."
     (bind-key "<s-left>" 'org-promote-subtree)
     (bind-key "<s-right>" 'org-demote-subtree)))
 
-(if (< emacs-major-version 28)
-    (use-package project :ensure t)
-  (use-package project))
+;; (if (< emacs-major-version 28)
+;;     (use-package project :ensure t)
+;;   (use-package project))
 
 (if (< emacs-major-version 28)
     (progn
       (use-package eldoc
-        :ensure t
+        :straight t
         :config
         (load "eldoc")))
   (use-package eldoc))
@@ -468,39 +471,39 @@ behavior added."
 ;; third party
 
 (use-package auto-package-update
-  :ensure t
+  :straight t
   :init
   (setq auto-package-update-delete-old-versions t))
 
 (use-package eros
-  :ensure t
+  :straight t
   :hook (emacs-lisp-mode-hook . eros-mode))
 
 (use-package exec-path-from-shell
-  :ensure t
+  :straight t
   :demand t
   :config
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
 
 (use-package all-the-icons-dired
-  :ensure t
+  :straight t
   :hook (dired-mode-hook . all-the-icons-dired-mode))
 
 (use-package crux
-  :ensure t)
+  :straight t)
 
 (use-package visual-fill-column
-  :ensure t)
+  :straight t)
 
 (use-package hydra
-  :ensure t)
+  :straight t)
 
 (use-package pretty-hydra
-  :ensure t)
+  :straight t)
 
 (use-package helm
-  :ensure t
+  :straight t
   :demand t
   :bind (:map helm-map
          ("TAB" . helm-execute-persistent-action)
@@ -560,15 +563,15 @@ behavior added."
                                      " --line-number %s %s %s")))
 
 (use-package helm-descbinds
-  :ensure t
+  :straight t
   :commands helm-descbinds)
 
 (use-package helm-projectile
-  :ensure t
+  :straight t
   :after (helm projectile))
 
 (use-package helm-circe
-  :ensure t
+  :straight t
   :after circe
   :bind (:map helm-command-map ("i" . helm-circe)))
 
@@ -597,7 +600,7 @@ behavior added."
 ;;   (counsel-mode +1))
 
 (use-package projectile
-  :ensure t
+  :straight t
   :demand t
   :bind-keymap ("C-c p" . projectile-command-map)
   :bind (:map projectile-command-map
@@ -639,7 +642,7 @@ behavior added."
 (bind-key (kbd "C-c P") #'hydra-projectile/body)
 
 (use-package company
-  :ensure t
+  :straight t
   :demand t
   :bind
   (:map company-active-map
@@ -673,12 +676,12 @@ behavior added."
   (add-hook 'prog-mode-hook #'dd/company-prog-mode))
 
 (use-package orderless
-  :ensure t
+  :straight t
   :demand t
   :custom (completion-styles '(basic orderless emacs22 partial-completion flex)))
 
 (use-package magit
-  :ensure t
+  :straight t
   :bind (("C-x g" . magit-status)
          :map magit-status-mode-map
          ("q" . dd/magit-kill-buffers))
@@ -691,7 +694,7 @@ behavior added."
       (mapc #'kill-buffer buffers))))
 
 (use-package rg
-  :ensure t
+  :straight t
   :after wgrep
   :init
   (setq rg-group-result t
@@ -709,10 +712,10 @@ behavior added."
     :flags ("--hidden -g !.git")))
 
 (use-package flycheck
-  :ensure t)
+  :straight t)
 
 (use-package lsp-mode
-  :ensure t
+  :straight t
   :commands lsp
   :bind (:map lsp-mode-map
               ("C-c l" . hydra-lsp/body))
@@ -732,7 +735,7 @@ behavior added."
         lsp-pyls-configuration-sources ["flake8"]))
 
 (use-package lsp-ui
-  :ensure t
+  :straight t
   :config
   (setq lsp-ui-doc-enable t
         lsp-ui-doc-include-signature nil
@@ -743,7 +746,7 @@ behavior added."
         lsp-ui-sideline-show-hover nil))
 
 (use-package eglot
-  :ensure t
+  :straight t
   :commands eglot
   :init
   (setq eglot-server-programs
@@ -753,43 +756,43 @@ behavior added."
   (setq eglot-autoshutdown t))
 
 (use-package eldoc-box
-  :ensure t
+  :straight t
   :hook (eglot-managed-mode-hook . eldoc-box-hover-at-point-mode)
   :init
   (setq eldoc-box-clear-with-C-g t
         eldoc-box-fringe-use-same-bg nil))
 
 (use-package clang-format
-  :ensure t
+  :straight t
   :after c++-mode
   :config
   (setq clang-format-executable dd/clang-format-exe))
 
 (use-package modern-cpp-font-lock
-  :ensure t
+  :straight t
   :hook (c++-mode-hook . modern-c++-font-lock-mode))
 
 (use-package pyvenv
-  :ensure t
+  :straight t
   :init
   (setenv "WORKON_HOME" "~/.pyenv/versions"))
 
 (use-package blacken
-  :ensure t
+  :straight t
   :after python)
 
 (when (or dd/on-mac dd/on-cc7 dd/on-abx)
   (use-package cider
-    :ensure t
+    :straight t
     :commands cider-jack-in))
 
 (use-package rainbow-delimiters
-  :ensure t
+  :straight t
   :hook ((emacs-lisp-mode-hook . rainbow-delimiters-mode)
          (clojure-mode-hook . rainbow-delimiters-mode)))
 
 (use-package which-key
-  :ensure t
+  :straight t
   :demand t
   :init
   :config
@@ -798,36 +801,38 @@ behavior added."
         which-key-frame-max-height 35))
 
 (use-package yasnippet
-  :ensure t
+  :straight t
   :demand t
   :init
   (yas-global-mode 1))
 
 (use-package yasnippet-snippets
-  :ensure t)
+  :straight t)
 
 (use-package cmake-mode
-  :ensure t
-  :mode ("CMakeLists.txt" "\\.cmake\\'"))
+  :straight
+  (:host github :repo "emacsmirror/cmake-mode" :files (:defaults "*"))
+  :mode
+  ("CMakeLists.txt" "\\.cmake\\'"))
 
 (use-package iedit
-  :ensure t
+  :straight t
   :bind ("C-c ;" . iedit-mode))
 
 (use-package markdown-mode
-  :ensure t
+  :straight t
   :mode "\\.md\\'")
 
 (use-package yaml-mode
-  :ensure t
+  :straight t
   :mode ("\\.yml\\'" "\\.yaml\\'"))
 
 (use-package ace-window
-  :ensure t
+  :straight t
   :bind ("M-o" . ace-window))
 
 (use-package helpful
-  :ensure t
+  :straight t
   :bind (([remap describe-function] . helpful-callable)
          ([remap describe-variable] . helpful-variable)
          ([remap describe-key] . helpful-key)
@@ -839,14 +844,14 @@ behavior added."
   (setq helpful-max-highlight 15000))
 
 (use-package doom-themes
-  :ensure t
+  :straight t
   :demand t
   :config
   (load-theme 'doom-gruvbox t)
   (set-face-attribute 'font-lock-doc-face nil :foreground "#a89984"))
 
 (use-package doom-modeline
-  :ensure t
+  :straight t
   :init
   (setq doom-modeline-mu4e (or dd/on-mac dd/on-cc7 dd/on-abx))
   (doom-modeline-mode 1))
@@ -858,7 +863,7 @@ behavior added."
 ;;   (load-theme 'gruvbox t))
 
 (use-package elfeed
-  :ensure t
+  :straight t
   :commands elfeed
   :bind (("C-x w" . 'elfeed)
          :map elfeed-show-mode-map
@@ -878,7 +883,7 @@ behavior added."
 
 (when (or dd/on-grads-18 dd/on-cc7 dd/on-mac dd/on-abx)
   (use-package circe
-    :ensure t
+    :straight t
     :commands circe
     :hook (circe-chat-mode-hook . dd/circe-prompt)
     :init
@@ -953,7 +958,7 @@ behavior added."
 
   (use-package erc-hl-nicks
     :after erc
-    :ensure t
+    :straight t
     :config
     (add-to-list 'erc-modules 'hl-nicks)))
 
@@ -991,13 +996,13 @@ behavior added."
   ;; (add-hook 'erc-insert-modify-hook 'dd/erc-insert-modify-hook))
 
 (use-package gcmh
-  :ensure t
+  :straight t
   :demand t
   :init
   (gcmh-mode 1))
 
 (use-package tex-site
-  :ensure auctex
+  :straight auctex
   :mode ("\\.tex\\'" . TeX-latex-mode)
   :init
   (setq font-latex-fontify-sectioning 'color
@@ -1010,28 +1015,28 @@ behavior added."
 
 (when dd/on-mac
   (use-package lsp-latex
-    :ensure t))
+    :straight t))
 
 (when (or dd/on-cc7 dd/on-abx)
   (when dd/on-cc7
     (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig"))
   (use-package pdf-tools
-    :ensure t
+    :straight t
     :config
     (pdf-tools-install)
     (setq-default pdf-view-display-size 'fit-page)
     (setq TeX-view-program-selection '((output-pdf "PDF Tools")))))
 
 (use-package ox-hugo
-  :ensure t
+  :straight t
   :after ox)
 
 (use-package htmlize
-  :ensure t
+  :straight t
   :after ox)
 
 (use-package w3m
-  :ensure t
+  :straight t
   :config
   (setq w3m-default-display-inline-images t))
 
@@ -1068,6 +1073,7 @@ behavior added."
   (bind-key (kbd "s-f") #'helm-find-files)
   (bind-key (kbd "s-b") #'helm-mini)
   (bind-key (kbd "s-g") #'magit-status)
+  (bind-key (kbd "s-i") #'crux-find-user-init-file)
   (bind-key (kbd "s-o") #'other-window)
   (bind-key (kbd "s-p") #'projectile-command-map)
   (bind-key (kbd "s-r") #'dd/helm-rg-dwim)
