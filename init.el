@@ -303,6 +303,7 @@ behavior added."
   :bind (("C-x C-b" . ibuffer-other-window)))
 
 (use-package org
+  :load-path "~/software/repos/org-mode/lisp"
   :init
   (setq org-src-fontify-natively t)
   :hook (org-mode-hook . (lambda () (interactive)
@@ -601,17 +602,25 @@ behavior added."
   :bind-keymap ("C-c p" . projectile-command-map)
   :bind (:map projectile-command-map
               ("r" . dd/ripgrep-proj-or-dir)
-              ("g" . dd/counsel-rg-dwim))
+              ("g" . dd/helm-rg-dwim))
   :config
-  (when (executable-find "fd")
-    (setq projectile-git-command "fd . -0 --type f --color=never"))
-  (setq projectile-track-known-projects-automatically nil
-        projectile-completion-system 'ivy
-        projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
-        projectile-globally-ignored-directories '(".git" "__pycache__")
-        projectile-globally-ignored-files '(".DS_Store")
-        projectile-enable-caching nil)
   (projectile-mode +1))
+
+(when (executable-find "fd")
+  (setq projectile-git-command "fd . -0 --type f --color=never"))
+(setq projectile-track-known-projects-automatically t
+      projectile-completion-system 'helm
+      projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
+      projectile-globally-ignored-directories '(".git" "__pycache__")
+      projectile-globally-ignored-files '(".DS_Store")
+      projectile-enable-caching t)
+
+(when (or dd/on-mac dd/on-grads-18)
+  (setq projectile-project-search-path
+        '("~/software/repos/" "~/atlas/analysis/")))
+(when (or dd/on-abx dd/on-cc7)
+  (setq projectile-project-search-path
+        '("~/software/repos/" "/ddd/atlas/analysis/")))
 
 (pretty-hydra-define hydra-projectile
   (:exit t :hint nil :title (projectile-project-root) :quit-key "q")
@@ -821,15 +830,15 @@ behavior added."
 
 (use-package helpful
   :ensure t
-  :init
-  (setq helpful-max-highlight 15000)
-  :bind (("C-h f" . helpful-callable)
-         ("C-h v" . helpful-variable)
+  :bind (([remap describe-function] . helpful-callable)
+         ([remap describe-variable] . helpful-variable)
+         ([remap describe-key] . helpful-key)
          ("C-h o" . helpful-symbol)
          ("C-h ." . helpful-at-point)
-         ("C-h k" . helpful-key)
          :map helpful-mode-map
-         ("q" . kill-buffer-and-window)))
+         ("q" . kill-buffer-and-window))
+  :config
+  (setq helpful-max-highlight 15000))
 
 (use-package doom-themes
   :ensure t
@@ -989,7 +998,7 @@ behavior added."
   :init
   (gcmh-mode 1))
 
-(use-package latex
+(use-package tex-site
   :ensure auctex
   :mode ("\\.tex\\'" . TeX-latex-mode)
   :init
@@ -1000,6 +1009,10 @@ behavior added."
   (setq-default TeX-master nil)
   :config
   (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))
+
+(when dd/on-mac
+  (use-package lsp-latex
+    :ensure t))
 
 (when (or dd/on-cc7 dd/on-abx)
   (when dd/on-cc7
@@ -1059,7 +1072,7 @@ behavior added."
   (bind-key (kbd "s-g") #'magit-status)
   (bind-key (kbd "s-o") #'other-window)
   (bind-key (kbd "s-p") #'projectile-command-map)
-  (bind-key (kbd "s-r") #'dd/counsel-rg-dwim)
+  (bind-key (kbd "s-r") #'dd/helm-rg-dwim)
   (bind-key (kbd "s-u") #'gnus)
   (bind-key (kbd "s-w") #'dd/delete-frame-or-window))
 
