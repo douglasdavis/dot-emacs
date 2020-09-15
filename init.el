@@ -1013,9 +1013,13 @@ behavior added."
   :config
   (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))
 
-(when dd/on-mac
+(when (or dd/on-mac dd/on-cc7 dd/on-abx)
   (use-package lsp-latex
-    :straight t))
+    :straight t
+    :init
+    (when dd/on-cc7
+      (setq lsp-latex-texlab-executable
+            "/home/ddavis/software/repos/texlab/target/release/texlab"))))
 
 (when (or dd/on-cc7 dd/on-abx)
   (when dd/on-cc7
