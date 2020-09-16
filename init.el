@@ -302,7 +302,9 @@ behavior added."
     (server-start)))
 
 (use-package ibuffer
-  :bind (("C-x C-b" . ibuffer-other-window)))
+  :bind (("C-x C-b" . ibuffer-other-window))
+  :init
+  (setq ibuffer-expert t))
 
 (use-package org
   :init
