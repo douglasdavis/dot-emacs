@@ -545,7 +545,7 @@ behavior added."
 
 (use-package helm-buffers
   :after helm
-  :bind (("C-x b" . helm-buffers-list))
+  :bind (("C-x b" . helm-mini))
   :config
   (dolist (regexp '("\\*helm" "\\*lsp" "\\*EGLOT" "\\*straight" "\\*Flymake"
                     "\\*eldoc" "\\*Compile-Log" "\\*xref" "\\*company"
