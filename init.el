@@ -999,27 +999,26 @@ behavior added."
   :init
   (gcmh-mode 1))
 
-(use-package tex-site
-  :ensure auctex
-  :mode ("\\.tex\\'" . TeX-latex-mode)
-  :init
-  (setq font-latex-fontify-sectioning 'color
-        font-latex-fontify-script nil
-        TeX-source-correlate-mode 'synctex
-        TeX-source-correlate-start-server t)
-  (setq-default TeX-master nil)
-  :config
-  (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))
-
 (when (or dd/on-mac dd/on-cc7 dd/on-abx)
+  (use-package tex-site
+    :ensure auctex
+    :mode ("\\.tex\\'" . TeX-latex-mode)
+    :init
+    (setq font-latex-fontify-sectioning 'color
+          font-latex-fontify-script nil
+          TeX-source-correlate-mode 'synctex
+          TeX-source-correlate-start-server t)
+    (setq-default TeX-master nil)
+    :config
+    (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))
+  (use-package company-reftex
+    :ensure t)
   (use-package lsp-latex
     :ensure t
     :init
     (when dd/on-cc7
       (setq lsp-latex-texlab-executable
-            "/home/ddavis/software/repos/texlab/target/release/texlab"))))
-
-(when (or dd/on-cc7 dd/on-abx)
+            "/home/ddavis/software/repos/texlab/target/release/texlab")))
   (when dd/on-cc7
     (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig"))
   (use-package pdf-tools
@@ -1027,6 +1026,8 @@ behavior added."
     :config
     (pdf-tools-install)
     (setq-default pdf-view-display-size 'fit-page)
+    ;; (setq pdf-view-use-scaling t)
+    ;; (setq pdf-view-use-imagemagick nil)
     (setq TeX-view-program-selection '((output-pdf "PDF Tools")))))
 
 (use-package ox-hugo
@@ -1088,6 +1089,18 @@ behavior added."
 (when (or dd/on-mac dd/on-cc7 dd/on-abx)
   (load-file "~/.emacs.d/dot-emacs/email.el"))
 
+;; sec07:
+;; misc
+
+(defun dd/thesis ()
+  "Work on thesis."
+  (interactive)
+  (setq enable-local-variables :all)
+  (cd "~/Desktop/thesis")
+  (call-interactively #'projectile-find-file))
+
+(when dd/on-mac
+  (bind-key* (kbd "s-t") #'dd/thesis))
 
 (provide 'init)
 ;;; init.el ends here
