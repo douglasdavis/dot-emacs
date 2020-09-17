@@ -1076,7 +1076,7 @@ behavior added."
   (bind-key (kbd "s-f") #'helm-find-files)
   (bind-key (kbd "s-b") #'helm-mini)
   (bind-key (kbd "s-g") #'magit-status)
-  (bind-key (kbd "s-i") #'crux-find-user-init-file)
+  (bind-key (kbd "s-i") (lambda () (interactive) (find-file user-init-file)))
   (bind-key (kbd "s-o") #'other-window)
   (bind-key (kbd "s-p") #'projectile-command-map)
   (bind-key (kbd "s-r") #'dd/helm-rg-dwim)
