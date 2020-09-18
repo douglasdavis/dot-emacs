@@ -1021,14 +1021,15 @@ behavior added."
             "/home/ddavis/software/repos/texlab/target/release/texlab")))
   (when dd/on-cc7
     (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig"))
-  (use-package pdf-tools
-    :ensure t
-    :config
-    (pdf-tools-install)
-    (setq-default pdf-view-display-size 'fit-page)
-    ;; (setq pdf-view-use-scaling t)
-    ;; (setq pdf-view-use-imagemagick nil)
-    (setq TeX-view-program-selection '((output-pdf "PDF Tools")))))
+  (unless dd/on-mac
+    (use-package pdf-tools
+      :ensure t
+      :config
+      (pdf-tools-install)
+      (setq-default pdf-view-display-size 'fit-page)
+      ;; (setq pdf-view-use-scaling t)
+      ;; (setq pdf-view-use-imagemagick nil)
+      (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))))
 
 (use-package ox-hugo
   :ensure t
