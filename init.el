@@ -106,8 +106,6 @@
 (setq-default indent-tabs-mode nil)
 
 (column-number-mode +1)
-(make-variable-buffer-local 'display-line-numbers-width-start)
-(global-display-line-numbers-mode)
 
 (add-to-list 'default-frame-alist '(height . 72))
 (add-to-list 'default-frame-alist '(width . 234))
@@ -306,6 +304,12 @@ behavior added."
   :init
   (setq ibuffer-expert t))
 
+(use-package display-line-numbers
+  :init
+  (make-variable-buffer-local 'display-line-numbers-width-start)
+  :config
+  (global-display-line-numbers-mode))
+
 (use-package org
   :init
   (setq org-src-fontify-natively t)
@@ -353,6 +357,15 @@ behavior added."
 (use-package autorevert
   :init
   (global-auto-revert-mode +1))
+
+(use-package esh-mode
+  :hook (eshell-mode-hook . (lambda () (display-line-numbers-mode 0))))
+
+(use-package term
+  :hook (term-mode-hook . (lambda () (display-line-numbers-mode 0))))
+
+(use-package shell
+  :hook (shell-mode-hook . (lambda () (display-line-numbers-mode))))
 
 (use-package help-mode
   :bind
@@ -788,8 +801,7 @@ behavior added."
 
 (use-package rainbow-delimiters
   :ensure t
-  :hook ((emacs-lisp-mode-hook . rainbow-delimiters-mode)
-         (clojure-mode-hook . rainbow-delimiters-mode)))
+  :hook (prog-mode-hook . rainbow-delimiters-mode))
 
 (use-package which-key
   :ensure t
@@ -853,12 +865,6 @@ behavior added."
   :init
   (setq doom-modeline-mu4e (or dd/on-mac dd/on-cc7 dd/on-abx))
   (doom-modeline-mode 1))
-
-;; (use-package gruvbox
-;;   :ensure gruvbox-theme
-;;   :demand t
-;;   :config
-;;   (load-theme 'gruvbox t))
 
 (use-package elfeed
   :ensure t
@@ -959,39 +965,6 @@ behavior added."
     :ensure t
     :config
     (add-to-list 'erc-modules 'hl-nicks)))
-
-  ;; (defvar dd/nick-face-list '()
-  ;;   "See https://www.emacswiki.org/emacs/ErcNickColors#toc1")
-  ;; (defvar dd/erc-colors-list
-  ;;   '("#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#fe8019"
-  ;;     "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e")
-  ;;   "See https://www.emacswiki.org/emacs/ErcNickColors#toc1")
-  ;; (defun dd/build-nick-face-list ()
-  ;;   "See https://www.emacswiki.org/emacs/ErcNickColors#toc1"
-  ;;   (setq i -1)
-  ;;   (setq dd/nick-face-list
-  ;;         (mapcar
-  ;;          (lambda (COLOR)
-  ;;            (setq i (1+ i))
-  ;;            (list (custom-declare-face
-  ;;                   (make-symbol (format "erc-nick-face-%d" i))
-  ;;                   (list (list t (list :foreground COLOR)))
-  ;;                   (format "Nick face %d" i))))
-  ;;          dd/erc-colors-list)))
-  ;; (defun dd/erc-insert-modify-hook ()
-  ;;   "See https://www.emacswiki.org/emacs/ErcNickColors#toc1"
-  ;;   (if (null dd/nick-face-list) (dd/build-nick-face-list))
-  ;;   (save-excursion
-  ;;     (goto-char (point-min))
-  ;;     (if (looking-at "<\\([^>]*\\)>")
-  ;;         (let ((nick (match-string 1)))
-  ;;           (put-text-property (match-beginning 1) (match-end 1)
-  ;;                              'face (nth
-  ;;                                     (mod (string-to-number
-  ;;                                           (substring (md5 nick) 0 4) 16)
-  ;;                                          (length dd/nick-face-list))
-  ;;                                     dd/nick-face-list))))))
-  ;; (add-hook 'erc-insert-modify-hook 'dd/erc-insert-modify-hook))
 
 (use-package gcmh
   :ensure t
