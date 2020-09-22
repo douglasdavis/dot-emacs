@@ -997,6 +997,7 @@ behavior added."
   (unless dd/on-mac
     (use-package pdf-tools
       :ensure t
+      :hook (pdf-view-mode-hook . (lambda () (display-line-numbers-mode 0)))
       :config
       (pdf-tools-install)
       (setq-default pdf-view-display-size 'fit-page)
