@@ -966,11 +966,11 @@ behavior added."
     :config
     (add-to-list 'erc-modules 'hl-nicks)))
 
-(use-package gcmh
-  :ensure t
-  :demand t
-  :init
-  (gcmh-mode 1))
+;; (use-package gcmh
+;;   :ensure t
+;;   :demand t
+;;   :init
+;;   (gcmh-mode 1))
 
 (when (or dd/on-mac dd/on-cc7 dd/on-abx)
   (use-package tex-site
@@ -1076,6 +1076,9 @@ behavior added."
 
 (when dd/on-mac
   (bind-key* (kbd "s-t") #'dd/thesis))
+
+;; 100MB garbage collection threshold
+(setq gc-cons-threshold (* 100 1024 1024))
 
 (provide 'init)
 ;;; init.el ends here

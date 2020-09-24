@@ -1,6 +1,7 @@
 ;;; early-init.el --- Emacs early-init.el            -*- lexical-binding: t; -*-
 
-(setq gc-cons-threshold most-positive-fixnum)
+;; 10GB GC threshold during init
+(setq gc-cons-threshold (* 10000 1024 1024))
 
 (require 'package)
 (if (fboundp 'native-compile)
