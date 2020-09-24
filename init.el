@@ -559,6 +559,8 @@ behavior added."
 (use-package helm-buffers
   :after helm
   :bind (("C-x b" . helm-mini))
+  :init
+  (setq recentf-max-saved-items 30)
   :config
   (dolist (regexp '("\\*helm" "\\*lsp" "\\*EGLOT" "\\*straight" "\\*Flymake"
                     "\\*eldoc" "\\*Compile-Log" "\\*xref" "\\*company"
