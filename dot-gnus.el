@@ -33,7 +33,7 @@
             (address "ddavis@ddavis.io")
             (gcc "nnimap+fastmail:Sent")
             (body "")
-            (eval (setq message-sendmail-extra-arguments '("-a" "fastmail")))
+            (eval (setq message-sendmail-extra-arguments '("--read-envelope-from")))
             (user-mail-address "ddavis@ddavis.io")))
           ("dukemail"
            (posting-style
@@ -41,7 +41,7 @@
             (address "ddavis@phy.duke.edu")
             (body "")
             (gcc "nnimap+dukemail:Sent")
-            (eval (setq message-sendmail-extra-arguments '("-a" "duke")))
+            (eval (setq message-sendmail-extra-arguments '("--read-envelope-from")))
             (user-mail-address "ddavis@phy.duke.edu")))
           ("cernmail"
            (posting-style
@@ -49,7 +49,7 @@
             (address "ddavis@cern.ch")
             (body "")
             (gcc "nnimap+cernmail:Sent")
-            (eval (setq message-sendmail-extra-arguments '("-a" "cern")))
+            (eval (setq message-sendmail-extra-arguments '("--read-envelope-from")))
             (user-mail-address "ddavis@cern.ch")))))
 
   ;; keys
