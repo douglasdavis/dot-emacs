@@ -524,7 +524,7 @@ behavior added."
   :bind-keymap ("C-x c" . helm-command-map)
   :config
   (setq history-delete-duplicates t)
-  (setq helm-display-buffer-default-height 20
+  (setq helm-display-buffer-default-height 30
         helm-display-buffer-height 20
         helm-split-window-inside-p t
         helm-split-window-default-side 'below
