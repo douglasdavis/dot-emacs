@@ -427,6 +427,9 @@ behavior added."
     (setq browse-url-browser-function 'browse-url-generic
           browse-url-generic-program "/usr/local/bin/firefox")))
 
+(use-package sh-script
+  :custom (sh-basic-offset 2))
+
 (use-package elisp-mode
   :init
   :hook ((emacs-lisp-mode-hook . prettify-symbols-mode)))
@@ -477,8 +480,8 @@ behavior added."
          (message-mode-hook . flyspell-mode)
          (mu4e-compose-mode-hook . flyspell-mode)))
 
-(use-package flymake
-  :hook (emacs-lisp-mode-hook . flymake-mode))
+;; (use-package flymake
+;;   :hook (emacs-lisp-mode-hook . flymake-mode))
 
 ;; sec04:
 ;; third party
@@ -862,11 +865,11 @@ behavior added."
   (load-theme 'doom-gruvbox t)
   (set-face-attribute 'font-lock-doc-face nil :foreground "#a89984"))
 
-(use-package doom-modeline
-  :ensure t
-  :init
-  (setq doom-modeline-mu4e (or dd/on-mac dd/on-cc7 dd/on-abx))
-  (doom-modeline-mode 1))
+;; (use-package doom-modeline
+;;   :ensure t
+;;   :init
+;;   (setq doom-modeline-mu4e (or dd/on-mac dd/on-cc7 dd/on-abx))
+;;   (doom-modeline-mode 1))
 
 (use-package elfeed
   :ensure t
