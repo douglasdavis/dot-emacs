@@ -750,6 +750,7 @@ behavior added."
   (setq lsp-pyls-plugins-autopep8-enabled nil
         lsp-pyls-plugins-pycodestyle-enabled nil
         lsp-pyls-plugins-flake8-enabled t
+        lsp-pyls-plugins-pydocstyle-enabled t
         lsp-pyls-configuration-sources ["flake8"]))
 
 (use-package lsp-ui
