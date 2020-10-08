@@ -76,7 +76,7 @@
 (setq-default auto-save-list-file-prefix nil
               create-lockfiles nil
               backup-by-copying t
-              backup-directory-alist '(("." . "~/.saves"))
+              backup-directory-alist `(("." . ,(locate-user-emacs-file ".saves")))
               delete-old-versions t
               kept-new-versions 2
               kept-old-versions 1
@@ -885,6 +885,7 @@ behavior added."
           ("https://planet.emacslife.com/atom.xml" emacs)
           ("https://ddavis.io/index.xml" blog)
           ("http://pragmaticemacs.com/feed/" emacs)
+          ("https://feeds.megaphone.fm/ESP8794877317" fivethirtyeight podcast)
           ("http://feeds.podtrac.com/zKq6WZZLTlbM" nyt podcast)))
   :config
   (add-hook 'elfeed-new-entry-hook
@@ -990,16 +991,29 @@ behavior added."
     (setq-default TeX-master nil)
     :config
     (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))
+
   (use-package company-reftex
     :ensure t)
+
+  (use-package company-math
+    :ensure t)
+
+  (defun dd/company-math ()
+    (interactive)
+    (setq-local company-backends
+                (append '((company-math-symbols-latex company-latex-commands))
+                        company-backends)))
+
   (use-package lsp-latex
     :ensure t
     :init
     (when dd/on-cc7
       (setq lsp-latex-texlab-executable
             "/home/ddavis/software/repos/texlab/target/release/texlab")))
+
   (when dd/on-cc7
     (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig"))
+
   (unless dd/on-mac
     (use-package pdf-tools
       :ensure t
