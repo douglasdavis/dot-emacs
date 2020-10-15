@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: thesisfigure
+# key: btf
+# --
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=${1}\linewidth]{figures/ch${2}/${3}}
+  \caption{${4}}
+  \label{fig:${5}}
+\end{figure}

@@ -859,6 +859,11 @@ behavior added."
   :config
   (setq helpful-max-highlight 15000))
 
+(defun dd/kill-theme ()
+  "Disable any custom themes."
+  (interactive)
+  (mapcar #'disable-theme custom-enabled-themes))
+
 (use-package doom-themes
   :ensure t
   :demand t
@@ -1014,16 +1019,16 @@ behavior added."
   (when dd/on-cc7
     (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig"))
 
-  (unless dd/on-mac
-    (use-package pdf-tools
-      :ensure t
-      :hook (pdf-view-mode-hook . (lambda () (display-line-numbers-mode 0)))
-      :config
-      (pdf-tools-install)
-      (setq-default pdf-view-display-size 'fit-page)
-      ;; (setq pdf-view-use-scaling t)
-      ;; (setq pdf-view-use-imagemagick nil)
-      (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))))
+  (use-package pdf-tools
+    :ensure t
+    :hook (pdf-view-mode-hook . (lambda () (display-line-numbers-mode 0)))
+    :config
+    (pdf-tools-install)
+    (setq-default pdf-view-display-size 'fit-page)
+    (when dd/on-mac
+      (setq pdf-view-use-scaling t)
+      (setq pdf-view-use-imagemagick nil))
+    (setq TeX-view-program-selection '((output-pdf "PDF Tools")))))
 
 (use-package ox-hugo
   :ensure t
@@ -1060,23 +1065,24 @@ behavior added."
     (setq-default ns-function-modifier 'hyper)
     (setq-default mac-function-modifier 'hyper))
 
-  (bind-key (kbd "s-\\") #'dd/toggle-window-split)
-  (bind-key (kbd "s-\"") #'dd/google-something)
-  (bind-key (kbd "s-/") #'previous-buffer)
-  (bind-key (kbd "s-1") #'delete-other-windows)
-  (bind-key (kbd "s-2") #'split-window-below)
-  (bind-key (kbd "s-3") #'split-window-right)
-  (bind-key (kbd "s-5") #'projectile-find-file-in-known-projects)
-  (bind-key (kbd "s-4") #'mu4e)
-  (bind-key (kbd "s-f") #'helm-find-files)
-  (bind-key (kbd "s-b") #'helm-mini)
-  (bind-key (kbd "s-g") #'magit-status)
-  (bind-key (kbd "s-i") (lambda () (interactive) (find-file user-init-file)))
-  (bind-key (kbd "s-o") #'other-window)
-  (bind-key (kbd "s-p") #'projectile-command-map)
-  (bind-key (kbd "s-r") #'dd/helm-rg-dwim)
-  (bind-key (kbd "s-u") #'gnus)
-  (bind-key (kbd "s-w") #'dd/delete-frame-or-window))
+  (bind-key* (kbd "s-d") #'dd/kill-theme)
+  (bind-key* (kbd "s-\\") #'dd/toggle-window-split)
+  (bind-key* (kbd "s-\"") #'dd/google-something)
+  (bind-key* (kbd "s-/") #'previous-buffer)
+  (bind-key* (kbd "s-1") #'delete-other-windows)
+  (bind-key* (kbd "s-2") #'split-window-below)
+  (bind-key* (kbd "s-3") #'split-window-right)
+  (bind-key* (kbd "s-5") #'projectile-find-file-in-known-projects)
+  (bind-key* (kbd "s-4") #'mu4e)
+  (bind-key* (kbd "s-f") #'helm-find-files)
+  (bind-key* (kbd "s-b") #'helm-mini)
+  (bind-key* (kbd "s-g") #'magit-status)
+  (bind-key* (kbd "s-i") (lambda () (interactive) (find-file user-init-file)))
+  (bind-key* (kbd "s-o") #'other-window)
+  (bind-key* (kbd "s-p") #'projectile-command-map)
+  (bind-key* (kbd "s-r") #'dd/helm-rg-dwim)
+  (bind-key* (kbd "s-u") #'gnus)
+  (bind-key* (kbd "s-w") #'dd/delete-frame-or-window))
 
 ;; sec06:
 ;; email setup is in dedicated file
