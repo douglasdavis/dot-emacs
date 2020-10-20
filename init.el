@@ -994,6 +994,8 @@ behavior added."
           TeX-source-correlate-mode 'synctex
           TeX-source-correlate-start-server t)
     (setq-default TeX-master nil)
+    (setq TeX-auto-save t)
+    (setq TeX-parse-self t)
     :config
     (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))
 
