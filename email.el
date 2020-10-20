@@ -56,6 +56,10 @@
                                     "ddavis@ddavis.io"
                                     "ddavis@cern.ch"))
 
+(defun dd/mu4e-byte-comp ()
+  (interactive)
+  (byte-recompile-directory dd/mu4e-dir 0 t))
+
 (defun dd/reset-standard-name-and-email ()
   "Reset mail address and name to default."
   (interactive)

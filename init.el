@@ -71,7 +71,10 @@
       ring-bell-function 'ignore
       visible-bell nil)
 
-(fset 'yes-or-no-p 'y-or-n-p)
+(defun yes-or-no-p-advice (_orig-fun &rest args)
+  "Advice to use `y-or-n-p' instead of `yes-or-no-p', passing along ARGS."
+  (apply 'y-or-n-p args))
+(advice-add 'yes-or-no-p :around 'yes-or-no-p-advice)
 
 (setq-default auto-save-list-file-prefix nil
               create-lockfiles nil
@@ -1067,6 +1070,8 @@ behavior added."
     (setq-default ns-function-modifier 'hyper)
     (setq-default mac-function-modifier 'hyper))
 
+  (define-key global-map [s-right] 'move-end-of-line)
+  (define-key global-map [s-left] 'move-beginning-of-line)
   (bind-key* (kbd "s-d") #'dd/kill-theme)
   (bind-key* (kbd "s-\\") #'dd/toggle-window-split)
   (bind-key* (kbd "s-\"") #'dd/google-something)
