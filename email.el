@@ -27,13 +27,13 @@
 (defconst dd/mu-exe
   (cond (dd/on-mac "/Users/ddavis/software/localbase/bin/mu")
         (dd/on-abx "/usr/bin/mu")
-        (dd/on-cc7 "/home/ddavis/software/specific/mu/1.4.10/bin/mu"))
+        (dd/on-cc7 "/home/ddavis/software/specific/mu/1.4.13/bin/mu"))
   "Machine dependent mu executable string.")
 
 (defconst dd/mu4e-dir
   (cond (dd/on-mac "/Users/ddavis/software/localbase/share/emacs/site-lisp/mu4e")
         (dd/on-abx "/usr/share/emacs/site-lisp/mu4e")
-        (dd/on-cc7 "/home/ddavis/software/specific/mu/1.4.10/share/emacs/site-lisp/mu4e"))
+        (dd/on-cc7 "/home/ddavis/software/specific/mu/1.4.13/share/emacs/site-lisp/mu4e"))
   "Machine dependent mu4e installation location string.")
 
 (defconst dd/sendmail-exe
