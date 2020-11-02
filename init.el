@@ -1113,7 +1113,7 @@ behavior added."
 
 (defun dd/kill-all-buffers ()
   (interactive)
-  (-map
+  (mapcar
    (lambda (b)
      (let ((bn (buffer-name b)))
        (unless
