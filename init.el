@@ -1089,6 +1089,7 @@ behavior added."
   (bind-key* (kbd "s-p") #'projectile-command-map)
   (bind-key* (kbd "s-r") #'dd/helm-rg-dwim)
   (bind-key* (kbd "s-u") #'gnus)
+  (bind-key* (kbd "s-*") 'dd/kill-all-buffers)
   (bind-key* (kbd "s-w") #'dd/delete-frame-or-window))
 
 ;; sec06:
@@ -1109,6 +1110,17 @@ behavior added."
 
 (when dd/on-mac
   (bind-key* (kbd "s-t") #'dd/thesis))
+
+(defun dd/kill-all-buffers ()
+  (interactive)
+  (-map
+   (lambda (b)
+     (let ((bn (buffer-name b)))
+       (unless
+           (or (string= "*scratch*" bn)
+               (string= "*Messages*" bn))
+         (kill-buffer b))))
+   (buffer-list)))
 
 ;; 100MB garbage collection threshold
 (setq gc-cons-threshold (* 100 1024 1024))
