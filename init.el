@@ -483,6 +483,10 @@ behavior added."
          (message-mode-hook . flyspell-mode)
          (mu4e-compose-mode-hook . flyspell-mode)))
 
+(use-package recentf
+  :config
+  (recentf-mode +1))
+
 ;; (use-package flymake
 ;;   :hook (emacs-lisp-mode-hook . flymake-mode))
 
@@ -515,91 +519,91 @@ behavior added."
 (use-package visual-fill-column
   :ensure t)
 
-(use-package hydra
-  :ensure t)
+;; (use-package hydra
+;;   :ensure t)
 
-(use-package pretty-hydra
-  :ensure t)
+;; (use-package pretty-hydra
+;;   :ensure t)
 
-(use-package helm
-  :ensure t
-  :demand t
-  :bind (:map helm-map
-         ("TAB" . helm-execute-persistent-action)
-         ("<tab>" . helm-execute-persistent-action))
-  :bind-keymap ("C-x c" . helm-command-map)
-  :config
-  (setq history-delete-duplicates t)
-  (setq helm-display-buffer-default-height 30
-        helm-display-buffer-height 20
-        helm-split-window-inside-p t
-        helm-split-window-default-side 'below
-        helm-input-idle-delay 0.01)
-  (helm-mode +1)
-  (defun dd/helm-rg-dwim (arg)
-    "Call `helm-grep-ag' from `projectile-project-root' or `default-directory'."
-    (interactive "P")
-    (let ((proj (projectile-project-root)))
-      (if proj
-          (helm-grep-ag (expand-file-name proj) arg)
-        (helm-grep-ag (expand-file-name default-directory) arg)))))
+;; (use-package helm
+;;   :ensure t
+;;   :demand t
+;;   :bind (:map helm-map
+;;          ("TAB" . helm-execute-persistent-action)
+;;          ("<tab>" . helm-execute-persistent-action))
+;;   :bind-keymap ("C-x c" . helm-command-map)
+;;   :config
+;;   (setq history-delete-duplicates t)
+;;   (setq helm-display-buffer-default-height 30
+;;         helm-display-buffer-height 20
+;;         helm-split-window-inside-p t
+;;         helm-split-window-default-side 'below
+;;         helm-input-idle-delay 0.01)
+;;   (helm-mode +1)
+;;   (defun dd/helm-rg-dwim (arg)
+;;     "Call `helm-grep-ag' from `projectile-project-root' or `default-directory'."
+;;     (interactive "P")
+;;     (let ((proj (projectile-project-root)))
+;;       (if proj
+;;           (helm-grep-ag (expand-file-name proj) arg)
+;;         (helm-grep-ag (expand-file-name default-directory) arg)))))
 
-(use-package helm-command
-  :after helm
-  :bind (("M-x" . helm-M-x)))
+;; (use-package helm-command
+;;   :after helm
+;;   :bind (("M-x" . helm-M-x)))
 
-(use-package helm-ring
-  :after helm
-  :bind (("M-y" . helm-show-kill-ring)))
+;; (use-package helm-ring
+;;   :after helm
+;;   :bind (("M-y" . helm-show-kill-ring)))
 
-(use-package helm-files
-  :after helm
-  :bind (("C-x C-f" . helm-find-files)
-         ("C-x C-t" . find-file))
-  :custom-face
-  (helm-ff-file-extension ((t (:foreground "orange"))))
-  :config
-  (setq helm-ff-cache-mode-lighter ""
-        helm-ff-cache-mode-lighter-sleep ""))
+;; (use-package helm-files
+;;   :after helm
+;;   :bind (("C-x C-f" . helm-find-files)
+;;          ("C-x C-t" . find-file))
+;;   :custom-face
+;;   (helm-ff-file-extension ((t (:foreground "orange"))))
+;;   :config
+;;   (setq helm-ff-cache-mode-lighter ""
+;;         helm-ff-cache-mode-lighter-sleep ""))
 
-(use-package helm-buffers
-  :after helm
-  :bind (("C-x b" . helm-mini))
-  :init
-  (setq recentf-max-saved-items 30)
-  :config
-  (dolist (regexp '("\\*helm" "\\*lsp" "\\*EGLOT" "\\*straight" "\\*Flymake"
-                    "\\*eldoc" "\\*Compile-Log" "\\*xref" "\\*company"
-                    "\\*Warnings" "\\*Backtrace"))
-    (add-to-list 'helm-boring-buffer-regexp-list regexp)))
+;; (use-package helm-buffers
+;;   :after helm
+;;   :bind (("C-x b" . helm-mini))
+;;   :init
+;;   (setq recentf-max-saved-items 30)
+;;   :config
+;;   (dolist (regexp '("\\*helm" "\\*lsp" "\\*EGLOT" "\\*straight" "\\*Flymake"
+;;                     "\\*eldoc" "\\*Compile-Log" "\\*xref" "\\*company"
+;;                     "\\*Warnings" "\\*Backtrace"))
+;;     (add-to-list 'helm-boring-buffer-regexp-list regexp)))
 
-(use-package helm-grep
-  :after helm
-  :config
-  (setq helm-grep-file-path-style 'relative)
-  (setq helm-grep-ag-command (concat (executable-find "rg")
-                                     " --color=always"
-                                     " --smart-case"
-                                     " --no-heading"
-                                     " --line-number %s %s %s")))
+;; (use-package helm-grep
+;;   :after helm
+;;   :config
+;;   (setq helm-grep-file-path-style 'relative)
+;;   (setq helm-grep-ag-command (concat (executable-find "rg")
+;;                                      " --color=always"
+;;                                      " --smart-case"
+;;                                      " --no-heading"
+;;                                      " --line-number %s %s %s")))
 
-(use-package helm-descbinds
-  :ensure t
-  :commands helm-descbinds)
+;; (use-package helm-descbinds
+;;   :ensure t
+;;   :commands helm-descbinds)
 
-(use-package helm-projectile
-  :ensure t
-  :after (helm projectile))
+;; (use-package helm-projectile
+;;   :ensure t
+;;   :after (helm projectile))
 
-(use-package helm-circe
-  :ensure t
-  :after circe
-  :bind (:map helm-command-map ("i" . helm-circe)))
+;; (use-package helm-circe
+;;   :ensure t
+;;   :after circe
+;;   :bind (:map helm-command-map ("i" . helm-circe)))
 
-(setq helm-mode-no-completion-in-region-in-modes
-      '(circe-channel-mode
-        circe-query-mode
-        circe-server-mode))
+;; (setq helm-mode-no-completion-in-region-in-modes
+;;       '(circe-channel-mode
+;;         circe-query-mode
+;;         circe-server-mode))
 
 ;; (use-package ivy
 ;;   :ensure t
@@ -620,20 +624,41 @@ behavior added."
 ;;         (counsel-rg "" (expand-file-name default-directory) nil arg))))
 ;;   (counsel-mode +1))
 
+(use-package selectrum
+  :ensure t
+  :init
+  (setq selectrum-extend-current-candidate-highlight t)
+  (setq selectrum-num-candidates-displayed 15)
+  (setq selectrum-fix-minibuffer-height t)
+  :custom-face
+  (selectrum-primary-highlight ((t (:weight bold :foreground "#cc241d"))))
+  :config
+  (selectrum-mode +1))
+
+(use-package prescient
+  :ensure t
+  :config
+  (selectrum-prescient-mode +1))
+
+(when dd/on-mac
+  (use-package marginalia
+    :load-path "~/.emacs.d/third-party/marginalia")
+  (marginalia-mode +1)
+  (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light)))
+
 (use-package projectile
   :ensure t
   :demand t
   :bind-keymap ("C-c p" . projectile-command-map)
   :bind (:map projectile-command-map
-              ("r" . dd/ripgrep-proj-or-dir)
-              ("g" . dd/helm-rg-dwim))
+              ("r" . dd/ripgrep-proj-or-dir))
+  ;; ("g" . dd/helm-rg-dwim))
   :config
   (projectile-mode +1))
 
 (when (executable-find "fd")
   (setq projectile-git-command "fd . -0 --type f --color=never"))
 (setq projectile-track-known-projects-automatically t
-      projectile-completion-system 'helm
       projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
       projectile-globally-ignored-directories '(".git" "__pycache__")
       projectile-globally-ignored-files '(".DS_Store")
@@ -646,21 +671,21 @@ behavior added."
   (setq projectile-project-search-path
         '("~/software/repos/" "/ddd/atlas/analysis/")))
 
-(pretty-hydra-define hydra-projectile
-  (:exit t :hint nil :title (projectile-project-root) :quit-key "q")
-  ("Movement" (("b" projectile-switch-to-buffer               "switch")
-               ("B" projectile-switch-to-buffer-other-window  "switch (OW)")
-               ("f" projectile-find-file                      "file")
-               ("F" projectile-find-file-other-window         "file (OW)")
-               ("u" projectile-find-file-in-known-projects    "find in known"))
-   "Search" (("r" dd/ripgrep-proj-or-dir  "ripgrep (rg.el)")
-             ("s" dd/ripgrep-proj-or-dir  "ripgrep (rg.el)")
-             ("o" projectile-multi-occur  "multioccur"))
-   "Misc" (("p" projectile-switch-project     "switch project")
-           ("a" projectile-add-known-project  "add to known")
-           ("i" projectile-ibuffer            "ibuffer")
-           ("k" projectile-kill-buffers       "Kill em"))))
-(bind-key (kbd "C-c P") #'hydra-projectile/body)
+;; (pretty-hydra-define hydra-projectile
+;;   (:exit t :hint nil :title (projectile-project-root) :quit-key "q")
+;;   ("Movement" (("b" projectile-switch-to-buffer               "switch")
+;;                ("B" projectile-switch-to-buffer-other-window  "switch (OW)")
+;;                ("f" projectile-find-file                      "file")
+;;                ("F" projectile-find-file-other-window         "file (OW)")
+;;                ("u" projectile-find-file-in-known-projects    "find in known"))
+;;    "Search" (("r" dd/ripgrep-proj-or-dir  "ripgrep (rg.el)")
+;;              ("s" dd/ripgrep-proj-or-dir  "ripgrep (rg.el)")
+;;              ("o" projectile-multi-occur  "multioccur"))
+;;    "Misc" (("p" projectile-switch-project     "switch project")
+;;            ("a" projectile-add-known-project  "add to known")
+;;            ("i" projectile-ibuffer            "ibuffer")
+;;            ("k" projectile-kill-buffers       "Kill em"))))
+;; (bind-key (kbd "C-c P") #'hydra-projectile/body)
 
 (use-package company
   :ensure t
@@ -738,8 +763,8 @@ behavior added."
 (use-package lsp-mode
   :ensure t
   :commands lsp
-  :bind (:map lsp-mode-map
-              ("C-c l" . hydra-lsp/body))
+  ;; :bind (:map lsp-mode-map
+  ;;             ("C-c l" . hydra-lsp/body))
   :init
   (setq lsp-clients-clangd-executable dd/clangd-exe)
   (setq read-process-output-max (* 10 1024 1024))
@@ -1081,13 +1106,15 @@ behavior added."
   (bind-key* (kbd "s-3") #'split-window-right)
   (bind-key* (kbd "s-5") #'projectile-find-file-in-known-projects)
   (bind-key* (kbd "s-4") #'mu4e)
-  (bind-key* (kbd "s-f") #'helm-find-files)
-  (bind-key* (kbd "s-b") #'helm-mini)
+  ;; (bind-key* (kbd "s-f") #'helm-find-files)
+  ;; (bind-key* (kbd "s-b") #'helm-mini)
+  (bind-key* (kbd "s-f") #'find-file)
+  (bind-key* (kbd "s-b") #'switch-to-buffer)
   (bind-key* (kbd "s-g") #'magit-status)
   (bind-key* (kbd "s-i") (lambda () (interactive) (find-file user-init-file)))
   (bind-key* (kbd "s-o") #'other-window)
   (bind-key* (kbd "s-p") #'projectile-command-map)
-  (bind-key* (kbd "s-r") #'dd/helm-rg-dwim)
+  ;; (bind-key* (kbd "s-r") #'dd/helm-rg-dwim)
   (bind-key* (kbd "s-u") #'gnus)
   (bind-key* (kbd "s-*") 'dd/kill-all-buffers)
   (bind-key* (kbd "s-w") #'dd/delete-frame-or-window))
@@ -1101,17 +1128,8 @@ behavior added."
 ;; sec07:
 ;; misc
 
-(defun dd/thesis ()
-  "Work on thesis."
-  (interactive)
-  (setq enable-local-variables :all)
-  (cd "~/Desktop/thesis")
-  (call-interactively #'projectile-find-file))
-
-(when dd/on-mac
-  (bind-key* (kbd "s-t") #'dd/thesis))
-
 (defun dd/kill-all-buffers ()
+  "Kill all buffers except scratch and Messages."
   (interactive)
   (mapcar
    (lambda (b)
