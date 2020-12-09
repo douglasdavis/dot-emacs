@@ -71,10 +71,10 @@
       ring-bell-function 'ignore
       visible-bell nil)
 
-(defun yes-or-no-p-advice (_orig-fun &rest args)
+(defun yes-or-no-p-advice (orig-fun &rest args)
   "Advice to use `y-or-n-p' instead of `yes-or-no-p', passing along ARGS."
   (apply 'y-or-n-p args))
-(advice-add 'yes-or-no-p :around 'yes-or-no-p-advice)
+(advice-add 'yes-or-no-p :around #'yes-or-no-p-advice)
 
 (setq-default auto-save-list-file-prefix nil
               create-lockfiles nil
@@ -635,7 +635,7 @@ behavior added."
   :config
   (selectrum-mode +1))
 
-(use-package prescient
+(use-package selectrum-prescient
   :ensure t
   :config
   (selectrum-prescient-mode +1))
