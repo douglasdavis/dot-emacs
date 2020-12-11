@@ -640,9 +640,9 @@ behavior added."
   :config
   (selectrum-prescient-mode +1))
 
-(when dd/on-mac
-  (use-package marginalia
-    :load-path "~/.emacs.d/third-party/marginalia")
+(use-package marginalia
+  :ensure t
+  :config
   (marginalia-mode +1)
   (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light)))
 
