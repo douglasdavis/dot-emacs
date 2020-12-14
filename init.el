@@ -444,12 +444,20 @@ behavior added."
 
 (use-package python
   :mode ("\\.py\\'" . python-mode)
-  :interpreter ("python" . python-mode)
   :bind (:map python-mode-map
               ("C-c C-a" . dd/py-auto-lsp))
   :init
   (setq python-indent-guess-indent-offset nil)
   :config
+  (defun dd/run-python ()
+    "Intelligently run a Python shell."
+    (interactive)
+    (if pyvenv-virtual-env
+        (run-python)
+      (progn
+        (call-interactively #'pyvenv-workon)
+        (run-python))))
+
   (defun dd/py-workon-project-venv ()
     "Call pyenv-workon with the current projectile project name.
   This will return the full path of the associated virtual
