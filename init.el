@@ -662,7 +662,7 @@ behavior added."
       projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
       projectile-globally-ignored-directories '(".git" "__pycache__")
       projectile-globally-ignored-files '(".DS_Store")
-      projectile-enable-caching t)
+      projectile-enable-caching nil)
 
 (when (or dd/on-mac dd/on-grads-18)
   (setq projectile-project-search-path

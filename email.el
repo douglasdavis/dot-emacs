@@ -100,6 +100,10 @@
          ("M" . mu4e-action-view-in-w3m)
          ("j" . dd/mu4e-jump-via-comp-read))
   :config
+  (defun dd/dont-auto-save ()
+    (interactive)
+    (auto-save-mode -1))
+  (add-hook 'mu4e-compose-mode-hook #'dd/dont-auto-save)
   (defun dd/mu4e-toggle-gnus ()
     "Toggle Gnus view mode in mu4e."
     (interactive)
