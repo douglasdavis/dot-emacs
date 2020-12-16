@@ -72,7 +72,7 @@
       visible-bell nil)
 
 (defun yes-or-no-p-advice (orig-fun &rest args)
-  "Advice to use `y-or-n-p' instead of `yes-or-no-p', passing along ARGS."
+  "Advice to use `y-or-n-p' with ORIG-FUN passing along ARGS."
   (apply 'y-or-n-p args))
 (advice-add 'yes-or-no-p :around #'yes-or-no-p-advice)
 
@@ -103,15 +103,13 @@
       (menu-bar-mode +1)
     (menu-bar-mode -1)))
 
-(setq custom-safe-themes t)
-(setq inhibit-startup-screen t)
 (setq-default require-final-newline t)
 (setq-default indent-tabs-mode nil)
 
 (column-number-mode +1)
 
-(add-to-list 'default-frame-alist '(height . 72))
-(add-to-list 'default-frame-alist '(width . 234))
+(add-to-list 'default-frame-alist '(height . 64))
+(add-to-list 'default-frame-alist '(width . 192))
 
 (when dd/on-abx
   (set-face-attribute 'default nil
@@ -280,19 +278,36 @@ behavior added."
 ;; sec02:
 ;; use-package setup
 
-(require 'package)
-(setq package-archives
-      '(("melpa" . "https://melpa.org/packages/")
-        ("gnu" . "https://elpa.gnu.org/packages/")))
+;; (require 'package)
+;; (setq package-archives
+;;       '(("melpa" . "https://melpa.org/packages/")
+;;         ("gnu" . "https://elpa.gnu.org/packages/")))
 
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+;; (unless (package-installed-p 'use-package)
+;;   (package-refresh-contents)
+;;   (package-install 'use-package))
+
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+(straight-use-package 'use-package)
 
 (eval-when-compile
   (require 'use-package)
   (require 'bind-key)
   (setq use-package-hook-name-suffix nil))
+
+(use-package straight-x)
 
 ;; sec03:
 ;; use-package for some core Emacs packages.
@@ -314,6 +329,7 @@ behavior added."
   (global-display-line-numbers-mode))
 
 (use-package org
+  :straight (org :type built-in)
   :init
   (setq org-src-fontify-natively t)
   :hook (org-mode-hook . (lambda () (interactive)
@@ -338,13 +354,13 @@ behavior added."
     (bind-key "<s-right>" 'org-demote-subtree)))
 
 (if (< emacs-major-version 28)
-    (use-package project :ensure t)
+    (use-package project :straight t)
   (use-package project))
 
 (if (< emacs-major-version 28)
     (progn
       (use-package eldoc
-        :ensure t
+        :straight t
         :config
         (load "eldoc")))
   (use-package eldoc))
@@ -501,40 +517,40 @@ behavior added."
 ;; sec04:
 ;; third party
 
-(use-package auto-package-update
-  :ensure t
-  :init
-  (setq auto-package-update-delete-old-versions t))
+;; (use-package auto-package-update
+;;   :straight t
+;;   :init
+;;   (setq auto-package-update-delete-old-versions t))
 
 (use-package eros
-  :ensure t
+  :straight t
   :hook (emacs-lisp-mode-hook . eros-mode))
 
 (use-package exec-path-from-shell
-  :ensure t
+  :straight t
   :demand t
   :config
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
 
 (use-package all-the-icons-dired
-  :ensure t
+  :straight t
   :hook (dired-mode-hook . all-the-icons-dired-mode))
 
 (use-package crux
-  :ensure t)
+  :straight t)
 
 (use-package visual-fill-column
-  :ensure t)
+  :straight t)
 
 ;; (use-package hydra
-;;   :ensure t)
+;;   :straight t)
 
 ;; (use-package pretty-hydra
-;;   :ensure t)
+;;   :straight t)
 
 ;; (use-package helm
-;;   :ensure t
+;;   :straight t
 ;;   :demand t
 ;;   :bind (:map helm-map
 ;;          ("TAB" . helm-execute-persistent-action)
@@ -596,15 +612,15 @@ behavior added."
 ;;                                      " --line-number %s %s %s")))
 
 ;; (use-package helm-descbinds
-;;   :ensure t
+;;   :straight t
 ;;   :commands helm-descbinds)
 
 ;; (use-package helm-projectile
-;;   :ensure t
+;;   :straight t
 ;;   :after (helm projectile))
 
 ;; (use-package helm-circe
-;;   :ensure t
+;;   :straight t
 ;;   :after circe
 ;;   :bind (:map helm-command-map ("i" . helm-circe)))
 
@@ -614,14 +630,14 @@ behavior added."
 ;;         circe-server-mode))
 
 ;; (use-package ivy
-;;   :ensure t
+;;   :straight t
 ;;   :config
 ;;   (setq ivy-height 15
 ;;         ivy-fixed-height-minibuffer t)
 ;;   (ivy-mode +1))
 
 ;; (use-package counsel
-;;   :ensure t
+;;   :straight t
 ;;   :config
 ;;   (defun dd/counsel-rg-dwim (arg)
 ;;     "Call `counsel-rg' from project root or `default-directory' with ARG."
@@ -633,7 +649,7 @@ behavior added."
 ;;   (counsel-mode +1))
 
 (use-package selectrum
-  :ensure t
+  :straight t
   :init
   (setq selectrum-extend-current-candidate-highlight t)
   (setq selectrum-num-candidates-displayed 15)
@@ -644,18 +660,51 @@ behavior added."
   (selectrum-mode +1))
 
 (use-package selectrum-prescient
-  :ensure t
+  :straight t
   :config
   (selectrum-prescient-mode +1))
 
+;; (use-package icomplete-vertical
+;;   :straight t
+;;   :demand t
+;;   :init
+;;   ;;(completion-styles '(partial-completion substring))
+;;   ;;(completion-category-overrides '((file (styles basic substring))))
+;;   (setq read-file-name-completion-ignore-case t)
+;;   (setq read-buffer-completion-ignore-case t)
+;;   (setq completion-ignore-case t)
+;;   :config
+;;   (fido-mode -1)
+;;   (icomplete-mode +1)
+;;   (icomplete-vertical-mode +1)
+;;   :bind (:map icomplete-minibuffer-map
+;;               ("<tab>" . icomplete-force-complete)
+;;               ("<return>" . icomplete-force-complete-and-exit)
+;;               ("<down>" . icomplete-forward-completions)
+;;               ("C-n" . icomplete-forward-completions)
+;;               ("<up>" . icomplete-backward-completions)
+;;               ("C-p" . icomplete-backward-completions)
+;;               ("C-v" . icomplete-vertical-toggle)))
+
 (use-package marginalia
-  :ensure t
+  :straight (marginalia :branch "main")
   :config
   (marginalia-mode +1)
   (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light)))
 
+(use-package consult
+  :straight t
+  :demand t
+  :bind (("C-c l" . consult-line))
+  :config
+  (consult-preview-mode))
+
+(use-package consult-selectrum
+  :straight t
+  :demand t)
+
 (use-package projectile
-  :ensure t
+  :straight t
   :demand t
   :bind-keymap ("C-c p" . projectile-command-map)
   :bind (:map projectile-command-map
@@ -665,7 +714,7 @@ behavior added."
   (projectile-mode +1))
 
 (when (executable-find "fd")
-  (setq projectile-git-command "fd . -0 --type f --color=never"))
+  (setq projectile-git-command "fd . -H -0 --type f --color=never"))
 (setq projectile-track-known-projects-automatically t
       projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
       projectile-globally-ignored-directories '(".git" "__pycache__")
@@ -679,24 +728,8 @@ behavior added."
   (setq projectile-project-search-path
         '("~/software/repos/" "/ddd/atlas/analysis/")))
 
-;; (pretty-hydra-define hydra-projectile
-;;   (:exit t :hint nil :title (projectile-project-root) :quit-key "q")
-;;   ("Movement" (("b" projectile-switch-to-buffer               "switch")
-;;                ("B" projectile-switch-to-buffer-other-window  "switch (OW)")
-;;                ("f" projectile-find-file                      "file")
-;;                ("F" projectile-find-file-other-window         "file (OW)")
-;;                ("u" projectile-find-file-in-known-projects    "find in known"))
-;;    "Search" (("r" dd/ripgrep-proj-or-dir  "ripgrep (rg.el)")
-;;              ("s" dd/ripgrep-proj-or-dir  "ripgrep (rg.el)")
-;;              ("o" projectile-multi-occur  "multioccur"))
-;;    "Misc" (("p" projectile-switch-project     "switch project")
-;;            ("a" projectile-add-known-project  "add to known")
-;;            ("i" projectile-ibuffer            "ibuffer")
-;;            ("k" projectile-kill-buffers       "Kill em"))))
-;; (bind-key (kbd "C-c P") #'hydra-projectile/body)
-
 (use-package company
-  :ensure t
+  :straight t
   :demand t
   :bind
   (:map company-active-map
@@ -730,12 +763,12 @@ behavior added."
   (add-hook 'prog-mode-hook #'dd/company-prog-mode))
 
 (use-package orderless
-  :ensure t
+  :straight t
   :demand t
   :custom (completion-styles '(basic orderless emacs22 partial-completion flex)))
 
 (use-package magit
-  :ensure t
+  :straight t
   :bind (("C-x g" . magit-status)
          :map magit-status-mode-map
          ("q" . dd/magit-kill-buffers))
@@ -748,7 +781,7 @@ behavior added."
       (mapc #'kill-buffer buffers))))
 
 (use-package rg
-  :ensure t
+  :straight t
   :after wgrep
   :init
   (setq rg-group-result t
@@ -766,10 +799,10 @@ behavior added."
     :flags ("--hidden -g !.git")))
 
 (use-package flycheck
-  :ensure t)
+  :straight t)
 
 (use-package lsp-mode
-  :ensure t
+  :straight t
   :commands lsp
   ;; :bind (:map lsp-mode-map
   ;;             ("C-c l" . hydra-lsp/body))
@@ -790,7 +823,7 @@ behavior added."
         lsp-pyls-configuration-sources ["flake8"]))
 
 (use-package lsp-ui
-  :ensure t
+  :straight t
   :config
   (setq lsp-ui-doc-enable t
         lsp-ui-doc-include-signature nil
@@ -801,7 +834,7 @@ behavior added."
         lsp-ui-sideline-show-hover nil))
 
 (use-package eglot
-  :ensure t
+  :straight t
   :commands eglot
   :init
   (setq eglot-server-programs
@@ -811,42 +844,42 @@ behavior added."
   (setq eglot-autoshutdown t))
 
 (use-package eldoc-box
-  :ensure t
+  :straight t
   :hook (eglot-managed-mode-hook . eldoc-box-hover-at-point-mode)
   :init
   (setq eldoc-box-clear-with-C-g t
         eldoc-box-fringe-use-same-bg nil))
 
 (use-package clang-format
-  :ensure t
+  :straight t
   :after c++-mode
   :config
   (setq clang-format-executable dd/clang-format-exe))
 
 (use-package modern-cpp-font-lock
-  :ensure t
+  :straight t
   :hook (c++-mode-hook . modern-c++-font-lock-mode))
 
 (use-package pyvenv
-  :ensure t
+  :straight t
   :init
   (setenv "WORKON_HOME" "~/.pyenv/versions"))
 
 (use-package blacken
-  :ensure t
+  :straight t
   :after python)
 
 (when (or dd/on-mac dd/on-cc7 dd/on-abx)
   (use-package cider
-    :ensure t
+    :straight t
     :commands cider-jack-in))
 
 (use-package rainbow-delimiters
-  :ensure t
+  :straight t
   :hook (prog-mode-hook . rainbow-delimiters-mode))
 
 (use-package which-key
-  :ensure t
+  :straight t
   :demand t
   :init
   :config
@@ -855,36 +888,36 @@ behavior added."
         which-key-frame-max-height 35))
 
 (use-package yasnippet
-  :ensure t
+  :straight t
   :demand t
   :init
   (yas-global-mode 1))
 
 (use-package yasnippet-snippets
-  :ensure t)
+  :straight t)
 
 (use-package cmake-mode
-  :ensure t
+  :straight (cmake-mode :host github :repo "emacsmirror/cmake-mode")
   :mode ("CMakeLists.txt" "\\.cmake\\'"))
 
 (use-package iedit
-  :ensure t
+  :straight t
   :bind ("C-c ;" . iedit-mode))
 
 (use-package markdown-mode
-  :ensure t
+  :straight t
   :mode "\\.md\\'")
 
 (use-package yaml-mode
-  :ensure t
+  :straight t
   :mode ("\\.yml\\'" "\\.yaml\\'"))
 
 (use-package ace-window
-  :ensure t
+  :straight t
   :bind ("M-o" . ace-window))
 
 (use-package helpful
-  :ensure t
+  :straight t
   :bind (([remap describe-function] . helpful-callable)
          ([remap describe-variable] . helpful-variable)
          ([remap describe-key] . helpful-key)
@@ -901,20 +934,14 @@ behavior added."
   (mapcar #'disable-theme custom-enabled-themes))
 
 (use-package doom-themes
-  :ensure t
+  :straight t
   :demand t
   :config
   (load-theme 'doom-gruvbox t)
   (set-face-attribute 'font-lock-doc-face nil :foreground "#a89984"))
 
-;; (use-package doom-modeline
-;;   :ensure t
-;;   :init
-;;   (setq doom-modeline-mu4e (or dd/on-mac dd/on-cc7 dd/on-abx))
-;;   (doom-modeline-mode 1))
-
 (use-package elfeed
-  :ensure t
+  :straight t
   :commands elfeed
   :bind (("C-x w" . 'elfeed)
          :map elfeed-show-mode-map
@@ -935,7 +962,7 @@ behavior added."
 
 (when (or dd/on-grads-18 dd/on-cc7 dd/on-mac dd/on-abx)
   (use-package circe
-    :ensure t
+    :straight t
     :commands circe
     :hook (circe-chat-mode-hook . dd/circe-prompt)
     :init
@@ -1010,19 +1037,13 @@ behavior added."
 
   (use-package erc-hl-nicks
     :after erc
-    :ensure t
+    :straight t
     :config
     (add-to-list 'erc-modules 'hl-nicks)))
 
-;; (use-package gcmh
-;;   :ensure t
-;;   :demand t
-;;   :init
-;;   (gcmh-mode 1))
-
 (when (or dd/on-mac dd/on-cc7 dd/on-abx)
   (use-package tex-site
-    :ensure auctex
+    :straight auctex
     :mode ("\\.tex\\'" . TeX-latex-mode)
     :init
     (setq font-latex-fontify-sectioning 'color
@@ -1035,20 +1056,20 @@ behavior added."
     :config
     (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))
 
-  (use-package company-reftex
-    :ensure t)
+  ;; (use-package company-reftex
+  ;;   :ensure t)
 
-  (use-package company-math
-    :ensure t)
+  ;; (use-package company-math
+  ;;   :ensure t)
 
-  (defun dd/company-math ()
-    (interactive)
-    (setq-local company-backends
-                (append '((company-math-symbols-latex company-latex-commands))
-                        company-backends)))
+  ;; (defun dd/company-math ()
+  ;;   (interactive)
+  ;;   (setq-local company-backends
+  ;;               (append '((company-math-symbols-latex company-latex-commands))
+  ;;                       company-backends)))
 
   (use-package lsp-latex
-    :ensure t
+    :straight t
     :init
     (when dd/on-cc7
       (setq lsp-latex-texlab-executable
@@ -1058,7 +1079,7 @@ behavior added."
     (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig"))
 
   (use-package pdf-tools
-    :ensure t
+    :straight t
     :hook (pdf-view-mode-hook . (lambda () (display-line-numbers-mode 0)))
     :config
     (pdf-tools-install)
@@ -1069,15 +1090,15 @@ behavior added."
     (setq TeX-view-program-selection '((output-pdf "PDF Tools")))))
 
 (use-package ox-hugo
-  :ensure t
+  :straight t
   :after ox)
 
 (use-package htmlize
-  :ensure t
+  :straight t
   :after ox)
 
 (use-package w3m
-  :ensure t
+  :straight t
   :config
   (setq w3m-default-display-inline-images t))
 
@@ -1086,11 +1107,12 @@ behavior added."
 
 (bind-key (kbd "C-x \\") #'dd/toggle-window-split)
 
-(bind-key (kbd "C-w") (lambda ()
-                        (interactive)
-                        (if (region-active-p)
-                            (kill-region (region-beginning) (region-end))
-                          (dd/delete-frame-or-window))))
+(bind-key (kbd "C-w")
+          (lambda ()
+            (interactive)
+            (if (region-active-p)
+                (kill-region (region-beginning) (region-end))
+              (dd/delete-frame-or-window))))
 
 (when dd/on-mac
   (when (memq window-system '(mac ns))
@@ -1117,7 +1139,7 @@ behavior added."
   ;; (bind-key* (kbd "s-f") #'helm-find-files)
   ;; (bind-key* (kbd "s-b") #'helm-mini)
   (bind-key* (kbd "s-f") #'find-file)
-  (bind-key* (kbd "s-b") #'switch-to-buffer)
+  (bind-key* (kbd "s-b") #'consult-buffer)
   (bind-key* (kbd "s-g") #'magit-status)
   (bind-key* (kbd "s-i") (lambda () (interactive) (find-file user-init-file)))
   (bind-key* (kbd "s-o") #'other-window)
@@ -1148,8 +1170,8 @@ behavior added."
          (kill-buffer b))))
    (buffer-list)))
 
-;; 100MB garbage collection threshold
-(setq gc-cons-threshold (* 100 1024 1024))
+;; 128MB garbage collection threshold
+(setq gc-cons-threshold (* 128 1024 1024))
 
 (provide 'init)
 ;;; init.el ends here
