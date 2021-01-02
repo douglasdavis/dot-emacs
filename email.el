@@ -24,6 +24,28 @@
 
 ;;; Code:
 
+
+(use-package message
+  :init
+  (setq message-send-mail-function 'message-send-mail-with-sendmail
+        message-sendmail-f-is-evil t
+        message-sendmail-extra-arguments '("--read-envelope-from")
+        message-kill-buffer-on-exit t
+        message-dont-reply-to-names '("ddavis@phy.duke.edu"
+                                      "ddavis@ddavis.io"
+                                      "ddavis@cern.ch"))
+  :demand t)
+
+(use-package sendmail
+  :init
+  (defconst dd/sendmail-exe
+    (cond (dd/on-mac "/Users/ddavis/software/localbase/bin/msmtp")
+          (dd/on-abx "/usr/bin/msmtp")
+          (dd/on-cc7 "/usr/local/bin/msmtp"))
+    "Machine dependent msmtp executable string.")
+  (setq sendmail-program dd/sendmail-exe)
+  :demand t)
+
 (defconst dd/mu-exe
   (cond (dd/on-mac "/Users/ddavis/software/localbase/bin/mu")
         (dd/on-abx "/usr/bin/mu")
@@ -36,52 +58,9 @@
         (dd/on-cc7 "/home/ddavis/software/specific/mu/1.4.13/share/emacs/site-lisp/mu4e"))
   "Machine dependent mu4e installation location string.")
 
-(defconst dd/sendmail-exe
-  (cond (dd/on-mac "/Users/ddavis/software/localbase/bin/msmtp")
-        (dd/on-abx "/usr/bin/msmtp")
-        (dd/on-cc7 "/usr/local/bin/msmtp"))
-  "Machine dependent msmtp executable string.")
-
-(require 'sendmail)
-(require 'message)
-
-(setq user-mail-address "ddavis@ddavis.io"
-      user-full-name "Doug Davis"
-      sendmail-program dd/sendmail-exe
-      message-send-mail-function 'message-send-mail-with-sendmail
-      message-sendmail-f-is-evil t
-      message-sendmail-extra-arguments '("--read-envelope-from")
-      message-kill-buffer-on-exit t
-      message-dont-reply-to-names '("ddavis@phy.duke.edu"
-                                    "ddavis@ddavis.io"
-                                    "ddavis@cern.ch"))
-
-(defun dd/mu4e-byte-comp ()
-  (interactive)
-  (byte-recompile-directory dd/mu4e-dir 0 t))
-
-(defun dd/reset-standard-name-and-email ()
-  "Reset mail address and name to default."
-  (interactive)
-  (setq user-mail-address "ddavis@ddavis.io"
-        user-full-name "Doug Davis"))
-
-(defun dd/mu4e-jump-via-comp-read ()
-  "Jump maildirs using `completing-read'."
-  (interactive)
-  (let ((maildir (completing-read "Maildir: " (mu4e-get-maildirs))))
-    (mu4e-headers-search (format "maildir:\"%s\"" maildir))))
-
-(defun mu4e-action-view-in-w3m ()
-  "View the body of the message in Emacs w3m."
-  (interactive)
-  (w3m-browse-url (concat "file://"
-                          (mu4e~write-body-to-html (mu4e-message-at-point t)))))
-
 (with-eval-after-load "mm-decode"
   (add-to-list 'mm-discouraged-alternatives "text/html")
   (add-to-list 'mm-discouraged-alternatives "text/richtext"))
-
 
 (use-package mu4e
   :load-path dd/mu4e-dir
@@ -104,10 +83,33 @@
     (interactive)
     (auto-save-mode -1))
   (add-hook 'mu4e-compose-mode-hook #'dd/dont-auto-save)
+
   (defun dd/mu4e-toggle-gnus ()
     "Toggle Gnus view mode in mu4e."
     (interactive)
     (setq mu4e-view-use-gnus (not mu4e-view-use-gnus)))
+
+  (defun dd/mu4e-byte-comp ()
+    (interactive)
+    (byte-recompile-directory dd/mu4e-dir 0 t))
+
+  (defun dd/reset-standard-name-and-email ()
+    "Reset mail address and name to default."
+    (interactive)
+    (setq user-mail-address "ddavis@ddavis.io"
+          user-full-name "Doug Davis"))
+
+  (defun dd/mu4e-jump-via-comp-read ()
+    "Jump maildirs using `completing-read'."
+    (interactive)
+    (let ((maildir (completing-read "Maildir: " (mu4e-get-maildirs))))
+      (mu4e-headers-search (format "maildir:\"%s\"" maildir))))
+
+  (defun mu4e-action-view-in-w3m ()
+    "View the body of the message in Emacs w3m."
+    (interactive)
+    (w3m-browse-url (concat "file://"
+                            (mu4e~write-body-to-html (mu4e-message-at-point t)))))
 
   (set-face-attribute 'mu4e-header-highlight-face nil :weight 'regular)
   ;; (setq  mu4e-use-fancy-chars nil
@@ -166,21 +168,6 @@
   (when (or dd/on-mac dd/on-cc7 dd/on-abx)
     (add-to-list 'mu4e-contexts
                  (make-mu4e-context
-                  :name "gmail"
-                  :enter-func (lambda () (mu4e-message "Entering Gmail context"))
-                  :leave-func (lambda () (dd/reset-standard-name-and-email))
-                  :match-func (lambda (msg)
-                                (when msg
-                                  (string-match-p "^/gmail" (mu4e-message-field msg :maildir))))
-                  :vars '( ( user-mail-address           . "douglas.davis.092@gmail.com" )
-                           ( user-email-address          . "douglas.davis.092@gmail.com" )
-                           ( user-full-name              . "Doug Davis" )
-                           ( mu4e-trash-folder           . "/gmail/_blackhole" )
-                           ( mu4e-sent-folder            . "/gmail/[Gmail]/Sent Mail" )
-                           ( mu4e-drafts-folder          . "/gmail/_blackhole" )
-                           ( mu4e-reply-to-address       . "douglas.davis.092@gmail.com" ))))
-    (add-to-list 'mu4e-contexts
-                 (make-mu4e-context
                   :name "fastmail"
                   :enter-func (lambda () (mu4e-message "Entering FastMail context"))
                   :leave-func (lambda () (mu4e-message "Leaving FastMail context"))
@@ -198,7 +185,7 @@
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
                 :name "Unread short"
-                :query "flag:unread and (m:/duke* or m:/cern* or m:/fastmail/INBOX or m:/gmail/INBOX*)"
+                :query "flag:unread and (m:/duke* or m:/cern* or m:/fastmail/INBOX)"
                 :key ?U))
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
@@ -213,14 +200,13 @@
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
                 :name "INBOXes"
-                :query "m:/duke/INBOX or m:/cern/INBOX or m:/fastmail/INBOX or m:/gmail/INBOX"
+                :query "m:/duke/INBOX or m:/cern/INBOX or m:/fastmail/INBOX"
                 :key ?i))
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
                 :name "Last day's work"
                 :query (concat "date:1d..now "
                                "and not m:/fastmail* "
-                               "and not m:/gmail* "
                                "and not m:/cern/Mailing\\ Lists/CERN-JIRA "
                                "and not m:/cern/Mailing\\ Lists/JEDI*")
                 :key ?w))

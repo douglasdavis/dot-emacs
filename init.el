@@ -30,8 +30,8 @@
 (when (boundp 'load-prefer-newer)
   (setq load-prefer-newer t))
 
-(setq user-mail-address "ddavis@ddavis.io"
-      user-full-name "Doug Davis")
+(setq user-mail-address "ddavis@ddavis.io")
+(setq user-full-name "Doug Davis")
 
 (setq default-directory
       (file-name-directory
@@ -102,6 +102,9 @@
   (if dd/on-mac
       (menu-bar-mode +1)
     (menu-bar-mode -1)))
+
+(when (and dd/on-mac (not window-system))
+  (menu-bar-mode -1))
 
 (setq-default require-final-newline t)
 (setq-default indent-tabs-mode nil)
@@ -661,6 +664,7 @@ behavior added."
 
 (use-package selectrum-prescient
   :straight t
+  :after selectrum
   :config
   (selectrum-prescient-mode +1))
 
@@ -693,14 +697,15 @@ behavior added."
   (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light)))
 
 (use-package consult
-  :straight t
+  :straight (consult :branch "main")
   :demand t
-  :bind (("C-c l" . consult-line))
+  :bind (("C-c l" . consult-line)
+         ("C-x b" . consult-buffer))
   :config
-  (consult-preview-mode))
+  (consult-preview-mode +1))
 
 (use-package consult-selectrum
-  :straight t
+  :straight (consult-selectrum :branch "main")
   :demand t)
 
 (use-package projectile
@@ -762,10 +767,10 @@ behavior added."
   (add-hook 'text-mode-hook #'dd/company-text-mode)
   (add-hook 'prog-mode-hook #'dd/company-prog-mode))
 
-(use-package orderless
-  :straight t
-  :demand t
-  :custom (completion-styles '(basic orderless emacs22 partial-completion flex)))
+;; (use-package orderless
+;;   :straight t
+;;   :demand t
+;;   :custom (completion-styles '(basic orderless emacs22 partial-completion flex)))
 
 (use-package magit
   :straight t
@@ -980,9 +985,8 @@ behavior added."
              :nickserv-password dd/irc-pw-freenode
              :channels (:after-auth
                         "#emacs"
-                        "#clojure"
-                        "#clojure-beginners"
                         "#python"
+                        "#sr.ht"
                         "#lobsters"
                         "##crustaceans")
              :tls t)))
