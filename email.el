@@ -111,6 +111,7 @@
     (w3m-browse-url (concat "file://"
                             (mu4e~write-body-to-html (mu4e-message-at-point t)))))
 
+  (set-face-attribute 'mu4e-unread-face nil :weight 'regular)
   (set-face-attribute 'mu4e-header-highlight-face nil :weight 'regular)
   ;; (setq  mu4e-use-fancy-chars nil
   ;;        mu4e-headers-thread-connection-prefix '("│"   . "│")

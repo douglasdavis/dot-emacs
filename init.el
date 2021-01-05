@@ -658,7 +658,8 @@ behavior added."
   (setq selectrum-num-candidates-displayed 15)
   (setq selectrum-fix-minibuffer-height t)
   :custom-face
-  (selectrum-primary-highlight ((t (:weight bold :foreground "#cc241d"))))
+  (selectrum-primary-highlight ((t (:weight bold :foreground "#fe8019"))))
+  ;; (selectrum-primary-highlight ((t (:weight bold :foreground "#cc241d"))))
   :config
   (selectrum-mode +1))
 
@@ -694,15 +695,15 @@ behavior added."
   :straight (marginalia :branch "main")
   :config
   (marginalia-mode +1)
-  (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light)))
+  (setq marginalia-annotators '(marginalia-annotators-heavy
+                                marginalia-annotators-light)))
 
 (use-package consult
   :straight (consult :branch "main")
   :demand t
   :bind (("C-c l" . consult-line)
-         ("C-x b" . consult-buffer))
-  :config
-  (consult-preview-mode +1))
+         ("C-c r" . consult-ripgrep)
+         ("C-x b" . consult-buffer)))
 
 (use-package consult-selectrum
   :straight (consult-selectrum :branch "main")
@@ -713,8 +714,8 @@ behavior added."
   :demand t
   :bind-keymap ("C-c p" . projectile-command-map)
   :bind (:map projectile-command-map
-              ("r" . dd/ripgrep-proj-or-dir))
-  ;; ("g" . dd/helm-rg-dwim))
+              ("r" . dd/ripgrep-proj-or-dir)
+              ("g" . consult-ripgrep))
   :config
   (projectile-mode +1))
 
@@ -938,12 +939,18 @@ behavior added."
   (interactive)
   (mapcar #'disable-theme custom-enabled-themes))
 
-(use-package doom-themes
-  :straight t
+;; (use-package doom-themes
+;;   :straight t
+;;   :demand t
+;;   :config
+;;   (load-theme 'doom-gruvbox t)
+;;   (set-face-attribute 'font-lock-doc-face nil :foreground "#a89984"))
+
+(use-package gruvbox
+  :straight (gruvbox :host github :repo "greduan/emacs-theme-gruvbox")
   :demand t
   :config
-  (load-theme 'doom-gruvbox t)
-  (set-face-attribute 'font-lock-doc-face nil :foreground "#a89984"))
+  (load-theme 'gruvbox t))
 
 (use-package elfeed
   :straight t
@@ -1097,9 +1104,9 @@ behavior added."
   :straight t
   :after ox)
 
-(use-package htmlize
-  :straight t
-  :after ox)
+;; (use-package htmlize
+;;   :straight t
+;;   :after ox)
 
 (use-package w3m
   :straight t
@@ -1140,15 +1147,13 @@ behavior added."
   (bind-key* (kbd "s-3") #'split-window-right)
   (bind-key* (kbd "s-5") #'projectile-find-file-in-known-projects)
   (bind-key* (kbd "s-4") #'mu4e)
-  ;; (bind-key* (kbd "s-f") #'helm-find-files)
-  ;; (bind-key* (kbd "s-b") #'helm-mini)
   (bind-key* (kbd "s-f") #'find-file)
   (bind-key* (kbd "s-b") #'consult-buffer)
   (bind-key* (kbd "s-g") #'magit-status)
   (bind-key* (kbd "s-i") (lambda () (interactive) (find-file user-init-file)))
   (bind-key* (kbd "s-o") #'other-window)
   (bind-key* (kbd "s-p") #'projectile-command-map)
-  ;; (bind-key* (kbd "s-r") #'dd/helm-rg-dwim)
+  (bind-key* (kbd "s-r") #'consult-ripgrep)
   (bind-key* (kbd "s-u") #'gnus)
   (bind-key* (kbd "s-*") 'dd/kill-all-buffers)
   (bind-key* (kbd "s-w") #'dd/delete-frame-or-window))
