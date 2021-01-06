@@ -1089,16 +1089,17 @@ behavior added."
   (when dd/on-cc7
     (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig"))
 
-  (use-package pdf-tools
-    :straight t
-    :hook (pdf-view-mode-hook . (lambda () (display-line-numbers-mode 0)))
-    :config
-    (pdf-tools-install)
-    (setq-default pdf-view-display-size 'fit-page)
-    (when dd/on-mac
-      (setq pdf-view-use-scaling t)
-      (setq pdf-view-use-imagemagick nil))
-    (setq TeX-view-program-selection '((output-pdf "PDF Tools")))))
+  (when window-system
+    (use-package pdf-tools
+      :straight t
+      :hook (pdf-view-mode-hook . (lambda () (display-line-numbers-mode 0)))
+      :config
+      (pdf-tools-install)
+      (setq-default pdf-view-display-size 'fit-page)
+      (when dd/on-mac
+        (setq pdf-view-use-scaling t)
+        (setq pdf-view-use-imagemagick nil))
+      (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))))
 
 (use-package ox-hugo
   :straight t
