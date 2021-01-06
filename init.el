@@ -450,7 +450,7 @@ behavior added."
           browse-url-generic-program "/usr/local/bin/firefox")))
 
 (use-package sh-script
-  :custom (sh-basic-offset 2))
+  :custom (sh-basic-offset 4))
 
 (use-package elisp-mode
   :init
