@@ -456,10 +456,10 @@ behavior added."
   :init
   :hook ((emacs-lisp-mode-hook . prettify-symbols-mode)))
 
-(use-package cc-mode
-  :demand t
-  :mode (("\\.h\\(h?\\|xx\\|pp\\)\\'" . c++-mode)
-         ("\\.icc\\'" . c++-mode)))
+;; (use-package cc-mode
+;;   :demand t
+;;   :mode (("\\.h\\(h?\\|xx\\|pp\\)\\'" . c++-mode)
+;;          ("\\.icc\\'" . c++-mode)))
 
 (use-package python
   :mode ("\\.py\\'" . python-mode)
@@ -703,7 +703,11 @@ behavior added."
   :demand t
   :bind (("C-c l" . consult-line)
          ("C-c r" . consult-ripgrep)
-         ("C-x b" . consult-buffer)))
+         ("C-x b" . consult-buffer))
+  :config
+  (setq consult-preview-key 'nil)
+  (autoload 'projectile-project-root "projectile")
+  (setq consult-project-root-function #'projectile-project-root))
 
 (use-package consult-selectrum
   :straight (consult-selectrum :branch "main")
@@ -950,7 +954,8 @@ behavior added."
   :straight (gruvbox :host github :repo "greduan/emacs-theme-gruvbox")
   :demand t
   :config
-  (load-theme 'gruvbox t))
+  (load-theme 'gruvbox t)
+  (set-face-attribute 'font-lock-doc-face nil :slant 'italic :foreground "#928374"))
 
 (use-package elfeed
   :straight t
@@ -1137,8 +1142,10 @@ behavior added."
     (setq-default ns-function-modifier 'hyper)
     (setq-default mac-function-modifier 'hyper))
 
-  (define-key global-map [s-right] 'move-end-of-line)
-  (define-key global-map [s-left] 'move-beginning-of-line)
+  ;; (define-key global-map [s-right] 'move-end-of-line)
+  ;; (define-key global-map [s-left] 'move-beginning-of-line)
+  (bind-key* (kbd "s-<right>") #'right-word)
+  (bind-key* (kbd "s-<left>") #'left-word)
   (bind-key* (kbd "s-d") #'dd/kill-theme)
   (bind-key* (kbd "s-\\") #'dd/toggle-window-split)
   (bind-key* (kbd "s-\"") #'dd/google-something)
