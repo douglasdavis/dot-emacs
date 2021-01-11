@@ -1,3 +1,5 @@
+;;; dot-gnus.el --- Gnus config                       -*- lexical-binding: t; -*-
+
 (use-package gnus
   :config
   (setq gnus-startup-file "~/.emacs.d/gnusnews/newsrc")
@@ -33,7 +35,8 @@
             (address "ddavis@ddavis.io")
             (gcc "nnimap+fastmail:Sent")
             (body "")
-            (eval (setq message-sendmail-extra-arguments '("--read-envelope-from")))
+            (eval (setq mail-host-address "ddavis.io"
+                        message-sendmail-extra-arguments '("--read-envelope-from")))
             (user-mail-address "ddavis@ddavis.io")))
           ("dukemail"
            (posting-style
@@ -41,7 +44,8 @@
             (address "ddavis@phy.duke.edu")
             (body "")
             (gcc "nnimap+dukemail:Sent")
-            (eval (setq message-sendmail-extra-arguments '("--read-envelope-from")))
+            (eval (setq mail-host-address "phy.duke.edu"
+                        message-sendmail-extra-arguments '("--read-envelope-from")))
             (user-mail-address "ddavis@phy.duke.edu")))
           ("cernmail"
            (posting-style
@@ -49,7 +53,8 @@
             (address "ddavis@cern.ch")
             (body "")
             (gcc "nnimap+cernmail:Sent")
-            (eval (setq message-sendmail-extra-arguments '("--read-envelope-from")))
+            (eval (setq mail-host-address "cern.ch"
+                        message-sendmail-extra-arguments '("--read-envelope-from")))
             (user-mail-address "ddavis@cern.ch")))))
 
   ;; keys
