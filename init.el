@@ -403,7 +403,7 @@ behavior added."
 (when (or dd/on-mac dd/on-cc7 dd/on-grads-18 dd/on-abx)
   (use-package epa-file
     :config
-    (epa-file-enable)
+    ;; (epa-file-enable)
     (if dd/on-mac
         (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
       (custom-set-variables '(epg-gpg-program "/usr/bin/gpg2")))))
@@ -453,7 +453,6 @@ behavior added."
   :custom (sh-basic-offset 4))
 
 (use-package elisp-mode
-  :init
   :hook ((emacs-lisp-mode-hook . prettify-symbols-mode)))
 
 ;; (use-package cc-mode
@@ -502,6 +501,11 @@ behavior added."
         (progn
           (call-interactively #'pyvenv-workon)
           (lsp))))))
+
+(use-package ispell
+  :config
+  (when dd/on-mac
+    (setq ispell-program-name "/usr/local/bin/hunspell")))
 
 (use-package flyspell
   :hook ((org-mode-hook . flyspell-mode)
@@ -895,7 +899,13 @@ behavior added."
   :config
   (which-key-mode)
   (setq which-key-side-window-max-height 0.40
-        which-key-frame-max-height 35))
+        which-key-frame-max-height 40))
+
+(use-package which-key-posframe
+  :straight t
+  :after which-key
+  :config
+  (which-key-posframe-mode +1))
 
 (use-package yasnippet
   :straight t
@@ -953,9 +963,12 @@ behavior added."
 (use-package gruvbox
   :straight (gruvbox :host github :repo "greduan/emacs-theme-gruvbox")
   :demand t
+  :custom-face
+  (font-lock-doc-face ((t (:foreground "#928374"))))
   :config
-  (load-theme 'gruvbox t)
-  (set-face-attribute 'font-lock-doc-face nil :slant 'italic :foreground "#928374"))
+  (load-theme 'gruvbox t))
+
+;;  (set-face-attribute 'font-lock-doc-face nil :slant 'italic :foreground "#928374"))
 
 (use-package elfeed
   :straight t
@@ -1113,6 +1126,10 @@ behavior added."
 ;; (use-package htmlize
 ;;   :straight t
 ;;   :after ox)
+
+(use-package debbugs
+  :straight t
+  :defer 20)
 
 (use-package w3m
   :straight t
