@@ -109,8 +109,6 @@
 (setq-default require-final-newline t)
 (setq-default indent-tabs-mode nil)
 
-(column-number-mode +1)
-
 (add-to-list 'default-frame-alist '(height . 64))
 (add-to-list 'default-frame-alist '(width . 192))
 
@@ -314,6 +312,10 @@ behavior added."
 
 ;; sec03:
 ;; use-package for some core Emacs packages.
+
+(use-package simple
+  :config
+  (column-number-mode +1))
 
 (use-package server
   :config
@@ -655,8 +657,34 @@ behavior added."
 ;;         (counsel-rg "" (expand-file-name default-directory) nil arg))))
 ;;   (counsel-mode +1))
 
+(use-package projectile
+  :straight t
+  :demand t
+  :bind-keymap ("C-c p" . projectile-command-map)
+  :bind (:map projectile-command-map
+              ("r" . dd/ripgrep-proj-or-dir)
+              ("g" . consult-ripgrep))
+  :config
+  (projectile-mode +1))
+
+(when (executable-find "fd")
+  (setq projectile-git-command "fd . -H -0 --type f --color=never"))
+(setq projectile-track-known-projects-automatically t
+      projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
+      projectile-globally-ignored-directories '(".git" "__pycache__")
+      projectile-globally-ignored-files '(".DS_Store")
+      projectile-enable-caching nil)
+
+(when (or dd/on-mac dd/on-grads-18)
+  (setq projectile-project-search-path
+        '("~/software/repos/" "~/atlas/analysis/")))
+(when (or dd/on-abx dd/on-cc7)
+  (setq projectile-project-search-path
+        '("~/software/repos/" "/ddd/atlas/analysis/")))
+
 (use-package selectrum
   :straight t
+  :demand t
   :init
   (setq selectrum-extend-current-candidate-highlight t)
   (setq selectrum-num-candidates-displayed 15)
@@ -696,15 +724,15 @@ behavior added."
 ;;               ("C-v" . icomplete-vertical-toggle)))
 
 (use-package marginalia
-  :straight (marginalia :branch "main")
+  :straight t
   :config
   (marginalia-mode +1)
   (setq marginalia-annotators '(marginalia-annotators-heavy
                                 marginalia-annotators-light)))
 
 (use-package consult
-  :straight (consult :branch "main")
-  :demand t
+  :straight t
+  :after selectrum
   :bind (("C-c l" . consult-line)
          ("C-c r" . consult-ripgrep)
          ("C-x b" . consult-buffer))
@@ -714,33 +742,8 @@ behavior added."
   (setq consult-project-root-function #'projectile-project-root))
 
 (use-package consult-selectrum
-  :straight (consult-selectrum :branch "main")
-  :demand t)
-
-(use-package projectile
   :straight t
-  :demand t
-  :bind-keymap ("C-c p" . projectile-command-map)
-  :bind (:map projectile-command-map
-              ("r" . dd/ripgrep-proj-or-dir)
-              ("g" . consult-ripgrep))
-  :config
-  (projectile-mode +1))
-
-(when (executable-find "fd")
-  (setq projectile-git-command "fd . -H -0 --type f --color=never"))
-(setq projectile-track-known-projects-automatically t
-      projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
-      projectile-globally-ignored-directories '(".git" "__pycache__")
-      projectile-globally-ignored-files '(".DS_Store")
-      projectile-enable-caching nil)
-
-(when (or dd/on-mac dd/on-grads-18)
-  (setq projectile-project-search-path
-        '("~/software/repos/" "~/atlas/analysis/")))
-(when (or dd/on-abx dd/on-cc7)
-  (setq projectile-project-search-path
-        '("~/software/repos/" "/ddd/atlas/analysis/")))
+  :after consult)
 
 (use-package company
   :straight t
