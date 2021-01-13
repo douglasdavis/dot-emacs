@@ -323,7 +323,9 @@ behavior added."
     (server-start)))
 
 (use-package ibuffer
-  :bind (("C-x C-b" . ibuffer-other-window))
+  :bind (("C-x C-b" . ibuffer-other-window)
+         :map ibuffer-mode-map
+         ("q" . kill-buffer-and-window))
   :init
   (setq ibuffer-expert t))
 
@@ -463,6 +465,7 @@ behavior added."
 ;;          ("\\.icc\\'" . c++-mode)))
 
 (use-package python
+  :load-path "~/.emacs.d/dot-emacs/site-lisp"
   :mode ("\\.py\\'" . python-mode)
   :bind (:map python-mode-map
               ("C-c C-a" . dd/py-auto-lsp))
