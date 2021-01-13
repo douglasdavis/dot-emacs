@@ -1064,55 +1064,47 @@ behavior added."
     (add-to-list 'erc-modules 'notifications)
     (add-to-list 'erc-modules 'spelling)
 
-    (setq dd/erc-nick-face-list '())
     (setq-default dd/erc-colors-list
-                  '("#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#fe8019"
-                    "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e"))
+                  '("#fb4934" "#b8bb26" "#fabd2f"
+                    "#83a598" "#d3869b" "#8ec07c"
+                    "#fe8019" "#cc241d" "#98971a"
+                    "#d79921" "#458588" "#b16286"
+                    "#689d6a" "#d65d0e"))
 
-    (defun dd/erc-build-nick-face-list ()
-      "Builds a list of new faces using the foreground colors
-    specified in erc-colors-list. The nick faces created here
-    will be used to format IRC nicks."
-      (setq i -1)
-      (setq dd/erc-nick-face-list
-            (mapcar
-             (lambda (COLOR)
-               (setq i (1+ i))
-               (list (custom-declare-face
-                      (make-symbol (format "erc-nick-face-%d" i))
-                      (list (list t (list :foreground COLOR)))
-                      (format "Nick face %d" i))))
-             dd/erc-colors-list)))
+    ;; special colors for some people
+    (setq dd/erc-nick-color-alist '(("John" . "blue")
+        		            ("Bob" . "red")))
 
-    (defun dd/erc-insert-modify-hook ()
-      "This insert-modify hook looks for nicks in new messages
-    and computes md5(nick) and uses substring(md5_value, 0, 4)
-    mod (length dd/erc-nick-face-list) to index the face list and
-    produce the same face for a given nick each time it is seen.
-    We get a lot of collisions this way, unfortunately, but it's
-    better than some other methods I tried. Additionally, if you
-    change the order or size of the dd/erc-colors-list, you'll
-    change the colors used for nicks."
-      (if (null dd/erc-nick-face-list) (dd/erc-build-nick-face-list))
+    (defun dd/erc-get-color-for-nick (nick)
+      "Gets a color for NICK. If NICK is in
+    dd/erc-nick-color-alist, use that color, else hash the nick
+    and use a random color from the pool"
+      (or (cdr (assoc nick dd/erc-nick-color-alist))
+          (nth
+           (mod (string-to-number
+	         (substring (md5 (downcase nick)) 0 6) 16)
+	        (length dd/erc-colors-list))
+           dd/erc-colors-list)))
+
+    (defun dd/erc-put-color-on-nick ()
+      "Modifies the color of nicks according to
+    dd/erc-get-color-for-nick"
       (save-excursion
         (goto-char (point-min))
-        (if (looking-at "<\\([^>]*\\)>")
-            (let ((nick (match-string 1)))
-              (put-text-property (match-beginning 1) (match-end 1)
-                                 'face (nth
-                                        (mod (string-to-number
-                                              (substring (md5 nick) 0 4) 16)
-                                             (length dd/erc-nick-face-list))
-                                        dd/erc-nick-face-list))))))
+        (while (forward-word 1)
+          (setq bounds (bounds-of-thing-at-point 'word))
+          (setq word (buffer-substring-no-properties
+                      (car bounds) (cdr bounds)))
+          (when (or (and (erc-server-buffer-p) (erc-get-server-user word))
+                    (and erc-channel-users (erc-get-channel-user word)))
+            (put-text-property (car bounds) (cdr bounds)
+                               'face (cons 'foreground-color
+                                           (dd/erc-get-color-for-nick word)))))))
 
-    ;; This adds the ERC message insert hook.
-    (add-hook 'erc-insert-modify-hook 'dd/erc-insert-modify-hook)))
-
-  ;; (use-package erc-hl-nicks
-  ;;   :after erc
-  ;;   :straight t
-  ;;   :config
-  ;;   (add-to-list 'erc-modules 'hl-nicks)))
+    (add-hook 'erc-insert-modify-hook 'dd/erc-put-color-on-nick)
+    (add-hook 'erc-mode-hook (lambda ()
+                               (modify-syntax-entry ?\_ "w" nil)
+                               (modify-syntax-entry ?\- "w" nil)))))
 
 (when (or dd/on-mac dd/on-cc7 dd/on-abx)
   (use-package tex-site
