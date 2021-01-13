@@ -723,13 +723,6 @@ behavior added."
 ;;               ("C-p" . icomplete-backward-completions)
 ;;               ("C-v" . icomplete-vertical-toggle)))
 
-(use-package marginalia
-  :straight t
-  :config
-  (marginalia-mode +1)
-  (setq marginalia-annotators '(marginalia-annotators-heavy
-                                marginalia-annotators-light)))
-
 (use-package consult
   :straight t
   :after selectrum
@@ -741,9 +734,13 @@ behavior added."
   (autoload 'projectile-project-root "projectile")
   (setq consult-project-root-function #'projectile-project-root))
 
-(use-package consult-selectrum
+(use-package marginalia
   :straight t
-  :after consult)
+  :demand t
+  :config
+  (marginalia-mode +1)
+  (setq marginalia-annotators '(marginalia-annotators-heavy
+                                marginalia-annotators-light)))
 
 (use-package company
   :straight t
@@ -1065,13 +1062,57 @@ behavior added."
     (setq erc-track-exclude-types '("JOIN" "MODE" "NICK" "PART" "QUIT"
                                     "324" "329" "332" "333" "353" "477"))
     (add-to-list 'erc-modules 'notifications)
-    (add-to-list 'erc-modules 'spelling))
+    (add-to-list 'erc-modules 'spelling)
 
-  (use-package erc-hl-nicks
-    :after erc
-    :straight t
-    :config
-    (add-to-list 'erc-modules 'hl-nicks)))
+    (setq dd/erc-nick-face-list '())
+    (setq-default dd/erc-colors-list
+                  '("#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#fe8019"
+                    "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e"))
+
+    (defun dd/erc-build-nick-face-list ()
+      "Builds a list of new faces using the foreground colors
+    specified in erc-colors-list. The nick faces created here
+    will be used to format IRC nicks."
+      (setq i -1)
+      (setq dd/erc-nick-face-list
+            (mapcar
+             (lambda (COLOR)
+               (setq i (1+ i))
+               (list (custom-declare-face
+                      (make-symbol (format "erc-nick-face-%d" i))
+                      (list (list t (list :foreground COLOR)))
+                      (format "Nick face %d" i))))
+             dd/erc-colors-list)))
+
+    (defun dd/erc-insert-modify-hook ()
+      "This insert-modify hook looks for nicks in new messages
+    and computes md5(nick) and uses substring(md5_value, 0, 4)
+    mod (length dd/erc-nick-face-list) to index the face list and
+    produce the same face for a given nick each time it is seen.
+    We get a lot of collisions this way, unfortunately, but it's
+    better than some other methods I tried. Additionally, if you
+    change the order or size of the dd/erc-colors-list, you'll
+    change the colors used for nicks."
+      (if (null dd/erc-nick-face-list) (dd/erc-build-nick-face-list))
+      (save-excursion
+        (goto-char (point-min))
+        (if (looking-at "<\\([^>]*\\)>")
+            (let ((nick (match-string 1)))
+              (put-text-property (match-beginning 1) (match-end 1)
+                                 'face (nth
+                                        (mod (string-to-number
+                                              (substring (md5 nick) 0 4) 16)
+                                             (length dd/erc-nick-face-list))
+                                        dd/erc-nick-face-list))))))
+
+    ;; This adds the ERC message insert hook.
+    (add-hook 'erc-insert-modify-hook 'dd/erc-insert-modify-hook)))
+
+  ;; (use-package erc-hl-nicks
+  ;;   :after erc
+  ;;   :straight t
+  ;;   :config
+  ;;   (add-to-list 'erc-modules 'hl-nicks)))
 
 (when (or dd/on-mac dd/on-cc7 dd/on-abx)
   (use-package tex-site
