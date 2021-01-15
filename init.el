@@ -519,10 +519,6 @@ behavior added."
          (message-mode-hook . flyspell-mode)
          (mu4e-compose-mode-hook . flyspell-mode)))
 
-(use-package recentf
-  :config
-  (recentf-mode +1))
-
 ;; (use-package flymake
 ;;   :hook (emacs-lisp-mode-hook . flymake-mode))
 
@@ -737,6 +733,12 @@ behavior added."
   (autoload 'projectile-project-root "projectile")
   (setq consult-project-root-function #'projectile-project-root))
 
+(use-package recentf
+  :after consult
+  :config
+  (recentf-mode +1)
+  (add-to-list 'recentf-exclude 'file-remote-p))
+
 (use-package marginalia
   :straight t
   :demand t
@@ -920,8 +922,7 @@ behavior added."
   :straight t)
 
 (use-package cmake-mode
-  :straight (cmake-mode :host github :repo "emacsmirror/cmake-mode")
-  :mode ("CMakeLists.txt" "\\.cmake\\'"))
+  :load-path "~/.emacs.d/dot-emacs/site-lisp")
 
 (use-package iedit
   :straight t
