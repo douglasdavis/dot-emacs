@@ -52,16 +52,19 @@
   (declare (pure t) (side-effect-free t))
   (not (null (string-match-p (regexp-quote substr) s))))
 
-(defconst dd/on-mac (eq system-type 'darwin)
+(defconst dd/on-mac-p (eq system-type 'darwin)
   "For checking if on a mac.")
 
-(defconst dd/on-abx (dd/includes? (system-name) "abx")
+(defconst dd/on-m1-p (dd/includes? (emacs-version) "aarch64-apple")
+  "Fot checking if on M1 mac.")
+
+(defconst dd/on-abx-p (dd/includes? (system-name) "abx")
   "For checking of in abx box.")
 
-(defconst dd/on-cc7 (dd/includes? (system-name) "cc7")
+(defconst dd/on-cc7-p (dd/includes? (system-name) "cc7")
   "For checking if on cc7 box.")
 
-(defconst dd/on-grads-18 (dd/includes? (system-name) "grads-18")
+(defconst dd/on-grads-18-p (dd/includes? (system-name) "grads-18")
   "For checking if on grads-18 box.")
 
 (setq initial-scratch-message
@@ -99,41 +102,41 @@
   (tooltip-mode -1))
 
 (when (fboundp 'menu-bar-mode)
-  (if dd/on-mac
+  (if dd/on-mac-p
       (menu-bar-mode +1)
     (menu-bar-mode -1)))
 
-(when (and dd/on-mac (not window-system))
+(when (and dd/on-mac-p (not window-system))
   (menu-bar-mode -1))
 
 (setq-default require-final-newline t)
 (setq-default indent-tabs-mode nil)
 
-(add-to-list 'default-frame-alist '(height . 64))
+(add-to-list 'default-frame-alist '(height . 60))
 (add-to-list 'default-frame-alist '(width . 192))
 
-(when dd/on-abx
+(when dd/on-abx-p
   (set-face-attribute 'default nil
                       :family "JetBrains Mono"
                       :weight 'regular
                       :height 130))
-(when dd/on-mac
-  (when (boundp 'mac-allow-anti-aliasing)
-    (setq mac-allow-anti-aliasing t))
+(when dd/on-mac-p
+  (when (boundp 'ns-antialias-text)
+    (setq ns-antialias-text t))
   (set-face-attribute 'default nil
                       :family "JetBrains Mono"
                       :weight 'regular
                       :height 120))
-(when dd/on-cc7
+(when dd/on-cc7-p
   (set-face-attribute 'default nil
                       :family "JetBrains Mono"
                       :weight 'regular
                       :height 130))
-(when (and (or dd/on-abx dd/on-cc7) (fboundp 'set-fontset-font))
+(when (and (or dd/on-abx-p dd/on-cc7-p) (fboundp 'set-fontset-font))
     (set-fontset-font t 'symbol
                       (font-spec :family "Noto Color Emoji")
                       nil 'prepend))
-(when (and dd/on-mac (fboundp 'set-fontset-font))
+(when (and dd/on-mac-p (fboundp 'set-fontset-font))
     (set-fontset-font t 'unicode "Apple Color Emoji" nil 'prepend))
 
 (defun dd/delete-and-kill-current ()
@@ -262,9 +265,10 @@ behavior added."
   (dd/google-s s))
 
 (defvar dd/llvm-bin-path
-  (cond (dd/on-mac "/usr/local/opt/llvm/bin")
-        (dd/on-cc7 "/home/ddavis/software/specific/llvm/master/bin")
-        (dd/on-grads-18 "/home/drd25/software/specific/llvm/10.x/bin"))
+  (cond (dd/on-m1-p "/opt/homebrew/opt/llvm/bin")
+        (dd/on-mac-p "/usr/local/opt/llvm/bin")
+        (dd/on-cc7-p "/home/ddavis/software/specific/llvm/master/bin")
+        (dd/on-grads-18-p "/home/drd25/software/specific/llvm/10.x/bin"))
   "Machine dependent llvm bin path.")
 
 (defun dd/llvm-project-exe (exe-name)
@@ -348,13 +352,13 @@ behavior added."
                 '(("el" . "src emacs-lisp :results silent")
                   ("py" . "src python :results silent")
                   ("cpp" . "src C++"))))
-  (when dd/on-mac
+  (when dd/on-mac-p
     (bind-key "<A-down>" 'org-move-subtree-down org-mode-map)
     (bind-key "<A-up>" 'org-move-subtree-up org-mode-map)
     (bind-key "<A-left>" 'org-promote-subtree)
     (bind-key "<A-right>" 'org-demote-subtree))
 
-  (unless dd/on-mac
+  (unless dd/on-mac-p
     (bind-key "<s-down>" 'org-move-subtree-down org-mode-map)
     (bind-key "<s-up>" 'org-move-subtree-up org-mode-map)
     (bind-key "<s-left>" 'org-promote-subtree)
@@ -398,19 +402,20 @@ behavior added."
   (:map help-mode-map
         ("q" . kill-buffer-and-window)))
 
-(when (or dd/on-mac dd/on-cc7 dd/on-grads-18 dd/on-abx)
+(when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p dd/on-abx-p)
   (use-package auth-source
     :init
     (setq auth-sources
           (list (concat user-emacs-directory ".authinfo.gpg")))))
 
-(when (or dd/on-mac dd/on-cc7 dd/on-grads-18 dd/on-abx)
+(when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p dd/on-abx-p)
   (use-package epa-file
     :config
     ;; (epa-file-enable)
-    (if dd/on-mac
-        (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
-      (custom-set-variables '(epg-gpg-program "/usr/bin/gpg2")))))
+    (setq epg-gpg-program
+          (cond (dd/on-m1-p "/opt/homebrew/bin/gpg")
+                (dd/on-mac-p "/usr/local/bin/gpg")
+                (t "/usr/bin/gpg2")))))
 
 (use-package uniquify
   :init
@@ -449,7 +454,7 @@ behavior added."
 
 (use-package browse-url
   :init
-  (when dd/on-cc7
+  (when dd/on-cc7-p
     (setq browse-url-browser-function 'browse-url-generic
           browse-url-generic-program "/usr/local/bin/firefox")))
 
@@ -509,8 +514,10 @@ behavior added."
 
 (use-package ispell
   :config
-  (when dd/on-mac
-    (setq ispell-program-name "/usr/local/bin/hunspell")))
+  (when dd/on-mac-p
+    (setq ispell-program-name
+          (cond (dd/on-m1-p "/opt/homebrew/bin/hunspell")
+                (t "/usr/local/bin/hunspell")))))
 
 (use-package flyspell
   :hook ((org-mode-hook . flyspell-mode)
@@ -674,10 +681,10 @@ behavior added."
       projectile-globally-ignored-files '(".DS_Store")
       projectile-enable-caching nil)
 
-(when (or dd/on-mac dd/on-grads-18)
+(when (or dd/on-mac-p dd/on-grads-18-p)
   (setq projectile-project-search-path
         '("~/software/repos/" "~/atlas/analysis/")))
-(when (or dd/on-abx dd/on-cc7)
+(when (or dd/on-abx-p dd/on-cc7-p)
   (setq projectile-project-search-path
         '("~/software/repos/" "/ddd/atlas/analysis/")))
 
@@ -888,7 +895,7 @@ behavior added."
   :straight t
   :after python)
 
-(when (or dd/on-mac dd/on-cc7 dd/on-abx)
+(when (or dd/on-mac-p dd/on-cc7-p dd/on-abx-p)
   (use-package cider
     :straight t
     :commands cider-jack-in))
@@ -994,7 +1001,7 @@ behavior added."
             (elfeed-make-tagger :before "3 weeks ago" :remove 'unread))
   (setq-default elfeed-search-filter "@21-days-ago"))
 
-(when (or dd/on-grads-18 dd/on-cc7 dd/on-mac dd/on-abx)
+(when (or dd/on-grads-18-p dd/on-cc7-p dd/on-mac-p dd/on-abx-p)
   (use-package circe
     :straight t
     :commands circe
@@ -1110,7 +1117,7 @@ behavior added."
                                (modify-syntax-entry ?\_ "w" nil)
                                (modify-syntax-entry ?\- "w" nil)))))
 
-(when (or dd/on-mac dd/on-cc7 dd/on-abx)
+(when (or dd/on-mac-p dd/on-cc7-p dd/on-abx-p)
   (use-package tex-site
     :straight auctex
     :mode ("\\.tex\\'" . TeX-latex-mode)
@@ -1137,24 +1144,24 @@ behavior added."
   ;;               (append '((company-math-symbols-latex company-latex-commands))
   ;;                       company-backends)))
 
-  (use-package lsp-latex
-    :straight t
-    :init
-    (when dd/on-cc7
+  (when dd/on-cc7-p
+    (use-package lsp-latex
+      :straight t
+      :init
       (setq lsp-latex-texlab-executable
             "/home/ddavis/software/repos/texlab/target/release/texlab")))
 
-  (when dd/on-cc7
+  (when dd/on-cc7-p
     (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig"))
 
-  (when window-system
+  (when (and window-system (not dd/on-m1-p))
     (use-package pdf-tools
       :straight t
       :hook (pdf-view-mode-hook . (lambda () (display-line-numbers-mode 0)))
       :config
       (pdf-tools-install)
       (setq-default pdf-view-display-size 'fit-page)
-      (when dd/on-mac
+      (when dd/on-mac-p
         (setq pdf-view-use-scaling t)
         (setq pdf-view-use-imagemagick nil))
       (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))))
@@ -1188,7 +1195,7 @@ behavior added."
                 (kill-region (region-beginning) (region-end))
               (dd/delete-frame-or-window))))
 
-(when dd/on-mac
+(when dd/on-mac-p
   (when (memq window-system '(mac ns))
     (setq browse-url-browser-function 'browse-url-default-macosx-browser)
     (setq-default ns-alternate-modifier 'meta)
@@ -1226,7 +1233,7 @@ behavior added."
 ;; sec06:
 ;; email setup is in dedicated file
 
-(when (or dd/on-mac dd/on-cc7 dd/on-abx)
+(when (or dd/on-mac-p dd/on-cc7-p dd/on-abx-p)
   (load-file "~/.emacs.d/dot-emacs/email.el"))
 
 ;; sec07:
