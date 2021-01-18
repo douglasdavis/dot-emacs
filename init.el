@@ -314,6 +314,13 @@ behavior added."
 
 (use-package straight-x)
 
+(defun dd/straight-up ()
+  "Pull and check straight.el packages."
+  (interactive)
+  (progn
+    (straight-pull-all)
+    (straight-check-all)))
+
 ;; sec03:
 ;; use-package for some core Emacs packages.
 
@@ -878,9 +885,8 @@ behavior added."
 
 (use-package clang-format
   :straight t
-  :after c++-mode
-  :config
-  (setq clang-format-executable dd/clang-format-exe))
+  :custom
+  (clang-format-executable dd/clang-format-exe))
 
 (use-package modern-cpp-font-lock
   :straight t
