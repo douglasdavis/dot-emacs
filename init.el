@@ -411,11 +411,11 @@ behavior added."
 (when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p dd/on-abx-p)
   (use-package epa-file
     :config
-    ;; (epa-file-enable)
-    (setq epg-gpg-program
-          (cond (dd/on-m1-p "/opt/homebrew/bin/gpg")
-                (dd/on-mac-p "/usr/local/bin/gpg")
-                (t "/usr/bin/gpg2")))))
+    (custom-set-variables
+     `(epg-gpg-program
+       ,(cond (dd/on-m1-p "/opt/homebrew/bin/gpg")
+              (dd/on-mac-p "/usr/local/bin/gpg")
+              (t "/usr/bin/gpg2"))))))
 
 (use-package uniquify
   :init
