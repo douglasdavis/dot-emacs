@@ -435,6 +435,7 @@ behavior added."
   :config
   (setq tramp-default-method "ssh")
   (defun dd/cleanup-tramp ()
+    "Try to clean up all tramp buffers/connections"
     (interactive)
     (tramp-cleanup-all-buffers)
     (tramp-cleanup-all-connections)
