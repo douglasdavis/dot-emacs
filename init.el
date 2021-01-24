@@ -55,8 +55,9 @@
 (defconst dd/on-mac-p (eq system-type 'darwin)
   "For checking if on a mac.")
 
-(defconst dd/on-m1-p (dd/includes? (emacs-version) "aarch64-apple")
-  "Fot checking if on M1 mac.")
+(defconst dd/on-m1-p (or (dd/includes? (emacs-version) "aarch64-apple")
+                         (dd/includes? (emacs-version) "arm-apple"))
+  "For checking if on M1 mac.")
 
 (defconst dd/on-abx-p (dd/includes? (system-name) "abx")
   "For checking of in abx box.")
@@ -909,7 +910,8 @@ behavior added."
 
 (use-package rainbow-delimiters
   :straight t
-  :hook (prog-mode-hook . rainbow-delimiters-mode))
+  :hook ((emacs-lisp-mode-hook . rainbow-delimiters-mode)
+         (clojure-mode-hook . rainbow-delimiters-mode)))
 
 (use-package which-key
   :straight t
