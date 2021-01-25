@@ -202,7 +202,7 @@
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
                 :name "Recent personal"
-                :query "date:2w..now AND m:/fastmail/INBOX"
+                :query "date:1w..now AND m:/fastmail*"
                 :key ?f))
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
