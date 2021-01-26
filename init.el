@@ -473,13 +473,12 @@ behavior added."
 (use-package elisp-mode
   :hook ((emacs-lisp-mode-hook . prettify-symbols-mode)))
 
-;; (use-package cc-mode
-;;   :demand t
-;;   :mode (("\\.h\\(h?\\|xx\\|pp\\)\\'" . c++-mode)
-;;          ("\\.icc\\'" . c++-mode)))
+(use-package cc-mode
+  :load-path "~/.emacs.d/dot-emacs/site-lisp/cc-mode"
+  :demand t)
 
 (use-package python
-  :load-path "~/.emacs.d/dot-emacs/site-lisp"
+  :load-path "~/.emacs.d/dot-emacs/site-lisp/python"
   :mode ("\\.py\\'" . python-mode)
   :bind (:map python-mode-map
               ("C-c C-a" . dd/py-auto-lsp))
@@ -953,7 +952,7 @@ behavior added."
   :straight t)
 
 (use-package cmake-mode
-  :load-path "~/.emacs.d/dot-emacs/site-lisp")
+  :load-path "~/.emacs.d/dot-emacs/site-lisp/cmake-mode")
 
 (use-package iedit
   :straight t
