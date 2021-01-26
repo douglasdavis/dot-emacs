@@ -725,9 +725,9 @@ behavior added."
   (setq selectrum-extend-current-candidate-highlight t)
   (setq selectrum-num-candidates-displayed 15)
   (setq selectrum-fix-minibuffer-height t)
+  (setq selectrum-fix-vertical-window-height t)
   :custom-face
-  (selectrum-primary-highlight ((t (:weight bold :foreground "#fe8019"))))
-  ;; (selectrum-primary-highlight ((t (:weight bold :foreground "#cc241d"))))
+  (selectrum-primary-highlight ((t (:weight bold :foreground "#d3869b"))))
   :config
   (selectrum-mode +1))
 
@@ -806,7 +806,9 @@ behavior added."
   :config
   (make-variable-buffer-local 'company-minimum-prefix-length)
   (make-variable-buffer-local 'company-idle-delay)
-  (setq company-backends (cons 'company-capf (remove 'company-capf company-backends)))
+  (make-variable-buffer-local 'company-backends)
+  (setq-default company-backends
+                (cons 'company-capf (remove 'company-capf company-backends)))
   (setq-default company-minimum-prefix-length 2)
   (setq-default company-idle-delay 0.2)
   (defun dd/company-prog-mode  ()
