@@ -723,8 +723,8 @@ behavior added."
   :demand t
   :init
   (setq selectrum-extend-current-candidate-highlight t)
-  (setq selectrum-num-candidates-displayed 15)
-  (setq selectrum-fix-minibuffer-height t)
+  (setq selectrum-num-candidates-displayed 'auto)
+  (setq selectrum-max-window-height 13)
   (setq selectrum-fix-vertical-window-height t)
   :custom-face
   (selectrum-primary-highlight ((t (:weight bold :foreground "#d3869b"))))
