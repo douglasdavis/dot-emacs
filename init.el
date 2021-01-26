@@ -408,7 +408,7 @@ behavior added."
 (use-package help-mode
   :bind
   (:map help-mode-map
-        ("q" . kill-buffer-and-window)))
+        ("q" . #'kill-buffer-and-window)))
 
 (when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p dd/on-abx-p)
   (use-package auth-source
@@ -557,9 +557,27 @@ behavior added."
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
 
+(use-package all-the-icons
+  :straight t)
+
 (use-package all-the-icons-dired
   :straight t
   :hook (dired-mode-hook . all-the-icons-dired-mode))
+
+(use-package doom-themes
+  :straight t
+  :after all-the-icons
+  :custom
+  (doom-themes-enable-bold nil)
+  (doom-themes-enable-italic nil)
+  :config
+  (load-theme 'doom-gruvbox t))
+
+(use-package doom-modeline
+  :straight t
+  :after doom-themes
+  :config
+  (doom-modeline-mode +1))
 
 (use-package crux
   :straight t)
@@ -839,8 +857,6 @@ behavior added."
 (use-package lsp-mode
   :straight t
   :commands lsp
-  ;; :bind (:map lsp-mode-map
-  ;;             ("C-c l" . hydra-lsp/body))
   :init
   (setq lsp-clients-clangd-executable dd/clangd-exe)
   (setq read-process-output-max (* 10 1024 1024))
@@ -910,8 +926,7 @@ behavior added."
 
 (use-package rainbow-delimiters
   :straight t
-  :hook ((emacs-lisp-mode-hook . rainbow-delimiters-mode)
-         (clojure-mode-hook . rainbow-delimiters-mode)))
+  :hook (prog-mode-hook . rainbow-delimiters-mode))
 
 (use-package which-key
   :straight t
@@ -972,23 +987,6 @@ behavior added."
   "Disable any custom themes."
   (interactive)
   (mapcar #'disable-theme custom-enabled-themes))
-
-;; (use-package doom-themes
-;;   :straight t
-;;   :demand t
-;;   :config
-;;   (load-theme 'doom-gruvbox t)
-;;   (set-face-attribute 'font-lock-doc-face nil :foreground "#a89984"))
-
-(use-package gruvbox
-  :straight (gruvbox :host github :repo "greduan/emacs-theme-gruvbox")
-  :demand t
-  :custom-face
-  (font-lock-doc-face ((t (:foreground "#928374"))))
-  :config
-  (load-theme 'gruvbox t))
-
-;;  (set-face-attribute 'font-lock-doc-face nil :slant 'italic :foreground "#928374"))
 
 (use-package elfeed
   :straight t
