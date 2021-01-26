@@ -140,6 +140,10 @@
 (when (and dd/on-mac-p (fboundp 'set-fontset-font))
     (set-fontset-font t 'unicode "Apple Color Emoji" nil 'prepend))
 
+(defun dd/compile-local-site-lisp ()
+  (interactive)
+  (byte-recompile-directory "~/.emacs.d/dot-emacs/site-lisp" 0 t))
+
 (defun dd/delete-and-kill-current ()
   "Delete buffer's current file and kill the buffer."
   (interactive)
@@ -907,6 +911,7 @@ behavior added."
 
 (use-package modern-cpp-font-lock
   :straight t
+  :after cc-mode
   :hook (c++-mode-hook . modern-c++-font-lock-mode))
 
 (use-package pyvenv
