@@ -145,32 +145,6 @@
   (interactive)
   (byte-recompile-directory "~/.emacs.d/dot-emacs/site-lisp" 0 t))
 
-(defun dd/delete-and-kill-current ()
-  "Delete buffer's current file and kill the buffer."
-  (interactive)
-  (delete-file buffer-file-name)
-  (kill-buffer (buffer-name)))
-
-(defun dd/move-file (new-loc)
-  "Write this file to NEW-LOC, delete the old one.
-Taken from post: https://zck.me/emacs-move-file"
-  (interactive (list (expand-file-name
-                      (if buffer-file-name
-                          (read-file-name "Move file to: ")
-                        (read-file-name "Move file to: "
-                                        default-directory
-                                        (expand-file-name (file-name-nondirectory (buffer-name))
-                                                          default-directory))))))
-  (when (file-exists-p new-loc)
-    (delete-file new-loc))
-  (let ((old-loc (expand-file-name (buffer-file-name))))
-    (message "old file is: %s and new file is %s" old-loc new-loc)
-    (write-file new-loc t)
-    (when (and old-loc
-               (file-exists-p new-loc)
-               (not (string= old-loc new-loc)))
-      (delete-file old-loc))))
-
 (defun dd/copy-lines-matching-re (re)
   "Put lines matching RE in a buffer named *matching*."
   (interactive "sRegexp to match: ")
@@ -186,14 +160,11 @@ Taken from post: https://zck.me/emacs-move-file"
                  result-buffer))))
     (pop-to-buffer result-buffer)))
 
-;; (defun dd/del-trail-white ()
-;;   "Add `delete-trailing-whitespace' to `write-file-functions'.
-;; Since `write-file-functions' is a permanent local list, this is a
-;; convenience function to add the `delete-trailing-whitespace'
-;; function to that list. Should be added to a mode hook."
-;;   (add-to-list 'write-file-functions 'delete-trailing-whitespace))
-;; (add-hook 'text-mode-hook 'dd/del-trail-white)
-;; (add-hook 'prog-mode-hook 'dd/del-trail-white)
+(defun dd/delete-and-kill-current ()
+  "Delete buffer's current file and kill the buffer."
+  (interactive)
+  (delete-file buffer-file-name)
+  (kill-buffer (buffer-name)))
 
 (defun dd/delete-frame-or-window ()
   "If we have multiple frames delete the current one.
@@ -203,22 +174,6 @@ Command+w to behave similar to other macOS applications."
   (if (< (count-windows) 2)
       (delete-frame)
     (delete-window)))
-
-(defun dd/toggle-window-split ()
-  "If two windows are present; toggle the split axis."
-  (interactive)
-  (if (= (length (window-list)) 2)
-      (let ((buf (current-buffer))
-            before-height)
-        (with-current-buffer buf
-          (setq before-height (window-height))
-          (delete-window)
-          (set-window-buffer
-           (select-window (if (= (window-height) before-height)
-                              (split-window-vertically)
-                            (split-window-horizontally)))
-           buf)))
-    (user-error "Can toggle split only with two windows")))
 
 (defun keyboard-quit-context+ ()
   "Quit current context.
@@ -254,21 +209,69 @@ behavior added."
 
 (global-set-key [remap keyboard-quit] #'keyboard-quit-context+)
 
-(defun dd/google-s (s)
+(defun dd/kill-all-buffers ()
+  "Kill all buffers except scratch and Messages."
+  (interactive)
+  (mapcar
+   (lambda (b)
+     (let ((bn (buffer-name b)))
+       (unless
+           (or (string= "*scratch*" bn)
+               (string= "*Messages*" bn))
+         (kill-buffer b))))
+   (buffer-list)))
+
+(defun dd/move-file (new-loc)
+  "Write this file to NEW-LOC, delete the old one.
+Taken from post: https://zck.me/emacs-move-file"
+  (interactive (list (expand-file-name
+                      (if buffer-file-name
+                          (read-file-name "Move file to: ")
+                        (read-file-name "Move file to: "
+                                        default-directory
+                                        (expand-file-name (file-name-nondirectory (buffer-name))
+                                                          default-directory))))))
+  (when (file-exists-p new-loc)
+    (delete-file new-loc))
+  (let ((old-loc (expand-file-name (buffer-file-name))))
+    (message "old file is: %s and new file is %s" old-loc new-loc)
+    (write-file new-loc t)
+    (when (and old-loc
+               (file-exists-p new-loc)
+               (not (string= old-loc new-loc)))
+      (delete-file old-loc))))
+
+(defun dd/search-s (s)
   "Perform a google search S."
   (browse-url
    (format "https://google.com/search?q=%s"
            (url-hexify-string s))))
 
-(defun dd/google-region ()
+(defun dd/search-region ()
   "Google search the selection region."
   (interactive)
-  (dd/google-s (buffer-substring (region-beginning) (region-end))))
+  (dd/search-s (buffer-substring (region-beginning) (region-end))))
 
-(defun dd/google-something (s)
+(defun dd/search-something (s)
   "Perform an interactive google search of S."
   (interactive "sSearch: ")
-  (dd/google-s s))
+  (dd/search-s s))
+
+(defun dd/toggle-window-split ()
+  "If two windows are present; toggle the split axis."
+  (interactive)
+  (if (= (length (window-list)) 2)
+      (let ((buf (current-buffer))
+            before-height)
+        (with-current-buffer buf
+          (setq before-height (window-height))
+          (delete-window)
+          (set-window-buffer
+           (select-window (if (= (window-height) before-height)
+                              (split-window-vertically)
+                            (split-window-horizontally)))
+           buf)))
+    (user-error "Can toggle split only with two windows")))
 
 (defvar dd/llvm-bin-path
   (cond (dd/on-m1-p "/opt/homebrew/opt/llvm/bin")
@@ -282,9 +285,12 @@ behavior added."
   (when (and dd/llvm-bin-path (file-exists-p dd/llvm-bin-path))
     (concat (file-name-as-directory dd/llvm-bin-path) exe-name)))
 
-(defvar dd/clangd-exe (dd/llvm-project-exe "clangd"))
-(defvar dd/clang-format-exe (dd/llvm-project-exe "clang-format"))
-(defvar dd/clang-exe (dd/llvm-project-exe "clang"))
+(defvar dd/clangd-exe (dd/llvm-project-exe "clangd")
+  "clangd executable path")
+(defvar dd/clang-format-exe (dd/llvm-project-exe "clang-format")
+  "clang-format executable path")
+(defvar dd/clang-exe (dd/llvm-project-exe "clang")
+  "clang executable path")
 
 ;; sec02:
 ;; use-package setup
@@ -1089,18 +1095,6 @@ behavior added."
 
 ;; sec07:
 ;; misc
-
-(defun dd/kill-all-buffers ()
-  "Kill all buffers except scratch and Messages."
-  (interactive)
-  (mapcar
-   (lambda (b)
-     (let ((bn (buffer-name b)))
-       (unless
-           (or (string= "*scratch*" bn)
-               (string= "*Messages*" bn))
-         (kill-buffer b))))
-   (buffer-list)))
 
 ;; 128MB garbage collection threshold
 (setq gc-cons-threshold (* 128 1024 1024))
