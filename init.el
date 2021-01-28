@@ -471,15 +471,10 @@ behavior added."
     (setq browse-url-browser-function 'browse-url-generic
           browse-url-generic-program "/usr/local/bin/firefox")))
 
-(use-package sh-script
-  :custom (sh-basic-offset 4))
-
-(use-package elisp-mode
-  :hook ((emacs-lisp-mode-hook . prettify-symbols-mode)))
-
-(use-package cc-mode
-  :load-path "~/.emacs.d/dot-emacs/site-lisp/cc-mode"
-  :demand t)
+(use-package sh-script)
+(use-package cc-mode)
+(use-package elisp-mode)
+(add-hook 'emacs-lisp-mode-hook 'prettify-symbols-mode)
 
 (use-package python
   :load-path "~/.emacs.d/dot-emacs/site-lisp/python"
@@ -728,6 +723,7 @@ behavior added."
   (setq selectrum-fix-vertical-window-height t)
   :custom-face
   (selectrum-primary-highlight ((t (:weight bold :foreground "#d3869b"))))
+  (selectrum-current-candidate ((t (:inherit region))))
   :config
   (selectrum-mode +1))
 
@@ -908,13 +904,14 @@ behavior added."
 
 (use-package clang-format
   :straight t
+  :after cc-mode
   :custom
   (clang-format-executable dd/clang-format-exe))
 
 (use-package modern-cpp-font-lock
   :straight t
-  :after cc-mode
-  :hook (c++-mode-hook . modern-c++-font-lock-mode))
+  :init
+  (modern-c++-font-lock-global-mode +1))
 
 (use-package pyvenv
   :straight t
