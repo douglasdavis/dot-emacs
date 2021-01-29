@@ -145,6 +145,12 @@
   (interactive)
   (byte-recompile-directory "~/.emacs.d/dot-emacs/site-lisp" 0 t))
 
+(defun dd/compile-non-built-ins ()
+  "Byte-compile non built-in lisp code."
+  (interactive)
+  (dd/compile-local-site-lisp)
+  (dd/mu4e-byte-comp))
+
 (defun dd/copy-lines-matching-re (re)
   "Put lines matching RE in a buffer named *matching*."
   (interactive "sRegexp to match: ")

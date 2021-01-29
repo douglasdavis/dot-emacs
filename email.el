@@ -61,6 +61,10 @@
         (dd/on-cc7-p "/home/ddavis/software/specific/mu/1.4.15/share/emacs/site-lisp/mu4e"))
   "Machine dependent mu4e installation location string.")
 
+(defun dd/mu4e-byte-comp ()
+  (interactive)
+  (byte-recompile-directory dd/mu4e-dir 0 t))
+
 (with-eval-after-load "mm-decode"
   (add-to-list 'mm-discouraged-alternatives "text/html")
   (add-to-list 'mm-discouraged-alternatives "text/richtext"))
@@ -91,10 +95,6 @@
     "Toggle Gnus view mode in mu4e."
     (interactive)
     (setq mu4e-view-use-gnus (not mu4e-view-use-gnus)))
-
-  (defun dd/mu4e-byte-comp ()
-    (interactive)
-    (byte-recompile-directory dd/mu4e-dir 0 t))
 
   (defun dd/reset-standard-name-and-email ()
     "Reset mail address and name to default."
