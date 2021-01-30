@@ -41,7 +41,6 @@
   (defconst dd/sendmail-exe
     (cond (dd/on-m1-p "/Users/ddavis/software/specific/msmtp/1.8.14/bin/msmtp")
           (dd/on-mac-p "/Users/ddavis/software/localbase/bin/msmtp")
-          (dd/on-abx-p "/usr/bin/msmtp")
           (dd/on-cc7-p "/usr/local/bin/msmtp"))
     "Machine dependent msmtp executable string.")
   (setq sendmail-program dd/sendmail-exe)
@@ -50,14 +49,12 @@
 (defconst dd/mu-exe
   (cond (dd/on-m1-p "/opt/homebrew/Cellar/mu/1.4.15/bin/mu")
         (dd/on-mac-p "/Users/ddavis/software/localbase/bin/mu")
-        (dd/on-abx-p "/usr/bin/mu")
         (dd/on-cc7-p "/home/ddavis/software/specific/mu/1.4.15/bin/mu"))
   "Machine dependent mu executable string.")
 
 (defconst dd/mu4e-dir
   (cond (dd/on-m1-p "/opt/homebrew/Cellar/mu/1.4.15/share/emacs/site-lisp/mu/mu4e")
         (dd/on-mac-p "/Users/ddavis/software/localbase/share/emacs/site-lisp/mu4e")
-        (dd/on-abx-p "/usr/share/emacs/site-lisp/mu4e")
         (dd/on-cc7-p "/home/ddavis/software/specific/mu/1.4.15/share/emacs/site-lisp/mu4e"))
   "Machine dependent mu4e installation location string.")
 
@@ -171,7 +168,7 @@
                       ( mu4e-sent-folder        . "/duke/Sent" )
                       ( mu4e-drafts-folder      . "/duke/Drafts" )
                       ( mu4e-reply-to-address   . "ddavis@phy.duke.edu" )))))
-  (when (or dd/on-mac-p dd/on-cc7-p dd/on-abx-p)
+  (when (or dd/on-mac-p dd/on-cc7-p)
     (add-to-list 'mu4e-contexts
                  (make-mu4e-context
                   :name "fastmail"

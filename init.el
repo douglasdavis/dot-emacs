@@ -59,9 +59,6 @@
                          (dd/includes? (emacs-version) "arm-apple"))
   "For checking if on M1 mac.")
 
-(defconst dd/on-abx-p (dd/includes? (system-name) "abx")
-  "For checking of in abx box.")
-
 (defconst dd/on-cc7-p (dd/includes? (system-name) "cc7")
   "For checking if on cc7 box.")
 
@@ -116,11 +113,6 @@
 (add-to-list 'default-frame-alist '(height . 60))
 (add-to-list 'default-frame-alist '(width . 192))
 
-(when dd/on-abx-p
-  (set-face-attribute 'default nil
-                      :family "JetBrains Mono"
-                      :weight 'regular
-                      :height 130))
 (when dd/on-mac-p
   (when (boundp 'ns-antialias-text)
     (setq ns-antialias-text t))
@@ -133,7 +125,7 @@
                       :family "JetBrains Mono"
                       :weight 'regular
                       :height 130))
-(when (and (or dd/on-abx-p dd/on-cc7-p) (fboundp 'set-fontset-font))
+(when (and dd/on-cc7-p (fboundp 'set-fontset-font))
     (set-fontset-font t 'symbol
                       (font-spec :family "Noto Color Emoji")
                       nil 'prepend))
@@ -301,43 +293,43 @@ Taken from post: https://zck.me/emacs-move-file"
 ;; sec02:
 ;; use-package setup
 
-;; (require 'package)
-;; (setq package-archives
-;;       '(("melpa" . "https://melpa.org/packages/")
-;;         ("gnu" . "https://elpa.gnu.org/packages/")))
+(require 'package)
+(setq package-archives
+      '(("melpa" . "https://melpa.org/packages/")
+        ("gnu" . "https://elpa.gnu.org/packages/")))
 
-;; (unless (package-installed-p 'use-package)
-;;   (package-refresh-contents)
-;;   (package-install 'use-package))
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
 
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 5))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
+;; (defvar bootstrap-version)
+;; (let ((bootstrap-file
+;;        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+;;       (bootstrap-version 5))
+;;   (unless (file-exists-p bootstrap-file)
+;;     (with-current-buffer
+;;         (url-retrieve-synchronously
+;;          "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+;;          'silent 'inhibit-cookies)
+;;       (goto-char (point-max))
+;;       (eval-print-last-sexp)))
+;;   (load bootstrap-file nil 'nomessage))
 
-(straight-use-package 'use-package)
+;; (straight-use-package 'use-package)
 
 (eval-when-compile
   (require 'use-package)
   (require 'bind-key)
   (setq use-package-hook-name-suffix nil))
 
-(use-package straight-x)
+;; (use-package straight-x)
 
-(defun dd/straight-up ()
-  "Pull and check straight.el packages."
-  (interactive)
-  (progn
-    (straight-pull-all)
-    (straight-check-all)))
+;; (defun dd/straight-up ()
+;;   "Pull and check straight.el packages."
+;;   (interactive)
+;;   (progn
+;;     (straight-pull-all)
+;;     (straight-check-all)))
 
 ;; sec03:
 ;; use-package for some core Emacs packages.
@@ -346,7 +338,7 @@ Taken from post: https://zck.me/emacs-move-file"
   :init
   (global-auto-revert-mode +1))
 
-(when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p dd/on-abx-p)
+(when (or dd/on-mac-p dd/on-cc7-p)
   (use-package auth-source
     :init
     (setq auth-sources
@@ -377,22 +369,12 @@ Taken from post: https://zck.me/emacs-move-file"
   :config
   (global-display-line-numbers-mode))
 
-(if (< emacs-major-version 28)
-    (progn
-      (use-package eldoc
-        :straight t
-        :config
-        (load "eldoc")))
-  (use-package eldoc))
-
-(use-package elisp-mode)
-
 (use-package env
   :init
   (when dd/on-cc7-p
     (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig")))
 
-(when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p dd/on-abx-p)
+(when (or dd/on-mac-p dd/on-cc7-p)
   (use-package epa-file
     :config
     (custom-set-variables
@@ -401,7 +383,7 @@ Taken from post: https://zck.me/emacs-move-file"
               (dd/on-mac-p "/usr/local/bin/gpg")
               (t "/usr/bin/gpg2"))))))
 
-(when (or dd/on-grads-18-p dd/on-cc7-p dd/on-mac-p dd/on-abx-p)
+(when (or dd/on-grads-18-p dd/on-cc7-p dd/on-mac-p)
   (use-package erc
     :commands erc
     :init
@@ -494,7 +476,6 @@ Taken from post: https://zck.me/emacs-move-file"
                 (t "/usr/local/bin/hunspell")))))
 
 (use-package org
-  :straight (org :type built-in)
   :init
   (setq org-src-fontify-natively t)
   :hook (org-mode-hook . (lambda () (interactive)
@@ -567,7 +548,7 @@ Taken from post: https://zck.me/emacs-move-file"
   (setq-default show-paren-delay 0))
 
 (if (< emacs-major-version 28)
-    (use-package project :straight t)
+    (use-package project :ensure t)
   (use-package project))
 
 (use-package prog-mode
@@ -625,28 +606,28 @@ Taken from post: https://zck.me/emacs-move-file"
 ;; third party
 
 (use-package ace-window
-  :straight t
+  :ensure t
   :bind ("M-o" . ace-window))
 
 (use-package all-the-icons
-  :straight t)
+  :ensure t)
 
 (use-package all-the-icons-dired
-  :straight t
+  :ensure t
   :hook (dired-mode-hook . all-the-icons-dired-mode))
 
 (use-package blacken
-  :straight t
+  :ensure t
   :after python)
 
-(when (or dd/on-mac-p dd/on-cc7-p dd/on-abx-p)
+(when (or dd/on-mac-p dd/on-cc7-p)
   (use-package cider
-    :straight t
+    :ensure t
     :commands cider-jack-in))
 
-(when (or dd/on-grads-18-p dd/on-cc7-p dd/on-mac-p dd/on-abx-p)
+(when (or dd/on-grads-18-p dd/on-cc7-p dd/on-mac-p)
   (use-package circe
-    :straight t
+    :ensure t
     :commands circe
     :hook (circe-chat-mode-hook . dd/circe-prompt)
     :init
@@ -699,7 +680,7 @@ Taken from post: https://zck.me/emacs-move-file"
     (enable-circe-color-nicks)))
 
 (use-package clang-format
-  :straight t
+  :ensure t
   :after cc-mode
   :custom
   (clang-format-executable dd/clang-format-exe))
@@ -708,7 +689,7 @@ Taken from post: https://zck.me/emacs-move-file"
   :load-path "~/.emacs.d/dot-emacs/site-lisp/cmake-mode")
 
 (use-package company
-  :straight t
+  :ensure t
   :demand t
   :bind
   (:map company-active-map
@@ -744,7 +725,7 @@ Taken from post: https://zck.me/emacs-move-file"
   (add-hook 'prog-mode-hook #'dd/company-prog-mode))
 
 (use-package consult
-  :straight t
+  :ensure t
   :after selectrum
   :bind (("C-c l" . consult-line)
          ("C-c r" . consult-ripgrep)
@@ -755,14 +736,14 @@ Taken from post: https://zck.me/emacs-move-file"
   (setq consult-project-root-function #'projectile-project-root))
 
 (use-package crux
-  :straight t)
+  :ensure t)
 
 (use-package debbugs
-  :straight t
+  :ensure t
   :defer 20)
 
 (use-package doom-themes
-  :straight t
+  :ensure t
   :after all-the-icons
   :custom
   (doom-themes-enable-bold nil)
@@ -771,13 +752,13 @@ Taken from post: https://zck.me/emacs-move-file"
   (load-theme 'doom-gruvbox t))
 
 (use-package doom-modeline
-  :straight t
+  :ensure t
   :after doom-themes
   :config
   (doom-modeline-mode +1))
 
 (use-package eglot
-  :straight t
+  :ensure t
   :commands eglot
   :init
   (setq eglot-server-programs
@@ -787,14 +768,14 @@ Taken from post: https://zck.me/emacs-move-file"
   (setq eglot-autoshutdown t))
 
 (use-package eldoc-box
-  :straight t
+  :ensure t
   :hook (eglot-managed-mode-hook . eldoc-box-hover-at-point-mode)
   :init
   (setq eldoc-box-clear-with-C-g t
         eldoc-box-fringe-use-same-bg nil))
 
 (use-package elfeed
-  :straight t
+  :ensure t
   :commands elfeed
   :bind (("C-x w" . 'elfeed)
          :map elfeed-show-mode-map
@@ -805,30 +786,28 @@ Taken from post: https://zck.me/emacs-move-file"
         '(("https://planet.scipy.org/feed.xml" python)
           ("https://planet.emacslife.com/atom.xml" emacs)
           ("https://ddavis.io/index.xml" blog)
-          ("http://pragmaticemacs.com/feed/" emacs)
-          ("https://feeds.megaphone.fm/ESP8794877317" fivethirtyeight podcast)
-          ("http://feeds.podtrac.com/zKq6WZZLTlbM" nyt podcast)))
+          ("http://pragmaticemacs.com/feed/" emacs)))
   :config
   (add-hook 'elfeed-new-entry-hook
             (elfeed-make-tagger :before "3 weeks ago" :remove 'unread))
   (setq-default elfeed-search-filter "@21-days-ago"))
 
 (use-package eros
-  :straight t
+  :ensure t
   :hook (emacs-lisp-mode-hook . eros-mode))
 
 (use-package exec-path-from-shell
-  :straight t
+  :ensure t
   :demand t
   :config
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
 
 (use-package flycheck
-  :straight t)
+  :ensure t)
 
 (use-package helpful
-  :straight t
+  :ensure t
   :bind (([remap describe-function] . helpful-callable)
          ([remap describe-variable] . helpful-variable)
          ([remap describe-key] . helpful-key)
@@ -840,11 +819,11 @@ Taken from post: https://zck.me/emacs-move-file"
   (setq helpful-max-highlight 15000))
 
 (use-package iedit
-  :straight t
+  :ensure t
   :bind ("C-c ;" . iedit-mode))
 
 (use-package lsp-mode
-  :straight t
+  :ensure t
   :commands lsp
   :init
   (setq lsp-clients-clangd-executable dd/clangd-exe)
@@ -863,7 +842,7 @@ Taken from post: https://zck.me/emacs-move-file"
         lsp-pyls-configuration-sources ["flake8"]))
 
 (use-package lsp-ui
-  :straight t
+  :ensure t
   :config
   (setq lsp-ui-doc-enable t
         lsp-ui-doc-include-signature nil
@@ -874,7 +853,7 @@ Taken from post: https://zck.me/emacs-move-file"
         lsp-ui-sideline-show-hover nil))
 
 (use-package magit
-  :straight t
+  :ensure t
   :bind (("C-x g" . magit-status)
          :map magit-status-mode-map
          ("q" . dd/magit-kill-buffers))
@@ -887,7 +866,7 @@ Taken from post: https://zck.me/emacs-move-file"
       (mapc #'kill-buffer buffers))))
 
 (use-package marginalia
-  :straight t
+  :ensure t
   :demand t
   :config
   (marginalia-mode +1)
@@ -895,21 +874,21 @@ Taken from post: https://zck.me/emacs-move-file"
                                 marginalia-annotators-light)))
 
 (use-package markdown-mode
-  :straight t
+  :ensure t
   :mode "\\.md\\'")
 
 (use-package modern-cpp-font-lock
-  :straight t
+  :ensure t
   :init
   (modern-c++-font-lock-global-mode +1))
 
 (use-package ox-hugo
-  :straight t
+  :ensure t
   :after ox)
 
-(when (and (not dd/on-m1-p) window-system (or dd/on-mac-p dd/on-cc7-p dd/on-abx-p))
+(when (and (not dd/on-m1-p) window-system (or dd/on-mac-p dd/on-cc7-p))
   (use-package pdf-tools
-    :straight t
+    :ensure t
     :hook (pdf-view-mode-hook . (lambda () (display-line-numbers-mode 0)))
     :config
     (pdf-tools-install)
@@ -920,7 +899,7 @@ Taken from post: https://zck.me/emacs-move-file"
     (setq TeX-view-program-selection '((output-pdf "PDF Tools")))))
 
 (use-package projectile
-  :straight t
+  :ensure t
   :demand t
   :bind-keymap ("C-c p" . projectile-command-map)
   :bind (:map projectile-command-map
@@ -937,18 +916,18 @@ Taken from post: https://zck.me/emacs-move-file"
   (when (or dd/on-mac-p dd/on-grads-18-p)
     (setq projectile-project-search-path
           '("~/software/repos/" "~/atlas/analysis/")))
-  (when (or dd/on-abx-p dd/on-cc7-p)
+  (when dd/on-cc7-p
     (setq projectile-project-search-path
           '("~/software/repos/" "/ddd/atlas/analysis/")))
   (projectile-mode +1))
 
 (use-package pyvenv
-  :straight t
+  :ensure t
   :init
   (setenv "WORKON_HOME" "~/.pyenv/versions"))
 
 (use-package rainbow-delimiters
-  :straight t
+  :ensure t
   :hook (prog-mode-hook . rainbow-delimiters-mode))
 
 (use-package recentf
@@ -958,7 +937,7 @@ Taken from post: https://zck.me/emacs-move-file"
   (add-to-list 'recentf-exclude 'file-remote-p))
 
 (use-package rg
-  :straight t
+  :ensure t
   :after wgrep
   :init
   (setq rg-group-result t
@@ -976,7 +955,7 @@ Taken from post: https://zck.me/emacs-move-file"
     :flags ("--hidden -g !.git")))
 
 (use-package selectrum
-  :straight t
+  :ensure t
   :demand t
   :init
   (setq selectrum-extend-current-candidate-highlight t)
@@ -990,14 +969,14 @@ Taken from post: https://zck.me/emacs-move-file"
   (selectrum-mode +1))
 
 (use-package selectrum-prescient
-  :straight t
+  :ensure t
   :after selectrum
   :config
   (selectrum-prescient-mode +1))
 
-(when (or dd/on-mac-p dd/on-cc7-p dd/on-abx-p)
+(when (or dd/on-mac-p dd/on-cc7-p)
   (use-package tex-site
-    :straight auctex
+    :ensure auctex
     :mode ("\\.tex\\'" . TeX-latex-mode)
     :init
     (setq font-latex-fontify-sectioning 'color
@@ -1011,15 +990,15 @@ Taken from post: https://zck.me/emacs-move-file"
     (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)))
 
 (use-package visual-fill-column
-  :straight t)
+  :ensure t)
 
 (use-package w3m
-  :straight t
+  :ensure t
   :config
   (setq w3m-default-display-inline-images t))
 
 (use-package which-key
-  :straight t
+  :ensure t
   :demand t
   :init
   :config
@@ -1028,23 +1007,23 @@ Taken from post: https://zck.me/emacs-move-file"
         which-key-frame-max-height 40))
 
 (use-package which-key-posframe
-  :straight t
+  :ensure t
   :after which-key
   :config
   (which-key-posframe-mode +1))
 
 (use-package yaml-mode
-  :straight t
+  :ensure t
   :mode ("\\.yml\\'" "\\.yaml\\'"))
 
 (use-package yasnippet
-  :straight t
+  :ensure t
   :demand t
   :init
   (yas-global-mode 1))
 
 (use-package yasnippet-snippets
-  :straight t)
+  :ensure t)
 
 ;; sec05:
 ;; some package-free bindings and macOS specifics
@@ -1096,7 +1075,7 @@ Taken from post: https://zck.me/emacs-move-file"
 ;; sec06:
 ;; email setup is in dedicated file
 
-(when (or dd/on-mac-p dd/on-cc7-p dd/on-abx-p)
+(when (or dd/on-mac-p dd/on-cc7-p)
   (load-file "~/.emacs.d/dot-emacs/email.el"))
 
 ;; sec07:
