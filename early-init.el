@@ -7,10 +7,10 @@
 (setq inhibit-startup-screen t)
 (setq custom-safe-themes t)
 
-;; (require 'package)
-;; (if (fboundp 'native-compile)
-;;     (setq package-user-dir (concat user-emacs-directory "elpa-" emacs-version "-native"))
-;;   (setq package-user-dir (concat user-emacs-directory "elpa-" emacs-version)))
+(require 'package)
+(if (fboundp 'native-compile)
+    (setq package-user-dir (concat user-emacs-directory "elpa-" emacs-version "-native"))
+  (setq package-user-dir (concat user-emacs-directory "elpa-" emacs-version)))
 
 (provide 'early-init)
 ;;; early-init.el ends here

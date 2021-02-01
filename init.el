@@ -126,11 +126,11 @@
                       :weight 'regular
                       :height 130))
 (when (and dd/on-cc7-p (fboundp 'set-fontset-font))
-    (set-fontset-font t 'symbol
-                      (font-spec :family "Noto Color Emoji")
-                      nil 'prepend))
+  (set-fontset-font t 'symbol
+                    (font-spec :family "Noto Color Emoji")
+                    nil 'prepend))
 (when (and dd/on-mac-p (fboundp 'set-fontset-font))
-    (set-fontset-font t 'unicode "Apple Color Emoji" nil 'prepend))
+  (set-fontset-font t 'unicode "Apple Color Emoji" nil 'prepend))
 
 (defun dd/compile-local-site-lisp ()
   "Byte-compile site-lisp in dot-emacs repository."
