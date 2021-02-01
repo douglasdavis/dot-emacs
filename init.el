@@ -616,6 +616,9 @@ Taken from post: https://zck.me/emacs-move-file"
   :ensure t
   :hook (dired-mode-hook . all-the-icons-dired-mode))
 
+(use-package auto-package-update
+  :ensure t)
+
 (use-package blacken
   :ensure t
   :after python)
