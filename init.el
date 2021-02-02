@@ -290,6 +290,9 @@ Taken from post: https://zck.me/emacs-move-file"
 (defvar dd/clang-exe (dd/llvm-project-exe "clang")
   "clang executable path")
 
+(defconst dd/anaconda-installation "~/software/anaconda3"
+  "Anaconda installation path.")
+
 ;; sec02:
 ;; use-package setup
 
@@ -448,6 +451,9 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (use-package esh-mode
   :hook (eshell-mode-hook . (lambda () (display-line-numbers-mode 0))))
+
+(use-package f
+  :ensure t)
 
 (use-package flyspell
   :hook ((org-mode-hook . flyspell-mode)
@@ -927,7 +933,22 @@ Taken from post: https://zck.me/emacs-move-file"
 (use-package pyvenv
   :ensure t
   :init
-  (setenv "WORKON_HOME" "~/.pyenv/versions"))
+  (setenv "WORKON_HOME" "~/.pyenv/versions")
+  :config
+  (defun dd/conda-envs (&optional dir)
+    "Get list of conda environments."
+    (let ((search-dir (if dir
+                          dir
+                        (format "%s/envs" dd/anaconda-installation))))
+      (f-directories search-dir)))
+  (defun dd/conda-env-activate (name)
+    "Activate conda with pyvenv."
+    (interactive
+     (list
+      (completing-read "Work on: " (dd/conda-envs))))
+    (pyvenv-activate (format "%s/envs/%s"
+                             dd/anaconda-installation
+                             name))))
 
 (use-package rainbow-delimiters
   :ensure t
