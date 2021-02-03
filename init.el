@@ -341,7 +341,7 @@ Taken from post: https://zck.me/emacs-move-file"
   :init
   (global-auto-revert-mode +1))
 
-(when (or dd/on-mac-p dd/on-cc7-p)
+(when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p)
   (use-package auth-source
     :init
     (setq auth-sources
@@ -377,7 +377,7 @@ Taken from post: https://zck.me/emacs-move-file"
   (when dd/on-cc7-p
     (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig")))
 
-(when (or dd/on-mac-p dd/on-cc7-p)
+(when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p)
   (use-package epa-file
     :config
     (custom-set-variables
