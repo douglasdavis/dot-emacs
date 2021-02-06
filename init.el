@@ -747,6 +747,9 @@ Taken from post: https://zck.me/emacs-move-file"
 (use-package crux
   :ensure t)
 
+(use-package cython-mode
+  :ensure t)
+
 (use-package debbugs
   :ensure t
   :defer 20)
@@ -1027,12 +1030,10 @@ Taken from post: https://zck.me/emacs-move-file"
   :init
   :config
   (which-key-mode)
-  (setq which-key-side-window-max-height 0.40
-        which-key-frame-max-height 40))
+  (setq which-key-frame-max-height 50))
 
 (use-package which-key-posframe
   :ensure t
-  :after which-key
   :config
   (which-key-posframe-mode +1))
 
