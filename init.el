@@ -1024,6 +1024,9 @@ Taken from post: https://zck.me/emacs-move-file"
 (use-package visual-fill-column
   :ensure t)
 
+(use-package vterm
+  :ensure t)
+
 (use-package w3m
   :ensure t
   :config
