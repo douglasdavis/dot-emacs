@@ -65,6 +65,9 @@
 (defconst dd/on-grads-18-p (dd/includes? (system-name) "grads-18")
   "For checking if on grads-18 box.")
 
+(defconst dd/on-davian-p (dd/includes? (system-name) "davian")
+  "For checking if on davian box.")
+
 (setq initial-scratch-message
       (format ";; This is GNU Emacs %s\n\n" emacs-version))
 
@@ -120,7 +123,7 @@
                       :family "JetBrains Mono"
                       :weight 'regular
                       :height 120))
-(when dd/on-cc7-p
+(when (or dd/on-cc7-p dd/on-davian-p)
   (set-face-attribute 'default nil
                       :family "JetBrains Mono"
                       :weight 'regular
@@ -141,7 +144,8 @@
   "Byte-compile non built-in lisp code."
   (interactive)
   (dd/compile-local-site-lisp)
-  (dd/mu4e-byte-comp))
+  (when (fboundp 'dd/mu4e-dir)
+    (dd/mu4e-byte-comp)))
 
 (defun dd/copy-lines-matching-re (re)
   "Put lines matching RE in a buffer named *matching*."
@@ -275,7 +279,8 @@ Taken from post: https://zck.me/emacs-move-file"
   (cond (dd/on-m1-p "/opt/homebrew/opt/llvm/bin")
         (dd/on-mac-p "/usr/local/opt/llvm/bin")
         (dd/on-cc7-p "/home/ddavis/software/specific/llvm/master/bin")
-        (dd/on-grads-18-p "/home/drd25/software/specific/llvm/10.x/bin"))
+        (dd/on-grads-18-p "/home/drd25/software/specific/llvm/10.x/bin")
+        (t "/usr/bin"))
   "Machine dependent llvm bin path.")
 
 (defun dd/llvm-project-exe (exe-name)
