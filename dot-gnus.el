@@ -80,7 +80,7 @@
   (setq gnus-agent-synchronize-flags nil)
 
   ;; article
-  (setq gnus-article-browse-delete-temp 'ask)
+  (setq gnus-article-browse-delete-temp t)
   (setq gnus-article-over-scroll nil)
   (setq gnus-article-show-cursor t)
   (setq gnus-article-sort-functions
