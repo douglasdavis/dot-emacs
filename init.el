@@ -69,7 +69,11 @@
   "For checking if on davian box.")
 
 (setq initial-scratch-message
-      (format ";; This is GNU Emacs %s\n\n" emacs-version))
+      (let ((vstr (format ";; This is GNU Emacs %s" emacs-version))
+            (nstr (if (fboundp 'native-compile)
+                      " (native-comp)"
+                    "")))
+        (format "%s%s\n\n" vstr nstr)))
 
 (setq echo-keystrokes 0.01
       ring-bell-function 'ignore
@@ -346,7 +350,7 @@ Taken from post: https://zck.me/emacs-move-file"
   :init
   (global-auto-revert-mode +1))
 
-(when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p)
+(when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p dd/on-davian-p)
   (use-package auth-source
     :init
     (setq auth-sources
@@ -382,13 +386,14 @@ Taken from post: https://zck.me/emacs-move-file"
   (when dd/on-cc7-p
     (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig")))
 
-(when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p)
+(when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p dd/on-davian-p)
   (use-package epa-file
     :config
     (custom-set-variables
      `(epg-gpg-program
        ,(cond (dd/on-m1-p "/opt/homebrew/bin/gpg")
               (dd/on-mac-p "/usr/local/bin/gpg")
+              (dd/on-davian-p "/usr/bin/gpg")
               (t "/usr/bin/gpg2"))))))
 
 (when (or dd/on-grads-18-p dd/on-cc7-p dd/on-mac-p)
@@ -628,7 +633,11 @@ Taken from post: https://zck.me/emacs-move-file"
   :hook (dired-mode-hook . all-the-icons-dired-mode))
 
 (use-package auto-package-update
-  :ensure t)
+  :ensure t
+  :hook
+  (auto-package-update-before-hook . (lambda () (interactive)
+                                       (when (boundp 'comp-deferred-compilation)
+                                         (setq comp-deferred-compilation nil)))))
 
 (use-package blacken
   :ensure t
