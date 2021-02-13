@@ -145,7 +145,7 @@
   (byte-recompile-directory "~/.emacs.d/dot-emacs/site-lisp" 0 t))
 
 (defun dd/compile-non-built-ins ()
-  "Byte-compile non built-in lisp code."
+  "Byte-compile non built-in Lisp code."
   (interactive)
   (dd/compile-local-site-lisp)
   (when (fboundp 'dd/mu4e-dir)
@@ -279,7 +279,7 @@ Taken from post: https://zck.me/emacs-move-file"
            buf)))
     (user-error "Can toggle split only with two windows")))
 
-(defvar dd/llvm-bin-path
+(defconst dd/llvm-bin-path
   (cond (dd/on-m1-p "/opt/homebrew/opt/llvm/bin")
         (dd/on-mac-p "/usr/local/opt/llvm/bin")
         (dd/on-cc7-p "/home/ddavis/software/specific/llvm/master/bin")
@@ -292,15 +292,11 @@ Taken from post: https://zck.me/emacs-move-file"
   (when (and dd/llvm-bin-path (file-exists-p dd/llvm-bin-path))
     (concat (file-name-as-directory dd/llvm-bin-path) exe-name)))
 
-(defvar dd/clangd-exe (dd/llvm-project-exe "clangd")
-  "clangd executable path")
-(defvar dd/clang-format-exe (dd/llvm-project-exe "clang-format")
-  "clang-format executable path")
-(defvar dd/clang-exe (dd/llvm-project-exe "clang")
-  "clang executable path")
+(defconst dd/clang-exe (dd/llvm-project-exe "clang"))
+(defconst dd/clang-format-exe (dd/llvm-project-exe "clang-format"))
+(defconst dd/clangd-exe (dd/llvm-project-exe "clangd"))
 
-(defconst dd/anaconda-installation "~/software/anaconda3"
-  "Anaconda installation path.")
+(defconst dd/anaconda-installation "~/software/anaconda3")
 
 ;; sec02:
 ;; use-package setup
