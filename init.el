@@ -928,8 +928,6 @@ Taken from post: https://zck.me/emacs-move-file"
               ("r" . dd/ripgrep-proj-or-dir)
               ("g" . consult-ripgrep))
   :config
-  (when (executable-find "fd")
-    (setq projectile-git-command "fd . -H -0 --type f --color=never"))
   (setq projectile-track-known-projects-automatically t
         projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
         projectile-globally-ignored-directories '(".git" "__pycache__")
