@@ -45,6 +45,7 @@
 ;; for native comp branch
 (defconst dd/using-native-comp (fboundp 'native-comp-available-p))
 (when (boundp 'comp-deferred-compilation)
+  (setq comp-async-report-warnings-errors nil)
   (setq comp-deferred-compilation t))
 
 (defun dd/includes? (s substr)
