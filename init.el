@@ -354,7 +354,8 @@ Taken from post: https://zck.me/emacs-move-file"
           (list (concat user-emacs-directory ".authinfo.gpg")))))
 
 (use-package browse-url
-  :init
+  :defer 10
+  :config
   (when dd/on-cc7-p
     (setq browse-url-browser-function 'browse-url-generic
           browse-url-generic-program "/usr/local/bin/firefox")))
@@ -396,11 +397,10 @@ Taken from post: https://zck.me/emacs-move-file"
 (when (or dd/on-grads-18-p dd/on-cc7-p dd/on-mac-p)
   (use-package erc
     :commands erc
-    :init
+    :config
     (setq erc-prompt-for-password nil)
     (setq erc-user-full-name "Doug Davis")
     (setq erc-rename-buffers t)
-    :config
     (setq erc-track-enable-keybindings nil)
     (setq erc-kill-buffer-on-part t)
     (setq erc-kill-server-buffer-on-quit t)
@@ -458,9 +458,6 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (use-package esh-mode
   :hook (eshell-mode-hook . (lambda () (display-line-numbers-mode 0))))
-
-(use-package f
-  :ensure t)
 
 (use-package flyspell
   :hook ((org-mode-hook . flyspell-mode)
@@ -573,8 +570,6 @@ Taken from post: https://zck.me/emacs-move-file"
   (unless (server-running-p)
     (server-start)))
 
-(use-package sh-script)
-
 (use-package shell
   :hook (shell-mode-hook . (lambda () (display-line-numbers-mode))))
 
@@ -650,8 +645,7 @@ Taken from post: https://zck.me/emacs-move-file"
     :ensure t
     :commands circe
     :hook (circe-chat-mode-hook . dd/circe-prompt)
-    :init
-    (require 'auth-source-pass)
+    :config
     (defun dd/irc-pw-freenode (server)
       (auth-source-pass-get 'secret "Freenode"))
     (defun dd/irc-pw-gitter (server)
@@ -670,7 +664,6 @@ Taken from post: https://zck.me/emacs-move-file"
                         "#lobsters"
                         "##crustaceans")
              :tls t)))
-    :config
     (setq circe-use-cycle-completion t
           circe-reduce-lurker-spam t
           circe-format-say "<{nick}> {body}"
@@ -710,7 +703,6 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (use-package company
   :ensure t
-  :demand t
   :bind
   (:map company-active-map
         ("TAB" . company-complete-selection)
@@ -756,10 +748,12 @@ Taken from post: https://zck.me/emacs-move-file"
   (setq consult-project-root-function #'projectile-project-root))
 
 (use-package crux
+  :defer 30
   :ensure t)
 
 (use-package cython-mode
-  :ensure t)
+  :ensure t
+  :defer 30)
 
 (use-package debbugs
   :ensure t
@@ -803,14 +797,13 @@ Taken from post: https://zck.me/emacs-move-file"
   :bind (("C-x w" . 'elfeed)
          :map elfeed-show-mode-map
          ("V" . 'visual-fill-column-mode))
-  :init
+  :config
   (setq shr-use-fonts nil)
   (setq elfeed-feeds
         '(("https://planet.scipy.org/feed.xml" python)
           ("https://planet.emacslife.com/atom.xml" emacs)
           ("https://ddavis.io/index.xml" blog)
           ("http://pragmaticemacs.com/feed/" emacs)))
-  :config
   (add-hook 'elfeed-new-entry-hook
             (elfeed-make-tagger :before "3 weeks ago" :remove 'unread))
   (setq-default elfeed-search-filter "@21-days-ago"))
@@ -854,26 +847,24 @@ Taken from post: https://zck.me/emacs-move-file"
   :config
   (setq lsp-keep-workspace-alive nil
         lsp-auto-guess-root nil
-        lsp-enable-on-type-formatting nil))
-
-(use-package lsp-pyls
-  :config
-  (setq lsp-pyls-plugins-autopep8-enabled nil
-        lsp-pyls-plugins-pycodestyle-enabled nil
-        lsp-pyls-plugins-flake8-enabled t
-        lsp-pyls-plugins-pydocstyle-enabled t
-        lsp-pyls-configuration-sources ["flake8"]))
+        lsp-enable-on-type-formatting nil)
+  ;; python
+  (setq lsp-pyls-plugins-autopep8-enabled nil)
+  (setq lsp-pyls-plugins-pycodestyle-enabled nil)
+  (setq lsp-pyls-plugins-flake8-enabled t)
+  (setq lsp-pyls-plugins-pydocstyle-enabled t)
+  (setq lsp-pyls-configuration-sources ["flake8"]))
 
 (use-package lsp-ui
   :ensure t
-  :config
-  (setq lsp-ui-doc-enable t
-        lsp-ui-doc-include-signature nil
-        lsp-ui-doc-position 'at-point
-        lsp-ui-doc-header t
-        lsp-ui-doc-max-height 25
-        lsp-ui-doc-max-width 92
-        lsp-ui-sideline-show-hover nil))
+  :init
+  (setq lsp-ui-doc-enable t)
+  (setq lsp-ui-doc-include-signature nil)
+  (setq lsp-ui-doc-position 'at-point)
+  (setq lsp-ui-doc-header t)
+  (setq lsp-ui-doc-max-height 25)
+  (setq lsp-ui-doc-max-width 92)
+  (setq lsp-ui-sideline-show-hover nil))
 
 (use-package magit
   :ensure t
@@ -1029,7 +1020,8 @@ Taken from post: https://zck.me/emacs-move-file"
   :ensure t)
 
 (use-package vterm
-  :ensure t)
+  :ensure t
+  :defer 10)
 
 (use-package w3m
   :ensure t
