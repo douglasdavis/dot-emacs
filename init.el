@@ -1,6 +1,6 @@
 ;;; init.el --- Emacs init.el                        -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2020  Doug Davis
+;; Copyright (C) 2020, 2021 Doug Davis
 
 ;; Author: Doug Davis <ddavis@ddavis.io>
 ;; Keywords: local
@@ -486,12 +486,10 @@ Taken from post: https://zck.me/emacs-move-file"
                 (t "/usr/local/bin/hunspell")))))
 
 (use-package org
-  :init
-  (setq org-src-fontify-natively t)
   :hook (org-mode-hook . (lambda () (interactive)
-                           (setq-local display-line-numbers-width-start
-                                       t)))
+                           (setq-local display-line-numbers-width-start t)))
   :config
+  (setq org-src-fontify-natively t)
   (setq org-structure-template-alist
         (append org-structure-template-alist
                 '(("el" . "src emacs-lisp :results silent")
@@ -502,7 +500,6 @@ Taken from post: https://zck.me/emacs-move-file"
     (bind-key "<A-up>" 'org-move-subtree-up org-mode-map)
     (bind-key "<A-left>" 'org-promote-subtree)
     (bind-key "<A-right>" 'org-demote-subtree))
-
   (unless dd/on-mac-p
     (bind-key "<s-down>" 'org-move-subtree-down org-mode-map)
     (bind-key "<s-up>" 'org-move-subtree-up org-mode-map)
