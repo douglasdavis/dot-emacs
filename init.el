@@ -149,7 +149,7 @@
   "Byte-compile non built-in Lisp code."
   (interactive)
   (dd/compile-local-site-lisp)
-  (when (fboundp 'dd/mu4e-dir)
+  (when (boundp 'dd/mu4e-dir)
     (dd/mu4e-byte-comp)))
 
 (defun dd/copy-lines-matching-re (re)
