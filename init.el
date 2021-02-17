@@ -623,6 +623,7 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (use-package auto-package-update
   :ensure t
+  :commands (auto-package-update-now)
   :hook
   (auto-package-update-before-hook . (lambda () (interactive)
                                        (when (boundp 'comp-deferred-compilation)
@@ -745,16 +746,17 @@ Taken from post: https://zck.me/emacs-move-file"
   (setq consult-project-root-function #'projectile-project-root))
 
 (use-package crux
-  :defer 30
+  :defer 15
   :ensure t)
 
 (use-package cython-mode
   :ensure t
-  :defer 30)
+  :mode (("\\.pyx\\'" . cython-mode)
+         ("\\.pxd\\'" . cython-mode)))
 
 (use-package debbugs
   :ensure t
-  :defer 20)
+  :defer t)
 
 (use-package doom-themes
   :ensure t
@@ -886,7 +888,8 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (use-package markdown-mode
   :ensure t
-  :mode "\\.md\\'")
+  :defer t
+  :mode ("\\.md\\'" "\\.markdown\\'"))
 
 (use-package modern-cpp-font-lock
   :ensure t
@@ -1018,10 +1021,11 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (use-package vterm
   :ensure t
-  :defer 10)
+  :defer t)
 
 (use-package w3m
   :ensure t
+  :defer t
   :config
   (setq w3m-default-display-inline-images t))
 
