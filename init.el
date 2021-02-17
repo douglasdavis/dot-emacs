@@ -1002,7 +1002,8 @@ Taken from post: https://zck.me/emacs-move-file"
   :ensure t
   :after selectrum
   :config
-  (selectrum-prescient-mode +1))
+  (selectrum-prescient-mode +1)
+  (prescient-persist-mode +1))
 
 (when (or dd/on-mac-p dd/on-cc7-p)
   (use-package tex-site
