@@ -572,6 +572,9 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (use-package simple
   :config
+  (when (and (boundp 'read-extended-command-predicate)
+             (fboundp 'command-completion-default-include-p))
+    (setq read-extended-command-predicate 'command-completion-default-include-p))
   (column-number-mode +1))
 
 (use-package term
