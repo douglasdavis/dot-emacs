@@ -868,7 +868,6 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (use-package lsp-clangd :defer t)
 (use-package lsp-pyls :defer t)
-
 (use-package lsp-mode
   :ensure t
   :commands lsp
@@ -878,7 +877,8 @@ Taken from post: https://zck.me/emacs-move-file"
   :config
   (setq lsp-keep-workspace-alive nil
         lsp-auto-guess-root nil
-        lsp-enable-on-type-formatting nil)
+        lsp-enable-on-type-formatting nil
+        lsp-signature-function 'lsp-signature-posframe)
   ;; python
   (setq lsp-pyls-plugins-autopep8-enabled nil)
   (setq lsp-pyls-plugins-pycodestyle-enabled nil)
@@ -1123,7 +1123,7 @@ Taken from post: https://zck.me/emacs-move-file"
   (bind-key* (kbd "s-<left>") #'left-word)
   (bind-key* (kbd "s-d") #'dd/kill-theme)
   (bind-key* (kbd "s-\\") #'dd/toggle-window-split)
-  (bind-key* (kbd "s-\"") #'dd/google-something)
+  (bind-key* (kbd "s-\"") #'dd/search-something)
   (bind-key* (kbd "s-/") #'previous-buffer)
   (bind-key* (kbd "s-1") #'delete-other-windows)
   (bind-key* (kbd "s-2") #'split-window-below)
@@ -1140,7 +1140,7 @@ Taken from post: https://zck.me/emacs-move-file"
   (bind-key* (kbd "s-r") #'consult-ripgrep)
   (bind-key* (kbd "s-s") #'save-buffer)
   (bind-key* (kbd "s-u") #'gnus)
-  (bind-key* (kbd "s-*") 'dd/kill-all-buffers)
+  (bind-key* (kbd "s-*") #'dd/kill-all-buffers)
   (bind-key* (kbd "s-w") #'dd/delete-frame-or-window))
 
 ;; sec06:
