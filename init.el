@@ -268,6 +268,23 @@ Taken from post: https://zck.me/emacs-move-file"
   (interactive "sSearch: ")
   (dd/search-s s))
 
+(defvar dd/themes '(doom-gruvbox modus-operandi doom-solarized-light))
+(defun dd/theme-cycler ()
+  "Cycle through `dd/themes' variable."
+  (interactive)
+  (let ((current (car custom-enabled-themes))
+        (total (length dd/themes)))
+    (when current
+      (disable-theme current))
+    (if current
+        (progn
+          (let ((idx (1+ (-elem-index current dd/themes))))
+            (when (= idx total)
+              (setq idx 0))
+            (load-theme (nth idx dd/themes) t)))
+      (load-theme (car dd/themes) t))))
+(bind-key* "<f5>" #'dd/theme-cycler)
+
 (defun dd/toggle-window-split ()
   "If two windows are present; toggle the split axis."
   (interactive)
@@ -911,11 +928,8 @@ Taken from post: https://zck.me/emacs-move-file"
   :init
   (modern-c++-font-lock-global-mode +1))
 
-;; (when dd/on-mac-p
-;;   (use-package modus-themes
-;;     :ensure t
-;;     :config
-;;     (load-theme 'modus-operandi)))
+(use-package modus-themes
+  :ensure t)
 
 (use-package ox-hugo
   :ensure t
