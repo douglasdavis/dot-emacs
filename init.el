@@ -44,7 +44,8 @@
 
 ;; for native comp branch
 (defconst dd/using-native-comp (fboundp 'native-comp-available-p))
-(when (boundp 'comp-deferred-compilation)
+(when (and (boundp 'comp-deferred-compilation)
+           (boundp 'comp-async-report-warnings-errors))
   (setq comp-async-report-warnings-errors nil)
   (setq comp-deferred-compilation t))
 
@@ -68,6 +69,9 @@
 
 (defconst dd/on-davian-p (dd/includes? (system-name) "davian")
   "For checking if on davian box.")
+
+(defconst dd/use-pdf-tools-p (and window-system (or dd/on-mac-p dd/on-cc7-p dd/on-davian-p))
+  "For checking if we should use pdf-tools.")
 
 (setq initial-scratch-message
       (let ((vstr (format ";; This is GNU Emacs %s" emacs-version))
@@ -326,10 +330,11 @@ Taken from post: https://zck.me/emacs-move-file"
 
 ;; (straight-use-package 'use-package)
 
-(eval-when-compile
-  (require 'use-package)
-  (require 'bind-key)
-  (setq use-package-hook-name-suffix nil))
+(with-eval-after-load 'use-package
+  (eval-when-compile
+    (require 'use-package)
+    (require 'bind-key)
+    (setq use-package-hook-name-suffix nil)))
 
 ;; (use-package straight-x)
 
@@ -373,9 +378,8 @@ Taken from post: https://zck.me/emacs-move-file"
   :config
   (setq dired-recursive-copies 'always))
 
+(make-variable-buffer-local 'display-line-numbers-width-start)
 (use-package display-line-numbers
-  :init
-  (make-variable-buffer-local 'display-line-numbers-width-start)
   :config
   (global-display-line-numbers-mode))
 
@@ -394,67 +398,68 @@ Taken from post: https://zck.me/emacs-move-file"
               (dd/on-davian-p "/usr/bin/gpg")
               (t "/usr/bin/gpg2"))))))
 
-(when (or dd/on-grads-18-p dd/on-cc7-p dd/on-mac-p)
-  (use-package erc
-    :commands erc
-    :config
-    (setq erc-prompt-for-password nil)
-    (setq erc-user-full-name "Doug Davis")
-    (setq erc-rename-buffers t)
-    (setq erc-track-enable-keybindings nil)
-    (setq erc-kill-buffer-on-part t)
-    (setq erc-kill-server-buffer-on-quit t)
-    (setq erc-fill-function 'erc-fill-static)
-    (setq erc-fill-static-center 19)
-    (setq erc-prompt (lambda () (concat (buffer-name) " >")))
-    (setq erc-hide-list '("JOIN" "PART" "QUIT"))
-    (setq erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
-    (setq erc-track-exclude-types '("JOIN" "MODE" "NICK" "PART" "QUIT"
-                                    "324" "329" "332" "333" "353" "477"))
-    (add-to-list 'erc-modules 'notifications)
-    (add-to-list 'erc-modules 'spelling)
+;; (when (or dd/on-grads-18-p dd/on-cc7-p dd/on-mac-p)
+;;   (use-package erc
+;;     :commands erc
+;;     :config
+;;     (setq erc-prompt-for-password nil)
+;;     (setq erc-user-full-name "Doug Davis")
+;;     (setq erc-rename-buffers t)
+;;     (setq erc-track-enable-keybindings nil)
+;;     (setq erc-kill-buffer-on-part t)
+;;     (setq erc-kill-server-buffer-on-quit t)
+;;     (setq erc-fill-function 'erc-fill-static)
+;;     (setq erc-fill-static-center 19)
+;;     (setq erc-prompt (lambda () (concat (buffer-name) " >")))
+;;     (setq erc-hide-list '("JOIN" "PART" "QUIT"))
+;;     (setq erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
+;;     (setq erc-track-exclude-types '("JOIN" "MODE" "NICK" "PART" "QUIT"
+;;                                     "324" "329" "332" "333" "353" "477"))
+;;     (add-to-list 'erc-modules 'notifications)
+;;     (add-to-list 'erc-modules 'spelling)
 
-    (setq-default dd/erc-colors-list
-                  '("#fb4934" "#b8bb26" "#fabd2f"
-                    "#83a598" "#d3869b" "#8ec07c"
-                    "#fe8019" "#cc241d" "#98971a"
-                    "#d79921" "#458588" "#b16286"
-                    "#689d6a" "#d65d0e"))
+;;     (defconst dd/erc-colors-list '("#fb4934" "#b8bb26" "#fabd2f"
+;;                                    "#83a598" "#d3869b" "#8ec07c"
+;;                                    "#fe8019" "#cc241d" "#98971a"
+;;                                    "#d79921" "#458588" "#b16286"
+;;                                    "#689d6a" "#d65d0e"))
 
-    ;; special colors for some people
-    (setq dd/erc-nick-color-alist '(("John" . "blue")
-                                    ("Bob" . "red")))
+;;     ;; special colors for some people
+;;     (defconst dd/erc-nick-color-alist '(("X" . "blue")))
 
-    (defun dd/erc-get-color-for-nick (nick)
-      "Gets a color for NICK. If NICK is in
-    dd/erc-nick-color-alist, use that color, else hash the nick
-    and use a random color from the pool"
-      (or (cdr (assoc nick dd/erc-nick-color-alist))
-          (nth
-           (mod (string-to-number
-                 (substring (md5 (downcase nick)) 0 6) 16)
-                (length dd/erc-colors-list))
-           dd/erc-colors-list)))
+;;     (defun dd/erc-get-color-for-nick (nick)
+;;       "Gets a color for NICK. If NICK is in
+;;     dd/erc-nick-color-alist, use that color, else hash the nick
+;;     and use a random color from the pool"
+;;       (or (cdr (assoc nick dd/erc-nick-color-alist))
+;;           (nth
+;;            (mod (string-to-number
+;;                  (substring (md5 (downcase nick)) 0 6) 16)
+;;                 (length dd/erc-colors-list))
+;;            dd/erc-colors-list)))
 
-    (defun dd/erc-put-color-on-nick ()
-      "Modifies the color of nicks according to
-    dd/erc-get-color-for-nick"
-      (save-excursion
-        (goto-char (point-min))
-        (while (forward-word 1)
-          (setq bounds (bounds-of-thing-at-point 'word))
-          (setq word (buffer-substring-no-properties
-                      (car bounds) (cdr bounds)))
-          (when (or (and (erc-server-buffer-p) (erc-get-server-user word))
-                    (and erc-channel-users (erc-get-channel-user word)))
-            (put-text-property (car bounds) (cdr bounds)
-                               'face (cons 'foreground-color
-                                           (dd/erc-get-color-for-nick word)))))))
+;;     (defun dd/erc-put-color-on-nick ()
+;;       "Modifies the color of nicks according to
+;;     dd/erc-get-color-for-nick"
+;;       (save-excursion
+;;         (goto-char (point-min))
+;;         (while (forward-word 1)
+;;           (setq bounds (bounds-of-thing-at-point 'word))
+;;           (setq word (buffer-substring-no-properties
+;;                       (car bounds) (cdr bounds)))
+;;           (when (or (and (erc-server-buffer-p) (erc-get-server-user word))
+;;                     (and erc-channel-users (erc-get-channel-user word)))
+;;             (put-text-property (car bounds) (cdr bounds)
+;;                                'face (cons 'foreground-color
+;;                                            (dd/erc-get-color-for-nick word)))))))
 
-    (add-hook 'erc-insert-modify-hook 'dd/erc-put-color-on-nick)
-    (add-hook 'erc-mode-hook (lambda ()
-                               (modify-syntax-entry ?\_ "w" nil)
-                               (modify-syntax-entry ?\- "w" nil)))))
+;;     (add-hook 'erc-insert-modify-hook 'dd/erc-put-color-on-nick)
+;;     (add-hook 'erc-mode-hook (lambda ()
+;;                                (modify-syntax-entry ?\_ "w" nil)
+;;                                (modify-syntax-entry ?\- "w" nil))))
+
+;;   (use-package erc-track)
+;;   (use-package erc-fill))
 
 (use-package esh-mode
   :hook (eshell-mode-hook . (lambda () (display-line-numbers-mode 0))))
@@ -514,6 +519,7 @@ Taken from post: https://zck.me/emacs-move-file"
   :init
   (setq python-indent-guess-indent-offset nil)
   :config
+  (defvar pyvenv-virtual-env)
   (defun dd/run-python ()
     "Intelligently run a Python shell."
     (interactive)
@@ -569,6 +575,10 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (use-package shell
   :hook (shell-mode-hook . (lambda () (display-line-numbers-mode))))
+
+(use-package shr
+  :config
+  (setq shr-use-fonts nil))
 
 (use-package simple
   :config
@@ -627,6 +637,8 @@ Taken from post: https://zck.me/emacs-move-file"
 (use-package auto-package-update
   :ensure t
   :commands (auto-package-update-now)
+  :init
+  (setq auto-package-update-delete-old-versions t)
   :hook
   (auto-package-update-before-hook . (lambda () (interactive)
                                        (when (boundp 'comp-deferred-compilation)
@@ -702,8 +714,12 @@ Taken from post: https://zck.me/emacs-move-file"
 (use-package cmake-mode
   :load-path "~/.emacs.d/dot-emacs/site-lisp/cmake-mode")
 
+(make-variable-buffer-local 'company-minimum-prefix-length)
+(make-variable-buffer-local 'company-idle-delay)
+(make-variable-buffer-local 'company-backends)
 (use-package company
   :ensure t
+  :demand t
   :bind
   (:map company-active-map
         ("TAB" . company-complete-selection)
@@ -721,11 +737,10 @@ Taken from post: https://zck.me/emacs-move-file"
          (sh-mode-hook . company-mode)
          (yaml-mode-hook . company-mode))
   :config
-  (make-variable-buffer-local 'company-minimum-prefix-length)
-  (make-variable-buffer-local 'company-idle-delay)
-  (make-variable-buffer-local 'company-backends)
-  (setq-default company-backends
-                (cons 'company-capf (remove 'company-capf company-backends)))
+  (setq-default company-backends '(company-capf
+                                   company-files
+                                   company-semantic
+                                   (company-dabbrev company-keyword)))
   (setq-default company-minimum-prefix-length 2)
   (setq-default company-idle-delay 0.2)
   (defun dd/company-prog-mode  ()
@@ -739,7 +754,6 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (use-package consult
   :ensure t
-  :after selectrum
   :bind (("C-c l" . consult-line)
          ("C-c r" . consult-ripgrep)
          ("C-x b" . consult-buffer))
@@ -761,18 +775,18 @@ Taken from post: https://zck.me/emacs-move-file"
   :ensure t
   :defer t)
 
-(use-package doom-themes
-  :ensure t
-  :after all-the-icons
-  :custom
-  (doom-themes-enable-bold nil)
-  (doom-themes-enable-italic nil)
-  :config
-  (load-theme 'doom-gruvbox t))
+(unless dd/on-mac-p
+  (use-package doom-themes
+    :ensure t
+    ;; :custom
+    ;; (doom-themes-enable-bold nil)
+    ;; (doom-themes-enable-italic nil)
+    :config
+    (load-theme 'doom-gruvbox t)))
 
 (use-package doom-modeline
   :ensure t
-  :after doom-themes
+  :demand t
   :config
   (doom-modeline-mode +1))
 
@@ -796,11 +810,7 @@ Taken from post: https://zck.me/emacs-move-file"
 (use-package elfeed
   :ensure t
   :commands elfeed
-  :bind (("C-x w" . 'elfeed)
-         :map elfeed-show-mode-map
-         ("V" . 'visual-fill-column-mode))
   :config
-  (setq shr-use-fonts nil)
   (setq elfeed-feeds
         '(("https://planet.scipy.org/feed.xml" python)
           ("https://planet.emacslife.com/atom.xml" emacs)
@@ -839,6 +849,9 @@ Taken from post: https://zck.me/emacs-move-file"
 (use-package iedit
   :ensure t
   :bind ("C-c ;" . iedit-mode))
+
+(use-package lsp-clangd :defer t)
+(use-package lsp-pyls :defer t)
 
 (use-package lsp-mode
   :ensure t
@@ -899,21 +912,27 @@ Taken from post: https://zck.me/emacs-move-file"
   :init
   (modern-c++-font-lock-global-mode +1))
 
+(when dd/on-mac-p
+  (use-package modus-themes
+    :ensure t
+    :config
+    (load-theme 'modus-operandi)))
+
 (use-package ox-hugo
   :ensure t
   :after ox)
 
-(when (and (not dd/on-m1-p) window-system (or dd/on-mac-p dd/on-cc7-p))
+(when dd/use-pdf-tools-p
   (use-package pdf-tools
     :ensure t
+    :defer 10
     :hook (pdf-view-mode-hook . (lambda () (display-line-numbers-mode 0)))
     :config
     (pdf-tools-install)
     (setq-default pdf-view-display-size 'fit-page)
     (when dd/on-mac-p
       (setq pdf-view-use-scaling t)
-      (setq pdf-view-use-imagemagick nil))
-    (setq TeX-view-program-selection '((output-pdf "PDF Tools")))))
+      (setq pdf-view-use-imagemagick nil))))
 
 (use-package projectile
   :ensure t
@@ -993,7 +1012,7 @@ Taken from post: https://zck.me/emacs-move-file"
   (setq selectrum-max-window-height 13)
   (setq selectrum-fix-vertical-window-height t)
   :custom-face
-  (selectrum-primary-highlight ((t (:weight bold :foreground "#d3869b"))))
+  ;; (selectrum-primary-highlight ((t (:weight bold :foreground "#d3869b"))))
   (selectrum-current-candidate ((t (:inherit region))))
   :config
   (selectrum-mode +1))
@@ -1006,10 +1025,13 @@ Taken from post: https://zck.me/emacs-move-file"
   (prescient-persist-mode +1))
 
 (when (or dd/on-mac-p dd/on-cc7-p)
+  (use-package tex :defer t)
+  (use-package tex-buf :defer t)
+  (use-package font-latex :defer t)
   (use-package tex-site
     :ensure auctex
     :mode ("\\.tex\\'" . TeX-latex-mode)
-    :init
+    :config
     (setq font-latex-fontify-sectioning 'color
           font-latex-fontify-script nil
           TeX-source-correlate-mode 'synctex
@@ -1017,15 +1039,17 @@ Taken from post: https://zck.me/emacs-move-file"
     (setq-default TeX-master nil)
     (setq TeX-auto-save t)
     (setq TeX-parse-self t)
-    :config
-    (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)))
+    (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
+    (when dd/use-pdf-tools-p
+      (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))))
 
 (use-package visual-fill-column
   :ensure t)
 
 (use-package vterm
   :ensure t
-  :defer t)
+  :defer t
+  :hook (vterm-mode-hook . (lambda () (display-line-numbers-mode -1))))
 
 (use-package w3m
   :ensure t
@@ -1072,16 +1096,14 @@ Taken from post: https://zck.me/emacs-move-file"
               (dd/delete-frame-or-window))))
 
 (when dd/on-mac-p
-  (when (memq window-system '(mac ns))
-    (setq browse-url-browser-function 'browse-url-default-macosx-browser)
-    (setq-default ns-alternate-modifier 'meta)
-    (setq-default mac-option-modifier 'meta)
-    (setq-default ns-right-alternate-modifier nil)
-    (setq-default ns-command-modifier 'super)
-    (setq-default mac-command-modifier 'super)
-    (setq-default ns-function-modifier 'hyper)
-    (setq-default mac-function-modifier 'hyper))
-
+  (setq browse-url-browser-function 'browse-url-default-macosx-browser)
+  (setq-default ns-alternate-modifier 'meta)
+  (setq-default mac-option-modifier 'meta)
+  (setq-default ns-right-alternate-modifier nil)
+  (setq-default ns-command-modifier 'super)
+  (setq-default mac-command-modifier 'super)
+  (setq-default ns-function-modifier 'hyper)
+  (setq-default mac-function-modifier 'hyper)
   ;; (define-key global-map [s-right] 'move-end-of-line)
   ;; (define-key global-map [s-left] 'move-beginning-of-line)
   (bind-key* (kbd "s-<right>") #'right-word)
@@ -1099,9 +1121,11 @@ Taken from post: https://zck.me/emacs-move-file"
   (bind-key* (kbd "s-b") #'consult-buffer)
   (bind-key* (kbd "s-g") #'magit-status)
   (bind-key* (kbd "s-i") (lambda () (interactive) (find-file user-init-file)))
+  (bind-key* (kbd "s-k") #'kill-current-buffer)
   (bind-key* (kbd "s-o") #'other-window)
   (bind-key* (kbd "s-p") #'projectile-command-map)
   (bind-key* (kbd "s-r") #'consult-ripgrep)
+  (bind-key* (kbd "s-s") #'save-buffer)
   (bind-key* (kbd "s-u") #'gnus)
   (bind-key* (kbd "s-*") 'dd/kill-all-buffers)
   (bind-key* (kbd "s-w") #'dd/delete-frame-or-window))
