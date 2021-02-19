@@ -1119,6 +1119,11 @@ Taken from post: https://zck.me/emacs-move-file"
   (setq-default mac-function-modifier 'hyper)
   ;; (define-key global-map [s-right] 'move-end-of-line)
   ;; (define-key global-map [s-left] 'move-beginning-of-line)
+
+  (global-unset-key (kbd "s-h"))
+  (bind-key* "s-h f" #'describe-function)
+  (bind-key* "s-h v" #'describe-variable)
+  (bind-key* "s-h k" #'describe-key)
   (bind-key* (kbd "s-<right>") #'right-word)
   (bind-key* (kbd "s-<left>") #'left-word)
   (bind-key* (kbd "s-d") #'dd/kill-theme)
