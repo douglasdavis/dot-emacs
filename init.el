@@ -775,14 +775,13 @@ Taken from post: https://zck.me/emacs-move-file"
   :ensure t
   :defer t)
 
-(unless dd/on-mac-p
-  (use-package doom-themes
-    :ensure t
-    ;; :custom
-    ;; (doom-themes-enable-bold nil)
-    ;; (doom-themes-enable-italic nil)
-    :config
-    (load-theme 'doom-gruvbox t)))
+(use-package doom-themes
+  :ensure t
+  ;; :custom
+  ;; (doom-themes-enable-bold nil)
+  ;; (doom-themes-enable-italic nil)
+  :config
+  (load-theme 'doom-gruvbox t))
 
 (use-package doom-modeline
   :ensure t
@@ -912,11 +911,11 @@ Taken from post: https://zck.me/emacs-move-file"
   :init
   (modern-c++-font-lock-global-mode +1))
 
-(when dd/on-mac-p
-  (use-package modus-themes
-    :ensure t
-    :config
-    (load-theme 'modus-operandi)))
+;; (when dd/on-mac-p
+;;   (use-package modus-themes
+;;     :ensure t
+;;     :config
+;;     (load-theme 'modus-operandi)))
 
 (use-package ox-hugo
   :ensure t
@@ -1012,7 +1011,7 @@ Taken from post: https://zck.me/emacs-move-file"
   (setq selectrum-max-window-height 13)
   (setq selectrum-fix-vertical-window-height t)
   :custom-face
-  ;; (selectrum-primary-highlight ((t (:weight bold :foreground "#d3869b"))))
+  (selectrum-primary-highlight ((t (:weight bold :foreground "#d3869b"))))
   (selectrum-current-candidate ((t (:inherit region))))
   :config
   (selectrum-mode +1))
