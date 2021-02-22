@@ -769,6 +769,10 @@ Taken from post: https://zck.me/emacs-move-file"
   (add-hook 'text-mode-hook #'dd/company-text-mode)
   (add-hook 'prog-mode-hook #'dd/company-prog-mode))
 
+(use-package company-box
+  :ensure t
+  :hook (company-mode-hook . company-box-mode))
+
 (use-package consult
   :ensure t
   :bind (("C-c l" . consult-line)
@@ -791,6 +795,10 @@ Taken from post: https://zck.me/emacs-move-file"
 (use-package debbugs
   :ensure t
   :defer t)
+
+(use-package diredfl
+  :ensure t
+  :hook (dired-mode-hook . diredfl-mode))
 
 (use-package doom-themes
   :ensure t
@@ -1033,6 +1041,9 @@ Taken from post: https://zck.me/emacs-move-file"
 (use-package selectrum-prescient
   :ensure t
   :after selectrum
+  :custom-face
+  (selectrum-prescient-primary-highlight ((t (:weight bold :foreground "#d3869b"))))
+  (selectrum-prescient-secondary-highlight  ((t (:weight bold :foreground "#83a598"))))
   :config
   (selectrum-prescient-mode +1)
   (prescient-persist-mode +1))
