@@ -690,6 +690,7 @@ Taken from post: https://zck.me/emacs-move-file"
              :channels (:after-auth
                         "#emacs"
                         "#python"
+                        "#pydata"
                         "#sr.ht"
                         "#lobsters"
                         "##crustaceans")
@@ -1033,7 +1034,6 @@ Taken from post: https://zck.me/emacs-move-file"
   (setq selectrum-max-window-height 13)
   (setq selectrum-fix-vertical-window-height t)
   :custom-face
-  (selectrum-primary-highlight ((t (:weight bold :foreground "#d3869b"))))
   (selectrum-current-candidate ((t (:inherit region))))
   :config
   (selectrum-mode +1))
@@ -1167,6 +1167,12 @@ Taken from post: https://zck.me/emacs-move-file"
 
 ;; sec07:
 ;; misc
+
+(when dd/on-mac-p
+  (use-package numpydoc
+    :load-path "~/software/repos/numpydoc.el"))
+
+;; the end
 
 ;; 128MB garbage collection threshold
 (setq gc-cons-threshold (* 128 1024 1024))
