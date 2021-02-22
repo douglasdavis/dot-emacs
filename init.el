@@ -772,7 +772,10 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (use-package company-box
   :ensure t
-  :hook (company-mode-hook . company-box-mode))
+  :demand t
+  :hook (company-mode-hook . company-box-mode)
+  :config
+  (setq company-box-doc-delay 0.25))
 
 (use-package consult
   :ensure t
