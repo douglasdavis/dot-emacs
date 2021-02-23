@@ -2,6 +2,7 @@
 
 ;; 10GB GC threshold during init
 (setq gc-cons-threshold (* 10000 1024 1024))
+(setq load-prefer-newer t)
 
 (add-hook 'emacs-startup-hook
           (lambda ()

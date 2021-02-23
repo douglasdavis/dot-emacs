@@ -27,9 +27,6 @@
 ;; sec00:
 ;; preamble stuff
 
-(when (boundp 'load-prefer-newer)
-  (setq load-prefer-newer t))
-
 (setq user-mail-address "ddavis@ddavis.io")
 (setq user-full-name "Doug Davis")
 
@@ -650,6 +647,13 @@ Taken from post: https://zck.me/emacs-move-file"
 (use-package all-the-icons-dired
   :ensure t
   :hook (dired-mode-hook . all-the-icons-dired-mode))
+
+(use-package auto-compile
+  :ensure t
+  :defer t
+  :config
+  (setq auto-compile-display-buffer nil)
+  (setq auto-compile-mode-line-counter t))
 
 (use-package auto-package-update
   :ensure t

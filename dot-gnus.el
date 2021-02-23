@@ -38,6 +38,15 @@
             (eval (setq mail-host-address "ddavis.io"
                         message-sendmail-extra-arguments '("--read-envelope-from")))
             (user-mail-address "ddavis@ddavis.io")))
+          ("fastmailwedding"
+           (posting-style
+            (name "Doug Davis")
+            (address "us@dougandkristiebecome.one")
+            (gcc "nnimap+fastmail:Sent")
+            (body "")
+            (eval (setq mail-host-address "dougandkristiebecome.one"
+                        message-sendmail-extra-arguments '("--read-envelope-from")))
+            (user-mail-address "us@dougandkristiebecome.one")))
           ("dukemail"
            (posting-style
             (name "Doug Davis")
