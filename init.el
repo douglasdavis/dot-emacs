@@ -284,7 +284,7 @@ Taken from post: https://zck.me/emacs-move-file"
               (setq idx 0))
             (load-theme (nth idx dd/themes) t)))
       (load-theme (car dd/themes) t))))
-(bind-key* "<f5>" #'dd/theme-cycler)
+(bind-key* "<f6>" #'dd/theme-cycler)
 
 (defun dd/toggle-window-split ()
   "If two windows are present; toggle the split axis."
@@ -1145,32 +1145,32 @@ Taken from post: https://zck.me/emacs-move-file"
   ;; (define-key global-map [s-left] 'move-beginning-of-line)
 
   (global-unset-key (kbd "s-h"))
+  (bind-key* "s-<right>" #'right-word)
+  (bind-key* "s-<left>" #'left-word)
+  (bind-key* "s-\\" #'dd/toggle-window-split)
+  (bind-key* "s-\"" #'dd/search-something)
+  (bind-key* "s-/" #'previous-buffer)
+  (bind-key* "s-1" #'delete-other-windows)
+  (bind-key* "s-2" #'split-window-below)
+  (bind-key* "s-3" #'split-window-right)
+  (bind-key* "s-4" #'mu4e)
+  (bind-key* "s-5" #'projectile-find-file-in-known-projects)
+  (bind-key* "s-d" #'dd/kill-theme)
+  (bind-key* "s-f" #'find-file)
+  (bind-key* "s-b" #'consult-buffer)
+  (bind-key* "s-g" #'magit-status)
   (bind-key* "s-h f" #'describe-function)
   (bind-key* "s-h v" #'describe-variable)
   (bind-key* "s-h k" #'describe-key)
-  (bind-key* (kbd "s-<right>") #'right-word)
-  (bind-key* (kbd "s-<left>") #'left-word)
-  (bind-key* (kbd "s-d") #'dd/kill-theme)
-  (bind-key* (kbd "s-\\") #'dd/toggle-window-split)
-  (bind-key* (kbd "s-\"") #'dd/search-something)
-  (bind-key* (kbd "s-/") #'previous-buffer)
-  (bind-key* (kbd "s-1") #'delete-other-windows)
-  (bind-key* (kbd "s-2") #'split-window-below)
-  (bind-key* (kbd "s-3") #'split-window-right)
-  (bind-key* (kbd "s-5") #'projectile-find-file-in-known-projects)
-  (bind-key* (kbd "s-4") #'mu4e)
-  (bind-key* (kbd "s-f") #'find-file)
-  (bind-key* (kbd "s-b") #'consult-buffer)
-  (bind-key* (kbd "s-g") #'magit-status)
-  (bind-key* (kbd "s-i") (lambda () (interactive) (find-file user-init-file)))
-  (bind-key* (kbd "s-k") #'kill-current-buffer)
-  (bind-key* (kbd "s-o") #'other-window)
-  (bind-key* (kbd "s-p") #'projectile-command-map)
-  (bind-key* (kbd "s-r") #'consult-ripgrep)
-  (bind-key* (kbd "s-s") #'save-buffer)
-  (bind-key* (kbd "s-u") #'gnus)
-  (bind-key* (kbd "s-*") #'dd/kill-all-buffers)
-  (bind-key* (kbd "s-w") #'dd/delete-frame-or-window))
+  (bind-key* "s-i" #'crux-find-user-init-file)
+  (bind-key* "s-k" #'kill-current-buffer)
+  (bind-key* "s-o" #'other-window)
+  (bind-key* "s-p" #'projectile-command-map)
+  (bind-key* "s-r" #'consult-ripgrep)
+  (bind-key* "s-s" #'save-buffer)
+  (bind-key* "s-u" #'gnus)
+  (bind-key* "s-*" #'dd/kill-all-buffers)
+  (bind-key* "s-w" #'dd/delete-frame-or-window))
 
 ;; sec06:
 ;; email setup is in dedicated file
@@ -1181,7 +1181,7 @@ Taken from post: https://zck.me/emacs-move-file"
 ;; sec07:
 ;; misc
 
-(when dd/on-mac-p
+(when (file-exists-p "~/software/repos/numpydoc.el")
   (use-package numpydoc
     :load-path "~/software/repos/numpydoc.el"))
 
