@@ -306,6 +306,13 @@ Taken from post: https://zck.me/emacs-move-file"
     (user-error "Can toggle split only with two windows")))
 (bind-key* "C-x \\" #'dd/toggle-window-split)
 
+(defun dd/vterm-go ()
+  "Switch to (or create) a general vterm called dd/vterm."
+  (interactive)
+  (if (get-buffer "dd/vterm")
+      (switch-to-buffer "dd/vterm")
+    (vterm "dd/vterm")))
+
 (defconst dd/llvm-bin-path
   (cond (dd/on-m1-p "/opt/homebrew/opt/llvm/bin")
         (dd/on-mac-p "/usr/local/opt/llvm/bin")
@@ -1165,9 +1172,11 @@ Taken from post: https://zck.me/emacs-move-file"
   (bind-key* "s-p" #'projectile-command-map)
   (bind-key* "s-r" #'consult-ripgrep)
   (bind-key* "s-s" #'save-buffer)
+  (bind-key* "s-t" #'dd/vterm-go)
   (bind-key* "s-u" #'gnus)
-  (bind-key* "s-*" #'dd/kill-all-buffers)
-  (bind-key* "s-w" #'dd/delete-frame-or-window))
+  (bind-key* "s-w" #'dd/delete-frame-or-window)
+  (bind-key* "s-x" #'execute-extended-command)
+  (bind-key* "s-*" #'dd/kill-all-buffers))
 
 ;; sec06:
 ;; email setup is in dedicated file
