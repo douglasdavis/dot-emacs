@@ -128,7 +128,9 @@
   (set-face-attribute 'default nil
                       :family "MonoLisa"
                       :weight 'regular
-                      :height 130))
+                      :height 130)
+  (dolist (face '(font-lock-doc-face font-lock-comment-face))
+    (set-face-attribute face nil :italic t)))
 (when (or dd/on-cc7-p dd/on-davian-p)
   (set-face-attribute 'default nil
                       :family "JetBrains Mono"
@@ -850,14 +852,13 @@ Taken from post: https://zck.me/emacs-move-file"
   :ensure t
   :commands elfeed
   :config
+  (setq elfeed-search-filter "@21-days-ago")
   (setq elfeed-feeds
         '(("https://planet.scipy.org/feed.xml" python)
           ("https://planet.emacslife.com/atom.xml" emacs)
-          ("https://ddavis.io/index.xml" blog)
-          ("http://pragmaticemacs.com/feed/" emacs)))
+          ("https://ddavis.io/index.xml" blog)))
   (add-hook 'elfeed-new-entry-hook
-            (elfeed-make-tagger :before "3 weeks ago" :remove 'unread))
-  (setq-default elfeed-search-filter "@21-days-ago"))
+            (elfeed-make-tagger :before "3 weeks ago" :remove 'unread)))
 
 (use-package eros
   :ensure t
