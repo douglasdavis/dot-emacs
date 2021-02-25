@@ -126,9 +126,9 @@
   (when (boundp 'ns-antialias-text)
     (setq ns-antialias-text t))
   (set-face-attribute 'default nil
-                      :family "JetBrains Mono"
+                      :family "MonoLisa"
                       :weight 'regular
-                      :height 120))
+                      :height 130))
 (when (or dd/on-cc7-p dd/on-davian-p)
   (set-face-attribute 'default nil
                       :family "JetBrains Mono"
@@ -237,8 +237,10 @@ Taken from post: https://zck.me/emacs-move-file"
                           (read-file-name "Move file to: ")
                         (read-file-name "Move file to: "
                                         default-directory
-                                        (expand-file-name (file-name-nondirectory (buffer-name))
-                                                          default-directory))))))
+                                        (expand-file-name
+                                         (file-name-nondirectory
+                                          (buffer-name))
+                                         default-directory))))))
   (when (file-exists-p new-loc)
     (delete-file new-loc))
   (let ((old-loc (expand-file-name (buffer-file-name))))
@@ -324,6 +326,7 @@ Taken from post: https://zck.me/emacs-move-file"
 (setq package-archives
       '(("melpa" . "https://melpa.org/packages/")
         ("gnu" . "https://elpa.gnu.org/packages/")))
+(package-initialize)
 
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -331,7 +334,8 @@ Taken from post: https://zck.me/emacs-move-file"
 
 ;; (defvar bootstrap-version)
 ;; (let ((bootstrap-file
-;;        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+;;        (expand-file-name "straight/repos/straight.el/bootstrap.el"
+;;                          user-emacs-directory))
 ;;       (bootstrap-version 5))
 ;;   (unless (file-exists-p bootstrap-file)
 ;;     (with-current-buffer
@@ -705,9 +709,13 @@ Taken from post: https://zck.me/emacs-move-file"
           lui-fill-type 19
           lui-fill-column 77)
     (setq circe-default-part-message
-          (concat "Closed Circe (" circe-version ") buffer in GNU Emacs (" emacs-version ")"))
+          (format "Closed Circe (%s) buffer in GNU Emacs (%s)"
+                  circe-version
+                  emacs-version))
     (setq circe-default-quit-message
-          (concat "Quit Circe (" circe-version ") in GNU Emacs (" emacs-version ")"))
+          (format "Quit Circe (%s) in GNU Emacs (%s)"
+                  circe-version
+                  emacs-version))
     (defun dd/switch-circe-channel ()
       (interactive)
       (let ((sources
@@ -774,12 +782,11 @@ Taken from post: https://zck.me/emacs-move-file"
   (add-hook 'text-mode-hook #'dd/company-text-mode)
   (add-hook 'prog-mode-hook #'dd/company-prog-mode))
 
-(use-package company-box
-  :ensure t
-  :demand t
-  :hook (company-mode-hook . company-box-mode)
-  :config
-  (setq company-box-doc-delay 0.25))
+;; (use-package company-box
+;;   :ensure t
+;;   :hook (company-mode-hook . company-box-mode)
+;;   :config
+;;   (setq company-box-doc-delay 0.25))
 
 (use-package consult
   :ensure t
@@ -864,7 +871,10 @@ Taken from post: https://zck.me/emacs-move-file"
     (exec-path-from-shell-initialize)))
 
 (use-package flycheck
-  :ensure t)
+  :ensure t
+  :defer t
+  :custom
+  (flycheck-emacs-lisp-load-path 'inherit))
 
 (use-package helpful
   :ensure t
@@ -975,13 +985,8 @@ Taken from post: https://zck.me/emacs-move-file"
         projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
         projectile-globally-ignored-directories '(".git" "__pycache__")
         projectile-globally-ignored-files '(".DS_Store")
+        projectile-ignored-projects '("/opt/homebrew/")
         projectile-enable-caching nil)
-  (when (or dd/on-mac-p dd/on-grads-18-p)
-    (setq projectile-project-search-path
-          '("~/software/repos/" "~/atlas/analysis/")))
-  (when dd/on-cc7-p
-    (setq projectile-project-search-path
-          '("~/software/repos/" "/ddd/atlas/analysis/")))
   (projectile-mode +1))
 
 (use-package pyvenv
