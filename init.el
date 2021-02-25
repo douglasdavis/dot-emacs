@@ -67,7 +67,10 @@
 (defconst dd/on-davian-p (dd/includes? (system-name) "davian")
   "For checking if on davian box.")
 
-(defconst dd/use-pdf-tools-p (and window-system (or dd/on-mac-p dd/on-cc7-p dd/on-davian-p))
+(defconst dd/use-pdf-tools-p (and window-system
+                                  (or dd/on-mac-p
+                                      dd/on-cc7-p
+                                      dd/on-davian-p))
   "For checking if we should use pdf-tools.")
 
 (setq initial-scratch-message
@@ -301,6 +304,7 @@ Taken from post: https://zck.me/emacs-move-file"
                             (split-window-horizontally)))
            buf)))
     (user-error "Can toggle split only with two windows")))
+(bind-key* "C-x \\" #'dd/toggle-window-split)
 
 (defconst dd/llvm-bin-path
   (cond (dd/on-m1-p "/opt/homebrew/opt/llvm/bin")
@@ -1123,16 +1127,9 @@ Taken from post: https://zck.me/emacs-move-file"
 ;; sec05:
 ;; some package-free bindings and macOS specifics
 
-(bind-key (kbd "C-x \\") #'dd/toggle-window-split)
-
-(bind-key (kbd "C-w")
-          (lambda ()
-            (interactive)
-            (if (region-active-p)
-                (kill-region (region-beginning) (region-end))
-              (dd/delete-frame-or-window))))
-
+;; some macOS specifics
 (when dd/on-mac-p
+  ;; browser and modifier setq's
   (setq browse-url-browser-function 'browse-url-default-macosx-browser)
   (setq-default ns-alternate-modifier 'meta)
   (setq-default mac-option-modifier 'meta)
@@ -1141,10 +1138,9 @@ Taken from post: https://zck.me/emacs-move-file"
   (setq-default mac-command-modifier 'super)
   (setq-default ns-function-modifier 'hyper)
   (setq-default mac-function-modifier 'hyper)
-  ;; (define-key global-map [s-right] 'move-end-of-line)
-  ;; (define-key global-map [s-left] 'move-beginning-of-line)
-
+  ;; will use s-h as a prefix for describe-* functions.
   (global-unset-key (kbd "s-h"))
+  ;; super (cmd) key bindings.
   (bind-key* "s-<right>" #'right-word)
   (bind-key* "s-<left>" #'left-word)
   (bind-key* "s-\\" #'dd/toggle-window-split)
@@ -1156,6 +1152,7 @@ Taken from post: https://zck.me/emacs-move-file"
   (bind-key* "s-4" #'mu4e)
   (bind-key* "s-5" #'projectile-find-file-in-known-projects)
   (bind-key* "s-d" #'dd/kill-theme)
+  (bind-key* "s-e" #'gnus)
   (bind-key* "s-f" #'find-file)
   (bind-key* "s-b" #'consult-buffer)
   (bind-key* "s-g" #'magit-status)
