@@ -43,6 +43,8 @@
 (defconst dd/using-native-comp (fboundp 'native-comp-available-p))
 (when (and (boundp 'comp-deferred-compilation)
            (boundp 'comp-async-report-warnings-errors))
+  (setq comp-async-query-on-exit t)
+  (setq comp-async-jobs-number 4)
   (setq comp-async-report-warnings-errors nil)
   (setq comp-deferred-compilation t))
 
@@ -136,7 +138,7 @@
     (set-face-attribute face nil :italic t)))
 (when (or dd/on-cc7-p dd/on-davian-p)
   (set-face-attribute 'default nil
-                      :family "JetBrains Mono"
+                      :family "MonoLisa"
                       :weight 'regular
                       :height 130))
 (when (and dd/on-cc7-p (fboundp 'set-fontset-font))
@@ -292,8 +294,11 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (defun dd/theme-extras ()
   "Some things to follow up theme loading."
-  (dd/selectrum-faces)
-  (set-face-attribute 'font-lock-doc-face nil :italic t))
+  (with-eval-after-load 'selectrum-prescient
+    (set-face-attribute 'selectrum-prescient-primary-highlight
+                        nil :inherit 'info-xref-visited))
+  (dolist (face '(font-lock-doc-face font-lock-comment-face))
+    (set-face-attribute face nil :italic t)))
 
 (defun dd/toggle-window-split ()
   "If two windows are present; toggle the split axis."
@@ -1092,15 +1097,9 @@ Taken from post: https://zck.me/emacs-move-file"
   :ensure t
   :after selectrum
   :custom-face
-  (selectrum-prescient-primary-highlight ((t (:inherit info-xref-visited))))
-  ;; (selectrum-prescient-primary-highlight ((t (:weight bold :foreground "#d3869b"))))
-  ;; (selectrum-prescient-secondary-highlight  ((t (:weight bold :foreground "#83a598"))))
   :config
   (selectrum-prescient-mode +1)
-  (prescient-persist-mode +1)
-  (defun dd/selectrum-faces ()
-    (set-face-attribute 'selectrum-prescient-primary-highlight
-                        nil :inherit 'info-xref-visited)))
+  (prescient-persist-mode +1))
 
 (when (or dd/on-mac-p dd/on-cc7-p)
   (use-package tex :defer t)
