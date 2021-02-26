@@ -286,7 +286,8 @@ Taken from post: https://zck.me/emacs-move-file"
             (when (= idx total)
               (setq idx 0))
             (load-theme (nth idx dd/themes) t)))
-      (load-theme (car dd/themes) t))))
+      (load-theme (car dd/themes) t))
+    (dd/selectrum-faces)))
 (bind-key* "<f6>" #'dd/theme-cycler)
 
 (defun dd/toggle-window-split ()
@@ -309,8 +310,11 @@ Taken from post: https://zck.me/emacs-move-file"
 (defun dd/vterm-go ()
   "Switch to (or create) a general vterm called dd/vterm."
   (interactive)
+  (delete-other-windows)
   (if (get-buffer "dd/vterm")
-      (switch-to-buffer "dd/vterm")
+      (progn
+        (set-buffer "dd/vterm")
+        (switch-to-buffer "dd/vterm"))
     (vterm "dd/vterm")))
 
 (defconst dd/llvm-bin-path
@@ -969,6 +973,11 @@ Taken from post: https://zck.me/emacs-move-file"
 (use-package modus-themes
   :ensure t)
 
+(when (file-exists-p "~/software/repos/numpydoc.el")
+  (use-package numpydoc
+    :after python
+    :load-path "~/software/repos/numpydoc.el"))
+
 (use-package ox-hugo
   :ensure t
   :after ox)
@@ -1055,7 +1064,7 @@ Taken from post: https://zck.me/emacs-move-file"
   :init
   (setq selectrum-extend-current-candidate-highlight t)
   (setq selectrum-num-candidates-displayed 'auto)
-  (setq selectrum-max-window-height 13)
+  (setq selectrum-max-window-height 16)
   (setq selectrum-fix-vertical-window-height t)
   :custom-face
   (selectrum-current-candidate ((t (:inherit region))))
@@ -1066,11 +1075,15 @@ Taken from post: https://zck.me/emacs-move-file"
   :ensure t
   :after selectrum
   :custom-face
-  (selectrum-prescient-primary-highlight ((t (:weight bold :foreground "#d3869b"))))
-  (selectrum-prescient-secondary-highlight  ((t (:weight bold :foreground "#83a598"))))
+  (selectrum-prescient-primary-highlight ((t (:inherit info-xref-visited))))
+  ;; (selectrum-prescient-primary-highlight ((t (:weight bold :foreground "#d3869b"))))
+  ;; (selectrum-prescient-secondary-highlight  ((t (:weight bold :foreground "#83a598"))))
   :config
   (selectrum-prescient-mode +1)
-  (prescient-persist-mode +1))
+  (prescient-persist-mode +1)
+  (defun dd/selectrum-faces ()
+    (set-face-attribute 'selectrum-prescient-primary-highlight
+                        nil :inherit 'info-xref-visited)))
 
 (when (or dd/on-mac-p dd/on-cc7-p)
   (use-package tex :defer t)
@@ -1186,10 +1199,6 @@ Taken from post: https://zck.me/emacs-move-file"
 
 ;; sec07:
 ;; misc
-
-(when (file-exists-p "~/software/repos/numpydoc.el")
-  (use-package numpydoc
-    :load-path "~/software/repos/numpydoc.el"))
 
 ;; the end
 
