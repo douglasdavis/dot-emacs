@@ -83,6 +83,8 @@
          ("M" . mu4e-action-view-in-w3m)
          ("j" . dd/mu4e-jump-via-comp-read))
   :config
+  (add-hook 'mu4e-main-mode-hook 'delete-other-windows)
+
   (defun dd/dont-auto-save ()
     (interactive)
     (auto-save-mode -1))

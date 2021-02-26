@@ -2,6 +2,8 @@
 
 (use-package gnus
   :config
+  (add-hook 'gnus-before-startup-hook #'delete-other-windows)
+  (add-hook 'gnus-before-resume-hook #'delete-other-windows)
   (setq gnus-startup-file "~/.emacs.d/gnusnews/newsrc")
   (setq gnus-select-method '(nnnil))
   (setq gnus-secondary-select-methods

@@ -287,8 +287,13 @@ Taken from post: https://zck.me/emacs-move-file"
               (setq idx 0))
             (load-theme (nth idx dd/themes) t)))
       (load-theme (car dd/themes) t))
-    (dd/selectrum-faces)))
+    (dd/theme-extras)))
 (bind-key* "<f6>" #'dd/theme-cycler)
+
+(defun dd/theme-extras ()
+  "Some things to follow up theme loading."
+  (dd/selectrum-faces)
+  (set-face-attribute 'font-lock-doc-face nil :italic t))
 
 (defun dd/toggle-window-split ()
   "If two windows are present; toggle the split axis."
@@ -690,6 +695,10 @@ Taken from post: https://zck.me/emacs-move-file"
   :ensure t
   :after python)
 
+(use-package buttercup
+  :ensure t
+  :defer t)
+
 (when (or dd/on-mac-p dd/on-cc7-p)
   (use-package cider
     :ensure t
@@ -709,7 +718,14 @@ Taken from post: https://zck.me/emacs-move-file"
       (lui-set-prompt
        (propertize (format "%s >>> " (buffer-name)) 'face 'circe-prompt-face)))
     (setq circe-network-options
-          '(("Freenode"
+          '(("Gitter"
+             :host "irc.gitter.im"
+             :server-buffer-name "⇄ Gitter (irc gateway)"
+             :nick "douglasdavis"
+             :pass dd/irc-pw-gitter
+             :port 6697
+             :tls t)
+            ("Freenode"
              :nick "ddavis"
              :nickserv-password dd/irc-pw-freenode
              :channels (:after-auth
@@ -838,7 +854,8 @@ Taken from post: https://zck.me/emacs-move-file"
   ;; (doom-themes-enable-bold nil)
   ;; (doom-themes-enable-italic nil)
   :config
-  (load-theme 'doom-gruvbox t))
+  (load-theme 'doom-gruvbox t)
+  (dd/theme-extras))
 
 (use-package doom-modeline
   :ensure t
