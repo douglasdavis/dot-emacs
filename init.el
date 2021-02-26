@@ -855,9 +855,6 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (use-package doom-themes
   :ensure t
-  ;; :custom
-  ;; (doom-themes-enable-bold nil)
-  ;; (doom-themes-enable-italic nil)
   :config
   (load-theme 'doom-gruvbox t)
   (dd/theme-extras))
