@@ -791,19 +791,8 @@ Taken from post: https://zck.me/emacs-move-file"
   (:map company-active-map
         ("TAB" . company-complete-selection)
         ("<tab>" . company-complete-selection))
-  :hook ((cider-repl-mode-hook . company-mode)
-         (clojure-mode-hook . company-mode)
-         (conf-colon-mode-hook . company-mode)
-         (conf-toml-mode-hook . company-mode)
-         (eglot-managed-mode-hook . company-mode)
-         (emacs-lisp-mode-hook . company-mode)
-         (LaTeX-mode-hook . company-mode)
-         (lsp-mode-hook . company-mode)
-         (mu4e-compose-mode-hook . company-mode)
-         (python-mode-hook . company-mode)
-         (sh-mode-hook . company-mode)
-         (yaml-mode-hook . company-mode))
   :config
+  (add-hook 'after-init-hook 'global-company-mode)
   (setq-default company-backends '(company-capf
                                    company-files
                                    company-semantic
