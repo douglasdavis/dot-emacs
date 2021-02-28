@@ -227,14 +227,13 @@ behavior added."
 (defun dd/kill-all-buffers ()
   "Kill all buffers except scratch and Messages."
   (interactive)
-  (mapcar
-   (lambda (b)
-     (let ((bn (buffer-name b)))
-       (unless
-           (or (string= "*scratch*" bn)
-               (string= "*Messages*" bn))
-         (kill-buffer b))))
-   (buffer-list)))
+  (let ((keep '("*scratch* *Messages*")))
+    (switch-to-buffer "*scratch*")
+    (delete-other-windows)
+    (mapcar (lambda (b)
+              (unless (member (buffer-name b) keep)
+                (kill-buffer b)))
+            (buffer-list))))
 
 (defun dd/move-file (new-loc)
   "Write this file to NEW-LOC, delete the old one.
@@ -1199,7 +1198,7 @@ Taken from post: https://zck.me/emacs-move-file"
   (bind-key* "s-r" #'consult-ripgrep)
   (bind-key* "s-s" #'save-buffer)
   (bind-key* "s-t" #'dd/vterm-go)
-  (bind-key* "s-u" #'gnus)
+  (bind-key* "s-u" #'auto-package-update-now)
   (bind-key* "s-w" #'dd/delete-frame-or-window)
   (bind-key* "s-x" #'execute-extended-command)
   (bind-key* "s-*" #'dd/kill-all-buffers))
