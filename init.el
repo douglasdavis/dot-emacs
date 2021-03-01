@@ -980,10 +980,13 @@ Taken from post: https://zck.me/emacs-move-file"
 (use-package modus-themes
   :ensure t)
 
-(when (file-exists-p "~/software/repos/numpydoc.el")
+(if (file-exists-p "~/software/repos/numpydoc.el")
+    (use-package numpydoc
+      :load-path "~/software/repos/numpydoc.el"
+      :after python)
   (use-package numpydoc
-    :after python
-    :load-path "~/software/repos/numpydoc.el"))
+    :ensure t
+    :after python))
 
 (use-package ox-hugo
   :ensure t
