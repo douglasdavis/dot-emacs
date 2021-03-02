@@ -69,6 +69,9 @@
 (defconst dd/on-davian-p (dd/includes? (system-name) "davian")
   "For checking if on davian box.")
 
+(defconst dd/on-work-p (file-exists-p "/Users/ddavis/.emacs.d/.work-laptop")
+  "For checking if on work laptop")
+
 (defconst dd/use-pdf-tools-p (and window-system
                                   (or dd/on-mac-p
                                       dd/on-cc7-p
