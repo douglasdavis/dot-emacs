@@ -1198,7 +1198,7 @@ Taken from post: https://zck.me/emacs-move-file"
 ;; sec06:
 ;; email setup is in dedicated file
 
-(when (or dd/on-mac-p dd/on-cc7-p)
+(when (or dd/on-m1-p dd/on-cc7-p)
   (load-file "~/.emacs.d/dot-emacs/email.el"))
 
 ;; sec07:
