@@ -71,8 +71,6 @@
 
 (defconst dd/on-work-p (file-exists-p "/Users/ddavis/.emacs.d/.work-laptop")
   "For checking if on work laptop")
-(when dd/on-work-p
-  (setq user-mail-address "ddavis@anaconda.com"))
 
 (defconst dd/use-pdf-tools-p (and window-system
                                   (or dd/on-mac-p
@@ -1210,7 +1208,7 @@ Taken from post: https://zck.me/emacs-move-file"
 ;; misc
 
 (when dd/on-work-p
-  (load-file "~/.emacs.d/dayjob/slack.el"))
+  (load-file "~/.emacs.d/day-job.el"))
 
 ;; the end
 
