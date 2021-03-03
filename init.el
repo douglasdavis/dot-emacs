@@ -1111,6 +1111,14 @@ Taken from post: https://zck.me/emacs-move-file"
     (when dd/use-pdf-tools-p
       (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))))
 
+(unless dd/on-m1-p
+  (use-package tree-sitter
+    :ensure t
+    :hook (python-mode-hook . tree-sitter-hl-mode))
+
+  (use-package tree-sitter-langs
+    :ensure t))
+
 (use-package visual-fill-column
   :ensure t)
 
