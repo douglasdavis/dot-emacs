@@ -139,15 +139,23 @@
                       :height 130)
   (dolist (face '(font-lock-doc-face font-lock-comment-face))
     (set-face-attribute face nil :italic t)))
-(when (or dd/on-cc7-p dd/on-davian-p)
+
+(when dd/on-davian-p
   (set-face-attribute 'default nil
                       :family "MonoLisa"
                       :weight 'regular
-                      :height 130))
-(when (and dd/on-cc7-p (fboundp 'set-fontset-font))
-  (set-fontset-font t 'symbol
-                    (font-spec :family "Noto Color Emoji")
-                    nil 'prepend))
+                      :height 140))
+
+(when dd/on-cc7-p
+  (set-face-attribute 'default nil
+                      :family "MonoLisa"
+                      :weight 'regular
+                      :height 130)
+  (when (fboundp 'set-fontset-font)
+    (set-fontset-font t 'symbol
+                      (font-spec :family "Noto Color Emoji")
+                      nil 'prepend)))
+
 (when (and dd/on-mac-p (fboundp 'set-fontset-font))
   (set-fontset-font t 'unicode "Apple Color Emoji" nil 'prepend))
 
