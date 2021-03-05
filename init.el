@@ -304,6 +304,7 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (defun dd/theme-extras ()
   "Some things to follow up theme loading."
+  (interactive)
   (with-eval-after-load 'selectrum-prescient
     (set-face-attribute 'selectrum-prescient-primary-highlight
                         nil :inherit 'info-xref-visited))
