@@ -994,9 +994,13 @@ Taken from post: https://zck.me/emacs-move-file"
 (if (file-exists-p "~/software/repos/numpydoc.el")
     (use-package numpydoc
       :load-path "~/software/repos/numpydoc.el"
+      :bind (:map python-mode-map
+                  ("C-c C-n" . numpydoc-generate))
       :after python)
   (use-package numpydoc
     :ensure t
+    :bind (:map python-mode-map
+                ("C-c C-n" . numpydoc-generate))
     :after python))
 
 (use-package ox-hugo
