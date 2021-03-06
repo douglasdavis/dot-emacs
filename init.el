@@ -568,11 +568,13 @@ Taken from post: https://zck.me/emacs-move-file"
     (bind-key "<s-right>" 'org-demote-subtree)))
 
 (use-package python
-  :load-path "~/.emacs.d/dot-emacs/site-lisp/python"
   :mode ("\\.py\\'" . python-mode)
   :bind (:map python-mode-map
               ("C-c C-a" . dd/py-auto-lsp))
   :init
+  (setq python-font-lock-keywords '(python-font-lock-keywords-level-1
+                                    python-font-lock-keywords-level-1
+                                    python-font-lock-keywords-level-2))
   (setq python-indent-guess-indent-offset nil)
   :config
   (defvar pyvenv-virtual-env)
@@ -790,8 +792,10 @@ Taken from post: https://zck.me/emacs-move-file"
   :custom
   (clang-format-executable dd/clang-format-exe))
 
-(use-package cmake-mode
-  :load-path "~/.emacs.d/dot-emacs/site-lisp/cmake-mode")
+;; (use-package cmake-mode
+;;   :load-path "~/.emacs.d/dot-emacs/site-lisp/cmake-mode")
+(use-package cmake-mode :ensure t)
+(use-package cmake-font-lock :ensure t)
 
 (make-variable-buffer-local 'company-minimum-prefix-length)
 (make-variable-buffer-local 'company-idle-delay)
@@ -834,10 +838,14 @@ Taken from post: https://zck.me/emacs-move-file"
   :config
   (setq consult-preview-key 'nil)
   (autoload 'projectile-project-root "projectile")
-  (setq consult-project-root-function #'projectile-project-root))
+  (setq consult-project-root-function #'projectile-project-root)
+  (defun find-fd (&optional dir initial)
+    (interactive "P")
+    (let ((consult-find-command "fd --color=never --full-path ARG OPTS"))
+      (consult-find dir initial))))
 
 (use-package crux
-  :defer 15
+  :defer 10
   :ensure t)
 
 (use-package cython-mode
@@ -1010,7 +1018,7 @@ Taken from post: https://zck.me/emacs-move-file"
 (when dd/use-pdf-tools-p
   (use-package pdf-tools
     :ensure t
-    :defer 10
+    :defer t
     :hook (pdf-view-mode-hook . (lambda () (display-line-numbers-mode 0)))
     :config
     (pdf-tools-install)
@@ -1160,6 +1168,7 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (use-package yaml-mode
   :ensure t
+  :defer t
   :mode ("\\.yml\\'" "\\.yaml\\'"))
 
 (use-package yasnippet
