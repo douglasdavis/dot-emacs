@@ -996,9 +996,6 @@ Taken from post: https://zck.me/emacs-move-file"
   :init
   (modern-c++-font-lock-global-mode +1))
 
-(use-package modus-themes
-  :ensure t)
-
 (if (file-exists-p "~/software/repos/numpydoc.el")
     (use-package numpydoc
       :load-path "~/software/repos/numpydoc.el"
