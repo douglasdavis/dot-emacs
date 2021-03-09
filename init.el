@@ -780,9 +780,9 @@ Taken from post: https://zck.me/emacs-move-file"
   (use-package circe-color-nicks
     :after circe
     :config
-    (setq circe-color-nicks-pool-type
-          '("#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#fe8019"
-            "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e"))
+    ;; (setq circe-color-nicks-pool-type
+    ;;       '("#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#fe8019"
+    ;;         "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e"))
     (setq circe-color-nicks-everywhere t)
     (enable-circe-color-nicks)))
 
@@ -967,9 +967,7 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (use-package magit
   :ensure t
-  :bind (("C-x g" . magit-status)
-         :map magit-status-mode-map
-         ("q" . dd/magit-kill-buffers))
+  :bind (("C-x g" . magit-status))
   :config
   (defun dd/magit-kill-buffers ()
     "See `https://manuel-uberti.github.io/emacs/2018/02/17/magit-bury-buffer/'"
@@ -1056,9 +1054,7 @@ Taken from post: https://zck.me/emacs-move-file"
     (interactive
      (list
       (completing-read "Work on: " (dd/conda-envs))))
-    (pyvenv-activate (format "%s/envs/%s"
-                             dd/anaconda-installation
-                             name))))
+    (pyvenv-activate name)))
 
 (use-package rainbow-delimiters
   :ensure t
