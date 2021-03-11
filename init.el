@@ -711,7 +711,9 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (use-package blacken
   :ensure t
-  :after python)
+  :demand t
+  :bind (:map python-mode-map
+              ("C-c C-f" . blacken-buffer)))
 
 (use-package buttercup
   :ensure t
