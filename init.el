@@ -624,7 +624,7 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (use-package prog-mode
   :config
-  (global-prettify-symbols-mode +1))
+  (add-hook 'emacs-lisp-mode-hook 'prettify-symbols-mode))
 
 (use-package server
   :config
@@ -711,9 +711,9 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (use-package blacken
   :ensure t
-  :demand t
   :bind (:map python-mode-map
-              ("C-c C-f" . blacken-buffer)))
+              ("C-c C-f" . blacken-buffer))
+  :after python)
 
 (use-package buttercup
   :ensure t
@@ -1229,10 +1229,30 @@ Taken from post: https://zck.me/emacs-move-file"
   (load-file "~/.emacs.d/dot-emacs/email.el"))
 
 ;; sec07:
-;; misc
+;; work
 
 (when dd/on-work-p
   (load-file "~/.emacs.d/day-job.el"))
+
+;; sec08:
+;; misc
+
+(when dd/on-m1-p
+  (add-to-list 'load-path "/Users/ddavis/software/repos/emacs-tree-sitter/core")
+  (add-to-list 'load-path "/Users/ddavis/software/repos/emacs-tree-sitter/lisp")
+  (add-to-list 'load-path "/Users/ddavis/software/repos/emacs-tree-sitter/langs")
+  (require 'tree-sitter)
+  (require 'tree-sitter-langs)
+  (tree-sitter-require 'python)
+  (add-hook 'python-mode-hook 'tree-sitter-hl-mode))
+
+;; (use-package zmq
+;;   :load-path "~/software/repos/emacs-zmq")
+;; (require 'zmq)
+;; (use-package jupyter :ensure t)
+
+(use-package ein
+  :ensure t)
 
 ;; the end
 
