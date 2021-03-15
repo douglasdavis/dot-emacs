@@ -814,7 +814,7 @@ Taken from post: https://zck.me/emacs-move-file"
   (setq-default company-backends '(company-capf
                                    company-files
                                    company-semantic
-                                   (company-dabbrev company-keyword)))
+                                   (company-dabbrev company-keywords)))
   (setq-default company-minimum-prefix-length 2)
   (setq-default company-idle-delay 0.2)
   (defun dd/company-prog-mode  ()
