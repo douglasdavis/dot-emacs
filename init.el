@@ -386,11 +386,9 @@ Taken from post: https://zck.me/emacs-move-file"
 
 ;; (straight-use-package 'use-package)
 
-(with-eval-after-load 'use-package
-  (eval-when-compile
-    (require 'use-package)
-    (require 'bind-key)
-    (setq use-package-hook-name-suffix nil)))
+(require 'use-package)
+(require 'bind-key)
+(setq use-package-hook-name-suffix nil)
 
 ;; (use-package straight-x)
 
@@ -1126,11 +1124,10 @@ Taken from post: https://zck.me/emacs-move-file"
     (when dd/use-pdf-tools-p
       (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))))
 
-(unless dd/on-m1-p
+(unless (or dd/on-m1-p dd/on-cc7-p)
   (use-package tree-sitter
     :ensure t
     :hook (python-mode-hook . tree-sitter-hl-mode))
-
   (use-package tree-sitter-langs
     :ensure t))
 
@@ -1251,8 +1248,8 @@ Taken from post: https://zck.me/emacs-move-file"
 ;; (require 'zmq)
 ;; (use-package jupyter :ensure t)
 
-(use-package ein
-  :ensure t)
+;; (use-package ein
+;;   :ensure t)
 
 ;; the end
 
