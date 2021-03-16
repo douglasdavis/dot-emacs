@@ -66,8 +66,8 @@
 (defconst dd/on-grads-18-p (dd/includes? (system-name) "grads-18")
   "For checking if on grads-18 box.")
 
-(defconst dd/on-davian-p (dd/includes? (system-name) "davian")
-  "For checking if on davian box.")
+(defconst dd/on-strange-p (dd/includes? (system-name) "strange")
+  "For checking if on strange box.")
 
 (defconst dd/on-work-p (file-exists-p "/Users/ddavis/.emacs.d/.work-laptop")
   "For checking if on work laptop")
@@ -75,7 +75,7 @@
 (defconst dd/use-pdf-tools-p (and window-system
                                   (or dd/on-mac-p
                                       dd/on-cc7-p
-                                      dd/on-davian-p))
+                                      dd/on-strange-p))
   "For checking if we should use pdf-tools.")
 
 (setq initial-scratch-message
@@ -140,7 +140,7 @@
   (dolist (face '(font-lock-doc-face font-lock-comment-face))
     (set-face-attribute face nil :italic t)))
 
-(when dd/on-davian-p
+(when dd/on-strange-p
   (set-face-attribute 'default nil
                       :family "MonoLisa"
                       :weight 'regular
@@ -406,7 +406,7 @@ Taken from post: https://zck.me/emacs-move-file"
   :init
   (global-auto-revert-mode +1))
 
-(when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p dd/on-davian-p)
+(when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p dd/on-strange-p)
   (use-package auth-source
     :init
     (setq auth-sources
@@ -442,14 +442,14 @@ Taken from post: https://zck.me/emacs-move-file"
   (when dd/on-cc7-p
     (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig")))
 
-(when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p dd/on-davian-p)
+(when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p dd/on-strange-p)
   (use-package epa-file
     :config
     (custom-set-variables
      `(epg-gpg-program
        ,(cond (dd/on-m1-p "/opt/homebrew/bin/gpg")
               (dd/on-mac-p "/usr/local/bin/gpg")
-              (dd/on-davian-p "/usr/bin/gpg")
+              (dd/on-strange-p "/usr/bin/gpg")
               (t "/usr/bin/gpg2"))))))
 
 ;; (when (or dd/on-grads-18-p dd/on-cc7-p dd/on-mac-p)
