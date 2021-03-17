@@ -717,12 +717,12 @@ Taken from post: https://zck.me/emacs-move-file"
   :ensure t
   :defer t)
 
-(when (or dd/on-mac-p dd/on-cc7-p)
+(when (or dd/on-mac-p dd/on-strange-p dd/on-cc7-p)
   (use-package cider
     :ensure t
     :commands cider-jack-in))
 
-(when (or dd/on-grads-18-p dd/on-cc7-p dd/on-mac-p)
+(when (or dd/on-strange-p dd/on-cc7-p dd/on-mac-p)
   (use-package circe
     :ensure t
     :commands circe
