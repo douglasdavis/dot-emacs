@@ -409,6 +409,7 @@ Taken from post: https://zck.me/emacs-move-file"
 (when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p dd/on-strange-p)
   (use-package auth-source
     :init
+    (setenv "GPG_AGENT_INFO" nil)
     (setq auth-sources
           (list (concat user-emacs-directory ".authinfo.gpg")))))
 
@@ -1235,13 +1236,16 @@ Taken from post: https://zck.me/emacs-move-file"
 ;; misc
 
 (when dd/on-m1-p
-  (add-to-list 'load-path "/Users/ddavis/software/repos/emacs-tree-sitter/core")
-  (add-to-list 'load-path "/Users/ddavis/software/repos/emacs-tree-sitter/lisp")
-  (add-to-list 'load-path "/Users/ddavis/software/repos/emacs-tree-sitter/langs")
-  (require 'tree-sitter)
-  (require 'tree-sitter-langs)
-  (tree-sitter-require 'python)
-  (add-hook 'python-mode-hook 'tree-sitter-hl-mode))
+  (use-package tree-sitter
+    :load-path "/Users/ddavis/software/repos/emacs-tree-sitter/lisp"
+    :init
+    (add-to-list 'load-path "/Users/ddavis/software/repos/emacs-tree-sitter/core")
+    :config
+    (add-to-list 'load-path "/Users/ddavis/software/repos/emacs-tree-sitter/langs")
+    (require 'tree-sitter)
+    (require 'tree-sitter-langs)
+    (tree-sitter-require 'python)
+    (add-hook 'python-mode-hook 'tree-sitter-hl-mode)))
 
 ;; (use-package zmq
 ;;   :load-path "~/software/repos/emacs-zmq")
