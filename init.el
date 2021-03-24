@@ -150,7 +150,9 @@
   (set-face-attribute 'default nil
                       :family "MonoLisa"
                       :weight 'regular
-                      :height 130)
+                      :height 130))
+
+(when (or dd/on-strange-p dd/on-cc7-p)
   (when (fboundp 'set-fontset-font)
     (set-fontset-font t 'symbol
                       (font-spec :family "Noto Color Emoji")
