@@ -286,7 +286,7 @@ Taken from post: https://zck.me/emacs-move-file"
   (interactive "sSearch: ")
   (dd/search-s s))
 
-(defvar dd/themes '(doom-Iosvkem doom-gruvbox modus-operandi doom-solarized-light))
+(defvar dd/themes '(doom-gruvbox doom-Iosvkem modus-operandi doom-solarized-light))
 (defun dd/theme-cycler ()
   "Cycle through `dd/themes' variable."
   (interactive)
