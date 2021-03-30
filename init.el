@@ -860,6 +860,12 @@ Taken from post: https://zck.me/emacs-move-file"
   :ensure t
   :defer t)
 
+(use-package default-text-scale
+  :ensure t
+  :bind (("s-=" . default-text-scale-increase)
+         ("s--" . default-text-scale-decrease)
+         ("s-0" . default-text-scale-reset)))
+
 (use-package diredfl
   :ensure t
   :hook (dired-mode-hook . diredfl-mode))
