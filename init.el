@@ -1127,12 +1127,12 @@ Taken from post: https://zck.me/emacs-move-file"
     (when dd/use-pdf-tools-p
       (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))))
 
-(unless (or dd/on-m1-p dd/on-cc7-p)
-  (use-package tree-sitter
-    :ensure t
-    :hook (python-mode-hook . tree-sitter-hl-mode))
-  (use-package tree-sitter-langs
-    :ensure t))
+;; (unless (or dd/on-m1-p dd/on-cc7-p)
+;;   (use-package tree-sitter
+;;     :ensure t
+;;     :hook (python-mode-hook . tree-sitter-hl-mode))
+;;   (use-package tree-sitter-langs
+;;     :ensure t))
 
 (use-package visual-fill-column
   :ensure t)
@@ -1238,16 +1238,18 @@ Taken from post: https://zck.me/emacs-move-file"
 ;; misc
 
 (when dd/on-m1-p
-  (use-package tree-sitter
-    :load-path "/Users/ddavis/software/repos/emacs-tree-sitter/lisp"
-    :init
-    (add-to-list 'load-path "/Users/ddavis/software/repos/emacs-tree-sitter/core")
-    :config
-    (add-to-list 'load-path "/Users/ddavis/software/repos/emacs-tree-sitter/langs")
-    (require 'tree-sitter)
-    (require 'tree-sitter-langs)
-    (tree-sitter-require 'python)
-    (add-hook 'python-mode-hook 'tree-sitter-hl-mode)))
+  (defun dd/pyts ()
+    (interactive)
+    (use-package tree-sitter
+      :load-path "/Users/ddavis/software/repos/emacs-tree-sitter/lisp"
+      :init
+      (add-to-list 'load-path "/Users/ddavis/software/repos/emacs-tree-sitter/core")
+      :config
+      (add-to-list 'load-path "/Users/ddavis/software/repos/emacs-tree-sitter/langs")
+      (require 'tree-sitter)
+      (require 'tree-sitter-langs)
+      (tree-sitter-require 'python)
+      (add-hook 'python-mode-hook 'tree-sitter-hl-mode))))
 
 ;; (use-package zmq
 ;;   :load-path "~/software/repos/emacs-zmq")
