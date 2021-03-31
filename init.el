@@ -555,7 +555,9 @@ Taken from post: https://zck.me/emacs-move-file"
   (setq org-structure-template-alist
         (append org-structure-template-alist
                 '(("el" . "src emacs-lisp :results silent")
-                  ("py" . "src python :results silent")
+                  ("p0" . "src python :session :results silent")
+                  ("p1" . "src python :session")
+                  ("p2" . "src python :results silent")
                   ("cpp" . "src C++"))))
   (when dd/on-mac-p
     (bind-key "<A-down>" 'org-move-subtree-down org-mode-map)
