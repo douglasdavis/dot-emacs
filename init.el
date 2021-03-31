@@ -962,6 +962,7 @@ Taken from post: https://zck.me/emacs-move-file"
   (setq lsp-pyls-plugins-autopep8-enabled nil)
   (setq lsp-pyls-plugins-pycodestyle-enabled nil)
   (setq lsp-pyls-plugins-flake8-enabled t)
+  (setq lsp-pyls-plugins-pyflakes-enabled nil)
   (setq lsp-pyls-plugins-pydocstyle-enabled t)
   (setq lsp-pyls-configuration-sources ["flake8"]))
 
