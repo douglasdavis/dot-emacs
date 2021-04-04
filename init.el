@@ -307,9 +307,9 @@ Taken from post: https://zck.me/emacs-move-file"
 (defun dd/theme-extras ()
   "Some things to follow up theme loading."
   (interactive)
-  (with-eval-after-load 'selectrum-prescient
-    (set-face-attribute 'selectrum-prescient-primary-highlight
-                        nil :inherit 'info-xref-visited))
+  ;; (with-eval-after-load 'selectrum-prescient
+  ;;   (set-face-attribute 'selectrum-prescient-primary-highlight
+  ;;                       nil :inherit 'info-xref-visited))
   (dolist (face '(font-lock-doc-face font-lock-comment-face))
     (set-face-attribute face nil :italic t)))
 
@@ -956,8 +956,9 @@ Taken from post: https://zck.me/emacs-move-file"
   :config
   (setq lsp-keep-workspace-alive nil
         lsp-auto-guess-root nil
-        lsp-enable-on-type-formatting nil
-        lsp-signature-function 'lsp-signature-posframe)
+        lsp-enable-links nil
+        lsp-enable-on-type-formatting nil)
+  ;; lsp-signature-function 'lsp-signature-posframe)
   ;; python
   (setq lsp-pyls-plugins-autopep8-enabled nil)
   (setq lsp-pyls-plugins-pycodestyle-enabled nil)
@@ -1001,6 +1002,17 @@ Taken from post: https://zck.me/emacs-move-file"
   :defer t
   :mode ("\\.md\\'" "\\.markdown\\'"))
 
+(use-package minicomp
+  :load-path "~/software/repos/minicomp"
+  :demand t
+  :init
+  (setq minicomp-count 13)
+  (setq minicomp-sort-threshold 3000)
+  :custom-face
+  (minicomp-current ((t (:inherit region))))
+  :config
+  (minicomp-mode +1))
+
 (use-package modern-cpp-font-lock
   :ensure t
   :init
@@ -1017,6 +1029,16 @@ Taken from post: https://zck.me/emacs-move-file"
     :bind (:map python-mode-map
                 ("C-c C-n" . numpydoc-generate))
     :after python))
+
+(use-package orderless
+  :ensure t
+  :init
+  (defun dd/use-orderless-in-minibuffer ()
+    (interactive)
+    (setq-local completion-styles '(orderless)))
+  (add-hook 'minibuffer-setup-hook 'dd/use-orderless-in-minibuffer)
+  (setq completion-category-defaults nil
+        completion-category-overrides '((file (styles . (partial-completion))))))
 
 (use-package ox-hugo
   :ensure t
@@ -1096,26 +1118,26 @@ Taken from post: https://zck.me/emacs-move-file"
     :confirm prefix
     :flags ("--hidden -g !.git")))
 
-(use-package selectrum
-  :ensure t
-  :demand t
-  :init
-  (setq selectrum-extend-current-candidate-highlight t)
-  (setq selectrum-num-candidates-displayed 'auto)
-  (setq selectrum-max-window-height 16)
-  (setq selectrum-fix-vertical-window-height t)
-  :custom-face
-  (selectrum-current-candidate ((t (:inherit region))))
-  :config
-  (selectrum-mode +1))
+;; (use-package selectrum
+;;   :ensure t
+;;   :demand t
+;;   :init
+;;   (setq selectrum-extend-current-candidate-highlight t)
+;;   (setq selectrum-num-candidates-displayed 'auto)
+;;   (setq selectrum-max-window-height 16)
+;;   (setq selectrum-fix-vertical-window-height t)
+;;   :custom-face
+;;   (selectrum-current-candidate ((t (:inherit region))))
+;;   :config
+;;   (selectrum-mode +1))
 
-(use-package selectrum-prescient
-  :ensure t
-  :after selectrum
-  :custom-face
-  :config
-  (selectrum-prescient-mode +1)
-  (prescient-persist-mode +1))
+;; (use-package selectrum-prescient
+;;   :ensure t
+;;   :after selectrum
+;;   :custom-face
+;;   :config
+;;   (selectrum-prescient-mode +1)
+;;   (prescient-persist-mode +1))
 
 (when (or dd/on-mac-p dd/on-cc7-p)
   (use-package tex :defer t)
@@ -1160,15 +1182,14 @@ Taken from post: https://zck.me/emacs-move-file"
 (use-package which-key
   :ensure t
   :demand t
-  :init
   :config
   (which-key-mode)
   (setq which-key-frame-max-height 50))
 
-(use-package which-key-posframe
-  :ensure t
-  :config
-  (which-key-posframe-mode +1))
+;; (use-package which-key-posframe
+;;   :ensure t
+;;   :config
+;;   (which-key-posframe-mode +1))
 
 (use-package yaml-mode
   :ensure t
