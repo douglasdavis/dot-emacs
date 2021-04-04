@@ -1244,13 +1244,15 @@ Taken from post: https://zck.me/emacs-move-file"
   (bind-key* "s-k" #'kill-current-buffer)
   (bind-key* "s-o" #'other-window)
   (bind-key* "s-p" #'projectile-command-map)
+  (bind-key* "s-q" #'save-buffers-kill-terminal)
   (bind-key* "s-r" #'consult-ripgrep)
   (bind-key* "s-s" #'save-buffer)
   (bind-key* "s-t" #'dd/vterm-go)
   (bind-key* "s-u" #'auto-package-update-now)
   (bind-key* "s-w" #'dd/delete-frame-or-window)
   (bind-key* "s-x" #'execute-extended-command)
-  (bind-key* "s-*" #'dd/kill-all-buffers))
+  (bind-key* "s-*" #'dd/kill-all-buffers)
+  (bind-key* "H-<backspace>" #'delete-forward-char))
 
 ;; sec06:
 ;; email setup is in dedicated file
