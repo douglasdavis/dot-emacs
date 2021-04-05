@@ -1029,10 +1029,10 @@ Taken from post: https://zck.me/emacs-move-file"
 (use-package orderless
   :ensure t
   :init
-  (defun dd/use-orderless-in-minibuffer ()
-    (interactive)
-    (setq-local completion-styles '(orderless)))
-  (add-hook 'minibuffer-setup-hook 'dd/use-orderless-in-minibuffer)
+  ;; (defun dd/use-orderless-in-minibuffer ()
+  ;;   (interactive)
+  ;;   (setq-local completion-styles '(orderless)))
+  ;; (add-hook 'minibuffer-setup-hook 'dd/use-orderless-in-minibuffer)
   (setq completion-category-defaults nil
         completion-category-overrides '((file (styles . (partial-completion))))))
 
