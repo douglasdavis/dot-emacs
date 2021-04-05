@@ -1009,17 +1009,6 @@ Taken from post: https://zck.me/emacs-move-file"
   :defer t
   :mode ("\\.md\\'" "\\.markdown\\'"))
 
-(use-package minicomp
-  :load-path "~/software/repos/minicomp"
-  :demand t
-  :init
-  (setq minicomp-count 13)
-  (setq minicomp-sort-threshold 3000)
-  :custom-face
-  (minicomp-current ((t (:inherit region))))
-  :config
-  (minicomp-mode +1))
-
 (use-package modern-cpp-font-lock
   :ensure t
   :init
