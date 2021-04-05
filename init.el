@@ -127,8 +127,14 @@
 (setq-default require-final-newline t)
 (setq-default indent-tabs-mode nil)
 
-(add-to-list 'default-frame-alist '(height . 60))
-(add-to-list 'default-frame-alist '(width . 192))
+(setq default-frame-alist
+      '((height . 54)
+        (width . 196)
+        (left . 0)
+        (top . 0)
+        (vertical-scroll-bars . nil)
+        (horizontal-scroll-bars . nil)
+        (tool-bar-lines . 0)))
 
 (when dd/on-mac-p
   (when (boundp 'ns-antialias-text)
@@ -757,6 +763,7 @@ Taken from post: https://zck.me/emacs-move-file"
                         "#pydata"
                         "#sr.ht"
                         "#lobsters"
+                        "#hpy"
                         "##crustaceans")
              :tls t)))
     (setq circe-use-cycle-completion t
