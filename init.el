@@ -313,9 +313,9 @@ Taken from post: https://zck.me/emacs-move-file"
 (defun dd/theme-extras ()
   "Some things to follow up theme loading."
   (interactive)
-  ;; (with-eval-after-load 'selectrum-prescient
-  ;;   (set-face-attribute 'selectrum-prescient-primary-highlight
-  ;;                       nil :inherit 'info-xref-visited))
+  (with-eval-after-load 'selectrum-prescient
+    (set-face-attribute 'selectrum-prescient-primary-highlight
+                        nil :inherit 'info-xref-visited))
   (dolist (face '(font-lock-doc-face font-lock-comment-face))
     (set-face-attribute face nil :italic t)))
 
@@ -1125,26 +1125,26 @@ Taken from post: https://zck.me/emacs-move-file"
     :confirm prefix
     :flags ("--hidden -g !.git")))
 
-;; (use-package selectrum
-;;   :ensure t
-;;   :demand t
-;;   :init
-;;   (setq selectrum-extend-current-candidate-highlight t)
-;;   (setq selectrum-num-candidates-displayed 'auto)
-;;   (setq selectrum-max-window-height 16)
-;;   (setq selectrum-fix-vertical-window-height t)
-;;   :custom-face
-;;   (selectrum-current-candidate ((t (:inherit region))))
-;;   :config
-;;   (selectrum-mode +1))
+(use-package selectrum
+  :ensure t
+  :demand t
+  :init
+  (setq selectrum-extend-current-candidate-highlight t)
+  (setq selectrum-num-candidates-displayed 'auto)
+  (setq selectrum-max-window-height 16)
+  (setq selectrum-fix-vertical-window-height t)
+  :custom-face
+  (selectrum-current-candidate ((t (:inherit region))))
+  :config
+  (selectrum-mode +1))
 
-;; (use-package selectrum-prescient
-;;   :ensure t
-;;   :after selectrum
-;;   :custom-face
-;;   :config
-;;   (selectrum-prescient-mode +1)
-;;   (prescient-persist-mode +1))
+(use-package selectrum-prescient
+  :ensure t
+  :after selectrum
+  :custom-face
+  :config
+  (selectrum-prescient-mode +1)
+  (prescient-persist-mode +1))
 
 (when (or dd/on-mac-p dd/on-cc7-p)
   (use-package tex :defer t)
