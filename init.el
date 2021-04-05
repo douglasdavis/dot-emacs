@@ -1161,6 +1161,17 @@ Taken from post: https://zck.me/emacs-move-file"
 ;;   (use-package tree-sitter-langs
 ;;     :ensure t))
 
+;; (use-package vertico
+;;   :load-path "~/software/repos/vertico"
+;;   :demand t
+;;   :init
+;;   (setq vertico-count 13)
+;;   (setq vertico-sort-threshold 3000)
+;;   :custom-face
+;;   (vertico-current ((t (:inherit region))))
+;;   :config
+;;   (vertico-mode +1))
+
 (use-package visual-fill-column
   :ensure t)
 
