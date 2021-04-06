@@ -79,7 +79,8 @@
   "For checking if we should use pdf-tools.")
 
 (setq initial-scratch-message
-      (let ((vstr (format ";; This is GNU Emacs %s" emacs-version))
+      (let ((vstr (format ";; %s"
+                          (replace-regexp-in-string "\n" "" (emacs-version))))
             (nstr (if (fboundp 'native-compile)
                       " (native-comp)"
                     "")))
