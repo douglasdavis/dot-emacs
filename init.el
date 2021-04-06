@@ -314,9 +314,9 @@ Taken from post: https://zck.me/emacs-move-file"
 (defun dd/theme-extras ()
   "Some things to follow up theme loading."
   (interactive)
-  ;; (with-eval-after-load 'selectrum-prescient
-  ;;   (set-face-attribute 'selectrum-prescient-primary-highlight
-  ;;                       nil :inherit 'info-xref-visited))
+  (with-eval-after-load 'selectrum-prescient
+    (set-face-attribute 'selectrum-prescient-primary-highlight
+                        nil :inherit 'info-xref-visited))
   (dolist (face '(font-lock-doc-face font-lock-comment-face))
     (set-face-attribute face nil :italic t)))
 
@@ -1010,17 +1010,6 @@ Taken from post: https://zck.me/emacs-move-file"
   :defer t
   :mode ("\\.md\\'" "\\.markdown\\'"))
 
-(use-package minicomp
-  :load-path "~/software/repos/minicomp"
-  :demand t
-  :init
-  (setq minicomp-count 13)
-  (setq minicomp-sort-threshold 3000)
-  :custom-face
-  (minicomp-current ((t (:inherit region))))
-  :config
-  (minicomp-mode +1))
-
 (use-package modern-cpp-font-lock
   :ensure t
   :init
@@ -1041,10 +1030,10 @@ Taken from post: https://zck.me/emacs-move-file"
 (use-package orderless
   :ensure t
   :init
-  (defun dd/use-orderless-in-minibuffer ()
-    (interactive)
-    (setq-local completion-styles '(orderless)))
-  (add-hook 'minibuffer-setup-hook 'dd/use-orderless-in-minibuffer)
+  ;; (defun dd/use-orderless-in-minibuffer ()
+  ;;   (interactive)
+  ;;   (setq-local completion-styles '(orderless)))
+  ;; (add-hook 'minibuffer-setup-hook 'dd/use-orderless-in-minibuffer)
   (setq completion-category-defaults nil
         completion-category-overrides '((file (styles . (partial-completion))))))
 
@@ -1126,26 +1115,26 @@ Taken from post: https://zck.me/emacs-move-file"
     :confirm prefix
     :flags ("--hidden -g !.git")))
 
-;; (use-package selectrum
-;;   :ensure t
-;;   :demand t
-;;   :init
-;;   (setq selectrum-extend-current-candidate-highlight t)
-;;   (setq selectrum-num-candidates-displayed 'auto)
-;;   (setq selectrum-max-window-height 16)
-;;   (setq selectrum-fix-vertical-window-height t)
-;;   :custom-face
-;;   (selectrum-current-candidate ((t (:inherit region))))
-;;   :config
-;;   (selectrum-mode +1))
+(use-package selectrum
+  :ensure t
+  :demand t
+  :init
+  (setq selectrum-extend-current-candidate-highlight t)
+  (setq selectrum-num-candidates-displayed 'auto)
+  (setq selectrum-max-window-height 16)
+  (setq selectrum-fix-vertical-window-height t)
+  :custom-face
+  (selectrum-current-candidate ((t (:inherit region))))
+  :config
+  (selectrum-mode +1))
 
-;; (use-package selectrum-prescient
-;;   :ensure t
-;;   :after selectrum
-;;   :custom-face
-;;   :config
-;;   (selectrum-prescient-mode +1)
-;;   (prescient-persist-mode +1))
+(use-package selectrum-prescient
+  :ensure t
+  :after selectrum
+  :custom-face
+  :config
+  (selectrum-prescient-mode +1)
+  (prescient-persist-mode +1))
 
 (when (or dd/on-mac-p dd/on-cc7-p)
   (use-package tex :defer t)
@@ -1172,6 +1161,17 @@ Taken from post: https://zck.me/emacs-move-file"
 ;;     :hook (python-mode-hook . tree-sitter-hl-mode))
 ;;   (use-package tree-sitter-langs
 ;;     :ensure t))
+
+;; (use-package vertico
+;;   :load-path "~/software/repos/vertico"
+;;   :demand t
+;;   :init
+;;   (setq vertico-count 13)
+;;   (setq vertico-sort-threshold 3000)
+;;   :custom-face
+;;   (vertico-current ((t (:inherit region))))
+;;   :config
+;;   (vertico-mode +1))
 
 (use-package visual-fill-column
   :ensure t)
