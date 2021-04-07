@@ -87,7 +87,8 @@
               (format-time-string "%Y-%m-%d"
                                   emacs-build-time)
               (cond ((fboundp 'native-compile) " (native-comp")
-                    (t ""))))
+                    (t ""))
+              "\n\n"))
 
 (setq echo-keystrokes 0.01
       ring-bell-function 'ignore
