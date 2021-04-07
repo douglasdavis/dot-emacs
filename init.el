@@ -79,12 +79,15 @@
   "For checking if we should use pdf-tools.")
 
 (setq initial-scratch-message
-      (let ((vstr (format ";; %s"
-                          (replace-regexp-in-string "\n" "" (emacs-version))))
-            (nstr (if (fboundp 'native-compile)
-                      " (native-comp)"
-                    "")))
-        (format "%s%s\n\n" vstr nstr)))
+      (concat ";; GNU Emacs "
+              emacs-version
+              ", "
+              system-configuration
+              ", "
+              (format-time-string "%Y-%m-%d"
+                                  emacs-build-time)
+              (cond ((fboundp 'native-compile) " (native-comp")
+                    (t ""))))
 
 (setq echo-keystrokes 0.01
       ring-bell-function 'ignore
