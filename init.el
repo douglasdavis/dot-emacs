@@ -86,7 +86,7 @@
               ", "
               (format-time-string "%Y-%m-%d"
                                   emacs-build-time)
-              (cond ((fboundp 'native-compile) " (native-comp")
+              (cond ((fboundp 'native-compile) " (native-comp)")
                     (t ""))
               "\n\n"))
 
