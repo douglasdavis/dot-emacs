@@ -586,6 +586,7 @@ Taken from post: https://zck.me/emacs-move-file"
   :bind (:map python-mode-map
               ("C-c C-a" . dd/py-auto-lsp))
   :init
+  (setq python-shell-interpreter "python3")
   (setq python-font-lock-keywords '(python-font-lock-keywords-level-1
                                     python-font-lock-keywords-level-1
                                     python-font-lock-keywords-level-2))
