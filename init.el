@@ -826,7 +826,7 @@ Taken from post: https://zck.me/emacs-move-file"
         ("TAB" . company-complete-selection)
         ("<tab>" . company-complete-selection))
   :config
-  (add-hook 'after-init-hook 'global-company-mode)
+  (add-hook 'after-init-hook #'global-company-mode)
   (setq-default company-backends '(company-capf
                                    company-files
                                    company-semantic
@@ -840,7 +840,9 @@ Taken from post: https://zck.me/emacs-move-file"
     (setq company-minimum-prefix-length 3
           company-idle-delay 0.3))
   (add-hook 'text-mode-hook #'dd/company-text-mode)
-  (add-hook 'prog-mode-hook #'dd/company-prog-mode))
+  (add-hook 'prog-mode-hook #'dd/company-prog-mode)
+  (when (version<= "28.0.50" emacs-version)
+    (setq company-format-margin-function #'company-vscode-dark-icons-margin)))
 
 ;; (use-package company-box
 ;;   :ensure t
@@ -1220,6 +1222,9 @@ Taken from post: https://zck.me/emacs-move-file"
 
 ;; sec05:
 ;; some package-free bindings and macOS specifics
+
+(when (version< emacs-version "28")
+  (bind-key "C-x x g" #'revert-buffer))
 
 ;; some macOS specifics
 (when dd/on-mac-p
