@@ -1034,15 +1034,15 @@ Taken from post: https://zck.me/emacs-move-file"
                 ("C-c C-n" . numpydoc-generate))
     :after python))
 
-(use-package orderless
-  :ensure t
-  :init
-  ;; (defun dd/use-orderless-in-minibuffer ()
-  ;;   (interactive)
-  ;;   (setq-local completion-styles '(orderless)))
-  ;; (add-hook 'minibuffer-setup-hook 'dd/use-orderless-in-minibuffer)
-  (setq completion-category-defaults nil
-        completion-category-overrides '((file (styles . (partial-completion))))))
+;; (use-package orderless
+;;   :ensure t
+;;   :init
+;;   (defun dd/use-orderless-in-minibuffer ()
+;;     (interactive)
+;;     (setq-local completion-styles '(orderless)))
+;;   (add-hook 'minibuffer-setup-hook 'dd/use-orderless-in-minibuffer)
+;;   (setq completion-category-defaults nil
+;;         completion-category-overrides '((file (styles . (partial-completion))))))
 
 (use-package ox-hugo
   :ensure t
@@ -1170,7 +1170,7 @@ Taken from post: https://zck.me/emacs-move-file"
 ;;     :ensure t))
 
 ;; (use-package vertico
-;;   :load-path "~/software/repos/vertico"
+;;   :ensure t
 ;;   :demand t
 ;;   :init
 ;;   (setq vertico-count 13)
@@ -1178,7 +1178,13 @@ Taken from post: https://zck.me/emacs-move-file"
 ;;   :custom-face
 ;;   (vertico-current ((t (:inherit region))))
 ;;   :config
-;;   (vertico-mode +1))
+;;   (vertico-mode +1)
+;;   (setq resize-mini-windows nil))
+
+;; Do not allow the cursor in the minibuffer prompt
+(setq minibuffer-prompt-properties
+      '(read-only t cursor-intangible t face minibuffer-prompt))
+(add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
 (use-package visual-fill-column
   :ensure t)
