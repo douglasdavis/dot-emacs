@@ -41,12 +41,11 @@
 
 ;; for native comp branch
 (defconst dd/using-native-comp (fboundp 'native-comp-available-p))
-(when (and (boundp 'comp-deferred-compilation)
-           (boundp 'comp-async-report-warnings-errors))
-  (setq comp-async-query-on-exit t)
-  (setq comp-async-jobs-number 4)
-  (setq comp-async-report-warnings-errors nil)
-  (setq comp-deferred-compilation t))
+(setq comp-deferred-compilation-deny-list '("with-editor.el"))
+(setq comp-async-query-on-exit t)
+(setq comp-async-jobs-number 4)
+(setq comp-async-report-warnings-errors nil)
+(setq comp-deferred-compilation t)
 
 (defun dd/includes? (s substr)
   "Clojure like function; t if S includes SUBSTR."
@@ -903,7 +902,7 @@ Taken from post: https://zck.me/emacs-move-file"
   :commands eglot
   :init
   (setq eglot-server-programs
-        `((python-mode "pyls")
+        `((python-mode "jedi-language-server")
           ((c++-mode c-mode) ,dd/clangd-exe)))
   :config
   (setq eglot-autoshutdown t))
@@ -975,6 +974,7 @@ Taken from post: https://zck.me/emacs-move-file"
         lsp-enable-on-type-formatting nil)
   ;; lsp-signature-function 'lsp-signature-posframe)
   ;; python
+  (setq lsp-pyls-server-command '("pylsp"))
   (setq lsp-pyls-plugins-autopep8-enabled nil)
   (setq lsp-pyls-plugins-pycodestyle-enabled nil)
   (setq lsp-pyls-plugins-flake8-enabled t)
@@ -1048,17 +1048,17 @@ Taken from post: https://zck.me/emacs-move-file"
   :ensure t
   :after ox)
 
-(when dd/use-pdf-tools-p
-  (use-package pdf-tools
-    :ensure t
-    :defer t
-    :hook (pdf-view-mode-hook . (lambda () (display-line-numbers-mode 0)))
-    :config
-    (pdf-tools-install)
-    (setq-default pdf-view-display-size 'fit-page)
-    (when dd/on-mac-p
-      (setq pdf-view-use-scaling t)
-      (setq pdf-view-use-imagemagick nil))))
+;; (when dd/use-pdf-tools-p
+;;   (use-package pdf-tools
+;;     :ensure t
+;;     :defer t
+;;     :hook (pdf-view-mode-hook . (lambda () (display-line-numbers-mode 0)))
+;;     :config
+;;     (pdf-tools-install)
+;;     (setq-default pdf-view-display-size 'fit-page)
+;;     (when dd/on-mac-p
+;;       (setq pdf-view-use-scaling t)
+;;       (setq pdf-view-use-imagemagick nil))))
 
 (use-package projectile
   :ensure t
@@ -1158,9 +1158,9 @@ Taken from post: https://zck.me/emacs-move-file"
     (setq-default TeX-master nil)
     (setq TeX-auto-save t)
     (setq TeX-parse-self t)
-    (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
-    (when dd/use-pdf-tools-p
-      (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))))
+    (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)))
+    ;; (when dd/use-pdf-tools-p
+    ;;   (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))))
 
 ;; (unless (or dd/on-m1-p dd/on-cc7-p)
 ;;   (use-package tree-sitter
