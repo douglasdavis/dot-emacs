@@ -902,7 +902,7 @@ Taken from post: https://zck.me/emacs-move-file"
   :commands eglot
   :init
   (setq eglot-server-programs
-        `((python-mode "jedi-language-server")
+        `((python-mode "pylsp")
           ((c++-mode c-mode) ,dd/clangd-exe)))
   :config
   (setq eglot-autoshutdown t))
