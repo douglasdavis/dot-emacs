@@ -961,6 +961,9 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (use-package lsp-clangd :defer t)
 (use-package lsp-pyls :defer t)
+(use-package lsp-pylsp
+  :load-path "~/software/repos/lsp-pylsp"
+  :defer t)
 (use-package lsp-mode
   :ensure t
   :commands lsp
@@ -974,13 +977,22 @@ Taken from post: https://zck.me/emacs-move-file"
         lsp-enable-on-type-formatting nil)
   ;; lsp-signature-function 'lsp-signature-posframe)
   ;; python
-  (setq lsp-pyls-server-command '("pylsp"))
-  (setq lsp-pyls-plugins-autopep8-enabled nil)
-  (setq lsp-pyls-plugins-pycodestyle-enabled nil)
-  (setq lsp-pyls-plugins-flake8-enabled t)
-  (setq lsp-pyls-plugins-pyflakes-enabled nil)
-  (setq lsp-pyls-plugins-pydocstyle-enabled t)
-  (setq lsp-pyls-configuration-sources ["flake8"]))
+  (setq lsp-pylsp-server-command '("pylsp"))
+  (setq lsp-pylsp-plugins-autopep8-enabled nil)
+  (setq lsp-pylsp-plugins-pycodestyle-enabled nil)
+  (setq lsp-pylsp-plugins-flake8-enabled t)
+  (setq lsp-pylsp-plugins-pyflakes-enabled nil)
+  (setq lsp-pylsp-plugins-pydocstyle-enabled t)
+  (setq lsp-pylsp-plugins-pydocstyle-convention "numpy")
+  (setq lsp-pylsp-configuration-sources ["flake8"]))
+
+  ;; (setq lsp-pyls-server-command '("pylsp"))
+  ;; (setq lsp-pyls-plugins-autopep8-enabled nil)
+  ;; (setq lsp-pyls-plugins-pycodestyle-enabled nil)
+  ;; (setq lsp-pyls-plugins-flake8-enabled t)
+  ;; (setq lsp-pyls-plugins-pyflakes-enabled nil)
+  ;; (setq lsp-pyls-plugins-pydocstyle-enabled t)
+  ;; (setq lsp-pyls-configuration-sources ["flake8"]))
 
 (use-package lsp-ui
   :ensure t
