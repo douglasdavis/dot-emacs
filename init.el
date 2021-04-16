@@ -960,10 +960,9 @@ Taken from post: https://zck.me/emacs-move-file"
   :bind ("C-c ;" . iedit-mode))
 
 (use-package lsp-clangd :defer t)
-(use-package lsp-pyls :defer t)
+;; (use-package lsp-pyls :defer t)
 (use-package lsp-pylsp
-  :load-path "~/software/repos/lsp-pylsp"
-  :defer t)
+  :load-path "~/software/repos/lsp-pylsp")
 (use-package lsp-mode
   :ensure t
   :commands lsp
@@ -1174,12 +1173,12 @@ Taken from post: https://zck.me/emacs-move-file"
     ;; (when dd/use-pdf-tools-p
     ;;   (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))))
 
-;; (unless (or dd/on-m1-p dd/on-cc7-p)
-;;   (use-package tree-sitter
-;;     :ensure t
-;;     :hook (python-mode-hook . tree-sitter-hl-mode))
-;;   (use-package tree-sitter-langs
-;;     :ensure t))
+(unless (or dd/on-m1-p dd/on-cc7-p)
+  (use-package tree-sitter
+    :ensure t
+    :hook (python-mode-hook . tree-sitter-hl-mode))
+  (use-package tree-sitter-langs
+    :ensure t))
 
 (use-package vertico
   :ensure t
