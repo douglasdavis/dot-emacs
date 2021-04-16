@@ -82,6 +82,7 @@
               emacs-version
               ", "
               system-configuration
+              (format " (%s)" window-system)
               ", "
               (format-time-string "%Y-%m-%d"
                                   emacs-build-time)
