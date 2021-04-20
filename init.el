@@ -1046,15 +1046,15 @@ Taken from post: https://zck.me/emacs-move-file"
                 ("C-c C-n" . numpydoc-generate))
     :after python))
 
-;; (use-package orderless
-;;   :ensure t
-;;   :init
-;;   (defun dd/use-orderless-in-minibuffer ()
-;;     (interactive)
-;;     (setq-local completion-styles '(orderless)))
-;;   (add-hook 'minibuffer-setup-hook 'dd/use-orderless-in-minibuffer)
-;;   (setq completion-category-defaults nil
-;;         completion-category-overrides '((file (styles . (partial-completion))))))
+(use-package orderless
+  :ensure t
+  :init
+  (defun dd/use-orderless-in-minibuffer ()
+    (interactive)
+    (setq-local completion-styles '(orderless)))
+  (add-hook 'minibuffer-setup-hook 'dd/use-orderless-in-minibuffer)
+  (setq completion-category-defaults nil
+        completion-category-overrides '((file (styles . (partial-completion))))))
 
 (use-package ox-hugo
   :ensure t
@@ -1134,26 +1134,26 @@ Taken from post: https://zck.me/emacs-move-file"
     :confirm prefix
     :flags ("--hidden -g !.git")))
 
-(use-package selectrum
-  :ensure t
-  :demand t
-  :init
-  (setq selectrum-extend-current-candidate-highlight t)
-  (setq selectrum-num-candidates-displayed 'auto)
-  (setq selectrum-max-window-height 16)
-  (setq selectrum-fix-vertical-window-height t)
-  :custom-face
-  (selectrum-current-candidate ((t (:inherit region))))
-  :config
-  (selectrum-mode +1))
+;; (use-package selectrum
+;;   :ensure t
+;;   :demand t
+;;   :init
+;;   (setq selectrum-extend-current-candidate-highlight t)
+;;   (setq selectrum-num-candidates-displayed 'auto)
+;;   (setq selectrum-max-window-height 16)
+;;   (setq selectrum-fix-vertical-window-height t)
+;;   :custom-face
+;;   (selectrum-current-candidate ((t (:inherit region))))
+;;   :config
+;;   (selectrum-mode +1))
 
-(use-package selectrum-prescient
-  :ensure t
-  :after selectrum
-  :custom-face
-  :config
-  (selectrum-prescient-mode +1)
-  (prescient-persist-mode +1))
+;; (use-package selectrum-prescient
+;;   :ensure t
+;;   :after selectrum
+;;   :custom-face
+;;   :config
+;;   (selectrum-prescient-mode +1)
+;;   (prescient-persist-mode +1))
 
 (when (or dd/on-mac-p dd/on-cc7-p)
   (use-package tex :defer t)
@@ -1181,21 +1181,21 @@ Taken from post: https://zck.me/emacs-move-file"
   (use-package tree-sitter-langs
     :ensure t))
 
-;; (use-package vertico
-;;   :ensure t
-;;   :demand t
-;;   :init
-;;   (setq vertico-count 13)
-;;   (setq vertico-sort-threshold 3000)
-;;   :custom-face
-;;   (vertico-current ((t (:inherit region))))
-;;   :config
-;;   (vertico-mode +1)
-;;   (setq resize-mini-windows nil)
-;;   ;; Do not allow the cursor in the minibuffer prompt
-;;   (setq minibuffer-prompt-properties
-;;         '(read-only t cursor-intangible t face minibuffer-prompt))
-;;   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode))
+(use-package vertico
+  :ensure t
+  :demand t
+  :init
+  (setq vertico-count 13)
+  (setq vertico-sort-threshold 3000)
+  :custom-face
+  (vertico-current ((t (:inherit region))))
+  :config
+  (vertico-mode +1)
+  (setq resize-mini-windows nil)
+  ;; Do not allow the cursor in the minibuffer prompt
+  (setq minibuffer-prompt-properties
+        '(read-only t cursor-intangible t face minibuffer-prompt))
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode))
 
 (use-package visual-fill-column
   :ensure t)
