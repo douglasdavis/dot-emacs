@@ -960,6 +960,7 @@ Taken from post: https://zck.me/emacs-move-file"
   :ensure t
   :bind ("C-c ;" . iedit-mode))
 
+(setq lsp-use-plists t)
 (use-package lsp-clangd :defer t)
 ;; (use-package lsp-pyls :defer t)
 (use-package lsp-pylsp
