@@ -1307,6 +1307,7 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (when dd/on-m1-p
   (defun dd/pyts ()
+    "Setup local clone of tree-sitter."
     (interactive)
     (use-package tree-sitter
       :load-path "/Users/ddavis/software/repos/emacs-tree-sitter/lisp"
