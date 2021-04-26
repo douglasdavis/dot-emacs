@@ -17,7 +17,8 @@
 (setq custom-safe-themes t)
 
 (require 'package)
-(if (fboundp 'native-compile)
+(if (and (fboundp 'native-compile)
+         (native-comp-available-p))
     (setq package-user-dir (concat user-emacs-directory
                                    "elpa-"
                                    emacs-version

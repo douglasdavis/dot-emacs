@@ -40,7 +40,8 @@
 ;; general setup not associated with packages
 
 ;; for native comp branch
-(defconst dd/using-native-comp (fboundp 'native-comp-available-p))
+(defconst dd/using-native-comp (and (fboundp 'native-comp-available-p)
+                                    (native-comp-available-p)))
 (setq comp-deferred-compilation-deny-list '("with-editor.el"))
 (setq comp-async-query-on-exit t)
 (setq comp-async-jobs-number 4)
@@ -86,7 +87,7 @@
               ", "
               (format-time-string "%Y-%m-%d"
                                   emacs-build-time)
-              (cond ((fboundp 'native-compile) " (native-comp)")
+              (cond (dd/using-native-comp " (native-comp)")
                     (t ""))
               "\n\n"))
 
