@@ -845,11 +845,9 @@ Taken from post: https://zck.me/emacs-move-file"
   (when (version<= "28.0.50" emacs-version)
     (setq company-format-margin-function #'company-vscode-dark-icons-margin)))
 
-;; (use-package company-box
-;;   :ensure t
-;;   :hook (company-mode-hook . company-box-mode)
-;;   :config
-;;   (setq company-box-doc-delay 0.25))
+(use-package company-box
+  :ensure t
+  :hook (company-mode-hook . company-box-mode))
 
 (use-package consult
   :ensure t
