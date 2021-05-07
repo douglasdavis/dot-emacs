@@ -142,28 +142,32 @@
         (horizontal-scroll-bars . nil)
         (tool-bar-lines . 0)))
 
-(when dd/on-mac-p
-  (when (boundp 'ns-antialias-text)
-    (setq ns-antialias-text t))
-  (set-face-attribute 'default nil
-                      :family "MonoLisa"
-                      :weight 'regular
-                      :height 130)
-  (dolist (face '(font-lock-doc-face font-lock-comment-face))
-    (set-face-attribute face nil :italic t)))
+(defun dd/reset-font ()
+  "Reset font to personal default"
+  (interactive)
+  (when dd/on-mac-p
+    (when (boundp 'ns-antialias-text)
+      (setq ns-antialias-text t))
+    (set-face-attribute 'default nil
+                        :family "MonoLisa"
+                        :weight 'regular
+                        :height 130)
+    (dolist (face '(font-lock-doc-face font-lock-comment-face))
+      (set-face-attribute face nil :italic t)))
 
-(when dd/on-strange-p
-  (set-face-attribute 'default nil
-                      :family "MonoLisa"
-                      :weight 'regular
-                      :height 140))
+  (when dd/on-strange-p
+    (set-face-attribute 'default nil
+                        :family "MonoLisa"
+                        :weight 'regular
+                        :height 140))
 
-(when dd/on-cc7-p
-  (set-face-attribute 'default nil
-                      :family "MonoLisa"
-                      :weight 'regular
-                      :height 130))
+  (when dd/on-cc7-p
+    (set-face-attribute 'default nil
+                        :family "MonoLisa"
+                        :weight 'regular
+                        :height 130)))
 
+(dd/reset-font)
 (when (or dd/on-strange-p dd/on-cc7-p)
   (when (fboundp 'set-fontset-font)
     (set-fontset-font t 'symbol
@@ -862,6 +866,14 @@ Taken from post: https://zck.me/emacs-move-file"
     (interactive "P")
     (let ((consult-find-command "fd --color=never --full-path ARG OPTS"))
       (consult-find dir initial))))
+
+;; (use-package corfu
+;;   :ensure t
+;;   :init
+;;   (setq completion-cycle-threshold 3)
+;;   (setq tab-always-indent 'complete)
+;;   :config
+;;   (corfu-global-mode))
 
 (use-package crux
   :defer 10
