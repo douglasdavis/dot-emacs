@@ -973,9 +973,6 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (setq lsp-use-plists t)
 (use-package lsp-clangd :defer t)
-;; (use-package lsp-pyls :defer t)
-(use-package lsp-pylsp
-  :load-path "~/software/repos/lsp-pylsp")
 (use-package lsp-mode
   :ensure t
   :commands lsp
