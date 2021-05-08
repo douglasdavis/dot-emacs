@@ -586,6 +586,9 @@ Taken from post: https://zck.me/emacs-move-file"
     (bind-key "<s-left>" 'org-promote-subtree)
     (bind-key "<s-right>" 'org-demote-subtree)))
 
+(use-package outline
+  :mode ("NEWS\\'" . outline-mode))
+
 (use-package python
   :mode ("\\.py\\'" . python-mode)
   :bind (:map python-mode-map
