@@ -321,7 +321,8 @@ Taken from post: https://zck.me/emacs-move-file"
             (load-theme (nth idx dd/themes) t)))
       (load-theme (car dd/themes) t))
     (dd/theme-extras)))
-(bind-key* "<f6>" #'dd/theme-cycler)
+(with-eval-after-load 'bind-key
+  (bind-key* "<f6>" #'dd/theme-cycler))
 
 (defun dd/theme-extras ()
   "Some things to follow up theme loading."
@@ -347,7 +348,8 @@ Taken from post: https://zck.me/emacs-move-file"
                             (split-window-horizontally)))
            buf)))
     (user-error "Can toggle split only with two windows")))
-(bind-key* "C-x \\" #'dd/toggle-window-split)
+(with-eval-after-load 'bind-key
+  (bind-key* "C-x \\" #'dd/toggle-window-split))
 
 (defun dd/vterm-go ()
   "Switch to (or create) a general vterm called dd/vterm."
