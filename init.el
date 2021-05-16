@@ -927,6 +927,10 @@ Taken from post: https://zck.me/emacs-move-file"
   :config
   (setq eglot-autoshutdown t))
 
+(when (version< emacs-version "28")
+  (use-package eldoc
+    :ensure t))
+
 (use-package eldoc-box
   :ensure t
   :hook (eglot-managed-mode-hook . eldoc-box-hover-at-point-mode)
@@ -981,7 +985,8 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (setq lsp-use-plists t)
 (use-package lsp-clangd :defer t)
-(use-package lsp-pylsp)
+(use-package lsp-pylsp :defer t)
+(use-package lsp-pyright :ensure t :defer t)
 (use-package lsp-mode
   :ensure t
   :commands lsp
@@ -1002,15 +1007,13 @@ Taken from post: https://zck.me/emacs-move-file"
   (setq lsp-pylsp-plugins-pyflakes-enabled nil)
   (setq lsp-pylsp-plugins-pydocstyle-enabled t)
   (setq lsp-pylsp-plugins-pydocstyle-convention "numpy")
-  (setq lsp-pylsp-configuration-sources ["flake8"]))
+  (setq lsp-pylsp-configuration-sources ["flake8"])
 
-  ;; (setq lsp-pyls-server-command '("pylsp"))
-  ;; (setq lsp-pyls-plugins-autopep8-enabled nil)
-  ;; (setq lsp-pyls-plugins-pycodestyle-enabled nil)
-  ;; (setq lsp-pyls-plugins-flake8-enabled t)
-  ;; (setq lsp-pyls-plugins-pyflakes-enabled nil)
-  ;; (setq lsp-pyls-plugins-pydocstyle-enabled t)
-  ;; (setq lsp-pyls-configuration-sources ["flake8"]))
+  (defun dd/pyright ()
+    (interactive)
+    (setq lsp-pyright-typechecking-mode "off")
+    (use-package lsp-pyright
+      :ensure t)))
 
 (use-package lsp-ui
   :ensure t
@@ -1105,6 +1108,17 @@ Taken from post: https://zck.me/emacs-move-file"
   :init
   (setenv "WORKON_HOME" "~/.pyenv/versions")
   :config
+  ;; Set correct Python interpreter
+  (setq pyvenv-post-activate-hooks
+        (list
+         (lambda ()
+           (setq python-shell-interpreter (concat pyvenv-virtual-env
+                                                  "bin/python3")))))
+  (setq pyvenv-post-deactivate-hooks
+        (list
+         (lambda ()
+           (setq python-shell-interpreter "python3"))))
+
   (defun dd/conda-envs (&optional dir)
     "Get list of conda environments."
     (let ((search-dir (if dir
