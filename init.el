@@ -331,7 +331,11 @@ Taken from post: https://zck.me/emacs-move-file"
     (set-face-attribute 'selectrum-prescient-primary-highlight
                         nil :inherit 'info-xref-visited))
   (dolist (face '(font-lock-doc-face font-lock-comment-face))
-    (set-face-attribute face nil :italic t)))
+    (set-face-attribute face nil :italic t))
+  (when (eq (car custom-enabled-themes) 'doom-Iosvkem)
+    (custom-set-faces
+     `(company-tooltip      ((t (:background ,(doom-color 'base3)))))
+     `(company-scrollbar-bg ((t (:background ,(doom-color 'magenta))))))))
 
 (defun dd/toggle-window-split ()
   "If two windows are present; toggle the split axis."
@@ -1211,6 +1215,7 @@ Taken from post: https://zck.me/emacs-move-file"
   :ensure t
   :demand t
   :init
+  (setq enable-recursive-minibuffers t)
   (setq vertico-count 13)
   (setq vertico-sort-threshold 3000)
   :custom-face
