@@ -480,68 +480,68 @@ Taken from post: https://zck.me/emacs-move-file"
               (dd/on-strange-p "/usr/bin/gpg")
               (t "/usr/bin/gpg2"))))))
 
-;; (when (or dd/on-grads-18-p dd/on-cc7-p dd/on-mac-p)
-;;   (use-package erc
-;;     :commands erc
-;;     :config
-;;     (setq erc-prompt-for-password nil)
-;;     (setq erc-user-full-name "Doug Davis")
-;;     (setq erc-rename-buffers t)
-;;     (setq erc-track-enable-keybindings nil)
-;;     (setq erc-kill-buffer-on-part t)
-;;     (setq erc-kill-server-buffer-on-quit t)
-;;     (setq erc-fill-function 'erc-fill-static)
-;;     (setq erc-fill-static-center 19)
-;;     (setq erc-prompt (lambda () (concat (buffer-name) " >")))
-;;     (setq erc-hide-list '("JOIN" "PART" "QUIT"))
-;;     (setq erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
-;;     (setq erc-track-exclude-types '("JOIN" "MODE" "NICK" "PART" "QUIT"
-;;                                     "324" "329" "332" "333" "353" "477"))
-;;     (add-to-list 'erc-modules 'notifications)
-;;     (add-to-list 'erc-modules 'spelling)
+(use-package erc
+  :commands erc
+  :config
+  (setq erc-default-server "irc.libera.chat"
+        erc-prompt-for-password nil
+        erc-user-full-name "Doug Davis"
+        erc-rename-buffers t
+        erc-track-enable-keybindings nil
+        erc-kill-buffer-on-part t
+        erc-kill-server-buffer-on-quit t
+        erc-fill-function 'erc-fill-static
+        erc-fill-static-center 19
+        erc-prompt (lambda () (concat (buffer-name) " >"))
+        erc-hide-list '("JOIN" "PART" "QUIT")
+        erc-lurker-hide-list '("JOIN" "PART" "QUIT")
+        erc-track-exclude-types '("JOIN" "MODE" "NICK" "PART" "QUIT"
+                                  "324" "329" "332" "333" "353" "477"))
+  (add-to-list 'erc-modules 'notifications)
+  (add-to-list 'erc-modules 'spelling)
 
-;;     (defconst dd/erc-colors-list '("#fb4934" "#b8bb26" "#fabd2f"
-;;                                    "#83a598" "#d3869b" "#8ec07c"
-;;                                    "#fe8019" "#cc241d" "#98971a"
-;;                                    "#d79921" "#458588" "#b16286"
-;;                                    "#689d6a" "#d65d0e"))
+  (defconst dd/erc-colors-list '("#fb4934" "#b8bb26" "#fabd2f"
+                                 "#83a598" "#d3869b" "#8ec07c"
+                                 "#fe8019" "#cc241d" "#98971a"
+                                 "#d79921" "#458588" "#b16286"
+                                 "#689d6a" "#d65d0e"))
 
-;;     ;; special colors for some people
-;;     (defconst dd/erc-nick-color-alist '(("X" . "blue")))
+  ;; special colors for some people
+  (defconst dd/erc-nick-color-alist '(("X" . "blue")))
 
-;;     (defun dd/erc-get-color-for-nick (nick)
-;;       "Gets a color for NICK. If NICK is in
-;;     dd/erc-nick-color-alist, use that color, else hash the nick
-;;     and use a random color from the pool"
-;;       (or (cdr (assoc nick dd/erc-nick-color-alist))
-;;           (nth
-;;            (mod (string-to-number
-;;                  (substring (md5 (downcase nick)) 0 6) 16)
-;;                 (length dd/erc-colors-list))
-;;            dd/erc-colors-list)))
+  (defun dd/erc-get-color-for-nick (nick)
+    "Gets a color for NICK. If NICK is in
+    dd/erc-nick-color-alist, use that color, else hash the nick
+    and use a random color from the pool"
+    (or (cdr (assoc nick dd/erc-nick-color-alist))
+        (nth
+         (mod (string-to-number
+               (substring (md5 (downcase nick)) 0 6) 16)
+              (length dd/erc-colors-list))
+         dd/erc-colors-list)))
 
-;;     (defun dd/erc-put-color-on-nick ()
-;;       "Modifies the color of nicks according to
-;;     dd/erc-get-color-for-nick"
-;;       (save-excursion
-;;         (goto-char (point-min))
-;;         (while (forward-word 1)
-;;           (setq bounds (bounds-of-thing-at-point 'word))
-;;           (setq word (buffer-substring-no-properties
-;;                       (car bounds) (cdr bounds)))
-;;           (when (or (and (erc-server-buffer-p) (erc-get-server-user word))
-;;                     (and erc-channel-users (erc-get-channel-user word)))
-;;             (put-text-property (car bounds) (cdr bounds)
-;;                                'face (cons 'foreground-color
-;;                                            (dd/erc-get-color-for-nick word)))))))
+  (defun dd/erc-put-color-on-nick ()
+    "Modifies the color of nicks according to
+    dd/erc-get-color-for-nick"
+    (save-excursion
+      (goto-char (point-min))
+      (while (forward-word 1)
+        (setq bounds (bounds-of-thing-at-point 'word))
+        (setq word (buffer-substring-no-properties
+                    (car bounds) (cdr bounds)))
+        (when (or (and (erc-server-buffer-p) (erc-get-server-user word))
+                  (and erc-channel-users (erc-get-channel-user word)))
+          (put-text-property (car bounds) (cdr bounds)
+                             'face (cons 'foreground-color
+                                         (dd/erc-get-color-for-nick word)))))))
 
-;;     (add-hook 'erc-insert-modify-hook 'dd/erc-put-color-on-nick)
-;;     (add-hook 'erc-mode-hook (lambda ()
-;;                                (modify-syntax-entry ?\_ "w" nil)
-;;                                (modify-syntax-entry ?\- "w" nil))))
+  (add-hook 'erc-insert-modify-hook 'dd/erc-put-color-on-nick)
+  (add-hook 'erc-mode-hook (lambda ()
+                             (modify-syntax-entry ?\_ "w" nil)
+                             (modify-syntax-entry ?\- "w" nil))))
 
-;;   (use-package erc-track)
-;;   (use-package erc-fill))
+(use-package erc-track :after erc)
+(use-package erc-fill :after erc)
 
 (use-package esh-mode
   :hook (eshell-mode-hook . (lambda () (display-line-numbers-mode 0))))
@@ -1104,8 +1104,7 @@ Taken from post: https://zck.me/emacs-move-file"
         projectile-globally-ignored-directories '(".git" "__pycache__")
         projectile-globally-ignored-files '(".DS_Store")
         projectile-ignored-projects '("/opt/homebrew/")
-        projectile-enable-caching nil)
-  (projectile-mode +1))
+        projectile-enable-caching nil))
 
 (use-package pyvenv
   :ensure t
