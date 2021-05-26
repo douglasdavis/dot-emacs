@@ -988,47 +988,47 @@ Taken from post: https://zck.me/emacs-move-file"
   :bind ("C-c ;" . iedit-mode))
 
 (setq lsp-use-plists t)
+(setq lsp-clients-clangd-executable dd/clangd-exe)
+(setq lsp-keep-workspace-alive nil
+      lsp-auto-guess-root nil
+      lsp-enable-links nil
+      lsp-enable-on-type-formatting nil)
+(setq lsp-pylsp-server-command '("pylsp")
+      lsp-pylsp-plugins-autopep8-enabled nil
+      lsp-pylsp-plugins-pycodestyle-enabled nil
+      lsp-pylsp-plugins-flake8-enabled t
+      lsp-pylsp-plugins-pyflakes-enabled nil
+      lsp-pylsp-plugins-pydocstyle-enabled t
+      lsp-pylsp-plugins-pydocstyle-convention "numpy"
+      lsp-pylsp-configuration-sources ["flake8"])
+(setq lsp-ui-doc-enable t
+      lsp-ui-doc-include-signature nil
+      lsp-ui-doc-position 'at-point
+      lsp-ui-doc-header t
+      lsp-ui-doc-max-height 32
+      lsp-ui-doc-max-width 96
+      lsp-ui-sideline-show-hover nil)
+
 (use-package lsp-clangd :defer t)
-(use-package lsp-pylsp :defer t)
-(use-package lsp-pyright :ensure t :defer t)
+
 (use-package lsp-mode
   :ensure t
   :commands lsp
   :init
-  (setq lsp-clients-clangd-executable dd/clangd-exe)
-  (setq read-process-output-max (* 10 1024 1024))
-  :config
-  (setq lsp-keep-workspace-alive nil
-        lsp-auto-guess-root nil
-        lsp-enable-links nil
-        lsp-enable-on-type-formatting nil)
-  ;; lsp-signature-function 'lsp-signature-posframe)
-  ;; python
-  (setq lsp-pylsp-server-command '("pylsp"))
-  (setq lsp-pylsp-plugins-autopep8-enabled nil)
-  (setq lsp-pylsp-plugins-pycodestyle-enabled nil)
-  (setq lsp-pylsp-plugins-flake8-enabled t)
-  (setq lsp-pylsp-plugins-pyflakes-enabled nil)
-  (setq lsp-pylsp-plugins-pydocstyle-enabled t)
-  (setq lsp-pylsp-plugins-pydocstyle-convention "numpy")
-  (setq lsp-pylsp-configuration-sources ["flake8"])
+  (setq read-process-output-max (* 10 1024 1024)))
 
-  (defun dd/pyright ()
-    (interactive)
-    (setq lsp-pyright-typechecking-mode "off")
-    (use-package lsp-pyright
-      :ensure t)))
+(use-package lsp-pylsp
+  :defer t)
 
 (use-package lsp-ui
   :ensure t
-  :init
-  (setq lsp-ui-doc-enable t)
-  (setq lsp-ui-doc-include-signature nil)
-  (setq lsp-ui-doc-position 'at-point)
-  (setq lsp-ui-doc-header t)
-  (setq lsp-ui-doc-max-height 25)
-  (setq lsp-ui-doc-max-width 92)
-  (setq lsp-ui-sideline-show-hover nil))
+  :after lsp)
+
+(defun dd/pyright ()
+  (interactive)
+  (setq lsp-pyright-typechecking-mode "off")
+  (use-package lsp-pyright
+    :ensure t))
 
 (use-package magit
   :ensure t
