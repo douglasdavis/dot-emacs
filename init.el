@@ -1002,14 +1002,15 @@ Taken from post: https://zck.me/emacs-move-file"
       lsp-pylsp-plugins-pydocstyle-convention "numpy"
       lsp-pylsp-configuration-sources ["flake8"])
 (setq lsp-ui-doc-enable t
-      lsp-ui-doc-include-signature nil
+      lsp-ui-doc-include-signature t
       lsp-ui-doc-position 'at-point
       lsp-ui-doc-header t
       lsp-ui-doc-max-height 32
       lsp-ui-doc-max-width 96
       lsp-ui-sideline-show-hover nil)
 
-(use-package lsp-clangd :defer t)
+(use-package lsp-clangd
+  :defer t)
 
 (use-package lsp-mode
   :ensure t
@@ -1022,7 +1023,7 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (use-package lsp-ui
   :ensure t
-  :after lsp)
+  :defer t)
 
 (defun dd/pyright ()
   (interactive)
