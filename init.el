@@ -1100,12 +1100,14 @@ Taken from post: https://zck.me/emacs-move-file"
               ("r" . dd/ripgrep-proj-or-dir)
               ("g" . consult-ripgrep))
   :config
+  (setq projectile-ignored-project-function 'file-remote-p)
   (setq projectile-track-known-projects-automatically t
         projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
         projectile-globally-ignored-directories '(".git" "__pycache__")
         projectile-globally-ignored-files '(".DS_Store")
         projectile-ignored-projects '("/opt/homebrew/")
-        projectile-enable-caching nil))
+        projectile-enable-caching nil)
+  (projectile-mode +1))
 
 (use-package pyvenv
   :ensure t
@@ -1201,8 +1203,8 @@ Taken from post: https://zck.me/emacs-move-file"
     (setq TeX-auto-save t)
     (setq TeX-parse-self t)
     (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)))
-    ;; (when dd/use-pdf-tools-p
-    ;;   (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))))
+;; (when dd/use-pdf-tools-p
+;;   (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))))
 
 (unless (or dd/on-m1-p dd/on-cc7-p)
   (use-package tree-sitter
