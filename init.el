@@ -397,34 +397,9 @@ Taken from post: https://zck.me/emacs-move-file"
   (package-refresh-contents)
   (package-install 'use-package))
 
-;; (defvar bootstrap-version)
-;; (let ((bootstrap-file
-;;        (expand-file-name "straight/repos/straight.el/bootstrap.el"
-;;                          user-emacs-directory))
-;;       (bootstrap-version 5))
-;;   (unless (file-exists-p bootstrap-file)
-;;     (with-current-buffer
-;;         (url-retrieve-synchronously
-;;          "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-;;          'silent 'inhibit-cookies)
-;;       (goto-char (point-max))
-;;       (eval-print-last-sexp)))
-;;   (load bootstrap-file nil 'nomessage))
-
-;; (straight-use-package 'use-package)
-
 (require 'use-package)
 (require 'bind-key)
 (setq use-package-hook-name-suffix nil)
-
-;; (use-package straight-x)
-
-;; (defun dd/straight-up ()
-;;   "Pull and check straight.el packages."
-;;   (interactive)
-;;   (progn
-;;     (straight-pull-all)
-;;     (straight-check-all)))
 
 ;; sec03:
 ;; use-package for some core Emacs packages.
@@ -861,10 +836,6 @@ Taken from post: https://zck.me/emacs-move-file"
   (when (version<= "28.0.50" emacs-version)
     (setq company-format-margin-function #'company-vscode-dark-icons-margin)))
 
-;; (use-package company-box
-;;   :ensure t
-;;   :hook (company-mode-hook . company-box-mode))
-
 (use-package consult
   :ensure t
   :bind (("C-c l" . consult-line)
@@ -988,42 +959,49 @@ Taken from post: https://zck.me/emacs-move-file"
   :bind ("C-c ;" . iedit-mode))
 
 (setq lsp-use-plists t)
-(setq lsp-clients-clangd-executable dd/clangd-exe)
-(setq lsp-keep-workspace-alive nil
-      lsp-auto-guess-root nil
-      lsp-enable-links nil
-      lsp-enable-on-type-formatting nil)
-(setq lsp-pylsp-server-command '("pylsp")
-      lsp-pylsp-plugins-autopep8-enabled nil
-      lsp-pylsp-plugins-pycodestyle-enabled nil
-      lsp-pylsp-plugins-flake8-enabled t
-      lsp-pylsp-plugins-pyflakes-enabled nil
-      lsp-pylsp-plugins-pydocstyle-enabled t
-      lsp-pylsp-plugins-pydocstyle-convention "numpy"
-      lsp-pylsp-configuration-sources ["flake8"])
-(setq lsp-ui-doc-enable t
-      lsp-ui-doc-include-signature t
-      lsp-ui-doc-position 'at-point
-      lsp-ui-doc-header t
-      lsp-ui-doc-max-height 32
-      lsp-ui-doc-max-width 96
-      lsp-ui-sideline-show-hover nil)
 
 (use-package lsp-clangd
-  :defer t)
+  :defer t
+  :init
+  (setq lsp-clients-clangd-executable dd/clangd-exe))
 
 (use-package lsp-mode
   :ensure t
   :commands lsp
   :init
-  (setq read-process-output-max (* 10 1024 1024)))
+  (setq read-process-output-max (* 10 1024 1024))
+  (setq lsp-keep-workspace-alive nil
+        lsp-auto-guess-root nil
+        lsp-enable-links nil
+        lsp-enable-on-type-formatting nil))
 
 (use-package lsp-pylsp
+  :init
+  (setq lsp-pylsp-plugins-pydocstyle-convention "numpy"
+        lsp-pylsp-configuration-sources ["flake8"])
+  (setq lsp-pylsp-plugins-autopep8-enabled nil
+        lsp-pylsp-plugins-mccabe-enabled nil
+        lsp-pylsp-plugins-pycodestyle-enabled nil
+        lsp-pylsp-plugins-pyflakes-enabled nil
+        lsp-pylsp-plugins-pylint-enabled nil)
+  (defun dd/pylsp-toggle-linting ()
+    "Toggle flake8 and pycodestyle for pylsp."
+    (interactive)
+    (setq lsp-pylsp-plugins-flake8-enabled (not lsp-pylsp-plugins-flake8-enabled))
+    (setq lsp-pylsp-plugins-pydocstyle-enabled (not lsp-pylsp-plugins-pydocstyle-enabled)))
   :defer t)
 
 (use-package lsp-ui
   :ensure t
-  :defer t)
+  :defer t
+  :init
+  (setq lsp-ui-doc-enable t
+        lsp-ui-doc-include-signature t
+        lsp-ui-doc-position 'at-point
+        lsp-ui-doc-header t
+        lsp-ui-doc-max-height 32
+        lsp-ui-doc-max-width 96
+        lsp-ui-sideline-show-hover nil))
 
 (defun dd/pyright ()
   (interactive)
@@ -1251,11 +1229,6 @@ Taken from post: https://zck.me/emacs-move-file"
   (which-key-mode)
   (setq which-key-frame-max-height 50))
 
-;; (use-package which-key-posframe
-;;   :ensure t
-;;   :config
-;;   (which-key-posframe-mode +1))
-
 (use-package yaml-mode
   :ensure t
   :defer t
@@ -1351,14 +1324,6 @@ Taken from post: https://zck.me/emacs-move-file"
       (require 'tree-sitter-langs)
       (tree-sitter-require 'python)
       (add-hook 'python-mode-hook 'tree-sitter-hl-mode))))
-
-;; (use-package zmq
-;;   :load-path "~/software/repos/emacs-zmq")
-;; (require 'zmq)
-;; (use-package jupyter :ensure t)
-
-;; (use-package ein
-;;   :ensure t)
 
 ;; the end
 

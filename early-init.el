@@ -16,6 +16,9 @@
 (setq inhibit-startup-screen t)
 (setq custom-safe-themes t)
 
+(setq package-enable-at-startup nil)
+(setq package-native-compile t)
+
 (require 'package)
 (if (and (fboundp 'native-compile)
          (native-comp-available-p))
