@@ -467,6 +467,8 @@ Taken from post: https://zck.me/emacs-move-file"
         erc-kill-server-buffer-on-quit t
         erc-fill-function 'erc-fill-static
         erc-fill-static-center 19
+        erc-fill-column 86
+        erc-query-display 'bury
         erc-prompt (lambda () (concat (buffer-name) " >"))
         erc-hide-list '("JOIN" "PART" "QUIT")
         erc-lurker-hide-list '("JOIN" "PART" "QUIT")
@@ -979,22 +981,28 @@ Taken from post: https://zck.me/emacs-move-file"
   :init
   (setq lsp-pylsp-plugins-pydocstyle-convention "numpy"
         lsp-pylsp-configuration-sources ["flake8"])
-  (setq lsp-pylsp-plugins-autopep8-enabled nil
+  (setq lsp-pylsp-plugins-pydocstyle-enabled nil
+        lsp-pylsp-plugins-flake8-enabled nil
+        lsp-pylsp-plugins-autopep8-enabled nil
         lsp-pylsp-plugins-mccabe-enabled nil
         lsp-pylsp-plugins-pycodestyle-enabled nil
         lsp-pylsp-plugins-pyflakes-enabled nil
         lsp-pylsp-plugins-pylint-enabled nil)
-  (defun dd/pylsp-toggle-linting ()
-    "Toggle flake8 and pycodestyle for pylsp."
+  (defun dd/pylsp-toggle-pydocstyle ()
+    "Toggle pycodestyle for pylsp."
     (interactive)
-    (setq lsp-pylsp-plugins-flake8-enabled (not lsp-pylsp-plugins-flake8-enabled))
     (setq lsp-pylsp-plugins-pydocstyle-enabled (not lsp-pylsp-plugins-pydocstyle-enabled)))
+  (defun dd/pylsp-toggle-flake8 ()
+    "Toggle pycodestyle for pylsp."
+    (interactive)
+    (setq lsp-pylsp-plugins-flake8-enabled (not lsp-pylsp-plugins-flake8-enabled)))
   :defer t)
 
 (use-package lsp-ui
   :ensure t
   :defer t
   :init
+  (setq lsp-ui-doc-use-webkit (featurep 'xwidget-internal))
   (setq lsp-ui-doc-enable t
         lsp-ui-doc-include-signature t
         lsp-ui-doc-position 'at-point
