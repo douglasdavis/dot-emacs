@@ -1083,7 +1083,8 @@ Taken from post: https://zck.me/emacs-move-file"
         projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
         projectile-globally-ignored-directories '(".git" "__pycache__")
         projectile-globally-ignored-files '(".DS_Store")
-        projectile-ignored-projects '("/opt/homebrew/")
+        projectile-ignored-projects '("/opt/homebrew/"
+                                      "/usr/local/Homebrew/")
         projectile-enable-caching nil)
   (projectile-mode +1))
 
@@ -1120,8 +1121,14 @@ Taken from post: https://zck.me/emacs-move-file"
   :ensure t
   :hook (prog-mode-hook . rainbow-delimiters-mode))
 
+
 (use-package recentf
-  :after consult
+  :demand t
+  :init
+  (defun dd/recentf-excluder (s)
+    "Check if file should be recentf excluded."
+    (s-contains-p ".emacs.d/elpa-" s))
+  (setq recentf-exclude '(dd/recentf-excluder))
   :config
   (recentf-mode +1)
   (add-to-list 'recentf-exclude 'file-remote-p))
