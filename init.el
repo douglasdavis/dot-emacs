@@ -979,6 +979,8 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (use-package lsp-pylsp
   :init
+  (setq lsp-clients-pylsp-library-directories `("/usr"
+                                                ,(expand-file-name "~/.pyenv/versions/")))
   (setq lsp-pylsp-plugins-pydocstyle-convention "numpy"
         lsp-pylsp-configuration-sources ["flake8"])
   (setq lsp-pylsp-plugins-pydocstyle-enabled nil
