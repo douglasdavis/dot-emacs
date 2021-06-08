@@ -978,6 +978,7 @@ Taken from post: https://zck.me/emacs-move-file"
         lsp-enable-on-type-formatting nil))
 
 (use-package lsp-pylsp
+  :defer t
   :init
   (setq lsp-clients-pylsp-library-directories `("/usr"
                                                 ,(expand-file-name "~/.pyenv/versions/")))
@@ -997,14 +998,16 @@ Taken from post: https://zck.me/emacs-move-file"
   (defun dd/pylsp-toggle-flake8 ()
     "Toggle pycodestyle for pylsp."
     (interactive)
-    (setq lsp-pylsp-plugins-flake8-enabled (not lsp-pylsp-plugins-flake8-enabled)))
-  :defer t)
+    (setq lsp-pylsp-plugins-flake8-enabled (not lsp-pylsp-plugins-flake8-enabled))))
 
 (use-package lsp-ui
   :ensure t
   :defer t
   :init
-  (setq lsp-ui-doc-use-webkit (featurep 'xwidget-internal))
+  (defun dd/lsp-use-webkit ()
+    "Use webkit lsp ui doc rendering if possible."
+    (interactive)
+    (setq lsp-ui-doc-use-webkit (featurep 'xwidget-internal)))
   (setq lsp-ui-doc-enable t
         lsp-ui-doc-include-signature t
         lsp-ui-doc-position 'at-point
