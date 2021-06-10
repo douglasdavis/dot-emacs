@@ -45,11 +45,8 @@
 (setq native-comp-async-query-on-exit t)
 (setq native-comp-async-jobs-number 4)
 (setq native-comp-async-report-warnings-errors nil)
-
-(setq native-comp-deferred-compilation-deny-list '("with-editor.el"))
-(setq native-comp-deferred-compilation t)
-(setq comp-deferred-compilation-deny-list '("with-editor.el"))
-(setq comp-deferred-compilation t)
+(setq native-comp-deferred-compilation-deny-list '(".emacs.d/elpa-28.0.50-native"))
+(setq native-comp-deferred-compilation nil)
 
 (defun dd/includes? (s substr)
   "Clojure like function; t if S includes SUBSTR."
@@ -712,11 +709,7 @@ Taken from post: https://zck.me/emacs-move-file"
   :ensure t
   :commands (auto-package-update-now)
   :init
-  (setq auto-package-update-delete-old-versions t)
-  :hook
-  (auto-package-update-before-hook . (lambda () (interactive)
-                                       (when (boundp 'native-comp-deferred-compilation)
-                                         (setq native-comp-deferred-compilation nil)))))
+  (setq auto-package-update-delete-old-versions t))
 
 (use-package blacken
   :ensure t
