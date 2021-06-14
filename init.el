@@ -45,7 +45,7 @@
 (setq native-comp-async-query-on-exit t)
 (setq native-comp-async-jobs-number 4)
 (setq native-comp-async-report-warnings-errors nil)
-(setq native-comp-deferred-compilation-deny-list '(".emacs.d/elpa-28.0.50-native"))
+(setq native-comp-deferred-compilation-deny-list '("\\.el\\'"))
 (setq native-comp-deferred-compilation nil)
 
 (defun dd/includes? (s substr)
