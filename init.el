@@ -866,11 +866,15 @@ Taken from post: https://zck.me/emacs-move-file"
   :ensure t
   :defer t)
 
+(setq ad-redefinition-action 'accept)
 (use-package default-text-scale
   :ensure t
+  :demand t
+  :init
   :bind (("s-=" . default-text-scale-increase)
          ("s--" . default-text-scale-decrease)
          ("s-0" . default-text-scale-reset)))
+(setq ad-redefinition-action 'warn)
 
 (use-package diredfl
   :ensure t
