@@ -33,6 +33,7 @@
         message-kill-buffer-on-exit t
         message-dont-reply-to-names '("ddavis@phy.duke.edu"
                                       "ddavis@ddavis.io"
+                                      "ddavis@anaconda.com"
                                       "ddavis@cern.ch"))
   :demand t)
 
@@ -40,22 +41,22 @@
   :init
   (defconst dd/sendmail-exe
     (cond (dd/on-m1-p "/Users/ddavis/software/specific/msmtp/1.8.14/bin/msmtp")
-          (dd/on-mac-p "/Users/ddavis/software/localbase/bin/msmtp")
-          (dd/on-cc7-p "/usr/local/bin/msmtp"))
+          (dd/on-cc7-p "/usr/local/bin/msmtp")
+          (t (executable-find "msmtp")))
     "Machine dependent msmtp executable string.")
   (setq sendmail-program dd/sendmail-exe)
   :demand t)
 
 (defconst dd/mu-exe
   (cond (dd/on-m1-p "/opt/homebrew/Cellar/mu/1.4.15/bin/mu")
-        (dd/on-mac-p "/Users/ddavis/software/localbase/bin/mu")
-        (dd/on-cc7-p "/home/ddavis/software/specific/mu/1.4.15/bin/mu"))
+        (dd/on-cc7-p "/home/ddavis/software/specific/mu/1.4.15/bin/mu")
+        (t (executable-find "mu")))
   "Machine dependent mu executable string.")
 
 (defconst dd/mu4e-dir
   (cond (dd/on-m1-p "/opt/homebrew/Cellar/mu/1.4.15/share/emacs/site-lisp/mu/mu4e")
-        (dd/on-mac-p "/Users/ddavis/software/localbase/share/emacs/site-lisp/mu4e")
-        (dd/on-cc7-p "/home/ddavis/software/specific/mu/1.4.15/share/emacs/site-lisp/mu4e"))
+        (dd/on-cc7-p "/home/ddavis/software/specific/mu/1.4.15/share/emacs/site-lisp/mu4e")
+        (dd/on-mac-p "/usr/local/Cellar/mu/1.4.15/share/emacs/site-lisp/mu/mu4e"))
   "Machine dependent mu4e installation location string.")
 
 (defun dd/mu4e-byte-comp ()

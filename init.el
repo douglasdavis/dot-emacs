@@ -1059,7 +1059,7 @@ Taken from post: https://zck.me/emacs-move-file"
   :init
   (defun dd/use-orderless-in-minibuffer ()
     (interactive)
-    (setq-local completion-styles '(orderless)))
+    (setq-local completion-styles '(orderless basic partial-completion emacs22 initials)))
   (add-hook 'minibuffer-setup-hook 'dd/use-orderless-in-minibuffer)
   (setq completion-category-defaults nil
         completion-category-overrides '((file (styles . (partial-completion))))))
@@ -1315,7 +1315,7 @@ Taken from post: https://zck.me/emacs-move-file"
 ;; sec06:
 ;; email setup is in dedicated file
 
-(when (or dd/on-m1-p dd/on-cc7-p)
+(when (or dd/on-m1-p dd/on-cc7-p dd/on-mac-p)
   (load-file "~/.emacs.d/dot-emacs/email.el"))
 
 ;; sec07:
