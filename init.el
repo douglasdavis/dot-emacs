@@ -874,7 +874,6 @@ Taken from post: https://zck.me/emacs-move-file"
   :bind (("s-=" . default-text-scale-increase)
          ("s--" . default-text-scale-decrease)
          ("s-0" . default-text-scale-reset)))
-(setq ad-redefinition-action 'warn)
 
 (use-package diredfl
   :ensure t
