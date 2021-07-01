@@ -12,10 +12,6 @@
                   (nnimap-address "imap.fastmail.com")
                   (nnimap-stream ssl)
                   (nnimap-authinfo-file "~/.emacs.d/.authinfo.gpg"))
-          (nnimap "cernmail"
-                  (nnimap-address "imap.cern.ch")
-                  (nnimap-stream ssl)
-                  (nnimap-authinfo-file "~/.emacs.d/.authinfo.gpg"))
           (nnimap "dukemail"
                   (nnimap-address "mail.phy.duke.edu")
                   (nnimap-stream ssl)
@@ -57,16 +53,7 @@
             (gcc "nnimap+dukemail:Sent")
             (eval (setq mail-host-address "phy.duke.edu"
                         message-sendmail-extra-arguments '("--read-envelope-from")))
-            (user-mail-address "ddavis@phy.duke.edu")))
-          ("cernmail"
-           (posting-style
-            (name "Doug Davis")
-            (address "ddavis@cern.ch")
-            (body "")
-            (gcc "nnimap+cernmail:Sent")
-            (eval (setq mail-host-address "cern.ch"
-                        message-sendmail-extra-arguments '("--read-envelope-from")))
-            (user-mail-address "ddavis@cern.ch")))))
+            (user-mail-address "ddavis@phy.duke.edu")))))
 
   ;; keys
   ;; (define-key gnus-group-mode-map (kbd "q") 'quit-window)
