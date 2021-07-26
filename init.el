@@ -1299,6 +1299,7 @@ Taken from post: https://zck.me/emacs-move-file"
   (bind-key* "s-h k" #'describe-key)
   (bind-key* "s-i" #'crux-find-user-init-file)
   (bind-key* "s-k" #'kill-current-buffer)
+  (bind-key* "s-n" #'make-frame)
   (bind-key* "s-o" #'other-window)
   (bind-key* "s-p" #'projectile-command-map)
   (bind-key* "s-q" #'save-buffers-kill-terminal)
