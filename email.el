@@ -48,15 +48,15 @@
   :demand t)
 
 (defconst dd/mu-exe
-  (cond (dd/on-m1-p "/opt/homebrew/Cellar/mu/1.6.1/bin/mu")
+  (cond (dd/on-m1-p "/opt/homebrew/Cellar/mu/1.6.2/bin/mu")
         (dd/on-cc7-p "/home/ddavis/software/specific/mu/1.4.15/bin/mu")
         (t (executable-find "mu")))
   "Machine dependent mu executable string.")
 
 (defconst dd/mu4e-dir
-  (cond (dd/on-m1-p "/opt/homebrew/Cellar/mu/1.6.1/share/emacs/site-lisp/mu/mu4e")
+  (cond (dd/on-m1-p "/opt/homebrew/Cellar/mu/1.6.2/share/emacs/site-lisp/mu/mu4e")
         (dd/on-cc7-p "/home/ddavis/software/specific/mu/1.4.15/share/emacs/site-lisp/mu4e")
-        (dd/on-mac-p "/usr/local/Cellar/mu/1.6.1/share/emacs/site-lisp/mu/mu4e"))
+        (dd/on-mac-p "/usr/local/Cellar/mu/1.6.2/share/emacs/site-lisp/mu/mu4e"))
   "Machine dependent mu4e installation location string.")
 
 (defun dd/mu4e-byte-comp ()
