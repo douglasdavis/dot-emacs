@@ -45,8 +45,8 @@
 (setq native-comp-async-query-on-exit t)
 (setq native-comp-async-jobs-number 4)
 (setq native-comp-async-report-warnings-errors nil)
-(setq native-comp-deferred-compilation-deny-list '("\\.el\\'"))
-(setq native-comp-deferred-compilation nil)
+(setq native-comp-deferred-compilation-deny-list '("\\with-editor.el\\'"))
+(setq native-comp-deferred-compilation t)
 
 (defun dd/includes? (s substr)
   "Clojure like function; t if S includes SUBSTR."
@@ -1049,6 +1049,8 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (use-package numpydoc
   :ensure t
+  :init
+  (setq numpydoc-insertion-style nil)
   :bind (:map python-mode-map
               ("C-c C-n" . numpydoc-generate))
   :after python)
