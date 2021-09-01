@@ -12,6 +12,11 @@
                   (nnimap-address "imap.fastmail.com")
                   (nnimap-stream ssl)
                   (nnimap-authinfo-file "~/.emacs.d/.authinfo.gpg"))
+          (nnimap "anaconda"
+                  (nnimap-address "imap.gmail.com")
+                  (nnimap-stream ssl)
+                  (nnimap-server-port "imaps")
+                  (nnimap-authinfo-file "~/.emacs.d/.authinfo.gpg"))
           (nnimap "dukemail"
                   (nnimap-address "mail.phy.duke.edu")
                   (nnimap-stream ssl)
@@ -45,6 +50,16 @@
             (eval (setq mail-host-address "dougandkristiebecome.one"
                         message-sendmail-extra-arguments '("--read-envelope-from")))
             (user-mail-address "us@dougandkristiebecome.one")))
+          ("anaconda"
+           (posting-style
+            (address "Doug Davis <ddavis@anaconda.com>")
+            (gcc nil)
+            (body "")
+            (name "Doug Davis")
+            (eval (setq message-send-mail-function 'smtpmail-send-it
+                        smtpmail-default-smtp-sever "imap.gmail.com"
+                        smtpmail-smtp-service 587))
+            ("X-Message-SMTP-Method" "smtp smtp.gmail.com 587 ddavis@anaconda.com")))
           ("dukemail"
            (posting-style
             (name "Doug Davis")
