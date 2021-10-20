@@ -42,6 +42,13 @@
 ;; for native comp branch
 (defconst dd/using-native-comp (and (fboundp 'native-comp-available-p)
                                     (native-comp-available-p)))
+
+(defvar native-comp-async-query-on-exit)
+(defvar native-comp-async-jobs-number)
+(defvar native-comp-async-report-warnings-errors)
+(defvar native-comp-deferred-compilation-deny-list)
+(defvar native-comp-deferred-compilation)
+
 (setq native-comp-async-query-on-exit t)
 (setq native-comp-async-jobs-number 4)
 (setq native-comp-async-report-warnings-errors nil)
@@ -181,13 +188,6 @@
   "Byte-compile site-lisp in dot-emacs repository."
   (interactive)
   (byte-recompile-directory "~/.emacs.d/dot-emacs/site-lisp" 0 t))
-
-(defun dd/compile-non-built-ins ()
-  "Byte-compile non built-in Lisp code."
-  (interactive)
-  (dd/compile-local-site-lisp)
-  (when (boundp 'dd/mu4e-dir)
-    (dd/mu4e-byte-comp)))
 
 (defun dd/copy-lines-matching-re (re)
   "Put lines matching RE in a buffer named *matching*."
@@ -386,7 +386,8 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (require 'package)
 (setq package-archives
-      '(("melpa" . "https://melpa.org/packages/")
+      '(("nongnu" . "https://elpa.nongnu.org/nongnu/")
+        ("melpa" . "https://melpa.org/packages/")
         ("gnu" . "https://elpa.gnu.org/packages/")))
 (package-initialize)
 
@@ -561,28 +562,28 @@ Taken from post: https://zck.me/emacs-move-file"
   (when dd/on-mac-p
     (bind-key "<A-down>" 'org-move-subtree-down org-mode-map)
     (bind-key "<A-up>" 'org-move-subtree-up org-mode-map)
-    (bind-key "<A-left>" 'org-promote-subtree)
-    (bind-key "<A-right>" 'org-demote-subtree))
+    (bind-key "<A-left>" 'org-promote-subtree org-mode-map)
+    (bind-key "<A-right>" 'org-demote-subtree org-mode-map))
   (unless dd/on-mac-p
     (bind-key "<s-down>" 'org-move-subtree-down org-mode-map)
     (bind-key "<s-up>" 'org-move-subtree-up org-mode-map)
-    (bind-key "<s-left>" 'org-promote-subtree)
-    (bind-key "<s-right>" 'org-demote-subtree)))
+    (bind-key "<s-left>" 'org-promote-subtree org-mode-map)
+    (bind-key "<s-right>" 'org-demote-subtree org-mode-map)))
 
 (use-package outline
   :mode ("NEWS\\'" . outline-mode))
 
 (use-package python
-  :mode ("\\.py\\'" . python-mode)
   :bind (:map python-mode-map
               ("C-c C-a" . dd/py-auto-lsp))
   :init
-  (setq python-shell-interpreter "python3")
   (setq python-font-lock-keywords '(python-font-lock-keywords-level-1
                                     python-font-lock-keywords-level-1
                                     python-font-lock-keywords-level-2))
   (setq python-indent-guess-indent-offset nil)
   :config
+  (setq python-shell-interpreter "ipython")
+  (setq python-shell-interpreter-args "-i --simple-prompt")
   (defvar pyvenv-virtual-env)
   (defun dd/run-python ()
     "Intelligently run a Python shell."
@@ -617,7 +618,39 @@ Taken from post: https://zck.me/emacs-move-file"
           (lsp)
         (progn
           (call-interactively #'pyvenv-workon)
-          (lsp))))))
+          (lsp)))))
+
+  (defun dd/print-python-expression-in-repl ()
+    "Implying the first statement of the line is actually an expression.
+  Prints the value at the REPL."
+    (interactive)
+    (let ((initial-point (point)))
+      ;; mark expression at point
+      (beginning-of-line)
+      (set-mark (point))
+      (python-nav-end-of-statement)
+
+      ;; print marked expression in python shell
+      (let* ((region-start (min (+ 1 (point)) (point-max)))
+             (expr (string-trim-right
+                    (buffer-substring-no-properties region-start (mark)))))
+        (python-shell-send-string
+         (format "print(); print('=> %s'); print(%s, end='')" expr expr)))
+
+      (deactivate-mark)
+      (goto-char initial-point)))
+
+  (defun dd/print-python-object-fields-in-repl ()
+    "Sends word at point to IPython REPL
+  Uses the `ppretty' function defined in ipython_config; lists the
+  object's non-method fields and their respective current values."
+    (interactive)
+    (let ((word (word-at-point)))
+      (python-shell-send-string
+       (format "print(); print('=> %s'); ppretty(%s)" word word))))
+
+  (bind-key "C-c C-o" #'dd/print-python-object-fields-in-repl python-mode-map)
+  (bind-key "C-c C-k" #'dd/print-python-expression-in-repl python-mode-map))
 
 (use-package paren
   :init
@@ -1031,11 +1064,8 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (use-package marginalia
   :ensure t
-  :demand t
-  :config
-  (marginalia-mode +1)
-  (setq marginalia-annotators '(marginalia-annotators-heavy
-                                marginalia-annotators-light)))
+  :init
+  (marginalia-mode))
 
 (use-package markdown-mode
   :ensure t
@@ -1334,11 +1364,11 @@ Taken from post: https://zck.me/emacs-move-file"
     "Setup local clone of tree-sitter."
     (interactive)
     (use-package tree-sitter
-      :load-path "/Users/ddavis/software/repos/emacs-tree-sitter/lisp"
+      :load-path "/Users/ddavis/software/repos/elisp-tree-sitter/lisp"
       :init
-      (add-to-list 'load-path "/Users/ddavis/software/repos/emacs-tree-sitter/core")
+      (add-to-list 'load-path "/Users/ddavis/software/repos/elisp-tree-sitter/core")
       :config
-      (add-to-list 'load-path "/Users/ddavis/software/repos/emacs-tree-sitter/langs")
+      (add-to-list 'load-path "/Users/ddavis/software/repos/elisp-tree-sitter/langs")
       (require 'tree-sitter)
       (require 'tree-sitter-langs)
       (tree-sitter-require 'python)
