@@ -1111,6 +1111,9 @@ Taken from post: https://zck.me/emacs-move-file"
 ;;       (setq pdf-view-use-scaling t)
 ;;       (setq pdf-view-use-imagemagick nil))))
 
+(use-package posframe
+  :ensure t)
+
 (use-package projectile
   :ensure t
   :demand t
@@ -1255,6 +1258,13 @@ Taken from post: https://zck.me/emacs-move-file"
   (setq minibuffer-prompt-properties
         '(read-only t cursor-intangible t face minibuffer-prompt))
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode))
+
+(when window-system
+  (use-package vertico-posframe
+    :ensure t
+    :demand t
+    :config
+    (vertico-posframe-mode +1)))
 
 (use-package visual-fill-column
   :ensure t)
