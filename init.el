@@ -1133,6 +1133,9 @@ Taken from post: https://zck.me/emacs-move-file"
         projectile-enable-caching nil)
   (projectile-mode +1))
 
+(use-package python-isort
+  :ensure t)
+
 (use-package pyvenv
   :ensure t
   :init
