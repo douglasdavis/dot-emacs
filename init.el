@@ -1111,8 +1111,9 @@ Taken from post: https://zck.me/emacs-move-file"
 ;;       (setq pdf-view-use-scaling t)
 ;;       (setq pdf-view-use-imagemagick nil))))
 
-(use-package posframe
-  :ensure t)
+(when window-system
+  (use-package posframe
+    :ensure t))
 
 (use-package projectile
   :ensure t
