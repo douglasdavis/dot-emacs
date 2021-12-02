@@ -172,7 +172,9 @@
     (set-face-attribute 'default nil
                         :family "MonoLisa"
                         :weight 'regular
-                        :height 130)))
+                        :height 130))
+  (set-face-attribute 'mode-line-active nil :family "MonoLisa")
+  (set-face-attribute 'fixed-pitch nil :family "MonoLisa"))
 
 (dd/reset-font)
 (when (or dd/on-strange-p dd/on-cc7-p)
@@ -1111,9 +1113,9 @@ Taken from post: https://zck.me/emacs-move-file"
 ;;       (setq pdf-view-use-scaling t)
 ;;       (setq pdf-view-use-imagemagick nil))))
 
-(when window-system
-  (use-package posframe
-    :ensure t))
+;; (when window-system
+;;   (use-package posframe
+;;     :ensure t))
 
 (use-package projectile
   :ensure t
@@ -1263,12 +1265,12 @@ Taken from post: https://zck.me/emacs-move-file"
         '(read-only t cursor-intangible t face minibuffer-prompt))
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode))
 
-(when window-system
-  (use-package vertico-posframe
-    :ensure t
-    :demand t
-    :config
-    (vertico-posframe-mode +1)))
+;; (when window-system
+;;   (use-package vertico-posframe
+;;     :ensure t
+;;     :demand t
+;;     :config
+;;     (vertico-posframe-mode +1)))
 
 (use-package visual-fill-column
   :ensure t)
