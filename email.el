@@ -191,46 +191,28 @@
   (setq mu4e-bookmarks '())
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
-                :name "Unread short"
-                :query "flag:unread and (m:/duke* or m:/cern* or m:/fastmail/INBOX)"
-                :key ?U))
-  (add-to-list 'mu4e-bookmarks
-               (make-mu4e-bookmark
                 :name "Unread all"
                 :query "flag:unread AND NOT flag:trashed"
                 :key ?u))
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
-                :name "Recent personal"
-                :query "date:1w..now AND m:/fastmail*"
-                :key ?f))
+                :name "Personal recent"
+                :query "date:10d..now AND m:/fastmail*"
+                :key ?p))
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
-                :name "INBOXes"
+                :name "Inboxes"
                 :query "m:/duke/INBOX or m:/cern/INBOX or m:/fastmail/INBOX"
                 :key ?i))
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
-                :name "Last day's work"
-                :query (concat "date:1d..now "
-                               "and not m:/fastmail* "
-                               "and not m:/cern/Mailing\\ Lists/CERN-JIRA "
-                               "and not m:/cern/Mailing\\ Lists/JEDI*")
-                :key ?w))
-  (add-to-list 'mu4e-bookmarks
-               (make-mu4e-bookmark
-                :name "Recent work"
-                :query "date:3d..now AND NOT m:/fastmail* "
-                :key ?r))
-  (add-to-list 'mu4e-bookmarks
-               (make-mu4e-bookmark
                 :name "Duke recent"
-                :query "date:5d..now AND m:/duke*"
+                :query "date:10d..now AND m:/duke*"
                 :key ?d))
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
-                :name "CERN recent"
-                :query "date:2d..now AND m:/cern*"
+                :name "CERN mail"
+                :query "m:/cern*"
                 :key ?c))
   (add-to-list 'mu4e-bookmarks
                (make-mu4e-bookmark
@@ -247,6 +229,5 @@
                 :name "Last 7 days"
                 :query "date:1w..now"
                 :key ?7)))
-
 
 ;;; end of email.el
