@@ -173,7 +173,10 @@
                         :family "MonoLisa"
                         :weight 'regular
                         :height 130))
-  (set-face-attribute 'mode-line-active nil :family "MonoLisa")
+  (when (boundp 'mode-line-active)
+    (set-face-attribute 'mode-line-active nil :family "MonoLisa"))
+  (when (boundp 'mode-line-inactive)
+    (set-face-attribute 'mode-line-inactive nil :family "MonoLisa"))
   (set-face-attribute 'fixed-pitch nil :family "MonoLisa"))
 
 (dd/reset-font)
