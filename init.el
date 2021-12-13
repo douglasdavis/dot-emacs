@@ -173,9 +173,9 @@
                         :family "MonoLisa"
                         :weight 'regular
                         :height 130))
-  (when (boundp 'mode-line-active)
-    (set-face-attribute 'mode-line-active nil :family "MonoLisa"))
-  (when (boundp 'mode-line-inactive)
+
+  (when (version<= "29" emacs-version)
+    (set-face-attribute 'mode-line-active nil :family "MonoLisa")
     (set-face-attribute 'mode-line-inactive nil :family "MonoLisa"))
   (set-face-attribute 'fixed-pitch nil :family "MonoLisa"))
 
