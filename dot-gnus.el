@@ -12,14 +12,14 @@
                   (nnimap-address "imap.fastmail.com")
                   (nnimap-stream ssl)
                   (nnimap-authinfo-file "~/.emacs.d/.authinfo.gpg"))
+          ;; (nnimap "dukemail"
+          ;;         (nnimap-address "mail.phy.duke.edu")
+          ;;         (nnimap-stream ssl)
+          ;;         (nnimap-authinfo-file "~/.emacs.d/.authinfo.gpg"))
           (nnimap "anaconda"
                   (nnimap-address "imap.gmail.com")
                   (nnimap-stream ssl)
                   (nnimap-server-port "imaps")
-                  (nnimap-authinfo-file "~/.emacs.d/.authinfo.gpg"))
-          (nnimap "dukemail"
-                  (nnimap-address "mail.phy.duke.edu")
-                  (nnimap-stream ssl)
                   (nnimap-authinfo-file "~/.emacs.d/.authinfo.gpg"))))
   (setq gnus-message-archive-group "nnimap+fastmail:Sent")
 
@@ -50,6 +50,15 @@
             (eval (setq mail-host-address "dougandkristiebecome.one"
                         message-sendmail-extra-arguments '("--read-envelope-from")))
             (user-mail-address "us@dougandkristiebecome.one")))
+          ;; ("dukemail"
+          ;;  (posting-style
+          ;;   (name "Doug Davis")
+          ;;   (address "ddavis@phy.duke.edu")
+          ;;   (body "")
+          ;;   (gcc "nnimap+dukemail:Sent")
+          ;;   (eval (setq mail-host-address "phy.duke.edu"
+          ;;               message-sendmail-extra-arguments '("--read-envelope-from")))
+          ;;   (user-mail-address "ddavis@phy.duke.edu")))))
           ("anaconda"
            (posting-style
             (address "Doug Davis <ddavis@anaconda.com>")
@@ -59,16 +68,7 @@
             (eval (setq message-send-mail-function 'smtpmail-send-it
                         smtpmail-default-smtp-sever "imap.gmail.com"
                         smtpmail-smtp-service 587))
-            ("X-Message-SMTP-Method" "smtp smtp.gmail.com 587 ddavis@anaconda.com")))
-          ("dukemail"
-           (posting-style
-            (name "Doug Davis")
-            (address "ddavis@phy.duke.edu")
-            (body "")
-            (gcc "nnimap+dukemail:Sent")
-            (eval (setq mail-host-address "phy.duke.edu"
-                        message-sendmail-extra-arguments '("--read-envelope-from")))
-            (user-mail-address "ddavis@phy.duke.edu")))))
+            ("X-Message-SMTP-Method" "smtp smtp.gmail.com 587 ddavis@anaconda.com")))))
 
   ;; keys
   ;; (define-key gnus-group-mode-map (kbd "q") 'quit-window)

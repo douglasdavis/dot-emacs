@@ -175,8 +175,9 @@
                         :height 130))
 
   (when (version<= "29" emacs-version)
-    (set-face-attribute 'mode-line-active nil :family "MonoLisa")
-    (set-face-attribute 'mode-line-inactive nil :family "MonoLisa"))
+    (set-face-attribute 'variable-pitch nil :family "MonoLisa"))
+    ;; (set-face-attribute 'mode-line-active nil :family "MonoLisa")
+    ;; (set-face-attribute 'mode-line-inactive nil :family "MonoLisa"))
   (set-face-attribute 'fixed-pitch nil :family "MonoLisa"))
 
 (dd/reset-font)
@@ -1244,7 +1245,7 @@ Taken from post: https://zck.me/emacs-move-file"
 ;; (when dd/use-pdf-tools-p
 ;;   (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))))
 
-(unless (or dd/on-m1-p dd/on-cc7-p)
+(unless dd/on-cc7-p
   (use-package tree-sitter
     :ensure t
     :hook (python-mode-hook . tree-sitter-hl-mode))
