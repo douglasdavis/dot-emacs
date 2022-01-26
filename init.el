@@ -1036,7 +1036,8 @@ Taken from post: https://zck.me/emacs-move-file"
     (setq lsp-pylsp-plugins-flake8-enabled (not lsp-pylsp-plugins-flake8-enabled))))
 
 (use-package lsp-treemacs
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package lsp-ui
   :ensure t
