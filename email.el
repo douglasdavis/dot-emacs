@@ -147,14 +147,14 @@
              :match-func (lambda (msg)
                            (when msg
                              (string-match-p "^/cern" (mu4e-message-field msg :maildir))))
-             :vars '( ( user-mail-address      . "ddavis@cern.ch" )
-                      ( user-email-address     . "ddavis@cern.ch" )
-                      ( mail-host-address      . "cern.ch" )
-                      ( user-full-name         . "Doug Davis" )
-                      ( mu4e-trash-folder      . "/cern/Trash" )
-                      ( mu4e-sent-folder       . "/cern/Sent" )
-                      ( mu4e-drafts-folder     . "/cern/Drafts" )
-                      ( mu4e-reply-to-address  . "ddavis@cern.ch" )))
+             :vars '((user-mail-address      . "ddavis@cern.ch")
+                     (user-email-address     . "ddavis@cern.ch")
+                     (mail-host-address      . "cern.ch")
+                     (user-full-name         . "Doug Davis")
+                     (mu4e-trash-folder      . "/cern/Trash")
+                     (mu4e-sent-folder       . "/cern/Sent")
+                     (mu4e-drafts-folder     . "/cern/Drafts")
+                     (mu4e-reply-to-address  . "ddavis@cern.ch")))
 
            ,(make-mu4e-context
              :name "duke"
@@ -163,14 +163,14 @@
              :match-func (lambda (msg)
                            (when msg
                              (string-match-p "^/duke" (mu4e-message-field msg :maildir))))
-             :vars '( ( user-mail-address       . "ddavis@phy.duke.edu" )
-                      ( user-email-address      . "ddavis@phy.duke.edu" )
-                      ( user-full-name          . "Doug Davis" )
-                      ( mail-host-address       . "phy.duke.edu" )
-                      ( mu4e-trash-folder       . "/duke/Trash" )
-                      ( mu4e-sent-folder        . "/duke/Sent" )
-                      ( mu4e-drafts-folder      . "/duke/Drafts" )
-                      ( mu4e-reply-to-address   . "ddavis@phy.duke.edu" )))))
+             :vars '((user-mail-address       . "ddavis@phy.duke.edu")
+                     (user-email-address      . "ddavis@phy.duke.edu")
+                     (user-full-name          . "Doug Davis")
+                     (mail-host-address       . "phy.duke.edu")
+                     (mu4e-trash-folder       . "/duke/Trash")
+                     (mu4e-sent-folder        . "/duke/Sent")
+                     (mu4e-drafts-folder      . "/duke/Drafts")
+                     (mu4e-reply-to-address   . "ddavis@phy.duke.edu")))))
   (when (or dd/on-mac-p dd/on-cc7-p)
     (add-to-list 'mu4e-contexts
                  (make-mu4e-context
@@ -180,54 +180,41 @@
                   :match-func (lambda (msg)
                                 (when msg
                                   (string-match-p "^/fastmail" (mu4e-message-field msg :maildir))))
-                  :vars '( ( user-mail-address      . "ddavis@ddavis.io" )
-                           ( user-email-address     . "ddavis@ddavis.io" )
-                           ( user-full-name         . "Doug Davis" )
-                           ( mail-host-address      . "ddavis.io" )
-                           ( mu4e-trash-folder      . "/fastmail/Trash" )
-                           ( mu4e-sent-folder       . "/fastmail/Sent" )
-                           ( mu4e-drafts-folder     . "/fastmail/Drafts" )
-                           ( mu4e-reply-to-address  . "ddavis@ddavis.io" )))))
-  (setq mu4e-bookmarks '())
-  (add-to-list 'mu4e-bookmarks
-               (make-mu4e-bookmark
-                :name "Unread all"
-                :query "flag:unread AND NOT flag:trashed"
-                :key ?u))
-  (add-to-list 'mu4e-bookmarks
-               (make-mu4e-bookmark
-                :name "Personal recent"
-                :query "date:10d..now AND m:/fastmail*"
-                :key ?p))
-  (add-to-list 'mu4e-bookmarks
-               (make-mu4e-bookmark
-                :name "Inboxes"
-                :query "m:/duke/INBOX or m:/cern/INBOX or m:/fastmail/INBOX"
-                :key ?i))
-  (add-to-list 'mu4e-bookmarks
-               (make-mu4e-bookmark
-                :name "Duke recent"
-                :query "date:10d..now AND m:/duke*"
-                :key ?d))
-  (add-to-list 'mu4e-bookmarks
-               (make-mu4e-bookmark
-                :name "CERN mail"
-                :query "m:/cern*"
-                :key ?c))
-  (add-to-list 'mu4e-bookmarks
-               (make-mu4e-bookmark
-                :name "Last 1 day"
-                :query "date:1d..now"
-                :key ?1))
-  (add-to-list 'mu4e-bookmarks
-               (make-mu4e-bookmark
-                :name "Last 3 days"
-                :query "date:3d..now"
-                :key ?3))
-  (add-to-list 'mu4e-bookmarks
-               (make-mu4e-bookmark
-                :name "Last 7 days"
-                :query "date:1w..now"
-                :key ?7)))
+                  :vars '((user-mail-address      . "ddavis@ddavis.io")
+                          (user-email-address     . "ddavis@ddavis.io")
+                          (user-full-name         . "Doug Davis")
+                          (mail-host-address      . "ddavis.io")
+                          (mu4e-trash-folder      . "/fastmail/Trash")
+                          (mu4e-sent-folder       . "/fastmail/Sent")
+                          (mu4e-drafts-folder     . "/fastmail/Drafts")
+                          (mu4e-reply-to-address  . "ddavis@ddavis.io")))))
+  (setq mu4e-bookmarks (list (make-mu4e-bookmark
+                              :name "Unread all"
+                              :query "flag:unread AND NOT flag:trashed"
+                              :key ?u)
+                             (make-mu4e-bookmark
+                              :name "Personal recent"
+                              :query "date:10d..now AND m:/fastmail*"
+                              :key ?p)
+                             (make-mu4e-bookmark
+                              :name "Last 1 day"
+                              :query "date:1d..now"
+                              :key ?1)
+                             (make-mu4e-bookmark
+                              :name "Last 3 days"
+                              :query "date:3d..now"
+                              :key ?3)
+                             (make-mu4e-bookmark
+                              :name "Last 7 days"
+                              :query "date:1w..now"
+                              :key ?7)
+                             (make-mu4e-bookmark
+                              :name "Duke"
+                              :query "m:/duke*"
+                              :key ?d)
+                             (make-mu4e-bookmark
+                              :name "CERN"
+                              :query "m:/cern*"
+                              :key ?c))))
 
 ;;; end of email.el
