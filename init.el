@@ -1,6 +1,6 @@
 ;;; init.el --- Emacs init.el                        -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2020, 2021 Doug Davis
+;; Copyright (C) 2020 - 2022 Doug Davis
 
 ;; Author: Doug Davis <ddavis@ddavis.io>
 ;; Keywords: local
