@@ -841,34 +841,34 @@ Taken from post: https://zck.me/emacs-move-file"
 (use-package cmake-mode :ensure t)
 (use-package cmake-font-lock :ensure t)
 
-(make-variable-buffer-local 'company-minimum-prefix-length)
-(make-variable-buffer-local 'company-idle-delay)
-(make-variable-buffer-local 'company-backends)
-(use-package company
-  :ensure t
-  :demand t
-  :bind
-  (:map company-active-map
-        ("TAB" . company-complete-selection)
-        ("<tab>" . company-complete-selection))
-  :config
-  (add-hook 'after-init-hook #'global-company-mode)
-  (setq-default company-backends '(company-capf
-                                   company-files
-                                   company-semantic
-                                   (company-dabbrev company-keywords)))
-  (setq-default company-minimum-prefix-length 2)
-  (setq-default company-idle-delay 0.2)
-  (defun dd/company-prog-mode  ()
-    (setq company-minimum-prefix-length 1
-          company-idle-delay 0.1))
-  (defun dd/company-text-mode ()
-    (setq company-minimum-prefix-length 3
-          company-idle-delay 0.3))
-  (add-hook 'text-mode-hook #'dd/company-text-mode)
-  (add-hook 'prog-mode-hook #'dd/company-prog-mode)
-  (when (version<= "28.0.50" emacs-version)
-    (setq company-format-margin-function #'company-vscode-dark-icons-margin)))
+;; (make-variable-buffer-local 'company-minimum-prefix-length)
+;; (make-variable-buffer-local 'company-idle-delay)
+;; (make-variable-buffer-local 'company-backends)
+;; (use-package company
+;;   :ensure t
+;;   :demand t
+;;   :bind
+;;   (:map company-active-map
+;;         ("TAB" . company-complete-selection)
+;;         ("<tab>" . company-complete-selection))
+;;   :config
+;;   (add-hook 'after-init-hook #'global-company-mode)
+;;   (setq-default company-backends '(company-capf
+;;                                    company-files
+;;                                    company-semantic
+;;                                    (company-dabbrev company-keywords)))
+;;   (setq-default company-minimum-prefix-length 2)
+;;   (setq-default company-idle-delay 0.2)
+;;   (defun dd/company-prog-mode  ()
+;;     (setq company-minimum-prefix-length 1
+;;           company-idle-delay 0.1))
+;;   (defun dd/company-text-mode ()
+;;     (setq company-minimum-prefix-length 3
+;;           company-idle-delay 0.3))
+;;   (add-hook 'text-mode-hook #'dd/company-text-mode)
+;;   (add-hook 'prog-mode-hook #'dd/company-prog-mode)
+;;   (when (version<= "28.0.50" emacs-version)
+;;     (setq company-format-margin-function #'company-vscode-dark-icons-margin)))
 
 (use-package consult
   :ensure t
@@ -884,13 +884,22 @@ Taken from post: https://zck.me/emacs-move-file"
     (let ((consult-find-command "fd --color=never --full-path ARG OPTS"))
       (consult-find dir initial))))
 
-;; (use-package corfu
-;;   :ensure t
-;;   :init
-;;   (setq completion-cycle-threshold 3)
-;;   (setq tab-always-indent 'complete)
-;;   :config
-;;   (corfu-global-mode))
+(use-package cape
+  :ensure t
+  :init
+  (add-to-list 'completion-at-point-functions #'cape-file))
+
+(use-package corfu
+  :ensure t
+  :custom
+  (corfu-cycle t)
+  (corfu-auto t)
+  (corfu-scroll-margin 5)
+  :init
+  ;; (setq completion-cycle-threshold 3)
+  (setq tab-always-indent 'complete)
+  :config
+  (corfu-global-mode))
 
 (use-package crux
   :defer 10
@@ -932,10 +941,6 @@ Taken from post: https://zck.me/emacs-move-file"
 (use-package eglot
   :ensure t
   :commands eglot
-  :init
-  (setq eglot-server-programs
-        `((python-mode "pylsp")
-          ((c++-mode c-mode) ,dd/clangd-exe)))
   :config
   (setq eglot-autoshutdown t))
 
@@ -979,17 +984,17 @@ Taken from post: https://zck.me/emacs-move-file"
   :custom
   (flycheck-emacs-lisp-load-path 'inherit))
 
-(use-package helpful
-  :ensure t
-  :bind (([remap describe-function] . helpful-callable)
-         ([remap describe-variable] . helpful-variable)
-         ([remap describe-key] . helpful-key)
-         ("C-h o" . helpful-symbol)
-         ("C-h ." . helpful-at-point)
-         :map helpful-mode-map
-         ("q" . kill-buffer-and-window))
-  :config
-  (setq helpful-max-highlight 15000))
+;; (use-package helpful
+;;   :ensure t
+;;   :bind (([remap describe-function] . helpful-callable)
+;;          ([remap describe-variable] . helpful-variable)
+;;          ([remap describe-key] . helpful-key)
+;;          ("C-h o" . helpful-symbol)
+;;          ("C-h ." . helpful-at-point)
+;;          :map helpful-mode-map
+;;          ("q" . kill-buffer-and-window))
+;;   :config
+;;   (setq helpful-max-highlight 15000))
 
 (use-package iedit
   :ensure t
@@ -1057,7 +1062,6 @@ Taken from post: https://zck.me/emacs-move-file"
 
 (defun dd/pyright ()
   (interactive)
-  (setq lsp-pyright-typechecking-mode "off")
   (use-package lsp-pyright
     :ensure t))
 
@@ -1179,7 +1183,6 @@ Taken from post: https://zck.me/emacs-move-file"
   :ensure t
   :hook (prog-mode-hook . rainbow-delimiters-mode))
 
-
 (use-package recentf
   :demand t
   :init
@@ -1247,7 +1250,7 @@ Taken from post: https://zck.me/emacs-move-file"
     (setq TeX-parse-self t)
     (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)))
 ;; (when dd/use-pdf-tools-p
-;;   (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))))
+;;   (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))
 
 (unless dd/on-cc7-p
   (use-package tree-sitter
