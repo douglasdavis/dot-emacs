@@ -1150,6 +1150,9 @@ Taken from post: https://zck.me/emacs-move-file"
 (use-package python-isort
   :ensure t)
 
+(use-package python-pytest
+  :ensure t)
+
 (use-package pyvenv
   :ensure t
   :init
