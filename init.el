@@ -580,8 +580,8 @@ Taken from post: https://zck.me/emacs-move-file"
   :mode ("NEWS\\'" . outline-mode))
 
 (use-package python
-  :bind (:map python-mode-map
-              ("C-c C-a" . dd/py-auto-lsp))
+  ;; :bind (:map python-mode-map
+  ;;             ("C-c C-a" . dd/py-auto-lsp))
   :init
   (setq python-font-lock-keywords '(python-font-lock-keywords-level-1
                                     python-font-lock-keywords-level-1
@@ -611,20 +611,20 @@ Taken from post: https://zck.me/emacs-move-file"
           pyvenv-virtual-env
         (pyvenv-deactivate))))
 
-  (defun dd/py-auto-lsp ()
-    "Turn on lsp mode in a Python project with some automated logic.
-  Try to automatically determine which pyenv virtual environment
-  to activate based on the project name, using
-  `dd/py-workon-project-venv'. If successful, call `lsp'. If we
-  cannot determine the virtualenv automatically, first call the
-  interactive `pyvenv-workon' function before `lsp'"
-    (interactive)
-    (let ((pvenv (dd/py-workon-project-venv)))
-      (if pvenv
-          (lsp)
-        (progn
-          (call-interactively #'pyvenv-workon)
-          (lsp)))))
+  ;; (defun dd/py-auto-lsp ()
+  ;;   "Turn on lsp mode in a Python project with some automated logic.
+  ;; Try to automatically determine which pyenv virtual environment
+  ;; to activate based on the project name, using
+  ;; `dd/py-workon-project-venv'. If successful, call `lsp'. If we
+  ;; cannot determine the virtualenv automatically, first call the
+  ;; interactive `pyvenv-workon' function before `lsp'"
+  ;;   (interactive)
+  ;;   (let ((pvenv (dd/py-workon-project-venv)))
+  ;;     (if pvenv
+  ;;         (lsp)
+  ;;       (progn
+  ;;         (call-interactively #'pyvenv-workon)
+  ;;         (lsp)))))
 
   (defun dd/print-python-expression-in-repl ()
     "Implying the first statement of the line is actually an expression.
@@ -1000,70 +1000,70 @@ Taken from post: https://zck.me/emacs-move-file"
   :ensure t
   :bind ("C-c ;" . iedit-mode))
 
-(setq lsp-use-plists t)
+;; (setq lsp-use-plists t)
 
-(use-package lsp-clangd
-  :defer t
-  :init
-  (setq lsp-clients-clangd-executable dd/clangd-exe))
+;; (use-package lsp-clangd
+;;   :defer t
+;;   :init
+;;   (setq lsp-clients-clangd-executable dd/clangd-exe))
 
-(use-package lsp-mode
-  :ensure t
-  :commands lsp
-  :init
-  (setq read-process-output-max (* 10 1024 1024))
-  (setq lsp-keep-workspace-alive nil
-        lsp-auto-guess-root nil
-        lsp-enable-links nil
-        lsp-enable-on-type-formatting nil))
+;; (use-package lsp-mode
+;;   :ensure t
+;;   :commands lsp
+;;   :init
+;;   (setq read-process-output-max (* 10 1024 1024))
+;;   (setq lsp-keep-workspace-alive nil
+;;         lsp-auto-guess-root nil
+;;         lsp-enable-links nil
+;;         lsp-enable-on-type-formatting nil))
 
-(use-package lsp-pylsp
-  :defer t
-  :init
-  (setq lsp-clients-pylsp-library-directories `("/usr"
-                                                ,(expand-file-name "~/.pyenv/versions/")))
-  (setq lsp-pylsp-plugins-pydocstyle-convention "numpy"
-        lsp-pylsp-configuration-sources ["flake8"])
-  (setq lsp-pylsp-plugins-pydocstyle-enabled nil
-        lsp-pylsp-plugins-flake8-enabled t
-        lsp-pylsp-plugins-autopep8-enabled nil
-        lsp-pylsp-plugins-mccabe-enabled nil
-        lsp-pylsp-plugins-pycodestyle-enabled nil
-        lsp-pylsp-plugins-pyflakes-enabled nil
-        lsp-pylsp-plugins-pylint-enabled nil)
-  (defun dd/pylsp-toggle-pydocstyle ()
-    "Toggle pycodestyle for pylsp."
-    (interactive)
-    (setq lsp-pylsp-plugins-pydocstyle-enabled (not lsp-pylsp-plugins-pydocstyle-enabled)))
-  (defun dd/pylsp-toggle-flake8 ()
-    "Toggle pycodestyle for pylsp."
-    (interactive)
-    (setq lsp-pylsp-plugins-flake8-enabled (not lsp-pylsp-plugins-flake8-enabled))))
+;; (use-package lsp-pylsp
+;;   :defer t
+;;   :init
+;;   (setq lsp-clients-pylsp-library-directories `("/usr"
+;;                                                 ,(expand-file-name "~/.pyenv/versions/")))
+;;   (setq lsp-pylsp-plugins-pydocstyle-convention "numpy"
+;;         lsp-pylsp-configuration-sources ["flake8"])
+;;   (setq lsp-pylsp-plugins-pydocstyle-enabled nil
+;;         lsp-pylsp-plugins-flake8-enabled t
+;;         lsp-pylsp-plugins-autopep8-enabled nil
+;;         lsp-pylsp-plugins-mccabe-enabled nil
+;;         lsp-pylsp-plugins-pycodestyle-enabled nil
+;;         lsp-pylsp-plugins-pyflakes-enabled nil
+;;         lsp-pylsp-plugins-pylint-enabled nil)
+;;   (defun dd/pylsp-toggle-pydocstyle ()
+;;     "Toggle pycodestyle for pylsp."
+;;     (interactive)
+;;     (setq lsp-pylsp-plugins-pydocstyle-enabled (not lsp-pylsp-plugins-pydocstyle-enabled)))
+;;   (defun dd/pylsp-toggle-flake8 ()
+;;     "Toggle pycodestyle for pylsp."
+;;     (interactive)
+;;     (setq lsp-pylsp-plugins-flake8-enabled (not lsp-pylsp-plugins-flake8-enabled))))
 
-(use-package lsp-treemacs
-  :ensure t
-  :defer t)
+;; (use-package lsp-treemacs
+;;   :ensure t
+;;   :defer t)
 
-(use-package lsp-ui
-  :ensure t
-  :defer t
-  :init
-  (defun dd/lsp-use-webkit ()
-    "Use webkit lsp ui doc rendering if possible."
-    (interactive)
-    (setq lsp-ui-doc-use-webkit (featurep 'xwidget-internal)))
-  (setq lsp-ui-doc-enable t
-        lsp-ui-doc-include-signature t
-        lsp-ui-doc-position 'at-point
-        lsp-ui-doc-header t
-        lsp-ui-doc-max-height 32
-        lsp-ui-doc-max-width 96
-        lsp-ui-sideline-show-hover nil))
+;; (use-package lsp-ui
+;;   :ensure t
+;;   :defer t
+;;   :init
+;;   (defun dd/lsp-use-webkit ()
+;;     "Use webkit lsp ui doc rendering if possible."
+;;     (interactive)
+;;     (setq lsp-ui-doc-use-webkit (featurep 'xwidget-internal)))
+;;   (setq lsp-ui-doc-enable t
+;;         lsp-ui-doc-include-signature t
+;;         lsp-ui-doc-position 'at-point
+;;         lsp-ui-doc-header t
+;;         lsp-ui-doc-max-height 32
+;;         lsp-ui-doc-max-width 96
+;;         lsp-ui-sideline-show-hover nil))
 
-(defun dd/pyright ()
-  (interactive)
-  (use-package lsp-pyright
-    :ensure t))
+;; (defun dd/pyright ()
+;;   (interactive)
+;;   (use-package lsp-pyright
+;;     :ensure t))
 
 (use-package magit
   :ensure t
