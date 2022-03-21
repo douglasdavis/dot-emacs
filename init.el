@@ -942,6 +942,11 @@ Taken from post: https://zck.me/emacs-move-file"
   :ensure t
   :commands eglot
   :config
+  (add-to-list 'eglot-server-programs
+               `(python-mode
+                 . ,(eglot-alternatives '("pylsp"
+                                          "jedi-language-server"
+                                          ("pyright-langserver" "--stdio")))))
   (setq eglot-autoshutdown t))
 
 (when (version< emacs-version "28")
