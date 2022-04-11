@@ -340,6 +340,22 @@ Taken from post: https://zck.me/emacs-move-file"
      `(company-tooltip      ((t (:background ,(doom-color 'base3)))))
      `(company-scrollbar-bg ((t (:background ,(doom-color 'magenta))))))))
 
+(defun dd/better-defaults ()
+  "Better default cosmetics.
+Taken from an emacs-devel thread."
+  (let ((bg (face-attribute 'mode-line :background)))
+    (set-face-attribute 'mode-line nil
+                        :box (list :line-width 4 :color bg :style nil)))
+
+  (set-face-attribute 'mode-line nil
+                      :height 110
+                      :background "grey88"
+                      :box '(:line-width 4 :color "grey88" :style nil))
+  (set-face-attribute 'mode-line-inactive nil
+                      :height 110
+                      :background "grey95"
+                      :box '(:line-width 4 :color "grey95" :style nil)))
+
 (defun dd/toggle-window-split ()
   "If two windows are present; toggle the split axis."
   (interactive)
