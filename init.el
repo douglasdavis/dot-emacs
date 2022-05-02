@@ -374,15 +374,15 @@ Taken from an emacs-devel thread."
 (with-eval-after-load 'bind-key
   (bind-key* "C-x \\" #'dd/toggle-window-split))
 
-(defun dd/vterm-go ()
-  "Switch to (or create) a general vterm called dd/vterm."
-  (interactive)
-  (delete-other-windows)
-  (if (get-buffer "dd/vterm")
-      (progn
-        (set-buffer "dd/vterm")
-        (switch-to-buffer "dd/vterm"))
-    (vterm "dd/vterm")))
+;; (defun dd/vterm-go ()
+;;   "Switch to (or create) a general vterm called dd/vterm."
+;;   (interactive)
+;;   (delete-other-windows)
+;;   (if (get-buffer "dd/vterm")
+;;       (progn
+;;         (set-buffer "dd/vterm")
+;;         (switch-to-buffer "dd/vterm"))
+;;     (vterm "dd/vterm")))
 
 (defconst dd/llvm-bin-path
   (cond (dd/on-m1-p "/opt/homebrew/opt/llvm/bin")
@@ -1279,7 +1279,8 @@ Taken from an emacs-devel thread."
 (unless dd/on-cc7-p
   (use-package tree-sitter
     :ensure t
-    :hook (python-mode-hook . tree-sitter-hl-mode))
+    :hook ((python-mode-hook . tree-sitter-hl-mode)
+           (c-mode-common-hook . tree-sitter-hl-mode)))
   (use-package tree-sitter-langs
     :ensure t))
 
@@ -1310,10 +1311,10 @@ Taken from an emacs-devel thread."
 (use-package visual-fill-column
   :ensure t)
 
-(use-package vterm
-  :ensure t
-  :defer t
-  :hook (vterm-mode-hook . (lambda () (display-line-numbers-mode -1))))
+;; (use-package vterm
+;;   :ensure t
+;;   :defer t
+;;   :hook (vterm-mode-hook . (lambda () (display-line-numbers-mode -1))))
 
 (use-package w3m
   :ensure t
