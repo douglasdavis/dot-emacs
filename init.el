@@ -616,16 +616,16 @@ Taken from an emacs-devel thread."
         (call-interactively #'pyvenv-workon)
         (run-python))))
 
-  (defun dd/py-workon-project-venv ()
-    "Call pyenv-workon with the current projectile project name.
-  This will return the full path of the associated virtual
-  environment found in $WORKON_HOME, or nil if the environment
-  does not exist."
-    (let ((pname (projectile-project-name)))
-      (pyvenv-workon pname)
-      (if (file-directory-p pyvenv-virtual-env)
-          pyvenv-virtual-env
-        (pyvenv-deactivate))))
+  ;; (defun dd/py-workon-project-venv ()
+  ;;   "Call pyenv-workon with the current projectile project name.
+  ;; This will return the full path of the associated virtual
+  ;; environment found in $WORKON_HOME, or nil if the environment
+  ;; does not exist."
+  ;;   (let ((pname (projectile-project-name)))
+  ;;     (pyvenv-workon pname)
+  ;;     (if (file-directory-p pyvenv-virtual-env)
+  ;;         pyvenv-virtual-env
+  ;;       (pyvenv-deactivate))))
 
   ;; (defun dd/py-auto-lsp ()
   ;;   "Turn on lsp mode in a Python project with some automated logic.
@@ -679,9 +679,8 @@ Taken from an emacs-devel thread."
   (show-paren-mode 1)
   (setq-default show-paren-delay 0))
 
-(if (< emacs-major-version 28)
-    (use-package project :ensure t)
-  (use-package project))
+(use-package project
+  :demand t)
 
 (use-package prog-mode
   :config
@@ -893,7 +892,7 @@ Taken from an emacs-devel thread."
          ("C-x b" . consult-buffer))
   :config
   (setq consult-preview-key 'nil)
-  (autoload 'projectile-project-root "projectile")
+  ;; (autoload 'projectile-project-root "projectile")
   (setq consult-project-root-function #'projectile-project-root)
   (defun find-fd (&optional dir initial)
     (interactive "P")
@@ -915,7 +914,7 @@ Taken from an emacs-devel thread."
   ;; (setq completion-cycle-threshold 3)
   (setq tab-always-indent 'complete)
   :config
-  (corfu-global-mode))
+  (global-corfu-mode +1))
 
 (use-package crux
   :defer 10
@@ -1150,23 +1149,23 @@ Taken from an emacs-devel thread."
 ;;   (use-package posframe
 ;;     :ensure t))
 
-(use-package projectile
-  :ensure t
-  :demand t
-  :bind-keymap ("C-c p" . projectile-command-map)
-  :bind (:map projectile-command-map
-              ("r" . dd/ripgrep-proj-or-dir)
-              ("g" . consult-ripgrep))
-  :config
-  (setq projectile-ignored-project-function 'file-remote-p)
-  (setq projectile-track-known-projects-automatically t
-        projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
-        projectile-globally-ignored-directories '(".git" "__pycache__")
-        projectile-globally-ignored-files '(".DS_Store")
-        projectile-ignored-projects '("/opt/homebrew/"
-                                      "/usr/local/Homebrew/")
-        projectile-enable-caching nil)
-  (projectile-mode +1))
+;; (use-package projectile
+;;   :ensure t
+;;   :demand t
+;;   :bind-keymap ("C-c p" . projectile-command-map)
+;;   :bind (:map projectile-command-map
+;;               ("r" . dd/ripgrep-proj-or-dir)
+;;               ("g" . consult-ripgrep))
+;;   :config
+;;   (setq projectile-ignored-project-function 'file-remote-p)
+;;   (setq projectile-track-known-projects-automatically t
+;;         projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
+;;         projectile-globally-ignored-directories '(".git" "__pycache__")
+;;         projectile-globally-ignored-files '(".DS_Store")
+;;         projectile-ignored-projects '("/opt/homebrew/"
+;;                                       "/usr/local/Homebrew/")
+;;         projectile-enable-caching nil)
+;;   (projectile-mode +1))
 
 (use-package python-isort
   :ensure t)
@@ -1223,18 +1222,18 @@ Taken from an emacs-devel thread."
   :after wgrep
   :init
   (setq rg-group-result t
-        rg-hide-command t)
-  :config
-  (rg-define-search dd/ripgrep-proj-or-dir
-    :query ask
-    :format regexp
-    :files "everything"
-    :dir (let ((proj (projectile-project-root)))
-           (if proj
-               proj
-             default-directory))
-    :confirm prefix
-    :flags ("--hidden -g !.git")))
+        rg-hide-command t))
+  ;; :config
+  ;; (rg-define-search dd/ripgrep-proj-or-dir
+  ;;   :query ask
+  ;;   :format regexp
+  ;;   :files "everything"
+  ;;   :dir (let ((proj (projectile-project-root)))
+  ;;          (if proj
+  ;;              proj
+  ;;            default-directory))
+  ;;   :confirm prefix
+  ;;   :flags ("--hidden -g !.git")))
 
 ;; (use-package selectrum
 ;;   :ensure t
@@ -1372,7 +1371,7 @@ Taken from an emacs-devel thread."
   (bind-key* "s-2" #'split-window-below)
   (bind-key* "s-3" #'split-window-right)
   (bind-key* "s-4" #'mu4e)
-  (bind-key* "s-5" #'projectile-find-file-in-known-projects)
+  ;; (bind-key* "s-5" #'projectile-find-file-in-known-projects)
   (bind-key* "s-d" #'dd/kill-theme)
   (bind-key* "s-e" #'gnus)
   (bind-key* "s-f" #'find-file)
@@ -1385,7 +1384,8 @@ Taken from an emacs-devel thread."
   (bind-key* "s-k" #'kill-current-buffer)
   (bind-key* "s-n" #'make-frame)
   (bind-key* "s-o" #'other-window)
-  (bind-key* "s-p" #'projectile-command-map)
+  ;; (bind-key* "s-p" #'projectile-command-map)
+  (bind-key* "s-p" project-prefix-map)
   (bind-key* "s-q" #'save-buffers-kill-terminal)
   (bind-key* "s-r" #'consult-ripgrep)
   (bind-key* "s-s" #'save-buffer)
