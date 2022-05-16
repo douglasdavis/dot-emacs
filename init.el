@@ -599,9 +599,9 @@ Taken from an emacs-devel thread."
   ;; :bind (:map python-mode-map
   ;;             ("C-c C-a" . dd/py-auto-lsp))
   :init
-  (setq python-font-lock-keywords '(python-font-lock-keywords-level-1
-                                    python-font-lock-keywords-level-1
-                                    python-font-lock-keywords-level-2))
+  ;; (setq python-font-lock-keywords '(python-font-lock-keywords-level-1
+  ;;                                   python-font-lock-keywords-level-1
+  ;;                                   python-font-lock-keywords-level-2))
   (setq python-indent-guess-indent-offset nil)
   :config
   (setq python-shell-interpreter "ipython")
@@ -1410,21 +1410,6 @@ Taken from an emacs-devel thread."
 
 ;; sec08:
 ;; misc
-
-(when dd/on-m1-p
-  (defun dd/pyts ()
-    "Setup local clone of tree-sitter."
-    (interactive)
-    (use-package tree-sitter
-      :load-path "/Users/ddavis/software/repos/elisp-tree-sitter/lisp"
-      :init
-      (add-to-list 'load-path "/Users/ddavis/software/repos/elisp-tree-sitter/core")
-      :config
-      (add-to-list 'load-path "/Users/ddavis/software/repos/elisp-tree-sitter/langs")
-      (require 'tree-sitter)
-      (require 'tree-sitter-langs)
-      (tree-sitter-require 'python)
-      (add-hook 'python-mode-hook 'tree-sitter-hl-mode))))
 
 ;; the end
 
