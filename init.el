@@ -752,6 +752,9 @@ Taken from an emacs-devel thread."
   :ensure t
   :hook (dired-mode-hook . all-the-icons-dired-mode))
 
+(use-package apheleia
+  :ensure t)
+
 (use-package auto-compile
   :ensure t
   :defer t
@@ -1168,7 +1171,9 @@ Taken from an emacs-devel thread."
 ;;   (projectile-mode +1))
 
 (use-package python-isort
-  :ensure t)
+  :ensure t
+  :bind (:map python-mode-map
+              ("C-c C-i" . python-isort-buffer)))
 
 (use-package python-pytest
   :ensure t)

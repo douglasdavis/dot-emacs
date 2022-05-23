@@ -189,8 +189,8 @@
                           (mu4e-drafts-folder     . "/fastmail/Drafts")
                           (mu4e-reply-to-address  . "ddavis@ddavis.io")))))
   (setq mu4e-bookmarks (list (make-mu4e-bookmark
-                              :name "Unread all"
-                              :query "flag:unread AND NOT flag:trashed"
+                              :name "Unread"
+                              :query "flag:unread AND NOT flag:trashed AND NOT m:/cern*"
                               :key ?u)
                              (make-mu4e-bookmark
                               :name "Personal recent"
