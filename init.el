@@ -753,7 +753,8 @@ Taken from an emacs-devel thread."
   :hook (dired-mode-hook . all-the-icons-dired-mode))
 
 (use-package apheleia
-  :ensure t)
+  :ensure t
+  :hook (python-mode-hook . apheleia-mode))
 
 (use-package auto-compile
   :ensure t
@@ -1171,9 +1172,7 @@ Taken from an emacs-devel thread."
 ;;   (projectile-mode +1))
 
 (use-package python-isort
-  :ensure t
-  :bind (:map python-mode-map
-              ("C-c C-i" . python-isort-buffer)))
+  :ensure t)
 
 (use-package python-pytest
   :ensure t)
@@ -1423,3 +1422,11 @@ Taken from an emacs-devel thread."
 
 (provide 'init)
 ;;; init.el ends here
+
+
+(defun dask-awkward ()
+  (interactive)
+  (pyvenv-workon "dask-dev")
+  (find-file "~/software/repos/dask-awkward/")
+  (add-hook 'python-mode-hook 'python-isort-on-save-mode)
+  (project-find-file))
