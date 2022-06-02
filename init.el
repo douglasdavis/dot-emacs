@@ -920,6 +920,10 @@ Taken from an emacs-devel thread."
   :config
   (global-corfu-mode +1))
 
+(use-package corfu-terminal
+  :ensure t
+  :defer t)
+
 (use-package crux
   :defer 10
   :ensure t)
@@ -1239,6 +1243,9 @@ Taken from an emacs-devel thread."
   ;;   :confirm prefix
   ;;   :flags ("--hidden -g !.git")))
 
+(use-package rust-mode
+  :ensure t)
+
 ;; (use-package selectrum
 ;;   :ensure t
 ;;   :demand t
@@ -1283,6 +1290,7 @@ Taken from an emacs-devel thread."
   (use-package tree-sitter
     :ensure t
     :hook ((python-mode-hook . tree-sitter-hl-mode)
+           (rust-mode-hook . tree-sitter-hl-mode)
            (c-mode-common-hook . tree-sitter-hl-mode)))
   (use-package tree-sitter-langs
     :ensure t))
