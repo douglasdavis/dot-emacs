@@ -955,11 +955,11 @@ Taken from an emacs-devel thread."
   :config
   (dd/theme-cycler))
 
-(use-package doom-modeline
-  :ensure t
-  :demand t
-  :config
-  (doom-modeline-mode +1))
+;; (use-package doom-modeline
+;;   :ensure t
+;;   :demand t
+;;   :config
+;;   (doom-modeline-mode +1))
 
 (use-package eglot
   :ensure t
@@ -1006,11 +1006,11 @@ Taken from an emacs-devel thread."
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
 
-(use-package flycheck
-  :ensure t
-  :defer t
-  :custom
-  (flycheck-emacs-lisp-load-path 'inherit))
+;; (use-package flycheck
+;;   :ensure t
+;;   :defer t
+;;   :custom
+;;   (flycheck-emacs-lisp-load-path 'inherit))
 
 ;; (use-package helpful
 ;;   :ensure t
@@ -1076,10 +1076,6 @@ Taken from an emacs-devel thread."
 ;;   :ensure t
 ;;   :defer t
 ;;   :init
-;;   (defun dd/lsp-use-webkit ()
-;;     "Use webkit lsp ui doc rendering if possible."
-;;     (interactive)
-;;     (setq lsp-ui-doc-use-webkit (featurep 'xwidget-internal)))
 ;;   (setq lsp-ui-doc-enable t
 ;;         lsp-ui-doc-include-signature t
 ;;         lsp-ui-doc-position 'at-point
