@@ -48,15 +48,15 @@
   :demand t)
 
 (defconst dd/mu-exe
-  (cond (dd/on-m1-p "/opt/homebrew/Cellar/mu/1.6.11/bin/mu")
+  (cond (dd/on-m1-p "/opt/homebrew/Cellar/mu/1.8.3/bin/mu")
         (dd/on-cc7-p "/home/ddavis/software/specific/mu/1.4.15/bin/mu")
         (t (executable-find "mu")))
   "Machine dependent mu executable string.")
 
 (defconst dd/mu4e-dir
-  (cond (dd/on-m1-p "/opt/homebrew/Cellar/mu/1.6.11/share/emacs/site-lisp/mu/mu4e")
+  (cond (dd/on-m1-p "/opt/homebrew/Cellar/mu/1.8.3/share/emacs/site-lisp/mu/mu4e")
         (dd/on-cc7-p "/home/ddavis/software/specific/mu/1.4.15/share/emacs/site-lisp/mu4e")
-        (dd/on-mac-p "/usr/local/Cellar/mu/1.6.11/share/emacs/site-lisp/mu/mu4e"))
+        (dd/on-mac-p "/usr/local/Cellar/mu/1.8.3/share/emacs/site-lisp/mu/mu4e"))
   "Machine dependent mu4e installation location string.")
 
 (defun dd/mu4e-byte-comp ()
@@ -188,33 +188,26 @@
                           (mu4e-sent-folder       . "/fastmail/Sent")
                           (mu4e-drafts-folder     . "/fastmail/Drafts")
                           (mu4e-reply-to-address  . "ddavis@ddavis.io")))))
-  (setq mu4e-bookmarks (list (make-mu4e-bookmark
-                              :name "Unread"
-                              :query "flag:unread AND NOT flag:trashed AND NOT m:/cern*"
-                              :key ?u)
-                             (make-mu4e-bookmark
-                              :name "Personal recent"
-                              :query "date:10d..now AND m:/fastmail*"
-                              :key ?p)
-                             (make-mu4e-bookmark
-                              :name "Last 1 day"
-                              :query "date:1d..now"
-                              :key ?1)
-                             (make-mu4e-bookmark
-                              :name "Last 3 days"
-                              :query "date:3d..now"
-                              :key ?3)
-                             (make-mu4e-bookmark
-                              :name "Last 7 days"
-                              :query "date:1w..now"
-                              :key ?7)
-                             (make-mu4e-bookmark
-                              :name "Duke"
-                              :query "m:/duke*"
-                              :key ?d)
-                             (make-mu4e-bookmark
-                              :name "CERN"
-                              :query "m:/cern*"
-                              :key ?c))))
+  (setq mu4e-bookmarks '((:name "Unread"
+                                :query "flag:unread AND NOT flag:trashed AND NOT m:/cern*"
+                                :key ?u)
+                         (:name "Personal recent"
+                                :query "date:10d..now AND m:/fastmail*"
+                                :key ?p)
+                         (:name "Last 1 day"
+                                :query "date:1d..now"
+                                :key ?1)
+                         (:name "Last 3 days"
+                                :query "date:3d..now"
+                                :key ?3)
+                         (:name "Last 7 days"
+                                :query "date:1w..now"
+                                :key ?7)
+                         (:name "Duke"
+                                :query "m:/duke*"
+                                :key ?d)
+                         (:name "CERN"
+                                :query "m:/cern*"
+                                :key ?c))))
 
 ;;; end of email.el
