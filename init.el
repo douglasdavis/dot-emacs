@@ -922,7 +922,9 @@ Taken from an emacs-devel thread."
 
 (use-package corfu-terminal
   :ensure t
-  :defer t)
+  :init
+  (when (not window-system)
+    (corfu-terminal-mode +1)))
 
 (use-package crux
   :defer 10
@@ -1028,66 +1030,66 @@ Taken from an emacs-devel thread."
   :ensure t
   :bind ("C-c ;" . iedit-mode))
 
-;; (setq lsp-use-plists t)
+(setq lsp-use-plists t)
 
-;; (use-package lsp-clangd
-;;   :defer t
-;;   :init
-;;   (setq lsp-clients-clangd-executable dd/clangd-exe))
+(use-package lsp-clangd
+  :defer t
+  :init
+  (setq lsp-clients-clangd-executable dd/clangd-exe))
 
-;; (use-package lsp-mode
-;;   :ensure t
-;;   :commands lsp
-;;   :init
-;;   (setq read-process-output-max (* 10 1024 1024))
-;;   (setq lsp-keep-workspace-alive nil
-;;         lsp-auto-guess-root nil
-;;         lsp-enable-links nil
-;;         lsp-enable-on-type-formatting nil))
+(use-package lsp-mode
+  :ensure t
+  :commands lsp
+  :init
+  (setq read-process-output-max (* 10 1024 1024))
+  (setq lsp-keep-workspace-alive nil
+        lsp-auto-guess-root nil
+        lsp-enable-links nil
+        lsp-enable-on-type-formatting nil))
 
-;; (use-package lsp-pylsp
-;;   :defer t
-;;   :init
-;;   (setq lsp-clients-pylsp-library-directories `("/usr"
-;;                                                 ,(expand-file-name "~/.pyenv/versions/")))
-;;   (setq lsp-pylsp-plugins-pydocstyle-convention "numpy"
-;;         lsp-pylsp-configuration-sources ["flake8"])
-;;   (setq lsp-pylsp-plugins-pydocstyle-enabled nil
-;;         lsp-pylsp-plugins-flake8-enabled t
-;;         lsp-pylsp-plugins-autopep8-enabled nil
-;;         lsp-pylsp-plugins-mccabe-enabled nil
-;;         lsp-pylsp-plugins-pycodestyle-enabled nil
-;;         lsp-pylsp-plugins-pyflakes-enabled nil
-;;         lsp-pylsp-plugins-pylint-enabled nil)
-;;   (defun dd/pylsp-toggle-pydocstyle ()
-;;     "Toggle pycodestyle for pylsp."
-;;     (interactive)
-;;     (setq lsp-pylsp-plugins-pydocstyle-enabled (not lsp-pylsp-plugins-pydocstyle-enabled)))
-;;   (defun dd/pylsp-toggle-flake8 ()
-;;     "Toggle pycodestyle for pylsp."
-;;     (interactive)
-;;     (setq lsp-pylsp-plugins-flake8-enabled (not lsp-pylsp-plugins-flake8-enabled))))
+(use-package lsp-pylsp
+  :defer t
+  :init
+  (setq lsp-clients-pylsp-library-directories `("/usr"
+                                                ,(expand-file-name "~/.pyenv/versions/")))
+  (setq lsp-pylsp-plugins-pydocstyle-convention "numpy"
+        lsp-pylsp-configuration-sources ["flake8"])
+  (setq lsp-pylsp-plugins-pydocstyle-enabled nil
+        lsp-pylsp-plugins-flake8-enabled t
+        lsp-pylsp-plugins-autopep8-enabled nil
+        lsp-pylsp-plugins-mccabe-enabled nil
+        lsp-pylsp-plugins-pycodestyle-enabled nil
+        lsp-pylsp-plugins-pyflakes-enabled nil
+        lsp-pylsp-plugins-pylint-enabled nil)
+  (defun dd/pylsp-toggle-pydocstyle ()
+    "Toggle pycodestyle for pylsp."
+    (interactive)
+    (setq lsp-pylsp-plugins-pydocstyle-enabled (not lsp-pylsp-plugins-pydocstyle-enabled)))
+  (defun dd/pylsp-toggle-flake8 ()
+    "Toggle pycodestyle for pylsp."
+    (interactive)
+    (setq lsp-pylsp-plugins-flake8-enabled (not lsp-pylsp-plugins-flake8-enabled))))
 
-;; (use-package lsp-treemacs
-;;   :ensure t
-;;   :defer t)
+(use-package lsp-treemacs
+  :ensure t
+  :defer t)
 
-;; (use-package lsp-ui
-;;   :ensure t
-;;   :defer t
-;;   :init
-;;   (setq lsp-ui-doc-enable t
-;;         lsp-ui-doc-include-signature t
-;;         lsp-ui-doc-position 'at-point
-;;         lsp-ui-doc-header t
-;;         lsp-ui-doc-max-height 32
-;;         lsp-ui-doc-max-width 96
-;;         lsp-ui-sideline-show-hover nil))
+(use-package lsp-ui
+  :ensure t
+  :defer t
+  :init
+  (setq lsp-ui-doc-enable t
+        lsp-ui-doc-include-signature t
+        lsp-ui-doc-position 'at-point
+        lsp-ui-doc-header t
+        lsp-ui-doc-max-height 32
+        lsp-ui-doc-max-width 96
+        lsp-ui-sideline-show-hover nil))
 
-;; (defun dd/pyright ()
-;;   (interactive)
-;;   (use-package lsp-pyright
-;;     :ensure t))
+(defun dd/pyright ()
+  (interactive)
+  (use-package lsp-pyright
+    :ensure t))
 
 (use-package magit
   :ensure t
@@ -1174,8 +1176,8 @@ Taken from an emacs-devel thread."
 (use-package python-isort
   :ensure t)
 
-(use-package python-pytest
-  :ensure t)
+;; (use-package python-pytest
+;;   :ensure t)
 
 (use-package pyvenv
   :ensure t
