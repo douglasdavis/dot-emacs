@@ -73,8 +73,8 @@
 (defconst dd/on-grads-18-p (dd/includes? (system-name) "grads-18")
   "For checking if on grads-18 box.")
 
-(defconst dd/on-strange-p (dd/includes? (system-name) "strange")
-  "For checking if on strange box.")
+(defconst dd/on-baryon-p (dd/includes? (system-name) "baryon")
+  "For checking if on baryon box.")
 
 (defconst dd/on-work-p (file-exists-p "/Users/ddavis/.emacs.d/.work-laptop")
   "For checking if on work laptop")
@@ -82,7 +82,7 @@
 (defconst dd/use-pdf-tools-p (and window-system
                                   (or dd/on-mac-p
                                       dd/on-cc7-p
-                                      dd/on-strange-p))
+                                      dd/on-baryon-p))
   "For checking if we should use pdf-tools.")
 
 (setq initial-scratch-message
@@ -162,11 +162,11 @@
     (dolist (face '(font-lock-doc-face font-lock-comment-face))
       (set-face-attribute face nil :italic t)))
 
-  (when dd/on-strange-p
+  (when dd/on-baryon-p
     (set-face-attribute 'default nil
                         :family "MonoLisa"
                         :weight 'regular
-                        :height 140))
+                        :height 100))
 
   (when dd/on-cc7-p
     (set-face-attribute 'default nil
@@ -181,7 +181,7 @@
   (set-face-attribute 'fixed-pitch nil :family "MonoLisa"))
 
 (dd/reset-font)
-(when (or dd/on-strange-p dd/on-cc7-p)
+(when (or dd/on-baryon-p dd/on-cc7-p)
   (when (fboundp 'set-fontset-font)
     (set-fontset-font t 'symbol
                       (font-spec :family "Noto Color Emoji")
@@ -428,7 +428,7 @@ Taken from an emacs-devel thread."
   :init
   (global-auto-revert-mode +1))
 
-(when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p dd/on-strange-p)
+(when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p dd/on-baryon-p)
   (use-package auth-source
     :init
     (setenv "GPG_AGENT_INFO" nil)
@@ -465,14 +465,14 @@ Taken from an emacs-devel thread."
   (when dd/on-cc7-p
     (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig")))
 
-(when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p dd/on-strange-p)
+(when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p dd/on-baryon-p)
   (use-package epa-file
     :config
     (custom-set-variables
      `(epg-gpg-program
        ,(cond (dd/on-m1-p "/opt/homebrew/bin/gpg")
               (dd/on-mac-p "/usr/local/bin/gpg")
-              (dd/on-strange-p "/usr/bin/gpg")
+              (dd/on-baryon-p "/usr/bin/gpg")
               (t "/usr/bin/gpg2"))))))
 
 (use-package erc
@@ -779,12 +779,12 @@ Taken from an emacs-devel thread."
   :ensure t
   :defer t)
 
-(when (or dd/on-mac-p dd/on-strange-p dd/on-cc7-p)
+(when (or dd/on-mac-p dd/on-baryon-p dd/on-cc7-p)
   (use-package cider
     :ensure t
     :commands cider-jack-in))
 
-(when (or dd/on-strange-p dd/on-cc7-p dd/on-mac-p)
+(when (or dd/on-baryon-p dd/on-cc7-p dd/on-mac-p)
   (use-package circe
     :ensure t
     :commands circe
