@@ -1094,6 +1094,9 @@ Taken from an emacs-devel thread."
 (use-package magit
   :ensure t
   :bind (("C-x g" . magit-status))
+  :hook (magit-status-mode-hook . (lambda ()
+                                    (make-local-variable 'truncate-lines)
+                                    (setq truncate-lines nil)))
   :config
   (defun dd/magit-kill-buffers ()
     "See `https://manuel-uberti.github.io/emacs/2018/02/17/magit-bury-buffer/'"
