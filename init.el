@@ -70,9 +70,6 @@
 (defconst dd/on-cc7-p (dd/includes? (system-name) "cc7")
   "For checking if on cc7 box.")
 
-(defconst dd/on-grads-18-p (dd/includes? (system-name) "grads-18")
-  "For checking if on grads-18 box.")
-
 (defconst dd/on-baryon-p (dd/includes? (system-name) "baryon")
   "For checking if on baryon box.")
 
@@ -140,11 +137,16 @@
 (setq-default require-final-newline t)
 (setq-default indent-tabs-mode nil)
 
+(defun dd-window-height ()
+  (cond (dd/on-work-p 64)
+        (t 54)))
+(defun dd-window-width ()
+  (cond (dd/on-work-p 232)
+        (t 192)))
+
 (setq default-frame-alist
-      '((height . 54)
-        (width . 196)
-        (left . 0)
-        (top . 0)
+      `((height . ,(dd-window-height))
+        (width . ,(dd-window-width))
         (vertical-scroll-bars . nil)
         (horizontal-scroll-bars . nil)
         (tool-bar-lines . 0)))
@@ -373,6 +375,21 @@ Taken from an emacs-devel thread."
     (user-error "Can toggle split only with two windows")))
 (with-eval-after-load 'bind-key
   (bind-key* "C-x \\" #'dd/toggle-window-split))
+
+(defun dd/frame-recenter (&optional frame)
+  (interactive)
+  (unless (eq 'maximised (frame-parameter nil 'fullscreen))
+    (let* ((frame (or (and (boundp 'frame)
+                           frame)
+                      (selected-frame)))
+           (frame-w (frame-pixel-width frame))
+           (frame-h (frame-pixel-height frame))
+           ;; frame-monitor-workarea returns (x y width height) for the monitor
+           (monitor-w (nth 2 (frame-monitor-workarea frame)))
+           (monitor-h (nth 3 (frame-monitor-workarea frame)))
+           (center (list (/ (- monitor-w frame-w) 2)
+                         (/ (- monitor-h frame-h) 2))))
+      (apply 'set-frame-position (flatten-list (list frame center))))))
 
 ;; (defun dd/vterm-go ()
 ;;   "Switch to (or create) a general vterm called dd/vterm."
@@ -1385,6 +1402,7 @@ Taken from an emacs-devel thread."
   (bind-key* "s-3" #'split-window-right)
   (bind-key* "s-4" #'mu4e)
   ;; (bind-key* "s-5" #'projectile-find-file-in-known-projects)
+  (bind-key* "s-c" #'dd/frame-recenter)
   (bind-key* "s-d" #'dd/kill-theme)
   (bind-key* "s-e" #'gnus)
   (bind-key* "s-f" #'find-file)
