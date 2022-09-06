@@ -40,7 +40,7 @@
 (use-package sendmail
   :init
   (defconst dd/sendmail-exe
-    (cond (dd/on-m1-p "/Users/ddavis/software/specific/msmtp/1.8.14/bin/msmtp")
+    (cond (dd/on-m1-p "/Users/ddavis/software/specific/msmtp/1.8.22/bin/msmtp")
           (dd/on-cc7-p "/usr/local/bin/msmtp")
           (t (executable-find "msmtp")))
     "Machine dependent msmtp executable string.")
@@ -207,7 +207,7 @@
                                 :query "m:/duke*"
                                 :key ?d)
                          (:name "CERN"
-                                :query "m:/cern*"
+                                :query "m:/cern* AND date:2y..now"
                                 :key ?c))))
 
 ;;; end of email.el
