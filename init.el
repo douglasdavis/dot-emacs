@@ -1132,10 +1132,10 @@ Taken from an emacs-devel thread."
   :defer t
   :mode ("\\.md\\'" "\\.markdown\\'"))
 
-(use-package modern-cpp-font-lock
-  :ensure t
-  :init
-  (modern-c++-font-lock-global-mode +1))
+;; (use-package modern-cpp-font-lock
+;;   :ensure t
+;;   :init
+;;   (modern-c++-font-lock-global-mode +1))
 
 (use-package numpydoc
   :ensure t
