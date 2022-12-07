@@ -405,7 +405,6 @@ Taken from an emacs-devel thread."
   (cond (dd/on-m1-p "/opt/homebrew/opt/llvm/bin")
         (dd/on-mac-p "/usr/local/opt/llvm/bin")
         (dd/on-cc7-p "/home/ddavis/software/specific/llvm/master/bin")
-        (dd/on-grads-18-p "/home/drd25/software/specific/llvm/10.x/bin")
         (t "/usr/bin"))
   "Machine dependent llvm bin path.")
 
@@ -445,7 +444,7 @@ Taken from an emacs-devel thread."
   :init
   (global-auto-revert-mode +1))
 
-(when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p dd/on-baryon-p)
+(when (or dd/on-mac-p dd/on-cc7-p dd/on-baryon-p)
   (use-package auth-source
     :init
     (setenv "GPG_AGENT_INFO" nil)
@@ -482,7 +481,7 @@ Taken from an emacs-devel thread."
   (when dd/on-cc7-p
     (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig")))
 
-(when (or dd/on-mac-p dd/on-cc7-p dd/on-grads-18-p dd/on-baryon-p)
+(when (or dd/on-mac-p dd/on-cc7-p dd/on-baryon-p)
   (use-package epa-file
     :config
     (custom-set-variables
@@ -1070,9 +1069,9 @@ Taken from an emacs-devel thread."
   (setq lsp-clients-pylsp-library-directories `("/usr"
                                                 ,(expand-file-name "~/.pyenv/versions/")))
   (setq lsp-pylsp-plugins-pydocstyle-convention "numpy"
-        lsp-pylsp-configuration-sources ["flake8"])
+        lsp-pylsp-configuration-sources ["ruff"])
   (setq lsp-pylsp-plugins-pydocstyle-enabled nil
-        lsp-pylsp-plugins-flake8-enabled t
+        lsp-pylsp-plugins-flake8-enabled nil
         lsp-pylsp-plugins-autopep8-enabled nil
         lsp-pylsp-plugins-mccabe-enabled nil
         lsp-pylsp-plugins-pycodestyle-enabled nil
@@ -1196,8 +1195,8 @@ Taken from an emacs-devel thread."
 (use-package python-isort
   :ensure t)
 
-;; (use-package python-pytest
-;;   :ensure t)
+(use-package python-pytest
+  :ensure t)
 
 (use-package pyvenv
   :ensure t
