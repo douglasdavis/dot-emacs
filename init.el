@@ -105,15 +105,16 @@
 (advice-add 'yes-or-no-p :around #'yes-or-no-p-advice)
 
 (setq-default auto-save-list-file-prefix nil
-              create-lockfiles nil
               backup-by-copying t
               backup-directory-alist `(("." . ,(locate-user-emacs-file ".saves")))
+              create-lockfiles nil
               delete-old-versions t
+              enable-local-variables :all
               kept-new-versions 2
               kept-old-versions 1
-              version-control t
+              revert-without-query '(".*")
               ring-bell-function 'ignore
-              revert-without-query '(".*"))
+              version-control t)
 
 (setq sentence-end-double-space nil)
 
@@ -158,9 +159,9 @@
     (when (boundp 'ns-antialias-text)
       (setq ns-antialias-text t))
     (set-face-attribute 'default nil
-                        :family "MonoLisa"
+                        :family "Berkeley Mono"
                         :weight 'regular
-                        :height 130)
+                        :height 140)
     (dolist (face '(font-lock-doc-face font-lock-comment-face))
       (set-face-attribute face nil :italic t)))
 
@@ -462,6 +463,9 @@ Taken from an emacs-devel thread."
   :config
   (c-set-offset 'innamespace 0))
 
+(use-package compile
+  :hook (compilation-mode-hook . (lambda () (display-line-numbers-mode 0))))
+
 (use-package dired
   :demand t
   :init
@@ -475,6 +479,16 @@ Taken from an emacs-devel thread."
 (use-package display-line-numbers
   :config
   (global-display-line-numbers-mode))
+
+(use-package eglot
+  :commands eglot
+  :config
+  (add-to-list 'eglot-server-programs
+               `(python-mode
+                 . ,(eglot-alternatives '("pylsp"
+                                          "jedi-language-server"
+                                          ("pyright-langserver" "--stdio")))))
+  (setq eglot-autoshutdown t))
 
 (use-package env
   :init
@@ -559,12 +573,12 @@ Taken from an emacs-devel thread."
 (use-package esh-mode
   :hook (eshell-mode-hook . (lambda () (display-line-numbers-mode 0))))
 
-(use-package flyspell
-  :hook ((org-mode-hook . flyspell-mode)
-         (LaTeX-mode-hook . flyspell-mode)
-         (markdown-mode-hook . flyspell-mode)
-         (message-mode-hook . flyspell-mode)
-         (mu4e-compose-mode-hook . flyspell-mode)))
+;; (use-package flyspell
+;;   :hook ((org-mode-hook . flyspell-mode)
+;;          (LaTeX-mode-hook . flyspell-mode)
+;;          (markdown-mode-hook . flyspell-mode)
+;;          (message-mode-hook . flyspell-mode)
+;;          (mu4e-compose-mode-hook . flyspell-mode)))
 
 (use-package help-mode
   :bind
@@ -584,6 +598,13 @@ Taken from an emacs-devel thread."
     (setq ispell-program-name
           (cond (dd/on-m1-p "/opt/homebrew/bin/hunspell")
                 (t "/usr/local/bin/hunspell")))))
+
+(use-package mouse
+  :hook ((org-mode-hook . context-menu-mode)
+         (LaTeX-mode-hook . context-menu-mode)
+         (markdown-mode-hook . context-menu-mode)
+         (message-mode-hook . context-menu-mode)
+         (mu4e-compose-mode-hook . context-menu-mode)))
 
 (use-package org
   :hook (org-mode-hook . (lambda () (interactive)
@@ -795,75 +816,72 @@ Taken from an emacs-devel thread."
   :ensure t
   :defer t)
 
-(when (or dd/on-mac-p dd/on-baryon-p dd/on-cc7-p)
-  (use-package cider
-    :ensure t
-    :commands cider-jack-in))
+;; (use-package cider
+;;   :commands cider-jack-in)
 
-(when (or dd/on-baryon-p dd/on-cc7-p dd/on-mac-p)
-  (use-package circe
-    :ensure t
-    :commands circe
-    :hook (circe-chat-mode-hook . dd/circe-prompt)
-    :config
-    (defun dd/irc-pw-freenode (server)
-      (auth-source-pass-get 'secret "Freenode"))
-    (defun dd/irc-pw-gitter (server)
-      (auth-source-pass-get 'secret "Gitter"))
-    (defun dd/circe-prompt ()
-      (lui-set-prompt
-       (propertize (format "%s >>> " (buffer-name)) 'face 'circe-prompt-face)))
-    (setq circe-network-options
-          '(("Gitter"
-             :host "irc.gitter.im"
-             :server-buffer-name "⇄ Gitter (irc gateway)"
-             :nick "douglasdavis"
-             :pass dd/irc-pw-gitter
-             :port 6697
-             :tls t)
-            ("Freenode"
-             :nick "ddavis"
-             :nickserv-password dd/irc-pw-freenode
-             :channels (:after-auth
-                        "#emacs"
-                        "#python"
-                        "#pydata"
-                        "#sr.ht"
-                        "#lobsters"
-                        "#hpy"
-                        "##crustaceans")
-             :tls t)))
-    (setq circe-use-cycle-completion t
-          circe-reduce-lurker-spam t
-          circe-format-say "<{nick}> {body}"
-          lui-fill-type 19
-          lui-fill-column 77)
-    (setq circe-default-part-message
-          (format "Closed Circe (%s) buffer in GNU Emacs (%s)"
-                  circe-version
-                  emacs-version))
-    (setq circe-default-quit-message
-          (format "Quit Circe (%s) in GNU Emacs (%s)"
-                  circe-version
-                  emacs-version))
-    (defun dd/switch-circe-channel ()
-      (interactive)
-      (let ((sources
-             (cl-loop for buf in (buffer-list)
-                      if (eq 'circe-channel-mode (buffer-local-value 'major-mode buf))
-                      collect (buffer-name buf))))
-        (switch-to-buffer (completing-read "Channel: " sources))))
+;; (when (or dd/on-baryon-p dd/on-cc7-p dd/on-mac-p)
+;;   (use-package circe
+;;     :commands circe
+;;     :hook (circe-chat-mode-hook . dd/circe-prompt)
+;;     :config
+;;     (defun dd/irc-pw-freenode (server)
+;;       (auth-source-pass-get 'secret "Freenode"))
+;;     (defun dd/irc-pw-gitter (server)
+;;       (auth-source-pass-get 'secret "Gitter"))
+;;     (defun dd/circe-prompt ()
+;;       (lui-set-prompt
+;;        (propertize (format "%s >>> " (buffer-name)) 'face 'circe-prompt-face)))
+;;     (setq circe-network-options
+;;           '(("Gitter"
+;;              :host "irc.gitter.im"
+;;              :server-buffer-name "⇄ Gitter (irc gateway)"
+;;              :nick "douglasdavis"
+;;              :pass dd/irc-pw-gitter
+;;              :port 6697
+;;              :tls t)
+;;             ("Freenode"
+;;              :nick "ddavis"
+;;              :nickserv-password dd/irc-pw-freenode
+;;              :channels (:after-auth
+;;                         "#emacs"
+;;                         "#python"
+;;                         "#pydata"
+;;                         "#sr.ht"
+;;                         "#lobsters"
+;;                         "#hpy"
+;;                         "##crustaceans")
+;;              :tls t)))
+;;     (setq circe-use-cycle-completion t
+;;           circe-reduce-lurker-spam t
+;;           circe-format-say "<{nick}> {body}"
+;;           lui-fill-type 19
+;;           lui-fill-column 77)
+;;     (setq circe-default-part-message
+;;           (format "Closed Circe (%s) buffer in GNU Emacs (%s)"
+;;                   circe-version
+;;                   emacs-version))
+;;     (setq circe-default-quit-message
+;;           (format "Quit Circe (%s) in GNU Emacs (%s)"
+;;                   circe-version
+;;                   emacs-version))
+;;     (defun dd/switch-circe-channel ()
+;;       (interactive)
+;;       (let ((sources
+;;              (cl-loop for buf in (buffer-list)
+;;                       if (eq 'circe-channel-mode (buffer-local-value 'major-mode buf))
+;;                       collect (buffer-name buf))))
+;;         (switch-to-buffer (completing-read "Channel: " sources))))
 
-    (bind-key (kbd "C-c C-b") #'dd/switch-circe-channel circe-mode-map))
+;;     (bind-key (kbd "C-c C-b") #'dd/switch-circe-channel circe-mode-map))
 
-  (use-package circe-color-nicks
-    :after circe
-    :config
-    ;; (setq circe-color-nicks-pool-type
-    ;;       '("#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#fe8019"
-    ;;         "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e"))
-    (setq circe-color-nicks-everywhere t)
-    (enable-circe-color-nicks)))
+;;   (use-package circe-color-nicks
+;;     :after circe
+;;     :config
+;;     ;; (setq circe-color-nicks-pool-type
+;;     ;;       '("#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#fe8019"
+;;     ;;         "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e"))
+;;     (setq circe-color-nicks-everywhere t)
+;;     (enable-circe-color-nicks)))
 
 (use-package clang-format
   :ensure t
@@ -913,7 +931,7 @@ Taken from an emacs-devel thread."
   :config
   (setq consult-preview-key 'nil)
   ;; (autoload 'projectile-project-root "projectile")
-  (setq consult-project-root-function #'projectile-project-root)
+  ;; (setq consult-project-root-function #'projectile-project-root)
   (defun find-fd (&optional dir initial)
     (interactive "P")
     (let ((consult-find-command "fd --color=never --full-path ARG OPTS"))
@@ -946,10 +964,10 @@ Taken from an emacs-devel thread."
   :defer 10
   :ensure t)
 
-(use-package cython-mode
-  :ensure t
-  :mode (("\\.pyx\\'" . cython-mode)
-         ("\\.pxd\\'" . cython-mode)))
+;; (use-package cython-mode
+;;   :ensure t
+;;   :mode (("\\.pyx\\'" . cython-mode)
+;;          ("\\.pxd\\'" . cython-mode)))
 
 (use-package debbugs
   :ensure t
@@ -963,6 +981,13 @@ Taken from an emacs-devel thread."
   :bind (("s-=" . default-text-scale-increase)
          ("s--" . default-text-scale-decrease)
          ("s-0" . default-text-scale-reset)))
+
+(use-package denote
+  :ensure t
+  :init
+  (setq denote-directory (expand-file-name "~/.emacs.d/denotes")
+        denote-known-keywords '("dak" "random")
+        denote-file-type 'text))
 
 (use-package diredfl
   :ensure t
@@ -979,17 +1004,6 @@ Taken from an emacs-devel thread."
 ;;   :config
 ;;   (doom-modeline-mode +1))
 
-(use-package eglot
-  :ensure t
-  :commands eglot
-  :config
-  (add-to-list 'eglot-server-programs
-               `(python-mode
-                 . ,(eglot-alternatives '("pylsp"
-                                          "jedi-language-server"
-                                          ("pyright-langserver" "--stdio")))))
-  (setq eglot-autoshutdown t))
-
 (when (version< emacs-version "28")
   (use-package eldoc
     :ensure t))
@@ -1001,17 +1015,17 @@ Taken from an emacs-devel thread."
   (setq eldoc-box-clear-with-C-g t
         eldoc-box-fringe-use-same-bg nil))
 
-(use-package elfeed
-  :ensure t
-  :commands elfeed
-  :config
-  (setq elfeed-search-filter "@21-days-ago")
-  (setq elfeed-feeds
-        '(("https://planet.scipy.org/feed.xml" python)
-          ("https://planet.emacslife.com/atom.xml" emacs)
-          ("https://ddavis.io/index.xml" blog)))
-  (add-hook 'elfeed-new-entry-hook
-            (elfeed-make-tagger :before "3 weeks ago" :remove 'unread)))
+;; (use-package elfeed
+;;   :ensure t
+;;   :commands elfeed
+;;   :config
+;;   (setq elfeed-search-filter "@21-days-ago")
+;;   (setq elfeed-feeds
+;;         '(("https://planet.scipy.org/feed.xml" python)
+;;           ("https://planet.emacslife.com/atom.xml" emacs)
+;;           ("https://ddavis.io/index.xml" blog)))
+;;   (add-hook 'elfeed-new-entry-hook
+;;             (elfeed-make-tagger :before "3 weeks ago" :remove 'unread)))
 
 (use-package eros
   :ensure t
@@ -1045,6 +1059,16 @@ Taken from an emacs-devel thread."
 (use-package iedit
   :ensure t
   :bind ("C-c ;" . iedit-mode))
+
+(use-package jit-spell
+  :ensure t
+  :hook ((org-mode-hook . jit-spell-mode)
+         (LaTeX-mode-hook . jit-spell-mode)
+         (markdown-mode-hook . jit-spell-mode)
+         (message-mode-hook . jit-spell-mode)
+         (mu4e-compose-mode-hook . jit-spell-mode)))
+
+;; (use-package jinx)
 
 (setq lsp-use-plists t)
 
@@ -1120,6 +1144,9 @@ Taken from an emacs-devel thread."
     (let ((buffers (magit-mode-get-buffers)))
       (magit-restore-window-configuration)
       (mapc #'kill-buffer buffers))))
+
+(use-package magit-todos
+  :ensure t)
 
 (use-package marginalia
   :ensure t
@@ -1284,33 +1311,40 @@ Taken from an emacs-devel thread."
 ;;   (selectrum-prescient-mode +1)
 ;;   (prescient-persist-mode +1))
 
-(when (or dd/on-mac-p dd/on-cc7-p)
-  (use-package tex :defer t)
-  (use-package tex-buf :defer t)
-  (use-package font-latex :defer t)
-  (use-package tex-site
-    :ensure auctex
-    :mode ("\\.tex\\'" . TeX-latex-mode)
-    :config
-    (setq font-latex-fontify-sectioning 'color
-          font-latex-fontify-script nil
-          TeX-source-correlate-mode 'synctex
-          TeX-source-correlate-start-server t)
-    (setq-default TeX-master nil)
-    (setq TeX-auto-save t)
-    (setq TeX-parse-self t)
-    (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)))
-;; (when dd/use-pdf-tools-p
-;;   (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))
+;; (when (or dd/on-mac-p dd/on-cc7-p)
+;;   (use-package tex :defer t)
+;;   (use-package tex-buf :defer t)
+;;   (use-package font-latex :defer t)
+;;   (use-package tex-site
+;;     :ensure auctex
+;;     :mode ("\\.tex\\'" . TeX-latex-mode)
+;;     :config
+;;     (setq font-latex-fontify-sectioning 'color
+;;           font-latex-fontify-script nil
+;;           TeX-source-correlate-mode 'synctex
+;;           TeX-source-correlate-start-server t)
+;;     (setq-default TeX-master nil)
+;;     (setq TeX-auto-save t)
+;;     (setq TeX-parse-self t)
+;;     (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)))
+;; ;; (when dd/use-pdf-tools-p
+;; ;;   (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))
 
-(unless dd/on-cc7-p
-  (use-package tree-sitter
+(when (version< emacs-version "29.0.50")
+  (unless dd/on-cc7-p
+    (use-package tree-sitter
+      :ensure t
+      :hook ((python-mode-hook . tree-sitter-hl-mode)
+             (rust-mode-hook . tree-sitter-hl-mode)
+             (c-mode-common-hook . tree-sitter-hl-mode)))
+    (use-package tree-sitter-langs
+      :ensure t)))
+
+(when (version-list-< '(29 0) (version-to-list emacs-version))
+  (use-package treesit-auto
     :ensure t
-    :hook ((python-mode-hook . tree-sitter-hl-mode)
-           (rust-mode-hook . tree-sitter-hl-mode)
-           (c-mode-common-hook . tree-sitter-hl-mode)))
-  (use-package tree-sitter-langs
-    :ensure t))
+    :config
+    (global-treesit-auto-mode +1)))
 
 (use-package vertico
   :ensure t
@@ -1449,10 +1483,37 @@ Taken from an emacs-devel thread."
 (provide 'init)
 ;;; init.el ends here
 
-
-(defun dask-awkward ()
-  (interactive)
-  (pyvenv-workon "dask-dev")
-  (find-file "~/software/repos/dask-awkward/")
-  (add-hook 'python-mode-hook 'python-isort-on-save-mode)
-  (project-find-file))
+(when (and window-system (file-exists-p "/Users/ddavis/software/repos/ligature.el"))
+  (use-package ligature
+    :load-path "/Users/ddavis/software/repos/ligature.el"
+    :config
+    ;; Enable the "www" ligature in every possible major mode
+    (ligature-set-ligatures 't '("www"))
+    ;; Enable traditional ligature support in eww-mode, if the
+    ;; `variable-pitch' face supports it
+    (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+    ;; Enable all Cascadia Code ligatures in programming modes
+    (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####"
+                                         "~~>" "***" "||=" "||>" ":::" "::="
+                                         "=:=" "===" "==>" "=!=" "=>>" "=<<"
+                                         "=/=" "!==" "!!." ">=>" ">>=" ">>>"
+                                         ">>-" ">->" "->>" "-->" "---" "-<<"
+                                         "<~~" "<~>" "<*>" "<||" "<|>" "<$>"
+                                         "<==" "<=>" "<=<" "<->" "<--" "<-<"
+                                         "<<=" "<<-" "<<<" "<+>" "</>" "###"
+                                         "#_(" "..<" "..." "+++" "/==" "///"
+                                         "_|_" "www" "&&" "^=" "~~" "~@" "~="
+                                         "~>" "~-" "**" "*>" "*/" "||" "|}"
+                                         "|]" "|=" "|>" "|-" "{|" "[|" "]#"
+                                         "::" ":=" ":>" ":<" "$>" "==" "=>"
+                                         "!=" "!!" ">:" ">=" ">>" ">-" "-~"
+                                         "-|" "->" "--" "-<" "<~" "<*" "<|"
+                                         "<:" "<$" "<=" "<>" "<-" "<<" "<+"
+                                         "</" "#{" "#[" "#:" "#=" "#!" "##"
+                                         "#(" "#?" "#_" "%%" ".=" ".-" ".."
+                                         ".?" "+>" "++" "?:" "?=" "?." "??"
+                                         ";;" "/*" "/=" "/>" "//" "__" "~~"
+                                         "(*" "*)" "\\\\" "://"))
+    ;; Enables ligature checks globally in all buffers. You can also do it
+    ;; per mode with `ligature-mode'.
+    (global-ligature-mode t)))
