@@ -145,12 +145,19 @@
   (cond (dd/on-work-p 232)
         (t 192)))
 
-(setq default-frame-alist
-      `((height . ,(dd-window-height))
-        (width . ,(dd-window-width))
-        (vertical-scroll-bars . nil)
-        (horizontal-scroll-bars . nil)
-        (tool-bar-lines . 0)))
+;;(setq default-frame-alist
+
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+(add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
+(add-to-list 'default-frame-alist '(horizontal-scroll-bars . nil))
+(add-to-list 'default-frame-alist '(tool-bar-lines . 0))
+
+
+;;      `((height . ,(dd-window-height))
+;;        (width . ,(dd-window-width))
+;;        (vertical-scroll-bars . nil)
+;;        (horizontal-scroll-bars . nil)
+;;        (tool-bar-lines . 0)))
 
 (defun dd/reset-font ()
   "Reset font to personal default"
@@ -423,11 +430,10 @@ Taken from an emacs-devel thread."
 ;; sec02:
 ;; use-package setup
 
-(require 'package)
 (setq package-archives
-      '(("nongnu" . "https://elpa.nongnu.org/nongnu/")
-        ("melpa" . "https://melpa.org/packages/")
-        ("gnu" . "https://elpa.gnu.org/packages/")))
+      '(("gnu" . "https://elpa.gnu.org/packages/")
+        ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+        ("melpa" . "https://melpa.org/packages/")))
 (package-initialize)
 
 (unless (package-installed-p 'use-package)
@@ -483,9 +489,13 @@ Taken from an emacs-devel thread."
 (use-package eglot
   :commands eglot
   :config
+  ;; (add-to-list 'eglot-server-programs
+  ;;              `((rust-mode rust-ts-mode)
+  ;;                . ,(eglot-alternatives '("/Users/ddavis/.cargo/bin/rls"))))
   (add-to-list 'eglot-server-programs
-               `(python-mode
+               `((python-mode python-ts-mode)
                  . ,(eglot-alternatives '("pylsp"
+                                          ;; "ruff-lsp"
                                           "jedi-language-server"
                                           ("pyright-langserver" "--stdio")))))
   (setq eglot-autoshutdown t))
@@ -592,6 +602,12 @@ Taken from an emacs-devel thread."
   :init
   (setq ibuffer-expert t))
 
+(use-package isearch
+  :init
+  (setq isearch-lazy-count t)
+  (setq lazy-count-prefix-format nil)
+  (setq lazy-count-suffix-format "   (%s/%s)"))
+
 (use-package ispell
   :config
   (when dd/on-mac-p
@@ -610,6 +626,9 @@ Taken from an emacs-devel thread."
   :hook (org-mode-hook . (lambda () (interactive)
                            (setq-local display-line-numbers-width-start t)))
   :config
+
+  (setq org-agenda-files '("~/.todo.org"))
+
   (setq org-src-fontify-natively t)
   (setq org-structure-template-alist
         (append org-structure-template-alist
@@ -783,7 +802,7 @@ Taken from an emacs-devel thread."
   :bind ("M-o" . ace-window))
 
 (use-package all-the-icons
-  :ensure t)
+  :load-path "/Users/ddavis/software/repos/all-the-icons.el")
 
 (use-package all-the-icons-dired
   :ensure t
@@ -807,10 +826,10 @@ Taken from an emacs-devel thread."
   (setq auto-package-update-delete-old-versions t))
 
 (use-package blacken
-  :ensure t
-  :bind (:map python-mode-map
-              ("C-c C-f" . blacken-buffer))
-  :after python)
+  :ensure t)
+
+(use-package breadcrumb
+  :ensure t)
 
 (use-package buttercup
   :ensure t
@@ -1158,16 +1177,13 @@ Taken from an emacs-devel thread."
   :defer t
   :mode ("\\.md\\'" "\\.markdown\\'"))
 
-;; (use-package modern-cpp-font-lock
-;;   :ensure t
-;;   :init
-;;   (modern-c++-font-lock-global-mode +1))
-
 (use-package numpydoc
   :ensure t
   :init
   (setq numpydoc-insertion-style nil)
-  :bind (:map python-mode-map
+  :bind (:map python-ts-mode-map
+              ("C-c C-n" . numpydoc-generate)
+         :map python-mode-map
               ("C-c C-n" . numpydoc-generate))
   :after python)
 
@@ -1259,7 +1275,7 @@ Taken from an emacs-devel thread."
   :hook (prog-mode-hook . rainbow-delimiters-mode))
 
 (use-package recentf
-  :demand t
+  :defer 3
   :init
   (defun dd/recentf-excluder (s)
     "Check if file should be recentf excluded."
@@ -1287,8 +1303,17 @@ Taken from an emacs-devel thread."
   ;;   :confirm prefix
   ;;   :flags ("--hidden -g !.git")))
 
-(use-package rust-mode
-  :ensure t)
+;; (use-package rust-mode
+;;   :ensure t
+;;   :init
+;;   (setq rust-rustfmt-bin "/Users/ddavis/.cargo/bin/rustfmt")
+;;   (setq rust-cargo-bin "/Users/ddavis/.cargo/bin/cargo"))
+
+;; (use-package rustic
+;;   :ensure t
+;;   :init
+;;   (setq rustic-rustfmt-bin "/Users/ddavis/.cargo/bin/rustfmt")
+;;   (setq rustic-format-on-save t))
 
 ;; (use-package selectrum
 ;;   :ensure t
