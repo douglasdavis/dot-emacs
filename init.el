@@ -489,13 +489,12 @@ Taken from an emacs-devel thread."
 (use-package eglot
   :commands eglot
   :config
-  ;; (add-to-list 'eglot-server-programs
-  ;;              `((rust-mode rust-ts-mode)
-  ;;                . ,(eglot-alternatives '("/Users/ddavis/.cargo/bin/rls"))))
+  (add-to-list 'eglot-server-programs
+               `((rust-mode rust-ts-mode)
+                 . ,(eglot-alternatives '("/opt/homebrew/bin/rust-analyzer"))))
   (add-to-list 'eglot-server-programs
                `((python-mode python-ts-mode)
                  . ,(eglot-alternatives '("pylsp"
-                                          ;; "ruff-lsp"
                                           "jedi-language-server"
                                           ("pyright-langserver" "--stdio")))))
   (setq eglot-autoshutdown t))
@@ -507,6 +506,8 @@ Taken from an emacs-devel thread."
 
 (when (or dd/on-mac-p dd/on-cc7-p dd/on-baryon-p)
   (use-package epa-file
+    :init
+    (fset 'epg-wait-for-status 'ignore)
     :config
     (custom-set-variables
      `(epg-gpg-program
@@ -1303,11 +1304,11 @@ Taken from an emacs-devel thread."
   ;;   :confirm prefix
   ;;   :flags ("--hidden -g !.git")))
 
-;; (use-package rust-mode
-;;   :ensure t
-;;   :init
-;;   (setq rust-rustfmt-bin "/Users/ddavis/.cargo/bin/rustfmt")
-;;   (setq rust-cargo-bin "/Users/ddavis/.cargo/bin/cargo"))
+(use-package rust-mode
+  :ensure t
+  :init
+  (setq rust-rustfmt-bin "/Users/ddavis/.cargo/bin/rustfmt")
+  (setq rust-cargo-bin "/Users/ddavis/.cargo/bin/cargo"))
 
 ;; (use-package rustic
 ;;   :ensure t
@@ -1355,21 +1356,21 @@ Taken from an emacs-devel thread."
 ;; ;; (when dd/use-pdf-tools-p
 ;; ;;   (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))
 
-(when (version< emacs-version "29.0.50")
-  (unless dd/on-cc7-p
-    (use-package tree-sitter
-      :ensure t
-      :hook ((python-mode-hook . tree-sitter-hl-mode)
-             (rust-mode-hook . tree-sitter-hl-mode)
-             (c-mode-common-hook . tree-sitter-hl-mode)))
-    (use-package tree-sitter-langs
-      :ensure t)))
+;; (when (version< emacs-version "29.0.50")
+;;   (unless dd/on-cc7-p
+;;     (use-package tree-sitter
+;;       :ensure t
+;;       :hook ((python-mode-hook . tree-sitter-hl-mode)
+;;              (rust-mode-hook . tree-sitter-hl-mode)
+;;              (c-mode-common-hook . tree-sitter-hl-mode)))
+;;     (use-package tree-sitter-langs
+;;       :ensure t)))
 
-(when (version-list-< '(29 0) (version-to-list emacs-version))
-  (use-package treesit-auto
-    :ensure t
-    :config
-    (global-treesit-auto-mode +1)))
+;; (when (version-list-< '(29 0) (version-to-list emacs-version))
+;;   (use-package treesit-auto
+;;     :ensure t
+;;     :config
+;;     (global-treesit-auto-mode +1)))
 
 (use-package vertico
   :ensure t
@@ -1542,3 +1543,8 @@ Taken from an emacs-devel thread."
     ;; Enables ligature checks globally in all buffers. You can also do it
     ;; per mode with `ligature-mode'.
     (global-ligature-mode t)))
+
+
+;; (use-package forge
+;;   :ensure t
+;;   :after magit)
