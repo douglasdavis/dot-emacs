@@ -70,8 +70,8 @@
 (defconst dd/on-cc7-p (dd/includes? (system-name) "cc7")
   "For checking if on cc7 box.")
 
-(defconst dd/on-baryon-p (dd/includes? (system-name) "baryon")
-  "For checking if on baryon box.")
+(defconst dd/on-udt-p (dd/includes? (system-name) "udt")
+  "For checking if on udt box.")
 
 (defconst dd/on-work-p (file-exists-p "/Users/ddavis/.emacs.d/.work-laptop")
   "For checking if on work laptop")
@@ -79,7 +79,7 @@
 (defconst dd/use-pdf-tools-p (and window-system
                                   (or dd/on-mac-p
                                       dd/on-cc7-p
-                                      dd/on-baryon-p))
+                                      dd/on-udt-p))
   "For checking if we should use pdf-tools.")
 
 (setq initial-scratch-message
@@ -172,11 +172,11 @@
     (dolist (face '(font-lock-doc-face font-lock-comment-face))
       (set-face-attribute face nil :italic t)))
 
-  (when dd/on-baryon-p
+  (when dd/on-udt-p
     (set-face-attribute 'default nil
-                        :family "MonoLisa"
+                        :family "Berkeley Mono"
                         :weight 'regular
-                        :height 100))
+                        :height 120))
 
   (when dd/on-cc7-p
     (set-face-attribute 'default nil
@@ -191,7 +191,7 @@
   (set-face-attribute 'fixed-pitch nil :family "MonoLisa"))
 
 (dd/reset-font)
-(when (or dd/on-baryon-p dd/on-cc7-p)
+(when (or dd/on-udt-p dd/on-cc7-p)
   (when (fboundp 'set-fontset-font)
     (set-fontset-font t 'symbol
                       (font-spec :family "Noto Color Emoji")
@@ -451,7 +451,7 @@ Taken from an emacs-devel thread."
   :init
   (global-auto-revert-mode +1))
 
-(when (or dd/on-mac-p dd/on-cc7-p dd/on-baryon-p)
+(when (or dd/on-mac-p dd/on-cc7-p dd/on-udt-p)
   (use-package auth-source
     :init
     (setenv "GPG_AGENT_INFO" nil)
@@ -486,12 +486,18 @@ Taken from an emacs-devel thread."
   :config
   (global-display-line-numbers-mode))
 
+(defun dd/rust-analyzer-binary ()
+  (interactive)
+  (cond (dd/on-m1-p "/opt/homebrew/bin/rust-analyzer")
+        (dd/on-udt-p "/home/ddavis/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rust-analyzer")
+        (t "rust-analyzer")))
+
 (use-package eglot
   :commands eglot
   :config
   (add-to-list 'eglot-server-programs
                `((rust-mode rust-ts-mode)
-                 . ,(eglot-alternatives '("/opt/homebrew/bin/rust-analyzer"))))
+                 . (,(dd/rust-analyzer-binary))))
   (add-to-list 'eglot-server-programs
                `((python-mode python-ts-mode)
                  . ,(eglot-alternatives '("pylsp"
@@ -504,7 +510,7 @@ Taken from an emacs-devel thread."
   (when dd/on-cc7-p
     (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig")))
 
-(when (or dd/on-mac-p dd/on-cc7-p dd/on-baryon-p)
+(when (or dd/on-mac-p dd/on-cc7-p dd/on-udt-p)
   (use-package epa-file
     :init
     (fset 'epg-wait-for-status 'ignore)
@@ -513,7 +519,7 @@ Taken from an emacs-devel thread."
      `(epg-gpg-program
        ,(cond (dd/on-m1-p "/opt/homebrew/bin/gpg")
               (dd/on-mac-p "/usr/local/bin/gpg")
-              (dd/on-baryon-p "/usr/bin/gpg")
+              (dd/on-udt-p "/usr/bin/gpg")
               (t "/usr/bin/gpg2"))))))
 
 (use-package erc
@@ -802,8 +808,8 @@ Taken from an emacs-devel thread."
   :ensure t
   :bind ("M-o" . ace-window))
 
-(use-package all-the-icons
-  :load-path "/Users/ddavis/software/repos/all-the-icons.el")
+;; (use-package all-the-icons
+;;   :load-path "/Users/ddavis/software/repos/all-the-icons.el")
 
 (use-package all-the-icons-dired
   :ensure t
@@ -839,7 +845,7 @@ Taken from an emacs-devel thread."
 ;; (use-package cider
 ;;   :commands cider-jack-in)
 
-;; (when (or dd/on-baryon-p dd/on-cc7-p dd/on-mac-p)
+;; (when (or dd/on-udt-p dd/on-cc7-p dd/on-mac-p)
 ;;   (use-package circe
 ;;     :commands circe
 ;;     :hook (circe-chat-mode-hook . dd/circe-prompt)
@@ -1304,11 +1310,9 @@ Taken from an emacs-devel thread."
   ;;   :confirm prefix
   ;;   :flags ("--hidden -g !.git")))
 
-(use-package rust-mode
-  :ensure t
-  :init
-  (setq rust-rustfmt-bin "/Users/ddavis/.cargo/bin/rustfmt")
-  (setq rust-cargo-bin "/Users/ddavis/.cargo/bin/cargo"))
+
+(setq rust-rustfmt-bin (expand-file-name "~/.cargo/bin/rustfmt"))
+(setq rust-cargo-bin (expand-file-name "~/.cargo/bin/cargo"))
 
 ;; (use-package rustic
 ;;   :ensure t
@@ -1489,7 +1493,7 @@ Taken from an emacs-devel thread."
 ;; sec06:
 ;; email setup is in dedicated file
 
-(when (or dd/on-m1-p dd/on-cc7-p dd/on-mac-p)
+(when (or dd/on-m1-p dd/on-cc7-p dd/on-mac-p dd/on-udt-p)
   (load-file "~/.emacs.d/dot-emacs/email.el"))
 
 ;; sec07:
@@ -1509,9 +1513,12 @@ Taken from an emacs-devel thread."
 (provide 'init)
 ;;; init.el ends here
 
-(when (and window-system (file-exists-p "/Users/ddavis/software/repos/ligature.el"))
+
+(setq dd/ligature-path (expand-file-name "~/software/repos/ligature.el"))
+
+(when (and window-system (file-exists-p dd/ligature-path))
   (use-package ligature
-    :load-path "/Users/ddavis/software/repos/ligature.el"
+    :load-path dd/ligature-path
     :config
     ;; Enable the "www" ligature in every possible major mode
     (ligature-set-ligatures 't '("www"))

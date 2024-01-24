@@ -31,10 +31,7 @@
         message-sendmail-f-is-evil t
         message-sendmail-extra-arguments '("--read-envelope-from")
         message-kill-buffer-on-exit t
-        message-dont-reply-to-names '("ddavis@phy.duke.edu"
-                                      "ddavis@ddavis.io"
-                                      "ddavis@anaconda.com"
-                                      "ddavis@cern.ch"))
+        message-dont-reply-to-names '("ddavis@ddavis.io"))
   :demand t)
 
 (use-package sendmail
@@ -50,11 +47,13 @@
 (defconst dd/mu-exe
   (cond (dd/on-m1-p "/opt/homebrew/Cellar/mu/1.10.7/bin/mu")
         (dd/on-cc7-p "/home/ddavis/software/specific/mu/1.4.15/bin/mu")
+        (dd/on-udt-p "/opt/mu/1.10.8/bin/mu")
         (t (executable-find "mu")))
   "Machine dependent mu executable string.")
 
 (defconst dd/mu4e-dir
   (cond (dd/on-m1-p "/opt/homebrew/Cellar/mu/1.10.7/share/emacs/site-lisp/mu/mu4e")
+        (dd/on-udt-p "/opt/mu/1.10.8/share/emacs/site-lisp/mu4e")
         (dd/on-cc7-p "/home/ddavis/software/specific/mu/1.4.15/share/emacs/site-lisp/mu4e")
         (dd/on-mac-p "/usr/local/Cellar/mu/1.10.7/share/emacs/site-lisp/mu/mu4e"))
   "Machine dependent mu4e installation location string.")
@@ -72,41 +71,33 @@
   :commands (mu4e mu4e-update-mail-and-index)
   :bind (("C-c 4" . mu4e)
          :map mu4e-headers-mode-map
-         ("j" . dd/mu4e-jump-via-comp-read)
+         ;;("j" . dd/mu4e-jump-via-comp-read)
          ("d" . mu4e-headers-mark-for-delete)
          ("D" . mu4e-headers-mark-for-trash)
          :map mu4e-main-mode-map
-         ("j" . dd/mu4e-jump-via-comp-read)
+         ;;("j" . dd/mu4e-jump-via-comp-read)
          :map mu4e-view-mode-map
          ("V" . visual-fill-column-mode)
          ("d" . mu4e-view-mark-for-delete)
          ("D" . mu4e-view-mark-for-trash)
-         ("M" . mu4e-action-view-in-w3m)
-         ("j" . dd/mu4e-jump-via-comp-read))
+         ("M" . mu4e-action-view-in-w3m))
+         ;;         ("j" . dd/mu4e-jump-via-comp-read))
   :config
   (add-hook 'mu4e-main-mode-hook 'delete-other-windows)
+
+  (setq mu4e-read-option-use-builtin nil
+        mu4e-completing-read-function 'completing-read)
 
   (defun dd/dont-auto-save ()
     (interactive)
     (auto-save-mode -1))
   (add-hook 'mu4e-compose-mode-hook #'dd/dont-auto-save)
 
-  (defun dd/mu4e-toggle-gnus ()
-    "Toggle Gnus view mode in mu4e."
-    (interactive)
-    (setq mu4e-view-use-gnus (not mu4e-view-use-gnus)))
-
   (defun dd/reset-standard-name-and-email ()
     "Reset mail address and name to default."
     (interactive)
     (setq user-mail-address "ddavis@ddavis.io"
           user-full-name "Doug Davis"))
-
-  (defun dd/mu4e-jump-via-comp-read ()
-    "Jump maildirs using `completing-read'."
-    (interactive)
-    (let ((maildir (completing-read "Maildir: " (mu4e-get-maildirs))))
-      (mu4e-headers-search (format "maildir:\"%s\"" maildir))))
 
   (defun mu4e-action-view-in-w3m ()
     "View the body of the message in Emacs w3m."
@@ -116,11 +107,11 @@
 
   (set-face-attribute 'mu4e-unread-face nil :weight 'regular)
   (set-face-attribute 'mu4e-header-highlight-face nil :weight 'regular)
-  ;; (setq  mu4e-use-fancy-chars nil
-  ;;        mu4e-headers-thread-connection-prefix '("│"   . "│")
-  ;;        mu4e-headers-thread-orphan-prefix     '("├► " . "├► ")
-  ;;        mu4e-headers-thread-child-prefix      '("├► " . "├► ")
-  ;;        mu4e-headers-thread-last-child-prefix '("╰► " . "╰► "))
+  (setq  mu4e-use-fancy-chars nil
+         mu4e-headers-thread-connection-prefix '("│"   . "│")
+         mu4e-headers-thread-orphan-prefix     '("├► " . "├► ")
+         mu4e-headers-thread-child-prefix      '("├► " . "├► ")
+         mu4e-headers-thread-last-child-prefix '("╰► " . "╰► "))
   (setq mu4e-mu-binary dd/mu-exe
         mu4e-change-filenames-when-moving t
         mu4e-get-mail-command "true"
@@ -141,39 +132,6 @@
           "ddavis@cern\\.ch"))
   (setq mu4e-contexts
         `( ,(make-mu4e-context
-             :name "cern"
-             :enter-func (lambda () (mu4e-message "Entering CERN context"))
-             :leave-func (lambda () (dd/reset-standard-name-and-email))
-             :match-func (lambda (msg)
-                           (when msg
-                             (string-match-p "^/cern" (mu4e-message-field msg :maildir))))
-             :vars '((user-mail-address      . "ddavis@cern.ch")
-                     (user-email-address     . "ddavis@cern.ch")
-                     (mail-host-address      . "cern.ch")
-                     (user-full-name         . "Doug Davis")
-                     (mu4e-trash-folder      . "/cern/Trash")
-                     (mu4e-sent-folder       . "/cern/Sent")
-                     (mu4e-drafts-folder     . "/cern/Drafts")
-                     (mu4e-reply-to-address  . "ddavis@cern.ch")))
-
-           ,(make-mu4e-context
-             :name "duke"
-             :enter-func (lambda () (mu4e-message "Entering Duke context"))
-             :leave-func (lambda () (dd/reset-standard-name-and-email))
-             :match-func (lambda (msg)
-                           (when msg
-                             (string-match-p "^/duke" (mu4e-message-field msg :maildir))))
-             :vars '((user-mail-address       . "ddavis@phy.duke.edu")
-                     (user-email-address      . "ddavis@phy.duke.edu")
-                     (user-full-name          . "Doug Davis")
-                     (mail-host-address       . "phy.duke.edu")
-                     (mu4e-trash-folder       . "/duke/Trash")
-                     (mu4e-sent-folder        . "/duke/Sent")
-                     (mu4e-drafts-folder      . "/duke/Drafts")
-                     (mu4e-reply-to-address   . "ddavis@phy.duke.edu")))))
-  (when (or dd/on-mac-p dd/on-cc7-p)
-    (add-to-list 'mu4e-contexts
-                 (make-mu4e-context
                   :name "fastmail"
                   :enter-func (lambda () (mu4e-message "Entering FastMail context"))
                   :leave-func (lambda () (mu4e-message "Leaving FastMail context"))
@@ -188,9 +146,61 @@
                           (mu4e-sent-folder       . "/fastmail/Sent")
                           (mu4e-drafts-folder     . "/fastmail/Drafts")
                           (mu4e-reply-to-address  . "ddavis@ddavis.io")))))
+
+  ;;          ,(make-mu4e-context
+  ;;            :name "cern"
+  ;;            :enter-func (lambda () (mu4e-message "Entering CERN context"))
+  ;;            :leave-func (lambda () (dd/reset-standard-name-and-email))
+  ;;            :match-func (lambda (msg)
+  ;;                          (when msg
+  ;;                            (string-match-p "^/cern" (mu4e-message-field msg :maildir))))
+  ;;            :vars '((user-mail-address      . "ddavis@cern.ch")
+  ;;                    (user-email-address     . "ddavis@cern.ch")
+  ;;                    (mail-host-address      . "cern.ch")
+  ;;                    (user-full-name         . "Doug Davis")
+  ;;                    (mu4e-trash-folder      . "/cern/Trash")
+  ;;                    (mu4e-sent-folder       . "/cern/Sent")
+  ;;                    (mu4e-drafts-folder     . "/cern/Drafts")
+  ;;                    (mu4e-reply-to-address  . "ddavis@cern.ch")))
+
+  ;;          ,(make-mu4e-context
+  ;;            :name "duke"
+  ;;            :enter-func (lambda () (mu4e-message "Entering Duke context"))
+  ;;            :leave-func (lambda () (dd/reset-standard-name-and-email))
+  ;;            :match-func (lambda (msg)
+  ;;                          (when msg
+  ;;                            (string-match-p "^/duke" (mu4e-message-field msg :maildir))))
+  ;;            :vars '((user-mail-address       . "ddavis@phy.duke.edu")
+  ;;                    (user-email-address      . "ddavis@phy.duke.edu")
+  ;;                    (user-full-name          . "Doug Davis")
+  ;;                    (mail-host-address       . "phy.duke.edu")
+  ;;                    (mu4e-trash-folder       . "/duke/Trash")
+  ;;                    (mu4e-sent-folder        . "/duke/Sent")
+  ;;                    (mu4e-drafts-folder      . "/duke/Drafts")
+  ;;                    (mu4e-reply-to-address   . "ddavis@phy.duke.edu")))))
+  ;; (when (or dd/on-mac-p dd/on-cc7-p)
+  ;;   (add-to-list 'mu4e-contexts
+  ;;                (make-mu4e-context
+  ;;                 :name "fastmail"
+  ;;                 :enter-func (lambda () (mu4e-message "Entering FastMail context"))
+  ;;                 :leave-func (lambda () (mu4e-message "Leaving FastMail context"))
+  ;;                 :match-func (lambda (msg)
+  ;;                               (when msg
+  ;;                                 (string-match-p "^/fastmail" (mu4e-message-field msg :maildir))))
+  ;;                 :vars '((user-mail-address      . "ddavis@ddavis.io")
+  ;;                         (user-email-address     . "ddavis@ddavis.io")
+  ;;                         (user-full-name         . "Doug Davis")
+  ;;                         (mail-host-address      . "ddavis.io")
+  ;;                         (mu4e-trash-folder      . "/fastmail/Trash")
+  ;;                         (mu4e-sent-folder       . "/fastmail/Sent")
+  ;;                         (mu4e-drafts-folder     . "/fastmail/Drafts")
+  ;;                         (mu4e-reply-to-address  . "ddavis@ddavis.io")))))
   (setq mu4e-bookmarks '((:name "Unread"
                                 :query "flag:unread AND NOT flag:trashed AND NOT m:/cern*"
                                 :key ?u)
+                         (:name "Fastmail Inbox"
+                                :query "date:10d..now and m:/fastmail/INBOX"
+                                :key ?i)
                          (:name "Personal recent"
                                 :query "date:10d..now AND m:/fastmail*"
                                 :key ?p)
@@ -202,12 +212,12 @@
                                 :key ?3)
                          (:name "Last 7 days"
                                 :query "date:1w..now"
-                                :key ?7)
-                         (:name "Duke"
-                                :query "m:/duke*"
-                                :key ?d)
-                         (:name "CERN"
-                                :query "m:/cern* AND date:2y..now"
-                                :key ?c))))
+                                :key ?7))))
+                         ;; (:name "Duke"
+                         ;;        :query "m:/duke*"
+                         ;;        :key ?d)
+                         ;; (:name "CERN"
+                         ;;        :query "m:/cern* AND date:2y..now"
+                         ;;        :key ?c))))
 
 ;;; end of email.el
