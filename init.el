@@ -67,20 +67,8 @@
                          (dd/includes? (emacs-version) "arm-apple"))
   "For checking if on M1 mac.")
 
-(defconst dd/on-cc7-p (dd/includes? (system-name) "cc7")
-  "For checking if on cc7 box.")
-
 (defconst dd/on-udt-p (dd/includes? (system-name) "udt")
   "For checking if on udt box.")
-
-(defconst dd/on-work-p (file-exists-p "/Users/ddavis/.emacs.d/.work-laptop")
-  "For checking if on work laptop")
-
-(defconst dd/use-pdf-tools-p (and window-system
-                                  (or dd/on-mac-p
-                                      dd/on-cc7-p
-                                      dd/on-udt-p))
-  "For checking if we should use pdf-tools.")
 
 (setq initial-scratch-message
       (concat ";; GNU Emacs "
@@ -178,12 +166,6 @@
                         :weight 'regular
                         :height 120))
 
-  (when dd/on-cc7-p
-    (set-face-attribute 'default nil
-                        :family "MonoLisa"
-                        :weight 'regular
-                        :height 130))
-
   (when (version<= "29" emacs-version)
     (set-face-attribute 'variable-pitch nil :family "MonoLisa"))
     ;; (set-face-attribute 'mode-line-active nil :family "MonoLisa")
@@ -191,7 +173,7 @@
   (set-face-attribute 'fixed-pitch nil :family "MonoLisa"))
 
 (dd/reset-font)
-(when (or dd/on-udt-p dd/on-cc7-p)
+(when dd/on-udt-p
   (when (fboundp 'set-fontset-font)
     (set-fontset-font t 'symbol
                       (font-spec :family "Noto Color Emoji")
@@ -412,7 +394,6 @@ Taken from an emacs-devel thread."
 (defconst dd/llvm-bin-path
   (cond (dd/on-m1-p "/opt/homebrew/opt/llvm/bin")
         (dd/on-mac-p "/usr/local/opt/llvm/bin")
-        (dd/on-cc7-p "/home/ddavis/software/specific/llvm/master/bin")
         (t "/usr/bin"))
   "Machine dependent llvm bin path.")
 
@@ -451,7 +432,7 @@ Taken from an emacs-devel thread."
   :init
   (global-auto-revert-mode +1))
 
-(when (or dd/on-mac-p dd/on-cc7-p dd/on-udt-p)
+(when (or dd/on-mac-p dd/on-udt-p)
   (use-package auth-source
     :init
     (setenv "GPG_AGENT_INFO" nil)
@@ -461,9 +442,7 @@ Taken from an emacs-devel thread."
 (use-package browse-url
   :defer 10
   :config
-  (when dd/on-cc7-p
-    (setq browse-url-browser-function 'browse-url-generic
-          browse-url-generic-program "/usr/local/bin/firefox")))
+  (setq browse-url-browser-function 'browse-url-generic))
 
 (use-package cc-mode
   :config
@@ -505,12 +484,7 @@ Taken from an emacs-devel thread."
                                           ("pyright-langserver" "--stdio")))))
   (setq eglot-autoshutdown t))
 
-(use-package env
-  :init
-  (when dd/on-cc7-p
-    (setenv "PKG_CONFIG_PATH" "/usr/lib64/pkgconfig")))
-
-(when (or dd/on-mac-p dd/on-cc7-p dd/on-udt-p)
+(when (or dd/on-mac-p dd/on-udt-p)
   (use-package epa-file
     :init
     (fset 'epg-wait-for-status 'ignore)
@@ -990,11 +964,6 @@ Taken from an emacs-devel thread."
   :defer 10
   :ensure t)
 
-;; (use-package cython-mode
-;;   :ensure t
-;;   :mode (("\\.pyx\\'" . cython-mode)
-;;          ("\\.pxd\\'" . cython-mode)))
-
 (use-package debbugs
   :ensure t
   :defer t)
@@ -1070,17 +1039,17 @@ Taken from an emacs-devel thread."
 ;;   :custom
 ;;   (flycheck-emacs-lisp-load-path 'inherit))
 
-;; (use-package helpful
-;;   :ensure t
-;;   :bind (([remap describe-function] . helpful-callable)
-;;          ([remap describe-variable] . helpful-variable)
-;;          ([remap describe-key] . helpful-key)
-;;          ("C-h o" . helpful-symbol)
-;;          ("C-h ." . helpful-at-point)
-;;          :map helpful-mode-map
-;;          ("q" . kill-buffer-and-window))
-;;   :config
-;;   (setq helpful-max-highlight 15000))
+(use-package helpful
+  :ensure t
+  :bind (([remap describe-function] . helpful-callable)
+         ([remap describe-variable] . helpful-variable)
+         ([remap describe-key] . helpful-key)
+         ("C-h o" . helpful-symbol)
+         ("C-h ." . helpful-at-point)
+         :map helpful-mode-map
+         ("q" . kill-buffer-and-window))
+  :config
+  (setq helpful-max-highlight 15000))
 
 (use-package iedit
   :ensure t
@@ -1093,8 +1062,6 @@ Taken from an emacs-devel thread."
          (markdown-mode-hook . jit-spell-mode)
          (message-mode-hook . jit-spell-mode)
          (mu4e-compose-mode-hook . jit-spell-mode)))
-
-;; (use-package jinx)
 
 (setq lsp-use-plists t)
 
@@ -1204,44 +1171,6 @@ Taken from an emacs-devel thread."
   (setq completion-category-defaults nil
         completion-category-overrides '((file (styles . (partial-completion))))))
 
-(use-package ox-hugo
-  :ensure t
-  :after ox)
-
-;; (when dd/use-pdf-tools-p
-;;   (use-package pdf-tools
-;;     :ensure t
-;;     :defer t
-;;     :hook (pdf-view-mode-hook . (lambda () (display-line-numbers-mode 0)))
-;;     :config
-;;     (pdf-tools-install)
-;;     (setq-default pdf-view-display-size 'fit-page)
-;;     (when dd/on-mac-p
-;;       (setq pdf-view-use-scaling t)
-;;       (setq pdf-view-use-imagemagick nil))))
-
-;; (when window-system
-;;   (use-package posframe
-;;     :ensure t))
-
-;; (use-package projectile
-;;   :ensure t
-;;   :demand t
-;;   :bind-keymap ("C-c p" . projectile-command-map)
-;;   :bind (:map projectile-command-map
-;;               ("r" . dd/ripgrep-proj-or-dir)
-;;               ("g" . consult-ripgrep))
-;;   :config
-;;   (setq projectile-ignored-project-function 'file-remote-p)
-;;   (setq projectile-track-known-projects-automatically t
-;;         projectile-globally-ignored-file-suffixes '("#" "~" ".o" ".so" ".elc" ".pyc")
-;;         projectile-globally-ignored-directories '(".git" "__pycache__")
-;;         projectile-globally-ignored-files '(".DS_Store")
-;;         projectile-ignored-projects '("/opt/homebrew/"
-;;                                       "/usr/local/Homebrew/")
-;;         projectile-enable-caching nil)
-;;   (projectile-mode +1))
-
 (use-package python-isort
   :ensure t)
 
@@ -1262,20 +1191,7 @@ Taken from an emacs-devel thread."
   (setq pyvenv-post-deactivate-hooks
         (list
          (lambda ()
-           (setq python-shell-interpreter "python3"))))
-
-  (defun dd/conda-envs (&optional dir)
-    "Get list of conda environments."
-    (let ((search-dir (if dir
-                          dir
-                        (format "%s/envs" dd/anaconda-installation))))
-      (f-directories search-dir)))
-  (defun dd/conda-env-activate (name)
-    "Activate conda with pyvenv."
-    (interactive
-     (list
-      (completing-read "Work on: " (dd/conda-envs))))
-    (pyvenv-activate name)))
+           (setq python-shell-interpreter "python3")))))
 
 (use-package rainbow-delimiters
   :ensure t
@@ -1319,62 +1235,6 @@ Taken from an emacs-devel thread."
 ;;   :init
 ;;   (setq rustic-rustfmt-bin "/Users/ddavis/.cargo/bin/rustfmt")
 ;;   (setq rustic-format-on-save t))
-
-;; (use-package selectrum
-;;   :ensure t
-;;   :demand t
-;;   :init
-;;   (setq selectrum-extend-current-candidate-highlight t)
-;;   (setq selectrum-num-candidates-displayed 'auto)
-;;   (setq selectrum-max-window-height 16)
-;;   (setq selectrum-fix-vertical-window-height t)
-;;   :custom-face
-;;   (selectrum-current-candidate ((t (:inherit region))))
-;;   :config
-;;   (selectrum-mode +1))
-
-;; (use-package selectrum-prescient
-;;   :ensure t
-;;   :after selectrum
-;;   :custom-face
-;;   :config
-;;   (selectrum-prescient-mode +1)
-;;   (prescient-persist-mode +1))
-
-;; (when (or dd/on-mac-p dd/on-cc7-p)
-;;   (use-package tex :defer t)
-;;   (use-package tex-buf :defer t)
-;;   (use-package font-latex :defer t)
-;;   (use-package tex-site
-;;     :ensure auctex
-;;     :mode ("\\.tex\\'" . TeX-latex-mode)
-;;     :config
-;;     (setq font-latex-fontify-sectioning 'color
-;;           font-latex-fontify-script nil
-;;           TeX-source-correlate-mode 'synctex
-;;           TeX-source-correlate-start-server t)
-;;     (setq-default TeX-master nil)
-;;     (setq TeX-auto-save t)
-;;     (setq TeX-parse-self t)
-;;     (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)))
-;; ;; (when dd/use-pdf-tools-p
-;; ;;   (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))
-
-;; (when (version< emacs-version "29.0.50")
-;;   (unless dd/on-cc7-p
-;;     (use-package tree-sitter
-;;       :ensure t
-;;       :hook ((python-mode-hook . tree-sitter-hl-mode)
-;;              (rust-mode-hook . tree-sitter-hl-mode)
-;;              (c-mode-common-hook . tree-sitter-hl-mode)))
-;;     (use-package tree-sitter-langs
-;;       :ensure t)))
-
-;; (when (version-list-< '(29 0) (version-to-list emacs-version))
-;;   (use-package treesit-auto
-;;     :ensure t
-;;     :config
-;;     (global-treesit-auto-mode +1)))
 
 (use-package vertico
   :ensure t
@@ -1425,15 +1285,6 @@ Taken from an emacs-devel thread."
   :ensure t
   :defer t
   :mode ("\\.yml\\'" "\\.yaml\\'"))
-
-(use-package yasnippet
-  :ensure t
-  :demand t
-  :init
-  (yas-global-mode 1))
-
-(use-package yasnippet-snippets
-  :ensure t)
 
 ;; sec05:
 ;; some package-free bindings and macOS specifics
@@ -1493,14 +1344,8 @@ Taken from an emacs-devel thread."
 ;; sec06:
 ;; email setup is in dedicated file
 
-(when (or dd/on-m1-p dd/on-cc7-p dd/on-mac-p dd/on-udt-p)
+(when (or dd/on-m1-p dd/on-mac-p dd/on-udt-p)
   (load-file "~/.emacs.d/dot-emacs/email.el"))
-
-;; sec07:
-;; work
-
-(when dd/on-work-p
-  (load-file "~/.emacs.d/day-job.el"))
 
 ;; sec08:
 ;; misc
