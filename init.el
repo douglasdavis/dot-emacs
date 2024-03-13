@@ -154,8 +154,8 @@
     (when (boundp 'ns-antialias-text)
       (setq ns-antialias-text t))
     (set-face-attribute 'default nil
-                        :family "Berkeley Mono"
-                        :weight 'regular
+                        :family "CaskaydiaCove NFM"
+                        :weight 'semi-light
                         :height 140)
     (dolist (face '(font-lock-doc-face font-lock-comment-face))
       (set-face-attribute face nil :italic t)))
@@ -785,9 +785,10 @@ Taken from an emacs-devel thread."
 ;; (use-package all-the-icons
 ;;   :load-path "/Users/ddavis/software/repos/all-the-icons.el")
 
-(use-package all-the-icons-dired
-  :ensure t
-  :hook (dired-mode-hook . all-the-icons-dired-mode))
+(when (display-graphic-p)
+  (use-package all-the-icons-dired
+    :ensure t
+    :hook (dired-mode-hook . all-the-icons-dired-mode)))
 
 (use-package apheleia
   :ensure t
