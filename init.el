@@ -154,9 +154,9 @@
     (when (boundp 'ns-antialias-text)
       (setq ns-antialias-text t))
     (set-face-attribute 'default nil
-                        :family "CaskaydiaCove NFM"
-                        :weight 'semi-light
-                        :height 140)
+                        :family "JetBrains Mono"
+                        :weight 'regular
+                        :height 130)
     (dolist (face '(font-lock-doc-face font-lock-comment-face))
       (set-face-attribute face nil :italic t)))
 
@@ -782,14 +782,6 @@ Taken from an emacs-devel thread."
   :ensure t
   :bind ("M-o" . ace-window))
 
-;; (use-package all-the-icons
-;;   :load-path "/Users/ddavis/software/repos/all-the-icons.el")
-
-(when (display-graphic-p)
-  (use-package all-the-icons-dired
-    :ensure t
-    :hook (dired-mode-hook . all-the-icons-dired-mode)))
-
 (use-package apheleia
   :ensure t
   :hook (python-mode-hook . apheleia-mode))
@@ -1011,17 +1003,15 @@ Taken from an emacs-devel thread."
   (setq eldoc-box-clear-with-C-g t
         eldoc-box-fringe-use-same-bg nil))
 
-;; (use-package elfeed
-;;   :ensure t
-;;   :commands elfeed
-;;   :config
-;;   (setq elfeed-search-filter "@21-days-ago")
-;;   (setq elfeed-feeds
-;;         '(("https://planet.scipy.org/feed.xml" python)
-;;           ("https://planet.emacslife.com/atom.xml" emacs)
-;;           ("https://ddavis.io/index.xml" blog)))
-;;   (add-hook 'elfeed-new-entry-hook
-;;             (elfeed-make-tagger :before "3 weeks ago" :remove 'unread)))
+(use-package elfeed
+  :ensure t
+  :commands elfeed
+  :config
+  (setq elfeed-search-filter "@21-days-ago")
+  (setq elfeed-feeds
+        '(("https://ddavis.io/rss.xml" blog)))
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :before "3 weeks ago" :remove 'unread)))
 
 (use-package eros
   :ensure t
@@ -1401,3 +1391,24 @@ Taken from an emacs-devel thread."
 ;; (use-package forge
 ;;   :ensure t
 ;;   :after magit)
+
+
+(use-package nerd-icons
+  :ensure t)
+
+(use-package nerd-icons-completion
+  :ensure t
+  :config
+  (nerd-icons-completion-mode))
+
+(use-package nerd-icons-corfu
+  :ensure t)
+
+(use-package nerd-icons-dired
+  :ensure t
+  :hook
+  (dired-mode-hook . nerd-icons-dired-mode))
+
+(use-package nerd-icons-ibuffer
+  :ensure t
+  :hook (ibuffer-mode-hook . nerd-icons-ibuffer-mode))
