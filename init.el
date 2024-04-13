@@ -36,6 +36,9 @@
 
 (setq custom-file (concat user-emacs-directory "custom.el"))
 
+(add-to-list 'exec-path "/usr/local/bin")
+(add-to-list 'exec-path "/usr/local/sbin")
+
 ;; sec01:
 ;; general setup not associated with packages
 
@@ -43,17 +46,10 @@
 (defconst dd/using-native-comp (and (fboundp 'native-comp-available-p)
                                     (native-comp-available-p)))
 
-(defvar native-comp-async-query-on-exit)
-(defvar native-comp-async-jobs-number)
-(defvar native-comp-async-report-warnings-errors)
-(defvar native-comp-deferred-compilation-deny-list)
-(defvar native-comp-deferred-compilation)
-
+(setq native-comp-jit-compilation-deny-list '("loaddefs\\.el\\.gz"))
 (setq native-comp-async-query-on-exit t)
-(setq native-comp-async-jobs-number 4)
-(setq native-comp-async-report-warnings-errors nil)
-(setq native-comp-deferred-compilation-deny-list '("\\with-editor.el\\'"))
-(setq native-comp-deferred-compilation t)
+(setq native-comp-jit-compilation nil)
+(setq native-comp-async-jobs-number 3)
 
 (defun dd/includes? (s substr)
   "Clojure like function; t if S includes SUBSTR."
@@ -66,6 +62,9 @@
 (defconst dd/on-m1-p (or (dd/includes? (emacs-version) "aarch64-apple")
                          (dd/includes? (emacs-version) "arm-apple"))
   "For checking if on M1 mac.")
+
+(defconst dd/on-intel-p (dd/includes? (emacs-version) "x86")
+  "For checking if on Intel mac.")
 
 (defconst dd/on-udt-p (dd/includes? (system-name) "udt")
   "For checking if on udt box.")
@@ -82,6 +81,12 @@
               (cond (dd/using-native-comp " (native-comp)")
                     (t ""))
               "\n\n"))
+
+
+
+
+
+
 
 (setq echo-keystrokes 0.01
       ring-bell-function 'ignore
@@ -116,70 +121,36 @@
   (tooltip-mode -1))
 
 (when (fboundp 'menu-bar-mode)
-  (if dd/on-mac-p
-      (menu-bar-mode +1)
-    (menu-bar-mode -1)))
+  (menu-bar-mode +1))
 
-(when (and dd/on-mac-p (not window-system))
+(when (not window-system)
   (menu-bar-mode -1))
 
 (setq-default require-final-newline t)
 (setq-default indent-tabs-mode nil)
-
-(defun dd-window-height ()
-  (cond (dd/on-work-p 64)
-        (t 54)))
-(defun dd-window-width ()
-  (cond (dd/on-work-p 232)
-        (t 192)))
-
-;;(setq default-frame-alist
 
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 (add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
 (add-to-list 'default-frame-alist '(horizontal-scroll-bars . nil))
 (add-to-list 'default-frame-alist '(tool-bar-lines . 0))
 
-
-;;      `((height . ,(dd-window-height))
-;;        (width . ,(dd-window-width))
-;;        (vertical-scroll-bars . nil)
-;;        (horizontal-scroll-bars . nil)
-;;        (tool-bar-lines . 0)))
-
 (defun dd/reset-font ()
   "Reset font to personal default"
   (interactive)
-  (when dd/on-mac-p
-    (when (boundp 'ns-antialias-text)
-      (setq ns-antialias-text t))
+  (when (boundp 'ns-antialias-text)
+    (setq ns-antialias-text t)
     (set-face-attribute 'default nil
-                        :family "JetBrains Mono"
+                        :family "Hasklug Nerd Font Mono"
                         :weight 'regular
-                        :height 130)
+                        :height 140)
     (dolist (face '(font-lock-doc-face font-lock-comment-face))
       (set-face-attribute face nil :italic t)))
 
-  (when dd/on-udt-p
-    (set-face-attribute 'default nil
-                        :family "Berkeley Mono"
-                        :weight 'regular
-                        :height 120))
-
-  (when (version<= "29" emacs-version)
-    (set-face-attribute 'variable-pitch nil :family "MonoLisa"))
-    ;; (set-face-attribute 'mode-line-active nil :family "MonoLisa")
-    ;; (set-face-attribute 'mode-line-inactive nil :family "MonoLisa"))
-  (set-face-attribute 'fixed-pitch nil :family "MonoLisa"))
+  (set-face-attribute 'fixed-pitch nil :family "Berkeley Mono"))
 
 (dd/reset-font)
-(when dd/on-udt-p
-  (when (fboundp 'set-fontset-font)
-    (set-fontset-font t 'symbol
-                      (font-spec :family "Noto Color Emoji")
-                      nil 'prepend)))
 
-(when (and dd/on-mac-p (fboundp 'set-fontset-font))
+(when (fboundp 'set-fontset-font)
   (set-fontset-font t 'unicode "Apple Color Emoji" nil 'prepend))
 
 (defun dd/compile-local-site-lisp ()
@@ -381,36 +352,6 @@ Taken from an emacs-devel thread."
                          (/ (- monitor-h frame-h) 2))))
       (apply 'set-frame-position (flatten-list (list frame center))))))
 
-;; (defun dd/vterm-go ()
-;;   "Switch to (or create) a general vterm called dd/vterm."
-;;   (interactive)
-;;   (delete-other-windows)
-;;   (if (get-buffer "dd/vterm")
-;;       (progn
-;;         (set-buffer "dd/vterm")
-;;         (switch-to-buffer "dd/vterm"))
-;;     (vterm "dd/vterm")))
-
-(defconst dd/llvm-bin-path
-  (cond (dd/on-m1-p "/opt/homebrew/opt/llvm/bin")
-        (dd/on-mac-p "/usr/local/opt/llvm/bin")
-        (t "/usr/bin"))
-  "Machine dependent llvm bin path.")
-
-(defun dd/llvm-project-exe (exe-name)
-  "Get full path of LLVM executable EXE-NAME."
-  (when (and dd/llvm-bin-path (file-exists-p dd/llvm-bin-path))
-    (concat (file-name-as-directory dd/llvm-bin-path) exe-name)))
-
-(defconst dd/clang-exe (dd/llvm-project-exe "clang"))
-(defconst dd/clang-format-exe (dd/llvm-project-exe "clang-format"))
-(defconst dd/clangd-exe (dd/llvm-project-exe "clangd"))
-
-(defconst dd/anaconda-installation "~/software/anaconda3")
-
-;; sec02:
-;; use-package setup
-
 (setq package-archives
       '(("gnu" . "https://elpa.gnu.org/packages/")
         ("nongnu" . "https://elpa.nongnu.org/nongnu/")
@@ -425,31 +366,128 @@ Taken from an emacs-devel thread."
 (require 'bind-key)
 (setq use-package-hook-name-suffix nil)
 
-;; sec03:
-;; use-package for some core Emacs packages.
+(use-package ace-window
+  :ensure t
+  :bind ("M-o" . ace-window))
+
+(use-package apheleia
+  :ensure t
+  :config
+  (setf (alist-get 'python-mode apheleia-mode-alist) '(ruff ruff-isort))
+  (setf (alist-get 'python-ts-mode apheleia-mode-alist) '(ruff ruff-isort)))
+
+(use-package auto-compile
+  :ensure t
+  :defer t
+  :config
+  (setq auto-compile-display-buffer nil)
+  (setq auto-compile-mode-line-counter t))
+
+(use-package auto-package-update
+  :ensure t
+  :commands (auto-package-update-now)
+  :init
+  (setq auto-package-update-delete-old-versions t))
+
+(use-package auth-source
+  :init
+  (setenv "GPG_AGENT_INFO" nil)
+  (setq auth-sources
+        (list
+         (concat user-emacs-directory ".authinfo")
+         (concat user-emacs-directory ".authinfo.gpg"))))
 
 (use-package autorevert
   :init
   (global-auto-revert-mode +1))
 
-(when (or dd/on-mac-p dd/on-udt-p)
-  (use-package auth-source
-    :init
-    (setenv "GPG_AGENT_INFO" nil)
-    (setq auth-sources
-          (list (concat user-emacs-directory ".authinfo.gpg")))))
+(use-package breadcrumb
+  :ensure t
+  :hook (eglot-managed-mode-hook . breadcrumb-local-mode))
 
 (use-package browse-url
   :defer 10
   :config
   (setq browse-url-browser-function 'browse-url-generic))
 
+(use-package cape
+  :ensure t
+  :init
+  (add-to-list 'completion-at-point-functions #'cape-file))
+
 (use-package cc-mode
   :config
   (c-set-offset 'innamespace 0))
 
+(use-package cmake-mode
+  :ensure t)
+
+(use-package cmake-font-lock
+  :ensure t)
+
 (use-package compile
   :hook (compilation-mode-hook . (lambda () (display-line-numbers-mode 0))))
+
+(use-package consult
+  :ensure t
+  :bind (("C-c l" . consult-line)
+         ("C-c r" . consult-ripgrep)
+         ("C-x b" . consult-buffer))
+  :init
+  (setq consult-ripgrep-args
+        "rg --null --line-buffered --color=never --max-columns=1000 --path-separator /\
+            --smart-case --no-heading --with-filename --line-number --search-zip")
+  :config
+  (setq consult-preview-key 'nil)
+  ;; (autoload 'projectile-project-root "projectile")
+  ;; (setq consult-project-root-function #'projectile-project-root)
+  (defun find-fd (&optional dir initial)
+    (interactive "P")
+    (let ((consult-find-command "fd --color=never --full-path ARG OPTS"))
+      (consult-find dir initial))))
+
+(use-package corfu
+  :ensure t
+  :custom
+  (corfu-cycle t)
+  (corfu-auto t)
+  (corfu-scroll-margin 5)
+  :init
+  ;; (setq completion-cycle-threshold 3)
+  (setq tab-always-indent 'complete)
+  :config
+  (global-corfu-mode +1))
+
+(use-package corfu-terminal
+  :ensure t
+  :after corfu
+  :init
+  (unless (display-graphic-p)
+    (corfu-terminal-mode +1))
+  (add-hook 'after-make-frame-functions
+            (lambda (frame)
+              (unless (display-graphic-p frame)
+                (corfu-terminal-mode +1)))))
+
+(use-package crux
+  :defer 5
+  :ensure t)
+
+(setq ad-redefinition-action 'accept)
+(use-package default-text-scale
+  :ensure t
+  :demand t
+  :init
+  :bind (("s-=" . default-text-scale-increase)
+         ("s--" . default-text-scale-decrease)
+         ("s-0" . default-text-scale-reset)))
+
+(use-package denote
+  :ensure t
+  :init
+  (setq denote-directory (expand-file-name "~/.emacs.d/denotes")
+        denote-known-keywords '("dak" "random")
+        denote-file-type 'text))
 
 (use-package dired
   :demand t
@@ -460,46 +498,55 @@ Taken from an emacs-devel thread."
   :config
   (setq dired-recursive-copies 'always))
 
+(use-package diredfl
+  :ensure t
+  :hook (dired-mode-hook . diredfl-mode))
+
 (make-variable-buffer-local 'display-line-numbers-width-start)
 (use-package display-line-numbers
   :config
   (global-display-line-numbers-mode))
 
-(defun dd/rust-analyzer-binary ()
-  (interactive)
-  (cond (dd/on-m1-p "/opt/homebrew/bin/rust-analyzer")
-        (dd/on-udt-p "/home/ddavis/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rust-analyzer")
-        (t "rust-analyzer")))
+(use-package dockerfile-mode
+  :ensure t)
+
+(use-package doom-themes
+  :ensure t
+  :config
+  (dd/theme-cycler))
+
+(use-package doom-modeline
+  :ensure t
+  :demand t
+  :config
+  (doom-modeline-mode +1))
 
 (use-package eglot
   :commands eglot
   :config
   (add-to-list 'eglot-server-programs
-               `((rust-mode rust-ts-mode)
-                 . (,(dd/rust-analyzer-binary))))
-  (add-to-list 'eglot-server-programs
                `((python-mode python-ts-mode)
                  . ,(eglot-alternatives '("pylsp"
+                                          "ruff-lsp"
                                           "jedi-language-server"
                                           ("pyright-langserver" "--stdio")))))
+  (add-hook 'eglot-connect-hook 'breadcrumb-local-mode)
   (setq eglot-autoshutdown t))
 
-(when (or dd/on-mac-p dd/on-udt-p)
-  (use-package epa-file
-    :init
-    (fset 'epg-wait-for-status 'ignore)
-    :config
-    (custom-set-variables
-     `(epg-gpg-program
-       ,(cond (dd/on-m1-p "/opt/homebrew/bin/gpg")
-              (dd/on-mac-p "/usr/local/bin/gpg")
-              (dd/on-udt-p "/usr/bin/gpg")
-              (t "/usr/bin/gpg2"))))))
+(use-package eldoc)
+
+(use-package eldoc-box
+  :ensure t
+  :hook (eglot-managed-mode-hook . eldoc-box-hover-at-point-mode)
+  :init
+  (setq eldoc-box-clear-with-C-g t
+        eldoc-box-fringe-use-same-bg nil))
 
 (use-package erc
   :commands erc
   :config
-  (setq erc-default-server "irc.libera.chat"
+  (setq erc-nick "ddavis"
+        erc-default-server "irc.libera.chat"
         erc-prompt-for-password nil
         erc-user-full-name "Doug Davis"
         erc-rename-buffers t
@@ -509,7 +556,9 @@ Taken from an emacs-devel thread."
         erc-fill-function 'erc-fill-static
         erc-fill-static-center 19
         erc-fill-column 86
+        erc-track-shorten-start 5
         erc-query-display 'bury
+        erc-auto-query 'bury
         erc-prompt (lambda () (concat (buffer-name) " >"))
         erc-hide-list '("JOIN" "PART" "QUIT")
         erc-lurker-hide-list '("JOIN" "PART" "QUIT")
@@ -559,17 +608,40 @@ Taken from an emacs-devel thread."
                              (modify-syntax-entry ?\- "w" nil))))
 
 (use-package erc-track :after erc)
+
 (use-package erc-fill :after erc)
 
-(use-package esh-mode
-  :hook (eshell-mode-hook . (lambda () (display-line-numbers-mode 0))))
+(use-package eros
+  :ensure t
+  :hook (emacs-lisp-mode-hook . eros-mode))
 
-;; (use-package flyspell
-;;   :hook ((org-mode-hook . flyspell-mode)
-;;          (LaTeX-mode-hook . flyspell-mode)
-;;          (markdown-mode-hook . flyspell-mode)
-;;          (message-mode-hook . flyspell-mode)
-;;          (mu4e-compose-mode-hook . flyspell-mode)))
+;; (use-package exec-path-from-shell
+;;   :ensure t
+;;   :demand t
+;;   :config
+;;   (when (memq window-system '(mac ns x))
+;;     (exec-path-from-shell-initialize))
+
+;; (use-package flycheck
+;;   :ensure t
+;;   :defer t
+;;   :custom
+;;   (flycheck-emacs-lisp-load-path 'inherit))
+
+(use-package hcl-mode
+  :ensure t)
+
+(use-package helpful
+  :ensure t
+  :bind (([remap describe-function] . helpful-callable)
+         ([remap describe-variable] . helpful-variable)
+         ([remap describe-key] . helpful-key)
+         ("C-h o" . helpful-symbol)
+         ("C-h ." . helpful-at-point)
+         :map helpful-mode-map
+         ("q" . kill-buffer-and-window))
+  :config
+  (setq helpful-max-highlight 15000))
 
 (use-package help-mode
   :bind
@@ -583,6 +655,22 @@ Taken from an emacs-devel thread."
   :init
   (setq ibuffer-expert t))
 
+(use-package ibuffer-project
+  :ensure t
+  :demand t
+  :config
+  (add-to-list 'ibuffer-project-root-functions '(file-remote-p . "Remote"))
+  (add-hook
+   'ibuffer-hook
+   (lambda ()
+     (setq ibuffer-filter-groups (ibuffer-project-generate-filter-groups))
+     (unless (eq ibuffer-sorting-mode 'project-file-relative)
+       (ibuffer-do-sort-by-project-file-relative)))))
+
+(use-package iedit
+  :ensure t
+  :bind ("C-c ;" . iedit-mode))
+
 (use-package isearch
   :init
   (setq isearch-lazy-count t)
@@ -591,10 +679,85 @@ Taken from an emacs-devel thread."
 
 (use-package ispell
   :config
-  (when dd/on-mac-p
-    (setq ispell-program-name
-          (cond (dd/on-m1-p "/opt/homebrew/bin/hunspell")
-                (t "/usr/local/bin/hunspell")))))
+  (setq ispell-program-name "hunspell"))
+
+(use-package jit-spell
+  :ensure t
+  :hook ((org-mode-hook . jit-spell-mode)
+         (LaTeX-mode-hook . jit-spell-mode)
+         (markdown-mode-hook . jit-spell-mode)
+         (message-mode-hook . jit-spell-mode)
+         (mu4e-compose-mode-hook . jit-spell-mode)))
+
+(setq dd/ligature-path (expand-file-name "~/software/repos/ligature.el"))
+(when (and window-system (file-exists-p dd/ligature-path))
+  (use-package ligature
+    :load-path dd/ligature-path
+    :config
+    ;; Enable the "www" ligature in every possible major mode
+    (ligature-set-ligatures 't '("www"))
+    ;; Enable traditional ligature support in eww-mode, if the
+    ;; `variable-pitch' face supports it
+    (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+
+    (ligature-set-ligatures
+     '(prog-mode org-mode)
+     '(".." ".=" "..." "..<" "::" ":::" ":=" "::=" ";;" ";;;" "??" "???"
+       ".?" "?." ":?" "?:" "?=" "**" "***" "/*" "*/" "/**"
+       "<-" "->" "-<" ">-" "<--" "-->" "<<-" "->>" "-<<" ">>-" "<-<" ">->"
+       "<-|" "|->" "-|" "|-" "||-" "<!--" "<#--" "<=" "=>" ">=" "<==" "==>"
+       "<<=" "=>>" "=<<" ">>=" "<=<" ">=>" "<=|" "|=>" "<=>" "<==>" "||="
+       "|=" "//=" "/="
+       "<<" ">>" "<<<" ">>>" "<>" "<$" "$>" "<$>" "<+" "+>" "<+>" "<:" ":<"
+       "<:<" ">:" ":>" "<~" "~>" "<~>" "<<~" "<~~" "~~>" "~~" "<|" "|>"
+       "<|>" "<||" "||>" "<|||" "|||>" "</" "/>" "</>" "<*" "*>" "<*>" ":?>"
+       "#(" "#{" "#[" "]#" "#!" "#?" "#=" "#_" "#_(" "##" "###" "####"
+       "[|" "|]" "[<" ">]" "{!!" "!!}" "{|" "|}" "{{" "}}" "{{--" "--}}"
+       "{!--" "//" "///" "!!"
+       "www" "@_" "&&" "&&&" "&=" "~@" "++" "+++" "/\\" "\\/" "_|_" "||"
+       "=:" "=:=" "=!=" "==" "===" "=/=" "=~" "~-" "^=" "__" "!=" "!==" "-~"
+       "--" "---"))
+    ;; ;; Enable all Cascadia Code ligatures in programming modes
+    ;; (ligature-set-ligatures 'prog-mode '("-|" "-~" "---" "-<<" "-<" "--" "->" "->>" "-->" "///" "/=" "/=="
+    ;;                                      "/>" "//" "/*" "*>" "***" "*/" "<-" "<<-" "<=>" "<=" "<|" "<||"
+    ;;                                      "<|||" "<|>" "<:" "<>" "<-<" "<<<" "<==" "<<=" "<=<" "<==>" "<-|"
+    ;;                                      "<<" "<~>" "<=|" "<~~" "<~" "<$>" "<$" "<+>" "<+" "</>" "</" "<*"
+    ;;                                      "<*>" "<->" "<!--" ":>" ":<" ":::" "::" ":?" ":?>" ":=" "::=" "=>>"
+    ;;                                      "==>" "=/=" "=!=" "=>" "===" "=:=" "==" "!==" "!!" "!=" ">]" ">:"
+    ;;                                      ">>-" ">>=" ">=>" ">>>" ">-" ">=" "&&&" "&&" "|||>" "||>" "|>" "|]"
+    ;;                                      "|}" "|=>" "|->" "|=" "||-" "|-" "||=" "||" ".." ".?" ".=" ".-" "..<"
+    ;;                                      "..." "+++" "+>" "++" "[||]" "[<" "[|" "{|" "??" "?." "?=" "?:" "##"
+    ;;                                      "###" "####" "#[" "#{" "#=" "#!" "#:" "#_(" "#_" "#?" "#(" ";;" "_|_"
+    ;;                                      "__" "~~" "~~>" "~>" "~-" "~@" "$>" "^=" "]#"))
+    ;; Enables ligature checks globally in all buffers. You can also do it
+    ;; per mode with `ligature-mode'.
+    (global-ligature-mode t)))
+
+(use-package magit
+  :ensure t
+  :bind (("C-x g" . magit-status))
+  :hook (magit-status-mode-hook . (lambda ()
+                                    (make-local-variable 'truncate-lines)
+                                    (setq truncate-lines nil)))
+  :config
+  (defun dd/magit-kill-buffers ()
+    "See `https://manuel-uberti.github.io/emacs/2018/02/17/magit-bury-buffer/'"
+    (interactive)
+    (let ((buffers (magit-mode-get-buffers)))
+      (magit-restore-window-configuration)
+      (mapc #'kill-buffer buffers))))
+
+(use-package make-mode
+  :mode ("Makefile" . makefile-gmake-mode))
+
+(use-package marginalia
+  :ensure t
+  :demand t
+  :config
+  (marginalia-mode))
+
+(use-package markdown-mode
+  :ensure t)
 
 (use-package mouse
   :hook ((org-mode-hook . context-menu-mode)
@@ -603,46 +766,85 @@ Taken from an emacs-devel thread."
          (message-mode-hook . context-menu-mode)
          (mu4e-compose-mode-hook . context-menu-mode)))
 
-(use-package org
-  :hook (org-mode-hook . (lambda () (interactive)
-                           (setq-local display-line-numbers-width-start t)))
+(use-package nerd-icons
+  :ensure t)
+
+(use-package nerd-icons-completion
+  :ensure t
   :config
+  (nerd-icons-completion-mode))
 
-  (setq org-agenda-files '("~/.todo.org"))
+(use-package nerd-icons-corfu
+  :ensure t
+  :config
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
+(use-package nerd-icons-dired
+  :ensure t
+  :hook (dired-mode-hook . nerd-icons-dired-mode))
+
+(use-package nerd-icons-ibuffer
+  :ensure t
+  :hook (ibuffer-mode-hook . nerd-icons-ibuffer-mode))
+
+(use-package numpydoc
+  :ensure t
+  :init
+  (setq numpydoc-insertion-style nil)
+  :bind (:map python-ts-mode-map
+              ("C-c C-n" . numpydoc-generate)
+         :map python-mode-map
+              ("C-c C-n" . numpydoc-generate))
+  :after python)
+
+(use-package orderless
+  :ensure t
+  :init
+  (defun dd/use-orderless-in-minibuffer ()
+    (interactive)
+    (setq-local completion-styles '(orderless basic partial-completion emacs22 initials)))
+  (add-hook 'minibuffer-setup-hook 'dd/use-orderless-in-minibuffer)
+  (setq completion-category-defaults nil
+        completion-category-overrides '((file (styles . (partial-completion))))))
+
+(use-package org
+  ;; :hook (org-mode-hook . (lambda () (interactive)
+  ;;                          (setq-local display-line-numbers-width-start t)))
+  :config
   (setq org-src-fontify-natively t)
-  (setq org-structure-template-alist
-        (append org-structure-template-alist
-                '(("el" . "src emacs-lisp :results silent")
-                  ("p0" . "src python :session :results silent")
-                  ("p1" . "src python :session")
-                  ("p2" . "src python :results silent")
-                  ("cpp" . "src C++"))))
-  (when dd/on-mac-p
-    (bind-key "<A-down>" 'org-move-subtree-down org-mode-map)
-    (bind-key "<A-up>" 'org-move-subtree-up org-mode-map)
-    (bind-key "<A-left>" 'org-promote-subtree org-mode-map)
-    (bind-key "<A-right>" 'org-demote-subtree org-mode-map))
-  (unless dd/on-mac-p
-    (bind-key "<s-down>" 'org-move-subtree-down org-mode-map)
-    (bind-key "<s-up>" 'org-move-subtree-up org-mode-map)
-    (bind-key "<s-left>" 'org-promote-subtree org-mode-map)
-    (bind-key "<s-right>" 'org-demote-subtree org-mode-map)))
+  (bind-key "<A-down>" 'org-move-subtree-down org-mode-map)
+  (bind-key "<A-up>" 'org-move-subtree-up org-mode-map)
+  (bind-key "<A-left>" 'org-promote-subtree org-mode-map)
+  (bind-key "<A-right>" 'org-demote-subtree org-mode-map))
 
 (use-package outline
   :mode ("NEWS\\'" . outline-mode))
 
-(use-package python
-  ;; :bind (:map python-mode-map
-  ;;             ("C-c C-a" . dd/py-auto-lsp))
+(use-package paren
   :init
-  ;; (setq python-font-lock-keywords '(python-font-lock-keywords-level-1
-  ;;                                   python-font-lock-keywords-level-1
-  ;;                                   python-font-lock-keywords-level-2))
+  (show-paren-mode 1)
+  (setq-default show-paren-delay 0))
+
+(when window-system
+  (use-package posframe
+    :ensure t))
+
+(use-package prog-mode
+  :config
+  (add-hook 'emacs-lisp-mode-hook 'prettify-symbols-mode))
+
+(use-package project
+  :demand t)
+
+(use-package protobuf-mode
+  :ensure t)
+
+(use-package python
+  :init
   (setq python-indent-guess-indent-offset nil)
   :config
-  (setq python-shell-interpreter "ipython")
-  (setq python-shell-interpreter-args "-i --simple-prompt")
+  (setq python-shell-interpreter "python3")
+  (setq python-shell-interpreter-args "-i")
   (defvar pyvenv-virtual-env)
   (defun dd/run-python ()
     "Intelligently run a Python shell."
@@ -652,32 +854,6 @@ Taken from an emacs-devel thread."
       (progn
         (call-interactively #'pyvenv-workon)
         (run-python))))
-
-  ;; (defun dd/py-workon-project-venv ()
-  ;;   "Call pyenv-workon with the current projectile project name.
-  ;; This will return the full path of the associated virtual
-  ;; environment found in $WORKON_HOME, or nil if the environment
-  ;; does not exist."
-  ;;   (let ((pname (projectile-project-name)))
-  ;;     (pyvenv-workon pname)
-  ;;     (if (file-directory-p pyvenv-virtual-env)
-  ;;         pyvenv-virtual-env
-  ;;       (pyvenv-deactivate))))
-
-  ;; (defun dd/py-auto-lsp ()
-  ;;   "Turn on lsp mode in a Python project with some automated logic.
-  ;; Try to automatically determine which pyenv virtual environment
-  ;; to activate based on the project name, using
-  ;; `dd/py-workon-project-venv'. If successful, call `lsp'. If we
-  ;; cannot determine the virtualenv automatically, first call the
-  ;; interactive `pyvenv-workon' function before `lsp'"
-  ;;   (interactive)
-  ;;   (let ((pvenv (dd/py-workon-project-venv)))
-  ;;     (if pvenv
-  ;;         (lsp)
-  ;;       (progn
-  ;;         (call-interactively #'pyvenv-workon)
-  ;;         (lsp)))))
 
   (defun dd/print-python-expression-in-repl ()
     "Implying the first statement of the line is actually an expression.
@@ -711,17 +887,69 @@ Taken from an emacs-devel thread."
   (bind-key "C-c C-o" #'dd/print-python-object-fields-in-repl python-mode-map)
   (bind-key "C-c C-k" #'dd/print-python-expression-in-repl python-mode-map))
 
-(use-package paren
+;; (use-package python-pytest
+;;   :ensure t)
+
+(use-package pyvenv
+  :ensure t
   :init
-  (show-paren-mode 1)
-  (setq-default show-paren-delay 0))
-
-(use-package project
-  :demand t)
-
-(use-package prog-mode
+  (setenv "WORKON_HOME" "~/.pyenv/versions")
   :config
-  (add-hook 'emacs-lisp-mode-hook 'prettify-symbols-mode))
+  ;; Set correct Python interpreter
+  (setq pyvenv-post-activate-hooks
+        (list
+         (lambda ()
+           (setq python-shell-interpreter (concat pyvenv-virtual-env
+                                                  "bin/python3")))))
+  (setq pyvenv-post-deactivate-hooks
+        (list
+         (lambda ()
+           (setq python-shell-interpreter "python3"))))
+
+  (defun dd/conda-envs (&optional dir)
+    "Get list of conda environments."
+    (let ((search-dir (if dir
+                          dir
+                        (format "%s/envs" dd/anaconda-installation))))
+      (f-directories search-dir)))
+  (defun dd/conda-env-activate (name)
+    "Activate conda with pyvenv."
+    (interactive
+     (list
+      (completing-read "Work on: " (dd/conda-envs))))
+    (pyvenv-activate name)))
+
+(use-package rainbow-delimiters
+  :ensure t
+  :hook (prog-mode-hook . rainbow-delimiters-mode))
+
+(use-package recentf
+  :defer 3
+  :init
+  (defun dd/recentf-excluder (s)
+    "Check if file should be recentf excluded."
+    (s-contains-p ".emacs.d/elpa-" s))
+  (setq recentf-exclude '(dd/recentf-excluder))
+  :config
+  (recentf-mode +1)
+  (add-to-list 'recentf-exclude 'file-remote-p))
+
+(use-package reformatter
+  :ensure t
+  :config
+  (reformatter-define dd/ruff-format
+    :program "ruff"
+    :args `("format" "--stdin-filename" ,buffer-file-name "-"))
+  (reformatter-define dd/isort
+    :program "isort"
+    :args `("--stdout" "--atomic" "-")))
+
+(use-package rg
+  :ensure t
+  :after wgrep
+  :init
+  (setq rg-group-result t
+        rg-hide-command t))
 
 (use-package server
   :config
@@ -742,6 +970,11 @@ Taken from an emacs-devel thread."
     (setq read-extended-command-predicate 'command-completion-default-include-p))
   (column-number-mode +1))
 
+(use-package solaire-mode
+  :ensure t
+  :config
+  (solaire-global-mode +1))
+
 (use-package term
   :hook (term-mode-hook . (lambda () (display-line-numbers-mode 0))))
 
@@ -757,6 +990,14 @@ Taken from an emacs-devel thread."
     (find-file "~/.")
     (switch-to-buffer "*scratch*")))
 
+(use-package treesit-auto
+  :ensure t
+  :custom
+  (treesit-auto-install 'prompt)
+  :config
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
+
 (use-package uniquify
   :init
   (setq uniquify-buffer-name-style 'post-forward-angle-brackets
@@ -766,498 +1007,49 @@ Taken from an emacs-devel thread."
 (use-package vc
   :init
   (setq vc-follow-symlinks t))
-
-(use-package whitespace
-  :init
-  (dolist (hook '(prog-mode-hook text-mode-hook))
-    (add-hook hook #'whitespace-mode))
-  (add-hook 'before-save-hook #'whitespace-cleanup)
-  :config
-  (setq whitespace-style '(face tabs empty trailing)))
-
-;; sec04:
-;; third party
-
-(use-package ace-window
-  :ensure t
-  :bind ("M-o" . ace-window))
-
-(use-package apheleia
-  :ensure t
-  :hook (python-mode-hook . apheleia-mode))
-
-(use-package auto-compile
-  :ensure t
-  :defer t
-  :config
-  (setq auto-compile-display-buffer nil)
-  (setq auto-compile-mode-line-counter t))
-
-(use-package auto-package-update
-  :ensure t
-  :commands (auto-package-update-now)
-  :init
-  (setq auto-package-update-delete-old-versions t))
-
-(use-package blacken
-  :ensure t)
-
-(use-package breadcrumb
-  :ensure t)
-
-(use-package buttercup
-  :ensure t
-  :defer t)
-
-;; (use-package cider
-;;   :commands cider-jack-in)
-
-;; (when (or dd/on-udt-p dd/on-cc7-p dd/on-mac-p)
-;;   (use-package circe
-;;     :commands circe
-;;     :hook (circe-chat-mode-hook . dd/circe-prompt)
-;;     :config
-;;     (defun dd/irc-pw-freenode (server)
-;;       (auth-source-pass-get 'secret "Freenode"))
-;;     (defun dd/irc-pw-gitter (server)
-;;       (auth-source-pass-get 'secret "Gitter"))
-;;     (defun dd/circe-prompt ()
-;;       (lui-set-prompt
-;;        (propertize (format "%s >>> " (buffer-name)) 'face 'circe-prompt-face)))
-;;     (setq circe-network-options
-;;           '(("Gitter"
-;;              :host "irc.gitter.im"
-;;              :server-buffer-name "⇄ Gitter (irc gateway)"
-;;              :nick "douglasdavis"
-;;              :pass dd/irc-pw-gitter
-;;              :port 6697
-;;              :tls t)
-;;             ("Freenode"
-;;              :nick "ddavis"
-;;              :nickserv-password dd/irc-pw-freenode
-;;              :channels (:after-auth
-;;                         "#emacs"
-;;                         "#python"
-;;                         "#pydata"
-;;                         "#sr.ht"
-;;                         "#lobsters"
-;;                         "#hpy"
-;;                         "##crustaceans")
-;;              :tls t)))
-;;     (setq circe-use-cycle-completion t
-;;           circe-reduce-lurker-spam t
-;;           circe-format-say "<{nick}> {body}"
-;;           lui-fill-type 19
-;;           lui-fill-column 77)
-;;     (setq circe-default-part-message
-;;           (format "Closed Circe (%s) buffer in GNU Emacs (%s)"
-;;                   circe-version
-;;                   emacs-version))
-;;     (setq circe-default-quit-message
-;;           (format "Quit Circe (%s) in GNU Emacs (%s)"
-;;                   circe-version
-;;                   emacs-version))
-;;     (defun dd/switch-circe-channel ()
-;;       (interactive)
-;;       (let ((sources
-;;              (cl-loop for buf in (buffer-list)
-;;                       if (eq 'circe-channel-mode (buffer-local-value 'major-mode buf))
-;;                       collect (buffer-name buf))))
-;;         (switch-to-buffer (completing-read "Channel: " sources))))
-
-;;     (bind-key (kbd "C-c C-b") #'dd/switch-circe-channel circe-mode-map))
-
-;;   (use-package circe-color-nicks
-;;     :after circe
-;;     :config
-;;     ;; (setq circe-color-nicks-pool-type
-;;     ;;       '("#fb4934" "#b8bb26" "#fabd2f" "#83a598" "#d3869b" "#8ec07c" "#fe8019"
-;;     ;;         "#cc241d" "#98971a" "#d79921" "#458588" "#b16286" "#689d6a" "#d65d0e"))
-;;     (setq circe-color-nicks-everywhere t)
-;;     (enable-circe-color-nicks)))
-
-(use-package clang-format
-  :ensure t
-  :after cc-mode
-  :custom
-  (clang-format-executable dd/clang-format-exe))
-
-;; (use-package cmake-mode
-;;   :load-path "~/.emacs.d/dot-emacs/site-lisp/cmake-mode")
-(use-package cmake-mode :ensure t)
-(use-package cmake-font-lock :ensure t)
-
-;; (make-variable-buffer-local 'company-minimum-prefix-length)
-;; (make-variable-buffer-local 'company-idle-delay)
-;; (make-variable-buffer-local 'company-backends)
-;; (use-package company
-;;   :ensure t
-;;   :demand t
-;;   :bind
-;;   (:map company-active-map
-;;         ("TAB" . company-complete-selection)
-;;         ("<tab>" . company-complete-selection))
-;;   :config
-;;   (add-hook 'after-init-hook #'global-company-mode)
-;;   (setq-default company-backends '(company-capf
-;;                                    company-files
-;;                                    company-semantic
-;;                                    (company-dabbrev company-keywords)))
-;;   (setq-default company-minimum-prefix-length 2)
-;;   (setq-default company-idle-delay 0.2)
-;;   (defun dd/company-prog-mode  ()
-;;     (setq company-minimum-prefix-length 1
-;;           company-idle-delay 0.1))
-;;   (defun dd/company-text-mode ()
-;;     (setq company-minimum-prefix-length 3
-;;           company-idle-delay 0.3))
-;;   (add-hook 'text-mode-hook #'dd/company-text-mode)
-;;   (add-hook 'prog-mode-hook #'dd/company-prog-mode)
-;;   (when (version<= "28.0.50" emacs-version)
-;;     (setq company-format-margin-function #'company-vscode-dark-icons-margin)))
-
-(use-package consult
-  :ensure t
-  :bind (("C-c l" . consult-line)
-         ("C-c r" . consult-ripgrep)
-         ("C-x b" . consult-buffer))
-  :config
-  (setq consult-preview-key 'nil)
-  ;; (autoload 'projectile-project-root "projectile")
-  ;; (setq consult-project-root-function #'projectile-project-root)
-  (defun find-fd (&optional dir initial)
-    (interactive "P")
-    (let ((consult-find-command "fd --color=never --full-path ARG OPTS"))
-      (consult-find dir initial))))
-
-(use-package cape
-  :ensure t
-  :init
-  (add-to-list 'completion-at-point-functions #'cape-file))
-
-(use-package corfu
-  :ensure t
-  :custom
-  (corfu-cycle t)
-  (corfu-auto t)
-  (corfu-scroll-margin 5)
-  :init
-  ;; (setq completion-cycle-threshold 3)
-  (setq tab-always-indent 'complete)
-  :config
-  (global-corfu-mode +1))
-
-(use-package corfu-terminal
-  :ensure t
-  :init
-  (when (not window-system)
-    (corfu-terminal-mode +1)))
-
-(use-package crux
-  :defer 10
-  :ensure t)
-
-(use-package debbugs
-  :ensure t
-  :defer t)
-
-(setq ad-redefinition-action 'accept)
-(use-package default-text-scale
-  :ensure t
-  :demand t
-  :init
-  :bind (("s-=" . default-text-scale-increase)
-         ("s--" . default-text-scale-decrease)
-         ("s-0" . default-text-scale-reset)))
-
-(use-package denote
-  :ensure t
-  :init
-  (setq denote-directory (expand-file-name "~/.emacs.d/denotes")
-        denote-known-keywords '("dak" "random")
-        denote-file-type 'text))
-
-(use-package diredfl
-  :ensure t
-  :hook (dired-mode-hook . diredfl-mode))
-
-(use-package doom-themes
-  :ensure t
-  :config
-  (dd/theme-cycler))
-
-;; (use-package doom-modeline
-;;   :ensure t
-;;   :demand t
-;;   :config
-;;   (doom-modeline-mode +1))
-
-(when (version< emacs-version "28")
-  (use-package eldoc
-    :ensure t))
-
-(use-package eldoc-box
-  :ensure t
-  :hook (eglot-managed-mode-hook . eldoc-box-hover-at-point-mode)
-  :init
-  (setq eldoc-box-clear-with-C-g t
-        eldoc-box-fringe-use-same-bg nil))
-
-(use-package elfeed
-  :ensure t
-  :commands elfeed
-  :config
-  (setq elfeed-search-filter "@21-days-ago")
-  (setq elfeed-feeds
-        '(("https://ddavis.io/rss.xml" blog)))
-  (add-hook 'elfeed-new-entry-hook
-            (elfeed-make-tagger :before "3 weeks ago" :remove 'unread)))
-
-(use-package eros
-  :ensure t
-  :hook (emacs-lisp-mode-hook . eros-mode))
-
-(use-package exec-path-from-shell
-  :ensure t
-  :demand t
-  :config
-  (when (memq window-system '(mac ns x))
-    (exec-path-from-shell-initialize)))
-
-;; (use-package flycheck
-;;   :ensure t
-;;   :defer t
-;;   :custom
-;;   (flycheck-emacs-lisp-load-path 'inherit))
-
-(use-package helpful
-  :ensure t
-  :bind (([remap describe-function] . helpful-callable)
-         ([remap describe-variable] . helpful-variable)
-         ([remap describe-key] . helpful-key)
-         ("C-h o" . helpful-symbol)
-         ("C-h ." . helpful-at-point)
-         :map helpful-mode-map
-         ("q" . kill-buffer-and-window))
-  :config
-  (setq helpful-max-highlight 15000))
-
-(use-package iedit
-  :ensure t
-  :bind ("C-c ;" . iedit-mode))
-
-(use-package jit-spell
-  :ensure t
-  :hook ((org-mode-hook . jit-spell-mode)
-         (LaTeX-mode-hook . jit-spell-mode)
-         (markdown-mode-hook . jit-spell-mode)
-         (message-mode-hook . jit-spell-mode)
-         (mu4e-compose-mode-hook . jit-spell-mode)))
-
-(setq lsp-use-plists t)
-
-(use-package lsp-clangd
-  :defer t
-  :init
-  (setq lsp-clients-clangd-executable dd/clangd-exe))
-
-(use-package lsp-mode
-  :ensure t
-  :commands lsp
-  :init
-  (setq read-process-output-max (* 10 1024 1024))
-  (setq lsp-keep-workspace-alive nil
-        lsp-auto-guess-root nil
-        lsp-enable-links nil
-        lsp-enable-on-type-formatting nil))
-
-(use-package lsp-pylsp
-  :defer t
-  :init
-  (setq lsp-clients-pylsp-library-directories `("/usr"
-                                                ,(expand-file-name "~/.pyenv/versions/")))
-  (setq lsp-pylsp-plugins-pydocstyle-convention "numpy"
-        lsp-pylsp-configuration-sources ["ruff"])
-  (setq lsp-pylsp-plugins-pydocstyle-enabled nil
-        lsp-pylsp-plugins-flake8-enabled nil
-        lsp-pylsp-plugins-autopep8-enabled nil
-        lsp-pylsp-plugins-mccabe-enabled nil
-        lsp-pylsp-plugins-pycodestyle-enabled nil
-        lsp-pylsp-plugins-pyflakes-enabled nil
-        lsp-pylsp-plugins-pylint-enabled nil)
-  (defun dd/pylsp-toggle-pydocstyle ()
-    "Toggle pycodestyle for pylsp."
-    (interactive)
-    (setq lsp-pylsp-plugins-pydocstyle-enabled (not lsp-pylsp-plugins-pydocstyle-enabled)))
-  (defun dd/pylsp-toggle-flake8 ()
-    "Toggle pycodestyle for pylsp."
-    (interactive)
-    (setq lsp-pylsp-plugins-flake8-enabled (not lsp-pylsp-plugins-flake8-enabled))))
-
-(use-package lsp-treemacs
-  :ensure t
-  :defer t)
-
-(use-package lsp-ui
-  :ensure t
-  :defer t
-  :init
-  (setq lsp-ui-doc-enable t
-        lsp-ui-doc-include-signature t
-        lsp-ui-doc-position 'at-point
-        lsp-ui-doc-header t
-        lsp-ui-doc-max-height 32
-        lsp-ui-doc-max-width 96
-        lsp-ui-sideline-show-hover nil))
-
-(defun dd/pyright ()
-  (interactive)
-  (use-package lsp-pyright
-    :ensure t))
-
-(use-package magit
-  :ensure t
-  :bind (("C-x g" . magit-status))
-  :hook (magit-status-mode-hook . (lambda ()
-                                    (make-local-variable 'truncate-lines)
-                                    (setq truncate-lines nil)))
-  :config
-  (defun dd/magit-kill-buffers ()
-    "See `https://manuel-uberti.github.io/emacs/2018/02/17/magit-bury-buffer/'"
-    (interactive)
-    (let ((buffers (magit-mode-get-buffers)))
-      (magit-restore-window-configuration)
-      (mapc #'kill-buffer buffers))))
-
-(use-package magit-todos
-  :ensure t)
-
-(use-package marginalia
-  :ensure t
-  :init
-  (marginalia-mode))
-
-(use-package markdown-mode
-  :ensure t
-  :defer t
-  :mode ("\\.md\\'" "\\.markdown\\'"))
-
-(use-package numpydoc
-  :ensure t
-  :init
-  (setq numpydoc-insertion-style nil)
-  :bind (:map python-ts-mode-map
-              ("C-c C-n" . numpydoc-generate)
-         :map python-mode-map
-              ("C-c C-n" . numpydoc-generate))
-  :after python)
-
-(use-package orderless
-  :ensure t
-  :init
-  (defun dd/use-orderless-in-minibuffer ()
-    (interactive)
-    (setq-local completion-styles '(orderless basic partial-completion emacs22 initials)))
-  (add-hook 'minibuffer-setup-hook 'dd/use-orderless-in-minibuffer)
-  (setq completion-category-defaults nil
-        completion-category-overrides '((file (styles . (partial-completion))))))
-
-(use-package python-isort
-  :ensure t)
-
-(use-package python-pytest
-  :ensure t)
-
-(use-package pyvenv
-  :ensure t
-  :init
-  (setenv "WORKON_HOME" "~/.pyenv/versions")
-  :config
-  ;; Set correct Python interpreter
-  (setq pyvenv-post-activate-hooks
-        (list
-         (lambda ()
-           (setq python-shell-interpreter (concat pyvenv-virtual-env
-                                                  "bin/python3")))))
-  (setq pyvenv-post-deactivate-hooks
-        (list
-         (lambda ()
-           (setq python-shell-interpreter "python3")))))
-
-(use-package rainbow-delimiters
-  :ensure t
-  :hook (prog-mode-hook . rainbow-delimiters-mode))
-
-(use-package recentf
-  :defer 3
-  :init
-  (defun dd/recentf-excluder (s)
-    "Check if file should be recentf excluded."
-    (s-contains-p ".emacs.d/elpa-" s))
-  (setq recentf-exclude '(dd/recentf-excluder))
-  :config
-  (recentf-mode +1)
-  (add-to-list 'recentf-exclude 'file-remote-p))
-
-(use-package rg
-  :ensure t
-  :after wgrep
-  :init
-  (setq rg-group-result t
-        rg-hide-command t))
   ;; :config
-  ;; (rg-define-search dd/ripgrep-proj-or-dir
-  ;;   :query ask
-  ;;   :format regexp
-  ;;   :files "everything"
-  ;;   :dir (let ((proj (projectile-project-root)))
-  ;;          (if proj
-  ;;              proj
-  ;;            default-directory))
-  ;;   :confirm prefix
-  ;;   :flags ("--hidden -g !.git")))
-
-
-(setq rust-rustfmt-bin (expand-file-name "~/.cargo/bin/rustfmt"))
-(setq rust-cargo-bin (expand-file-name "~/.cargo/bin/cargo"))
-
-;; (use-package rustic
-;;   :ensure t
-;;   :init
-;;   (setq rustic-rustfmt-bin "/Users/ddavis/.cargo/bin/rustfmt")
-;;   (setq rustic-format-on-save t))
+  ;; (require 's)
+  ;; (defun dd/shorten-git-branch (string)
+  ;;   (concat
+  ;;    "g:"
+  ;;    (s-replace
+  ;;     "feature/" "feat/"
+  ;;     (s-chop-prefix
+  ;;      "Git:"
+  ;;      (s-truncate
+  ;;       38 string)))))
+  ;; (advice-add 'vc-git-mode-line-string :filter-return 'dd/shorten-git-branch))
 
 (use-package vertico
   :ensure t
   :demand t
   :init
   (setq enable-recursive-minibuffers t)
-  (setq vertico-count 13)
-  (setq vertico-sort-threshold 3000)
   ;; :custom-face
   ;; (vertico-current ((t (:inherit region))))
   :config
   (vertico-mode +1)
-  (setq resize-mini-windows nil)
+  (setq vertico-count 15)
+  (setq vertico-resize nil)
+  (setq vertico-sort-threshold 3000)
   ;; Do not allow the cursor in the minibuffer prompt
   (setq minibuffer-prompt-properties
         '(read-only t cursor-intangible t face minibuffer-prompt))
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode))
 
-;; (when window-system
-;;   (use-package vertico-posframe
-;;     :ensure t
-;;     :demand t
-;;     :config
-;;     (vertico-posframe-mode +1)))
+;; (use-package vertico-posframe
+;;   :ensure t
+;;   :after vertico
+;;   :config
+;;   (vertico-posframe-mode +1))
 
 (use-package visual-fill-column
   :ensure t)
 
-;; (use-package vterm
-;;   :ensure t
-;;   :defer t
-;;   :hook (vterm-mode-hook . (lambda () (display-line-numbers-mode -1))))
+(use-package vterm
+  :ensure t
+  :defer t
+  :hook (vterm-mode-hook . (lambda () (display-line-numbers-mode -1))))
 
 (use-package w3m
   :ensure t
@@ -1272,16 +1064,25 @@ Taken from an emacs-devel thread."
   (which-key-mode)
   (setq which-key-frame-max-height 50))
 
+(use-package whitespace
+  :init
+  (dolist (hook '(prog-mode-hook text-mode-hook))
+    (add-hook hook #'whitespace-mode))
+  (add-hook 'before-save-hook #'whitespace-cleanup)
+  :config
+  (setq whitespace-style '(face tabs empty trailing)))
+
 (use-package yaml-mode
   :ensure t
   :defer t
   :mode ("\\.yml\\'" "\\.yaml\\'"))
 
-;; sec05:
-;; some package-free bindings and macOS specifics
+(use-package yasnippet
+  :ensure t
+  :demand t)
 
-(when (version< emacs-version "28")
-  (bind-key "C-x x g" #'revert-buffer))
+(use-package yasnippet-snippets
+  :ensure t)
 
 ;; some macOS specifics
 (when dd/on-mac-p
@@ -1348,67 +1149,3 @@ Taken from an emacs-devel thread."
 
 (provide 'init)
 ;;; init.el ends here
-
-
-(setq dd/ligature-path (expand-file-name "~/software/repos/ligature.el"))
-
-(when (and window-system (file-exists-p dd/ligature-path))
-  (use-package ligature
-    :load-path dd/ligature-path
-    :config
-    ;; Enable the "www" ligature in every possible major mode
-    (ligature-set-ligatures 't '("www"))
-    ;; Enable traditional ligature support in eww-mode, if the
-    ;; `variable-pitch' face supports it
-    (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
-    ;; Enable all Cascadia Code ligatures in programming modes
-    (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####"
-                                         "~~>" "***" "||=" "||>" ":::" "::="
-                                         "=:=" "===" "==>" "=!=" "=>>" "=<<"
-                                         "=/=" "!==" "!!." ">=>" ">>=" ">>>"
-                                         ">>-" ">->" "->>" "-->" "---" "-<<"
-                                         "<~~" "<~>" "<*>" "<||" "<|>" "<$>"
-                                         "<==" "<=>" "<=<" "<->" "<--" "<-<"
-                                         "<<=" "<<-" "<<<" "<+>" "</>" "###"
-                                         "#_(" "..<" "..." "+++" "/==" "///"
-                                         "_|_" "www" "&&" "^=" "~~" "~@" "~="
-                                         "~>" "~-" "**" "*>" "*/" "||" "|}"
-                                         "|]" "|=" "|>" "|-" "{|" "[|" "]#"
-                                         "::" ":=" ":>" ":<" "$>" "==" "=>"
-                                         "!=" "!!" ">:" ">=" ">>" ">-" "-~"
-                                         "-|" "->" "--" "-<" "<~" "<*" "<|"
-                                         "<:" "<$" "<=" "<>" "<-" "<<" "<+"
-                                         "</" "#{" "#[" "#:" "#=" "#!" "##"
-                                         "#(" "#?" "#_" "%%" ".=" ".-" ".."
-                                         ".?" "+>" "++" "?:" "?=" "?." "??"
-                                         ";;" "/*" "/=" "/>" "//" "__" "~~"
-                                         "(*" "*)" "\\\\" "://"))
-    ;; Enables ligature checks globally in all buffers. You can also do it
-    ;; per mode with `ligature-mode'.
-    (global-ligature-mode t)))
-
-
-;; (use-package forge
-;;   :ensure t
-;;   :after magit)
-
-
-(use-package nerd-icons
-  :ensure t)
-
-(use-package nerd-icons-completion
-  :ensure t
-  :config
-  (nerd-icons-completion-mode))
-
-(use-package nerd-icons-corfu
-  :ensure t)
-
-(use-package nerd-icons-dired
-  :ensure t
-  :hook
-  (dired-mode-hook . nerd-icons-dired-mode))
-
-(use-package nerd-icons-ibuffer
-  :ensure t
-  :hook (ibuffer-mode-hook . nerd-icons-ibuffer-mode))

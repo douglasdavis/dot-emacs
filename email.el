@@ -44,15 +44,15 @@
   :demand t)
 
 (defconst dd/mu-exe
-  (cond (dd/on-m1-p "/opt/homebrew/Cellar/mu/1.12.1/bin/mu")
-        (dd/on-udt-p "/opt/mu/1.12.1/bin/mu")
+  (cond (dd/on-m1-p "/opt/homebrew/Cellar/mu/1.12.3/bin/mu")
+        (dd/on-udt-p "/opt/mu/1.12.3/bin/mu")
         (t (executable-find "mu")))
   "Machine dependent mu executable string.")
 
 (defconst dd/mu4e-dir
-  (cond (dd/on-m1-p "/opt/homebrew/Cellar/mu/1.12.1/share/emacs/site-lisp/mu/mu4e")
-        (dd/on-udt-p "/opt/mu/1.12.1/share/emacs/site-lisp/mu4e")
-        (dd/on-mac-p "/usr/local/Cellar/mu/1.12.1/share/emacs/site-lisp/mu/mu4e"))
+  (cond (dd/on-m1-p "/opt/homebrew/Cellar/mu/1.12.3/share/emacs/site-lisp/mu/mu4e")
+        (dd/on-udt-p "/opt/mu/1.12.3/share/emacs/site-lisp/mu4e")
+        (dd/on-intel-p "/usr/local/Cellar/mu/1.12.3/share/emacs/site-lisp/mu/mu4e"))
   "Machine dependent mu4e installation location string.")
 
 (defun dd/mu4e-byte-comp ()
@@ -68,7 +68,6 @@
   :commands (mu4e mu4e-update-mail-and-index)
   :bind (("C-c 4" . mu4e)
          :map mu4e-headers-mode-map
-         ;;("j" . dd/mu4e-jump-via-comp-read)
          ("d" . mu4e-headers-mark-for-delete)
          ("D" . mu4e-headers-mark-for-trash)
          :map mu4e-main-mode-map
@@ -78,10 +77,8 @@
          ("d" . mu4e-view-mark-for-delete)
          ("D" . mu4e-view-mark-for-trash)
          ("M" . mu4e-action-view-in-w3m))
-         ;;         ("j" . dd/mu4e-jump-via-comp-read))
   :config
   (add-hook 'mu4e-main-mode-hook 'delete-other-windows)
-
   (setq mu4e-read-option-use-builtin nil
         mu4e-completing-read-function 'completing-read)
 
@@ -102,13 +99,13 @@
     (w3m-browse-url (concat "file://"
                             (mu4e~write-body-to-html (mu4e-message-at-point t)))))
 
-  (set-face-attribute 'mu4e-unread-face nil :weight 'regular)
-  (set-face-attribute 'mu4e-header-highlight-face nil :weight 'regular)
-  (setq  mu4e-use-fancy-chars nil
-         mu4e-headers-thread-connection-prefix '("│"   . "│")
-         mu4e-headers-thread-orphan-prefix     '("├► " . "├► ")
-         mu4e-headers-thread-child-prefix      '("├► " . "├► ")
-         mu4e-headers-thread-last-child-prefix '("╰► " . "╰► "))
+  ;; (set-face-attribute 'mu4e-unread-face nil :weight 'regular)
+  ;; (set-face-attribute 'mu4e-header-highlight-face nil :weight 'regular)
+  ;; (setq  mu4e-use-fancy-chars nil
+  ;;        mu4e-headers-thread-connection-prefix '("│"   . "│")
+  ;;        mu4e-headers-thread-orphan-prefix     '("├► " . "├► ")
+  ;;        mu4e-headers-thread-child-prefix      '("├► " . "├► ")
+  ;;        mu4e-headers-thread-last-child-prefix '("╰► " . "╰► "))
   (setq mu4e-mu-binary dd/mu-exe
         mu4e-change-filenames-when-moving t
         mu4e-get-mail-command "true"
