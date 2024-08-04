@@ -140,7 +140,7 @@
   (when (boundp 'ns-antialias-text)
     (setq ns-antialias-text t)
     (set-face-attribute 'default nil
-                        :family "Hasklug Nerd Font Mono"
+                        :family "Berkeley Mono"
                         :weight 'regular
                         :height 140)
     (dolist (face '(font-lock-doc-face font-lock-comment-face))
@@ -970,10 +970,10 @@ Taken from an emacs-devel thread."
     (setq read-extended-command-predicate 'command-completion-default-include-p))
   (column-number-mode +1))
 
-(use-package solaire-mode
-  :ensure t
-  :config
-  (solaire-global-mode +1))
+;; (use-package solaire-mode
+;;   :ensure t
+;;   :config
+;;   (solaire-global-mode +1))
 
 (use-package term
   :hook (term-mode-hook . (lambda () (display-line-numbers-mode 0))))
