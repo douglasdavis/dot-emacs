@@ -140,13 +140,13 @@
   (when (boundp 'ns-antialias-text)
     (setq ns-antialias-text t)
     (set-face-attribute 'default nil
-                        :family "Berkeley Mono"
+                        :family "Agave Nerd Font"
                         :weight 'regular
-                        :height 140)
+                        :height 160)
     (dolist (face '(font-lock-doc-face font-lock-comment-face))
       (set-face-attribute face nil :italic t)))
 
-  (set-face-attribute 'fixed-pitch nil :family "Berkeley Mono"))
+  (set-face-attribute 'fixed-pitch nil :family "Agave Nerd Font"))
 
 (dd/reset-font)
 
